@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
-export async function proxy(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   let supabaseResponse = NextResponse.next({ request });
@@ -30,7 +30,7 @@ export async function proxy(request) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const isAuthPage = pathname === '/login' || pathname === '/signup';
-  const isPublicPage = pathname === '/';
+  const isPublicPage = pathname === '/' || pathname.startsWith('/auth/');
 
   // Redirect ingelogde gebruikers weg van auth-pagina's
   if (user && isAuthPage) {
