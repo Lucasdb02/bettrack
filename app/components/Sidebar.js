@@ -75,14 +75,32 @@ function NavItem({ item, active }) {
         href={item.href}
         style={{
           display: 'flex', alignItems: 'center', gap: 9,
-          padding: '7px 10px', borderRadius: 6,
+          padding: '7px 10px', borderRadius: 7,
           fontSize: 13, fontWeight: active ? 600 : 400,
-          color: active ? '#ffffff' : '#8baac8',
-          backgroundColor: active ? '#1e4976' : 'transparent',
-          textDecoration: 'none', transition: 'all 0.15s ease',
+          color: active ? '#e8f0ff' : '#7090b0',
+          background: active
+            ? 'rgba(123,158,240,0.15)'
+            : 'transparent',
+          backdropFilter: active ? 'blur(12px) saturate(1.5)' : 'none',
+          WebkitBackdropFilter: active ? 'blur(12px) saturate(1.5)' : 'none',
+          border: active ? '1px solid rgba(123,158,240,0.25)' : '1px solid transparent',
+          boxShadow: active ? 'inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 8px rgba(0,0,0,0.2)' : 'none',
+          textDecoration: 'none', transition: 'all 0.18s ease',
         }}
-        onMouseEnter={(e) => { if (!active) { e.currentTarget.style.backgroundColor = '#1a3a5c'; e.currentTarget.style.color = '#c5d8ec'; } }}
-        onMouseLeave={(e) => { if (!active) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#8baac8'; } }}
+        onMouseEnter={(e) => {
+          if (!active) {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+            e.currentTarget.style.color = '#b8d0e8';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!active) {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = 'transparent';
+            e.currentTarget.style.color = '#7090b0';
+          }
+        }}
       >
         <span style={{ color: active ? '#7b9ef0' : '#3d6080', flexShrink: 0 }}>{item.icon}</span>
         {item.label}
@@ -110,10 +128,10 @@ export default function Sidebar() {
   };
 
   return (
-    <aside style={{ backgroundColor: '#0a2540', width: '220px', minHeight: '100vh' }} className="flex flex-col flex-shrink-0 sticky top-0 h-screen">
+    <aside style={{ background: 'rgba(5,12,28,0.94)', backdropFilter: 'blur(24px) saturate(1.5)', WebkitBackdropFilter: 'blur(24px) saturate(1.5)', borderRight: '1px solid rgba(255,255,255,0.06)', width: '220px', minHeight: '100vh' }} className="flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
       {/* Logo */}
-      <div style={{ borderBottom: '1px solid #1e3a5c', padding: '18px 16px' }} className="flex items-center gap-3">
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '18px 16px' }} className="flex items-center gap-3">
         <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -148,20 +166,30 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer: dark toggle + account */}
-      <div style={{ borderTop: '1px solid #1e3a5c', padding: '12px 14px' }}>
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px 14px' }}>
         {/* Dark mode toggle */}
         <button
           onClick={toggle}
           title={dark ? 'Schakel naar licht' : 'Schakel naar donker'}
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
-            padding: '7px 10px', borderRadius: 6, marginBottom: 10,
-            backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
-            color: '#8baac8', fontSize: 13, fontWeight: 400,
-            transition: 'all 0.15s',
+            padding: '7px 10px', borderRadius: 7, marginBottom: 6,
+            background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
+            color: '#7090b0', fontSize: 13, fontWeight: 400,
+            transition: 'all 0.18s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a3a5c'; e.currentTarget.style.color = '#c5d8ec'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#8baac8'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+            e.currentTarget.style.color = '#c5d8ec';
+            e.currentTarget.style.backdropFilter = 'blur(12px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = 'transparent';
+            e.currentTarget.style.color = '#7090b0';
+            e.currentTarget.style.backdropFilter = 'none';
+          }}
         >
           <span style={{ color: '#3d6080', flexShrink: 0 }}>
             {dark ? (
@@ -185,13 +213,21 @@ export default function Sidebar() {
           onClick={handleLogout}
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
-            padding: '7px 10px', borderRadius: 6, marginBottom: 10,
-            backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
-            color: '#8baac8', fontSize: 13, fontWeight: 400,
-            transition: 'all 0.15s',
+            padding: '7px 10px', borderRadius: 7, marginBottom: 8,
+            background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
+            color: '#7090b0', fontSize: 13, fontWeight: 400,
+            transition: 'all 0.18s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a3a5c'; e.currentTarget.style.color = '#c5d8ec'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#8baac8'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255,80,80,0.1)';
+            e.currentTarget.style.borderColor = 'rgba(255,100,100,0.2)';
+            e.currentTarget.style.color = '#ff9090';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = 'transparent';
+            e.currentTarget.style.color = '#7090b0';
+          }}
         >
           <span style={{ color: '#3d6080', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -204,11 +240,27 @@ export default function Sidebar() {
         {/* Account */}
         <Link
           href="/account"
-          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 8px', borderRadius: 7, textDecoration: 'none', transition: 'background-color 0.15s', backgroundColor: pathname === '/account' ? '#1e4976' : 'transparent' }}
-          onMouseEnter={e => { if (pathname !== '/account') e.currentTarget.style.backgroundColor = '#1a3a5c'; }}
-          onMouseLeave={e => { if (pathname !== '/account') e.currentTarget.style.backgroundColor = 'transparent'; }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10, padding: '7px 8px', borderRadius: 8,
+            textDecoration: 'none', transition: 'all 0.18s',
+            background: pathname === '/account' ? 'rgba(123,158,240,0.15)' : 'transparent',
+            border: pathname === '/account' ? '1px solid rgba(123,158,240,0.25)' : '1px solid transparent',
+            boxShadow: pathname === '/account' ? 'inset 0 1px 0 rgba(255,255,255,0.1)' : 'none',
+          }}
+          onMouseEnter={e => {
+            if (pathname !== '/account') {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)';
+            }
+          }}
+          onMouseLeave={e => {
+            if (pathname !== '/account') {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }
+          }}
         >
-          <div style={{ width: 30, height: 30, borderRadius: '50%', backgroundColor: '#1e4976', flexShrink: 0 }} className="flex items-center justify-center">
+          <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>

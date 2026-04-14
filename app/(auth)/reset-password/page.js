@@ -15,19 +15,28 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    let recoveryReceived = false;
+
+    // If we already set the flag on a previous render/event, show form immediately
+    if (sessionStorage.getItem('reset_mode') === 'true') {
+      setStatus('ready');
+    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
-        recoveryReceived = true;
+        // Store flag so SIGNED_IN (which Supabase also fires) doesn't redirect us away
+        sessionStorage.setItem('reset_mode', 'true');
         setStatus('ready');
-      } else if (event === 'SIGNED_IN' && !recoveryReceived) {
-        router.replace('/dashboard');
+      } else if (event === 'SIGNED_IN') {
+        // Only redirect if this is a normal login, not a password-reset flow
+        if (sessionStorage.getItem('reset_mode') !== 'true') {
+          router.replace('/dashboard');
+        }
+        // If reset_mode is set, status is already 'ready' — do nothing
       }
     });
 
     const timer = setTimeout(() => {
-      if (!recoveryReceived) {
+      if (sessionStorage.getItem('reset_mode') !== 'true') {
         setStatus('expired');
       }
     }, 10000);
@@ -59,6 +68,7 @@ export default function ResetPasswordPage() {
       setLoading(false);
       return;
     }
+    sessionStorage.removeItem('reset_mode');
     router.push('/dashboard');
     router.refresh();
   }
