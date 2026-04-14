@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
+/* ── Light mode (default) ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-win:  #34D399;
+  --color-loss: #FB7185;
+  --bg-page:    #f6f9fc;
+  --bg-card:    #ffffff;
+  --bg-subtle:  #f9fafb;
+  --bg-input:   #f9fafb;
+  --bg-brand:   #f0f4ff;
+  --border:         #e5e7eb;
+  --border-subtle:  #f3f4f6;
+  --text-1:  #1a1f36;
+  --text-2:  #374151;
+  --text-3:  #6b7280;
+  --text-4:  #9ca3af;
+  --badge-bg:    #f3f4f6;
+  --badge-color: #374151;
+  --brand:       #5469d4;
+  --brand-soft:  #c7d2f8;
+  --tooltip-bg:  #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Dark mode ── */
+html.dark {
+  --bg-page:    #0d1117;
+  --bg-card:    #161c2a;
+  --bg-subtle:  #1c2335;
+  --bg-input:   #1c2335;
+  --bg-brand:   rgba(84, 105, 212, 0.12);
+  --border:         #2a3347;
+  --border-subtle:  #1e293b;
+  --text-1:  #e6edf3;
+  --text-2:  #c9d1d9;
+  --text-3:  #8b949e;
+  --text-4:  #6e7681;
+  --badge-bg:    #1c2335;
+  --badge-color: #94a3b8;
+  --brand:       #7b9ef0;
+  --brand-soft:  #3d5099;
+  --tooltip-bg:  #1c2335;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Sidebar scrollbar */
+.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: #1e4976; border-radius: 2px; }
+
+/* Table rows */
+.bet-row:hover { background-color: var(--row-hover); }
+
+/* Recharts SVG focus outline */
+.recharts-wrapper { outline: none !important; }
+.recharts-wrapper svg { outline: none !important; }
+.recharts-wrapper:focus { outline: none !important; }
+.recharts-wrapper svg:focus { outline: none !important; }
+.recharts-wrapper *:focus { outline: none !important; }
+svg:focus { outline: none !important; }
+
+/* Input focus ring */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 3px rgba(84, 105, 212, 0.15);
+}
+
+/* Dark mode — native inputs/selects */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  color-scheme: dark;
 }
