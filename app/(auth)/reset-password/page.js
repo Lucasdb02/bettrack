@@ -74,12 +74,12 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-[360px]">
         {/* Logo */}
         <div className="flex items-center gap-2.5 mb-8">
-          <div style={{ backgroundColor: '#5469d4', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(123,158,240,0.2)' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 16 }}>BetTrack</span>
+          <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 16 }}>TrackMijnBets</span>
         </div>
 
         {/* Icon */}

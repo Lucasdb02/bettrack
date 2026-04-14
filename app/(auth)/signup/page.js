@@ -36,12 +36,12 @@ function SignupPanel() {
     >
       {/* Logo top */}
       <div className="flex items-center gap-2.5">
-        <div style={{ backgroundColor: GREEN, width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(123,158,240,0.2)' }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
         </div>
-        <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>BetTrack</span>
+        <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
       </div>
 
       {/* Headline + perks */}
@@ -92,7 +92,7 @@ function SignupPanel() {
       </div>
 
       <p style={{ color: '#1e3a20', fontSize: 12, marginTop: 16 }}>
-        BetTrack · Gratis forever plan beschikbaar
+        TrackMijnBets · Gratis forever plan beschikbaar
       </p>
     </div>
   );
@@ -199,12 +199,12 @@ export default function SignupPage() {
         <div className="w-full max-w-[360px]">
           {/* Logo (mobile only) */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
-            <div style={{ backgroundColor: GREEN, width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(123,158,240,0.2)' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
               </svg>
             </div>
-            <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 16 }}>BetTrack</span>
+            <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 16 }}>TrackMijnBets</span>
           </div>
 
           <div className="mb-7">

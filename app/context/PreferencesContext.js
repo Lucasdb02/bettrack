@@ -23,7 +23,7 @@ export function PreferencesProvider({ children }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('bettrack_prefs');
+      const saved = localStorage.getItem('trackmijnbets_prefs');
       if (saved) setPrefsState({ ...DEFAULTS, ...JSON.parse(saved) });
     } catch {}
     setLoaded(true);
@@ -31,7 +31,7 @@ export function PreferencesProvider({ children }) {
 
   const setPrefs = useCallback((next) => {
     setPrefsState(next);
-    try { localStorage.setItem('bettrack_prefs', JSON.stringify(next)); } catch {}
+    try { localStorage.setItem('trackmijnbets_prefs', JSON.stringify(next)); } catch {}
   }, []);
 
   const updatePref = useCallback((key, value) => {

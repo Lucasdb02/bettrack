@@ -114,13 +114,13 @@ export default function Sidebar() {
 
       {/* Logo */}
       <div style={{ borderBottom: '1px solid #1e3a5c', padding: '18px 16px' }} className="flex items-center gap-3">
-        <div style={{ backgroundColor: '#5469d4', width: 30, height: 30, borderRadius: 7, flexShrink: 0 }} className="flex items-center justify-center">
+        <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
         </div>
         <div>
-          <p style={{ color: '#fff', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>BetTrack</p>
+          <p style={{ color: '#fff', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>TrackMijnBets</p>
           <p style={{ color: '#4a6885', fontSize: 10.5 }}>Analyse Tool</p>
         </div>
       </div>

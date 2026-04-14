@@ -29,12 +29,12 @@ function Header() {
 
         {/* Logo */}
         <div className="flex items-center gap-2.5" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <div style={{ backgroundColor: '#5469d4', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>BetTrack</span>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
         </div>
 
         {/* Nav tabs */}
@@ -171,7 +171,7 @@ function Hero() {
           <div style={{ backgroundColor: '#1a2e45', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
             {['#ff5f57','#febc2e','#28c840'].map((c, i) => <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: c }} />)}
             <div style={{ flex: 1, marginLeft: 12, height: 20, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>bettrack.nl/dashboard</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>trackmijnbets.nl/dashboard</span>
             </div>
           </div>
 
@@ -180,8 +180,8 @@ function Hero() {
             {/* Fake sidebar */}
             <div style={{ width: 180, backgroundColor: '#0a1e32', padding: '20px 12px', borderRight: '1px solid rgba(255,255,255,0.05)', flexShrink: 0 }}>
               <div className="flex items-center gap-2" style={{ marginBottom: 24, paddingLeft: 8 }}>
-                <div style={{ width: 22, height: 22, backgroundColor: '#5469d4', borderRadius: 5 }} />
-                <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>BetTrack</span>
+                <div style={{ width: 22, height: 22, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 5, border: '1px solid rgba(123,158,240,0.2)' }} />
+                <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>TrackMijnBets</span>
               </div>
               {['Dashboard', 'Bets Overzicht', 'Bet Invoeren', 'Maandoverzicht', 'Statistieken'].map((item, i) => (
                 <div key={i} style={{ padding: '7px 10px', borderRadius: 5, marginBottom: 2, backgroundColor: i === 0 ? 'rgba(84,105,212,0.25)' : 'transparent', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -315,7 +315,7 @@ function Features() {
             Alles wat je nodig hebt<br />om beter te wedden
           </h2>
           <p style={{ fontSize: 17, color: '#6b7280', marginTop: 16, maxWidth: 520, margin: '16px auto 0' }}>
-            Van eenvoudige bet-invoer tot diepgaande analyse — BetTrack geeft je alle tools om patronen te ontdekken.
+            Van eenvoudige bet-invoer tot diepgaande analyse — TrackMijnBets geeft je alle tools om patronen te ontdekken.
           </p>
         </div>
 
@@ -344,7 +344,7 @@ function Features() {
 function HoeHetWerkt() {
   const steps = [
     { num: '01', title: 'Voer je bet in', desc: 'Vul sport, wedstrijd, markt, selectie, odds en inzet in. Zie direct je potentiële winst voordat je de bet opslaat.' },
-    { num: '02', title: 'Bijhouden & updaten', desc: 'Zodra de uitkomst bekend is, update je de bet met één klik. BetTrack berekent automatisch je winst of verlies.' },
+    { num: '02', title: 'Bijhouden & updaten', desc: 'Zodra de uitkomst bekend is, update je de bet met één klik. TrackMijnBets berekent automatisch je winst of verlies.' },
     { num: '03', title: 'Analyseer je data', desc: 'Bekijk per sport, markt en bookmaker waar je goed en slecht presteert. Verbeter je strategie op basis van echte data.' },
   ];
 
@@ -529,7 +529,7 @@ function FinalCTA() {
           Klaar om slimmer te wedden?
         </h2>
         <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.6)', marginBottom: 40, lineHeight: 1.6 }}>
-          Doe mee met 2.400+ bettors die BetTrack gebruiken om hun resultaten te verbeteren. Begin vandaag, gratis.
+          Doe mee met 2.400+ bettors die TrackMijnBets gebruiken om hun resultaten te verbeteren. Begin vandaag, gratis.
         </p>
         <Link
           href="/signup"
@@ -562,9 +562,9 @@ function Footer() {
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: 14 }}>BetTrack</span>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 14 }}>TrackMijnBets</span>
         </div>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>© 2026 BetTrack. Alle rechten voorbehouden.</p>
+        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>© 2026 TrackMijnBets. Alle rechten voorbehouden.</p>
         <div className="flex items-center gap-4">
           {['Privacy', 'Voorwaarden', 'Contact'].map((l) => (
             <a key={l} href="#" style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}

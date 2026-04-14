@@ -141,13 +141,13 @@ function GegevensTab({ bets }) {
     const header = ['datum','sport','wedstrijd','markt','selectie','odds','inzet','uitkomst','bookmaker','notities'].join(',');
     const rows = bets.map(b => [b.datum, b.sport, `"${b.wedstrijd}"`, b.markt, `"${b.selectie}"`, b.odds, b.inzet, b.uitkomst, b.bookmaker, `"${b.notities||''}"`].join(','));
     const blob = new Blob([[header, ...rows].join('\n')], { type:'text/csv' });
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download:`bettrack_${new Date().toISOString().split('T')[0]}.csv` });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download:`trackmijnbets_${new Date().toISOString().split('T')[0]}.csv` });
     a.click(); URL.revokeObjectURL(a.href);
   };
 
   const exportJSON = () => {
     const blob = new Blob([JSON.stringify(bets, null, 2)], { type:'application/json' });
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download:`bettrack_${new Date().toISOString().split('T')[0]}.json` });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download:`trackmijnbets_${new Date().toISOString().split('T')[0]}.json` });
     a.click(); URL.revokeObjectURL(a.href);
   };
 

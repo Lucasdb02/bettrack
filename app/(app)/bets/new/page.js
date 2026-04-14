@@ -29,7 +29,7 @@ function FF({ label, required, hint, children }) {
 
 // ── API field mapping ──────────────────────────────────────────────────────────
 
-// ── Normalise status → BetTrack uitkomst ──────────────────────────────────────
+// ── Normalise status → TrackMijnBets uitkomst ──────────────────────────────────────
 
 function normalizeOutcome(status) {
   switch ((status || '').toLowerCase().trim()) {
@@ -70,7 +70,7 @@ function dedupeBets(bets) {
   });
 }
 
-// ── Flatten API response and map to BetTrack model ────────────────────────────
+// ── Flatten API response and map to TrackMijnBets model ────────────────────────────
 
 function flattenAndMap(data) {
   const imports = Array.isArray(data.imports) ? data.imports : [];

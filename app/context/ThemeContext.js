@@ -40,7 +40,7 @@ export function ThemeProvider({ children }) {
 
   // On mount: read saved preference and apply immediately
   useEffect(() => {
-    const saved = localStorage.getItem('bettrack_theme');
+    const saved = localStorage.getItem('trackmijnbets_theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isDark = saved !== null ? saved === 'dark' : prefersDark;
     applyTheme(isDark);
@@ -50,7 +50,7 @@ export function ThemeProvider({ children }) {
   const toggle = () => {
     setDark(d => {
       const next = !d;
-      localStorage.setItem('bettrack_theme', next ? 'dark' : 'light');
+      localStorage.setItem('trackmijnbets_theme', next ? 'dark' : 'light');
       applyTheme(next);
       return next;
     });

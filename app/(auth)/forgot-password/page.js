@@ -76,16 +76,16 @@ export default function ForgotPasswordPage() {
         <div className="flex flex-col items-center mb-8">
           <div
             style={{
-              backgroundColor: '#5469d4', width: 40, height: 40, borderRadius: 10,
+              background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 40, height: 40, borderRadius: 10,
               display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12,
-              boxShadow: '0 2px 8px rgba(84,105,212,0.35)',
+              boxShadow: '0 2px 8px rgba(6,14,26,0.6)', border: '1px solid rgba(123,158,240,0.2)',
             }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 18, letterSpacing: '-0.02em' }}>BetTrack</span>
+          <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 18, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
         </div>
 
         <div className="mb-7">
