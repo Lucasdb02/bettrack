@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../../lib/supabase';
 
@@ -12,36 +12,40 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [linkError, setLinkError] = useState(false);
-  const readyRef = useRef(false);
 
   useEffect(() => {
-    // Supabase stuurt recovery tokens via de URL hash: #access_token=...&type=recovery
-    // onAuthStateChange vuurt PASSWORD_RECOVERY zodra de hash is verwerkt.
-    const supabase = createClient();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        readyRef.current = true;
-        setReady(true);
-      } else if (event === 'SIGNED_IN' && session) {
-        // Sommige Supabase versies sturen SIGNED_IN i.p.v. PASSWORD_RECOVERY
-        // bij een recovery flow; check de URL hash als fallback.
-        if (typeof window !== 'undefined' && window.location.hash.includes('type=recovery')) {
-          readyRef.current = true;
-          setReady(true);
-        }
+    async function initSession() {
+      const hash = window.location.hash;
+      if (!hash) {
+        setLinkError(true);
+        return;
       }
-    });
 
-    // Timeout: als na 5 seconden geen event is ontvangen, toon foutmelding
-    const timer = setTimeout(() => {
-      if (!readyRef.current) setLinkError(true);
-    }, 5000);
+      const params = new URLSearchParams(hash.replace('#', ''));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      const type = params.get('type');
 
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timer);
-    };
+      if (!accessToken || !refreshToken || type !== 'recovery') {
+        setLinkError(true);
+        return;
+      }
+
+      const supabase = createClient();
+      const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (error) {
+        setLinkError(true);
+        return;
+      }
+
+      setReady(true);
+    }
+
+    initSession();
   }, []);
 
   async function handleSubmit(e) {
