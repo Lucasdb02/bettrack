@@ -65,7 +65,7 @@ function Header() {
         {/* CTA buttons */}
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard"
+            href="/login"
             style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 6, transition: 'color 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.75)'}
@@ -73,7 +73,7 @@ function Header() {
             Inloggen
           </Link>
           <Link
-            href="/dashboard"
+            href="/signup"
             style={{
               backgroundColor: '#5469d4', color: '#fff', fontSize: 13.5, fontWeight: 600,
               textDecoration: 'none', padding: '8px 18px', borderRadius: 7,
@@ -124,7 +124,7 @@ function Hero() {
         {/* CTA row */}
         <div className="flex items-center justify-center gap-4" style={{ marginBottom: 64 }}>
           <Link
-            href="/dashboard"
+            href="/signup"
             style={{
               backgroundColor: '#5469d4', color: '#fff', fontSize: 15, fontWeight: 700,
               textDecoration: 'none', padding: '13px 28px', borderRadius: 9,
@@ -479,7 +479,7 @@ function Prijzen() {
               <span style={{ fontSize: 44, fontWeight: 800, color: '#0a1628', lineHeight: 1 }}>€0</span>
               <span style={{ fontSize: 15, color: '#9ca3af', marginBottom: 6 }}>/maand</span>
             </div>
-            <Link href="/dashboard" style={{ display: 'block', textAlign: 'center', padding: '11px', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#374151', textDecoration: 'none', marginBottom: 28 }}>
+            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#374151', textDecoration: 'none', marginBottom: 28 }}>
               Gratis beginnen
             </Link>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -502,7 +502,7 @@ function Prijzen() {
               <span style={{ fontSize: 44, fontWeight: 800, color: '#fff', lineHeight: 1 }}>€9</span>
               <span style={{ fontSize: 15, color: '#4a6885', marginBottom: 6 }}>/maand</span>
             </div>
-            <Link href="/dashboard" style={{ display: 'block', textAlign: 'center', padding: '11px', backgroundColor: '#5469d4', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28 }}>
+            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', backgroundColor: '#5469d4', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28 }}>
               Pro starten
             </Link>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -532,7 +532,7 @@ function FinalCTA() {
           Doe mee met 2.400+ bettors die BetTrack gebruiken om hun resultaten te verbeteren. Begin vandaag, gratis.
         </p>
         <Link
-          href="/dashboard"
+          href="/signup"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             backgroundColor: '#5469d4', color: '#fff', fontSize: 15.5, fontWeight: 700,

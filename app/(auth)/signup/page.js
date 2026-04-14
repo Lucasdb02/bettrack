@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '../../../lib/supabase';
 
+const GREEN = '#16a34a';
+const GREEN_DARK = '#15803d';
+const GREEN_GLOW = 'rgba(22,163,74,0.4)';
+
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,27 +20,79 @@ function GoogleIcon() {
   );
 }
 
-function BetTrackLogo({ subtitle }) {
+/* ── Left panel: benefits list ── */
+function SignupPanel() {
+  const perks = [
+    { icon: '📊', title: 'Alles op één plek', desc: 'Alle bets van alle bookmakers overzichtelijk bijhouden.' },
+    { icon: '📈', title: 'Winst inzicht', desc: 'Zie per sport, bookmaker en markt waar je wint of verliest.' },
+    { icon: '🎯', title: 'ROI & statistieken', desc: 'Automatisch berekende ROI, win rate en yield per periode.' },
+    { icon: '🔒', title: 'Veilig & privé', desc: 'Jouw data is alleen van jou. Nooit gedeeld met derden.' },
+  ];
+
   return (
-    <div className="flex flex-col items-center mb-8">
-      <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-        style={{
-          background: 'var(--brand)',
-          boxShadow: '0 2px 8px rgba(84,105,212,0.35)',
-        }}
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10C3 6.13 6.13 3 10 3s7 3.13 7 7-3.13 7-7 7-7-3.13-7-7z" stroke="white" strokeWidth="1.5"/>
-          <path d="M10 7v3l2 2" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-          <circle cx="10" cy="10" r="1.5" fill="white"/>
-        </svg>
+    <div
+      className="hidden lg:flex flex-col justify-between h-full px-10 py-10"
+      style={{ background: 'linear-gradient(155deg, #021208 0%, #062010 60%, #082a12 100%)' }}
+    >
+      {/* Logo top */}
+      <div className="flex items-center gap-2.5">
+        <div style={{ backgroundColor: GREEN, width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+        </div>
+        <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>BetTrack</span>
       </div>
-      <h1 className="text-xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
-        BetTrack
-      </h1>
-      <p className="text-sm mt-1" style={{ color: 'var(--text-3)' }}>
-        {subtitle}
+
+      {/* Headline + perks */}
+      <div className="flex-1 flex flex-col justify-center gap-10 mt-8">
+        <div>
+          <h2 style={{ color: '#e6edf3', fontSize: 28, fontWeight: 700, lineHeight: 1.25, letterSpacing: '-0.03em', marginBottom: 10 }}>
+            Gratis starten in<br/>minder dan een minuut.
+          </h2>
+          <p style={{ color: '#8b949e', fontSize: 14, lineHeight: 1.6, maxWidth: 340 }}>
+            Geen creditcard nodig. Direct toegang tot alle functies.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-5">
+          {perks.map((p) => (
+            <div key={p.title} className="flex items-start gap-4">
+              <div
+                style={{
+                  width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                  background: 'rgba(22,163,74,0.12)', border: '1px solid rgba(22,163,74,0.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+                }}
+              >
+                {p.icon}
+              </div>
+              <div>
+                <div style={{ color: '#e6edf3', fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{p.title}</div>
+                <div style={{ color: '#6e7681', fontSize: 13, lineHeight: 1.5 }}>{p.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Trusted by badge */}
+        <div
+          style={{
+            background: 'rgba(22,163,74,0.08)', border: '1px solid rgba(22,163,74,0.18)',
+            borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12,
+          }}
+        >
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke={GREEN} strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span style={{ color: '#8b949e', fontSize: 13 }}>
+            Al <span style={{ color: '#e6edf3', fontWeight: 600 }}>1.200+</span> Nederlandse bettors gingen je voor
+          </span>
+        </div>
+      </div>
+
+      <p style={{ color: '#1e3a20', fontSize: 12, marginTop: 16 }}>
+        BetTrack · Gratis forever plan beschikbaar
       </p>
     </div>
   );
@@ -95,31 +151,28 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center px-4"
-        style={{ background: 'var(--bg-page)' }}
-      >
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#0d1117' }}>
         <div className="w-full max-w-[360px] text-center">
           <div
             className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-            style={{ background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.25)' }}
+            style={{ background: 'rgba(22,163,74,0.12)', border: `1px solid rgba(22,163,74,0.25)` }}
           >
-            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="#34D399" strokeWidth={2}>
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke={GREEN} strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-1)' }}>
+          <h2 className="text-lg font-semibold mb-2" style={{ color: '#e6edf3' }}>
             Bevestig je e-mail
           </h2>
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-3)' }}>
+          <p className="text-sm leading-relaxed" style={{ color: '#8b949e' }}>
             We hebben een bevestigingslink gestuurd naar{' '}
-            <span className="font-medium" style={{ color: 'var(--text-2)' }}>{email}</span>.
+            <span className="font-medium" style={{ color: '#c9d1d9' }}>{email}</span>.
             Klik op de link om je account te activeren.
           </p>
           <Link
             href="/login"
             className="inline-flex items-center gap-1.5 mt-6 text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: 'var(--brand)' }}
+            style={{ color: GREEN }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -132,22 +185,35 @@ export default function SignupPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: 'var(--bg-page)' }}
-    >
-      <div className="w-full max-w-[360px]">
-        <BetTrackLogo subtitle="Maak een gratis account aan" />
+    <div className="min-h-screen flex" style={{ background: '#0d1117' }}>
+      {/* Left: signup benefits panel */}
+      <div className="lg:w-[55%] xl:w-[58%]">
+        <SignupPanel />
+      </div>
 
-        {/* Card */}
-        <div
-          className="rounded-2xl border p-7"
-          style={{
-            background: 'var(--bg-card)',
-            borderColor: 'var(--border)',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)',
-          }}
-        >
+      {/* Right: signup form */}
+      <div
+        className="flex-1 flex items-center justify-center px-6 py-10"
+        style={{ background: '#0d1117', borderLeft: '1px solid rgba(255,255,255,0.06)' }}
+      >
+        <div className="w-full max-w-[360px]">
+          {/* Logo (mobile only) */}
+          <div className="flex items-center gap-2.5 mb-8 lg:hidden">
+            <div style={{ backgroundColor: GREEN, width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 16 }}>BetTrack</span>
+          </div>
+
+          <div className="mb-7">
+            <h1 style={{ color: '#e6edf3', fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 6 }}>
+              Maak je gratis account aan
+            </h1>
+            <p style={{ color: '#8b949e', fontSize: 14 }}>Start vandaag nog met tracken. Geen creditcard nodig.</p>
+          </div>
+
           {/* Google button */}
           <button
             type="button"
@@ -155,13 +221,12 @@ export default function SignupPage() {
             disabled={googleLoading}
             className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border text-sm font-medium transition-all disabled:opacity-60"
             style={{
-              background: 'var(--bg-card)',
-              borderColor: 'var(--border)',
-              color: 'var(--text-1)',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+              background: 'rgba(255,255,255,0.04)',
+              borderColor: 'rgba(255,255,255,0.1)',
+              color: '#e6edf3',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-subtle)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-card)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
           >
             {googleLoading ? (
               <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -176,15 +241,15 @@ export default function SignupPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
-            <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-4)' }}>of</span>
-            <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#4e5a6a' }}>of</span>
+            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-2)' }}>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: '#8b949e' }}>
                 E-mailadres
               </label>
               <input
@@ -194,17 +259,19 @@ export default function SignupPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="jouw@email.nl"
-                className="w-full px-3 py-2.5 rounded-lg border text-sm transition-all"
+                className="w-full px-3 py-2.5 rounded-lg border text-sm transition-all outline-none"
                 style={{
-                  background: 'var(--bg-input)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-1)',
+                  background: 'rgba(255,255,255,0.04)',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  color: '#e6edf3',
                 }}
+                onFocus={e => e.currentTarget.style.borderColor = GREEN}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-2)' }}>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: '#8b949e' }}>
                 Wachtwoord
               </label>
               <input
@@ -214,17 +281,19 @@ export default function SignupPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Minimaal 6 tekens"
-                className="w-full px-3 py-2.5 rounded-lg border text-sm transition-all"
+                className="w-full px-3 py-2.5 rounded-lg border text-sm transition-all outline-none"
                 style={{
-                  background: 'var(--bg-input)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-1)',
+                  background: 'rgba(255,255,255,0.04)',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  color: '#e6edf3',
                 }}
+                onFocus={e => e.currentTarget.style.borderColor = GREEN}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-2)' }}>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: '#8b949e' }}>
                 Wachtwoord bevestigen
               </label>
               <input
@@ -234,12 +303,14 @@ export default function SignupPage() {
                 value={confirm}
                 onChange={e => setConfirm(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3 py-2.5 rounded-lg border text-sm transition-all"
+                className="w-full px-3 py-2.5 rounded-lg border text-sm transition-all outline-none"
                 style={{
-                  background: 'var(--bg-input)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-1)',
+                  background: 'rgba(255,255,255,0.04)',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  color: '#e6edf3',
                 }}
+                onFocus={e => e.currentTarget.style.borderColor = GREEN}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
 
@@ -259,21 +330,21 @@ export default function SignupPage() {
               type="submit"
               disabled={loading}
               className="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-60"
-              style={{ background: 'var(--brand)' }}
-              onMouseEnter={e => !loading && (e.currentTarget.style.opacity = '0.88')}
-              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              style={{ background: GREEN, boxShadow: `0 2px 12px ${GREEN_GLOW}` }}
+              onMouseEnter={e => !loading && (e.currentTarget.style.background = GREEN_DARK)}
+              onMouseLeave={e => (e.currentTarget.style.background = GREEN)}
             >
-              {loading ? 'Account aanmaken...' : 'Account aanmaken'}
+              {loading ? 'Account aanmaken...' : 'Account aanmaken — Gratis'}
             </button>
           </form>
-        </div>
 
-        <p className="text-center text-sm mt-5" style={{ color: 'var(--text-3)' }}>
-          Al een account?{' '}
-          <Link href="/login" className="font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--brand)' }}>
-            Inloggen
-          </Link>
-        </p>
+          <p className="text-center text-sm mt-6" style={{ color: '#6e7681' }}>
+            Al een account?{' '}
+            <Link href="/login" className="font-medium transition-opacity hover:opacity-70" style={{ color: GREEN }}>
+              Inloggen
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
