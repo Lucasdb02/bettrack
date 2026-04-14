@@ -29,7 +29,7 @@ export async function proxy(request) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/reset-password';
   const isPublicPage = pathname === '/' || pathname.startsWith('/auth/');
 
   // Redirect ingelogde gebruikers weg van auth-pagina's
