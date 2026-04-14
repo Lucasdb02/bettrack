@@ -11,42 +11,18 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
-  const [linkError, setLinkError] = useState(false);
 
   useEffect(() => {
-    async function initSession() {
-      const hash = window.location.hash;
-      if (!hash) {
-        setLinkError(true);
-        return;
+    // De callback heeft al setSession aangeroepen, dus controleer alleen of de gebruiker ingelogd is
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (error || !data.user) {
+        router.replace('/forgot-password?error=session_expired');
+      } else {
+        setReady(true);
       }
-
-      const params = new URLSearchParams(hash.replace('#', ''));
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-      const type = params.get('type');
-
-      if (!accessToken || !refreshToken || type !== 'recovery') {
-        setLinkError(true);
-        return;
-      }
-
-      const supabase = createClient();
-      const { error } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      if (error) {
-        setLinkError(true);
-        return;
-      }
-
-      setReady(true);
-    }
-
-    initSession();
-  }, []);
+    });
+  }, [router]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -105,27 +81,11 @@ export default function ResetPasswordPage() {
 
         {!ready ? (
           <div className="flex flex-col items-center gap-3 py-8">
-            {linkError ? (
-              <>
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#f43f5e" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                </svg>
-                <p style={{ color: '#f43f5e', fontSize: 13, textAlign: 'center' }}>
-                  De resetlink is ongeldig of verlopen.
-                </p>
-                <a href="/forgot-password" style={{ color: '#7b9ef0', fontSize: 13 }}>
-                  Nieuwe link aanvragen
-                </a>
-              </>
-            ) : (
-              <>
-                <svg className="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24" style={{ color: '#5469d4' }}>
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                <p style={{ color: '#6e7681', fontSize: 13 }}>Link wordt geverifieerd…</p>
-              </>
-            )}
+            <svg className="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24" style={{ color: '#5469d4' }}>
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            <p style={{ color: '#6e7681', fontSize: 13 }}>Sessie wordt geladen…</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
