@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from '../context/ThemeContext';
+import { createClient } from '../../lib/supabase';
 
 const mainNav = [
   {
@@ -92,7 +93,15 @@ function NavItem({ item, active }) {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { dark, toggle } = useTheme();
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  }
 
   const isActive = (href) => {
     if (href === '/dashboard') return pathname === '/dashboard';
@@ -169,6 +178,27 @@ export default function Sidebar() {
             )}
           </span>
           {dark ? 'Lichte modus' : 'Donkere modus'}
+        </button>
+
+        {/* Uitloggen */}
+        <button
+          onClick={handleLogout}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 9,
+            padding: '7px 10px', borderRadius: 6, marginBottom: 10,
+            backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
+            color: '#8baac8', fontSize: 13, fontWeight: 400,
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a3a5c'; e.currentTarget.style.color = '#c5d8ec'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#8baac8'; }}
+        >
+          <span style={{ color: '#3d6080', flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </span>
+          Uitloggen
         </button>
 
         {/* Account */}
