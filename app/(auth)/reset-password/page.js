@@ -33,10 +33,10 @@ export default function ResetPasswordPage() {
       }
     });
 
-    // Timeout: als na 8 seconden geen event is ontvangen, toon foutmelding
+    // Timeout: als na 5 seconden geen event is ontvangen, toon foutmelding
     const timer = setTimeout(() => {
       if (!readyRef.current) setLinkError(true);
-    }, 8000);
+    }, 5000);
 
     return () => {
       subscription.unsubscribe();
