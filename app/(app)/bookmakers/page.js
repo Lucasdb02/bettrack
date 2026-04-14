@@ -1,15 +1,16 @@
 'use client';
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { usePreferences, useFmt, ALL_BOOKMAKERS } from '../../context/PreferencesContext';
+import { useFmt, ALL_BOOKMAKERS } from '../../context/PreferencesContext';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
 import BookmakerIcon, { BOOKIE_BRAND_COLORS } from '../../components/BookmakerIcon';
 import { getDateRange, fmtBucketLabel } from '../../lib/dateUtils';
 import PeriodDropdown from '../../components/PeriodDropdown';
+import { createClient } from '@/lib/supabase';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend,
+  ResponsiveContainer,
 } from 'recharts';
 
 const FALLBACK_COLORS = [
@@ -25,7 +26,6 @@ function bookieColor(naam, activeList) {
 
 /* ── Build stacked chart data ── */
 function buildChartData(bets, activeBookies, bookmakersConfig, period, customRange) {
-  // Determine date range
   let from, to;
   if (period === 'all') {
     const settled = bets.filter(b => b.uitkomst !== 'lopend');
@@ -48,7 +48,6 @@ function buildChartData(bets, activeBookies, bookmakersConfig, period, customRan
   const diffDays = Math.ceil((to - from) / 86400000);
   const bucketType = diffDays <= 35 ? 'day' : diffDays <= 180 ? 'week' : 'month';
 
-  // Generate bucket end-dates
   const buckets = [];
   const cur = new Date(from);
   while (cur < to) {
@@ -62,14 +61,13 @@ function buildChartData(bets, activeBookies, bookmakersConfig, period, customRan
   const settledBets = bets.filter(b => b.uitkomst !== 'lopend');
 
   return buckets.map(date => {
-    const cutoff = date.getTime() + 86400000; // include bets ON this date
+    const cutoff = date.getTime() + 86400000;
     const point  = { label: fmtBucketLabel(date, bucketType) };
     activeBookies.forEach(naam => {
       const cfg          = bookmakersConfig[naam] || {};
       const startBalance = cfg.startBalance || 0;
       const startDate    = cfg.startDate ? (() => { const [y,m,d] = cfg.startDate.split('-').map(Number); return new Date(y, m-1, d).getTime(); })() : 0;
 
-      // Before the bookmaker's start date → no balance yet
       if (startDate && date.getTime() < startDate) {
         point[naam] = 0;
         return;
@@ -214,20 +212,56 @@ function BookmakerFilterDropdown({ bookmakers, selected, onChange }) {
 }
 
 export default function BookmakersPage() {
-  const { prefs, updateBookmaker, loaded } = usePreferences();
-  const { bets } = useBets();
   const { fmtPnl } = useFmt();
+  const { bets } = useBets();
+
+  // Supabase state
+  const [dbBookmakers, setDbBookmakers] = useState([]); // [{id, naam, saldo, start_datum}]
+  const [loadedBm, setLoadedBm]         = useState(false);
+
   const [editBalance, setEditBalance]     = useState({});
   const [editDate,    setEditDate]        = useState({});
   const [selectedToAdd, setSelectedToAdd] = useState('');
   const [period, setPeriod]               = useState('last28');
   const [customRange, setCustomRange]     = useState(null);
-  const [filterBookies, setFilterBookies] = useState([]); // [] = all
+  const [filterBookies, setFilterBookies] = useState([]);
 
-  const activeBookies   = ALL_BOOKMAKERS.filter(n => prefs.bookmakersConfig[n]?.actief);
-  const inactiveBookies = ALL_BOOKMAKERS.filter(n => !prefs.bookmakersConfig[n]?.actief);
+  const supabase = createClient();
+
+  // Fetch bookmakers from Supabase on mount
+  useEffect(() => {
+    async function fetchBookmakers() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoadedBm(true); return; }
+      const { data, error } = await supabase
+        .from('bookmakers')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+      if (!error && data) setDbBookmakers(data);
+      setLoadedBm(true);
+    }
+    fetchBookmakers();
+  }, []);
+
+  // Derived lists
+  const activeBookies   = dbBookmakers.map(b => b.naam);
+  const inactiveBookies = ALL_BOOKMAKERS.filter(n => !dbBookmakers.some(b => b.naam === n));
   const visibleBookies  = filterBookies.length === 0 ? activeBookies : activeBookies.filter(n => filterBookies.includes(n));
-  const getConfig       = (naam) => prefs.bookmakersConfig[naam] || { actief:false, startBalance:0 };
+
+  const getConfig = useCallback((naam) => {
+    const bm = dbBookmakers.find(b => b.naam === naam);
+    return { startBalance: bm?.saldo || 0, startDate: bm?.start_datum || null };
+  }, [dbBookmakers]);
+
+  // bookmakersConfig shape for chart
+  const bookmakersConfig = useMemo(() => {
+    const cfg = {};
+    dbBookmakers.forEach(b => {
+      cfg[b.naam] = { startBalance: b.saldo || 0, startDate: b.start_datum || null };
+    });
+    return cfg;
+  }, [dbBookmakers]);
 
   const pnlPerBookie = useMemo(() => {
     const map = {};
@@ -250,8 +284,8 @@ export default function BookmakersPage() {
   }, [bets]);
 
   const chartData = useMemo(
-    () => buildChartData(bets, visibleBookies, prefs.bookmakersConfig, period, customRange),
-    [bets, visibleBookies, prefs.bookmakersConfig, period, customRange]
+    () => buildChartData(bets, visibleBookies, bookmakersConfig, period, customRange),
+    [bets, visibleBookies, bookmakersConfig, period, customRange]
   );
 
   const totalBalance = useMemo(
@@ -260,7 +294,7 @@ export default function BookmakersPage() {
       const stats = pnlPerBookie[n] || { pnl:0 };
       return s + cfg.startBalance + stats.pnl;
     }, 0),
-    [activeBookies, prefs.bookmakersConfig, pnlPerBookie]
+    [activeBookies, bookmakersConfig, pnlPerBookie]
   );
 
   const displayStats = useMemo(() => {
@@ -268,7 +302,6 @@ export default function BookmakersPage() {
     if (chartData.length === 0) return { balance: totalBalance, pct: null };
     const endBal = sumBucket(chartData[chartData.length - 1]);
     if (chartData.length === 1) return { balance: endBal, pct: null };
-    // Find first bucket that actually has data (non-zero total)
     const firstWithData = chartData.find(b => sumBucket(b) > 0);
     if (!firstWithData || firstWithData === chartData[chartData.length - 1])
       return { balance: endBal, pct: null };
@@ -277,26 +310,49 @@ export default function BookmakersPage() {
     return { balance: endBal, pct };
   }, [chartData, activeBookies, totalBalance]);
 
-  const addBookmaker = () => {
+  const addBookmaker = async () => {
     if (!selectedToAdd) return;
-    updateBookmaker(selectedToAdd, { actief:true, startBalance: getConfig(selectedToAdd).startBalance || 0 });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('bookmakers')
+      .insert({ user_id: user.id, naam: selectedToAdd, saldo: 0 })
+      .select()
+      .single();
+    if (!error && data) setDbBookmakers(prev => [...prev, data]);
     setSelectedToAdd('');
   };
 
-  const removeBookmaker  = (naam) => updateBookmaker(naam, { actief:false });
+  const removeBookmaker = async (naam) => {
+    const bm = dbBookmakers.find(b => b.naam === naam);
+    if (!bm) return;
+    const { error } = await supabase.from('bookmakers').delete().eq('id', bm.id);
+    if (!error) setDbBookmakers(prev => prev.filter(b => b.naam !== naam));
+  };
 
-  const commitBalance = (naam) => {
+  const commitBalance = async (naam) => {
     const val = parseFloat(editBalance[naam]);
-    if (!isNaN(val)) updateBookmaker(naam, { startBalance: val });
+    if (!isNaN(val)) {
+      const bm = dbBookmakers.find(b => b.naam === naam);
+      if (bm) {
+        await supabase.from('bookmakers').update({ saldo: val }).eq('id', bm.id);
+        setDbBookmakers(prev => prev.map(b => b.naam === naam ? { ...b, saldo: val } : b));
+      }
+    }
     setEditBalance(p => { const n={...p}; delete n[naam]; return n; });
   };
 
-  const commitDate = (naam) => {
-    updateBookmaker(naam, { startDate: editDate[naam] || null });
+  const commitDate = async (naam) => {
+    const val = editDate[naam] || null;
+    const bm = dbBookmakers.find(b => b.naam === naam);
+    if (bm) {
+      await supabase.from('bookmakers').update({ start_datum: val }).eq('id', bm.id);
+      setDbBookmakers(prev => prev.map(b => b.naam === naam ? { ...b, start_datum: val } : b));
+    }
     setEditDate(p => { const n={...p}; delete n[naam]; return n; });
   };
 
-  if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
+  if (!loadedBm) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
 
   return (
     <div style={{ maxWidth:1060, margin:'0 auto', padding:'40px 32px' }}>
@@ -308,12 +364,11 @@ export default function BookmakersPage() {
       {/* ── Balance chart ── */}
       {activeBookies.length > 0 && (
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'22px 24px', marginBottom:24 }}>
-          {/* Chart header */}
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:20, flexWrap:'wrap', gap:12 }}>
             <div>
               <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:4 }}>Totale Balance</p>
               <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
-                <p style={{ fontSize:26, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{displayStats.balance.toFixed(2)}</p>
+                <p style={{ fontSize:26, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{totalBalance.toFixed(2)}</p>
                 {displayStats.pct !== null && (
                   <span style={{ fontSize:14, fontWeight:700, color: displayStats.pct >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>
                     {displayStats.pct >= 0 ? '+' : ''}{displayStats.pct.toFixed(2)}%
@@ -321,7 +376,6 @@ export default function BookmakersPage() {
                 )}
               </div>
             </div>
-            {/* Filters */}
             <div style={{ display:'flex', gap:8 }}>
               <BookmakerFilterDropdown
                 bookmakers={activeBookies}
@@ -362,7 +416,6 @@ export default function BookmakersPage() {
             </div>
           )}
 
-          {/* Legend */}
           <div style={{ display:'flex', flexWrap:'wrap', gap:'8px 16px', marginTop:16 }}>
             {visibleBookies.map(naam => (
               <div key={naam} style={{ display:'flex', alignItems:'center', gap:6 }}>
@@ -394,7 +447,16 @@ export default function BookmakersPage() {
           <button
             onClick={addBookmaker}
             disabled={!selectedToAdd}
-            style={{ padding:'9px 20px', backgroundColor: selectedToAdd ? '#5469d4' : 'var(--bg-subtle)', color: selectedToAdd ? '#fff' : 'var(--text-4)', border:'none', borderRadius:7, fontSize:13.5, fontWeight:600, cursor: selectedToAdd ? 'pointer' : 'default', display:'flex', alignItems:'center', gap:7 }}
+            style={{
+              padding:'9px 20px',
+              background: selectedToAdd ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : 'var(--bg-subtle)',
+              color: selectedToAdd ? '#fff' : 'var(--text-4)',
+              border: selectedToAdd ? '1px solid rgba(255,255,255,0.12)' : '1px solid var(--border)',
+              boxShadow: selectedToAdd ? '0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)' : 'none',
+              borderRadius:7, fontSize:13.5, fontWeight:600,
+              cursor: selectedToAdd ? 'pointer' : 'default',
+              display:'flex', alignItems:'center', gap:7,
+            }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Toevoegen
@@ -449,7 +511,7 @@ export default function BookmakersPage() {
                           onKeyDown={e => { if(e.key==='Enter') commitDate(naam); if(e.key==='Escape') setEditDate(p => { const n={...p}; delete n[naam]; return n; }); }}
                           style={{ padding:'4px 6px', border:'1px solid #5469d4', borderRadius:6, fontSize:12, color:'var(--text-1)', backgroundColor:'var(--bg-input)', width:120 }}
                         />
-                        <button onClick={() => commitDate(naam)} style={{ padding:'4px 7px', backgroundColor:'#5469d4', color:'#fff', border:'none', borderRadius:6, fontSize:12, cursor:'pointer' }}>✓</button>
+                        <button onClick={() => commitDate(naam)} style={{ padding:'4px 7px', background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', border:'1px solid rgba(255,255,255,0.12)', borderRadius:6, fontSize:12, cursor:'pointer' }}>✓</button>
                       </div>
                     ) : (
                       <button onClick={() => setEditDate(p => ({ ...p, [naam]: cfg.startDate || '' }))} style={{ background:'none', border:'none', padding:0, cursor:'pointer', textAlign:'left', display:'flex', alignItems:'baseline', gap:5 }}>
@@ -474,7 +536,7 @@ export default function BookmakersPage() {
                             style={{ width:'100%', padding:'4px 7px 4px 20px', border:'1px solid #5469d4', borderRadius:6, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)' }}
                           />
                         </div>
-                        <button onClick={() => commitBalance(naam)} style={{ padding:'4px 7px', backgroundColor:'#5469d4', color:'#fff', border:'none', borderRadius:6, fontSize:12, cursor:'pointer' }}>✓</button>
+                        <button onClick={() => commitBalance(naam)} style={{ padding:'4px 7px', background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', border:'1px solid rgba(255,255,255,0.12)', borderRadius:6, fontSize:12, cursor:'pointer' }}>✓</button>
                       </div>
                     ) : (
                       <button onClick={() => setEditBalance(p => ({ ...p, [naam]: String(cfg.startBalance) }))} style={{ background:'none', border:'none', padding:0, cursor:'pointer', textAlign:'left', display:'flex', alignItems:'baseline', gap:5 }}>
