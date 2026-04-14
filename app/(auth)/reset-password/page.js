@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../../lib/supabase';
 
@@ -11,17 +11,37 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [linkError, setLinkError] = useState(false);
+  const readyRef = useRef(false);
 
   useEffect(() => {
-    // Supabase stuurt de tokens via de URL hash: #access_token=...&type=recovery
-    // createClient() pikt dit automatisch op via onAuthStateChange
+    // Supabase stuurt recovery tokens via de URL hash: #access_token=...&type=recovery
+    // onAuthStateChange vuurt PASSWORD_RECOVERY zodra de hash is verwerkt.
     const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
+        readyRef.current = true;
         setReady(true);
+      } else if (event === 'SIGNED_IN' && session) {
+        // Sommige Supabase versies sturen SIGNED_IN i.p.v. PASSWORD_RECOVERY
+        // bij een recovery flow; check de URL hash als fallback.
+        if (typeof window !== 'undefined' && window.location.hash.includes('type=recovery')) {
+          readyRef.current = true;
+          setReady(true);
+        }
       }
     });
-    return () => subscription.unsubscribe();
+
+    // Timeout: als na 8 seconden geen event is ontvangen, toon foutmelding
+    const timer = setTimeout(() => {
+      if (!readyRef.current) setLinkError(true);
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, []);
 
   async function handleSubmit(e) {
@@ -81,11 +101,27 @@ export default function ResetPasswordPage() {
 
         {!ready ? (
           <div className="flex flex-col items-center gap-3 py-8">
-            <svg className="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24" style={{ color: '#5469d4' }}>
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            <p style={{ color: '#6e7681', fontSize: 13 }}>Link wordt geverifieerd…</p>
+            {linkError ? (
+              <>
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#f43f5e" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <p style={{ color: '#f43f5e', fontSize: 13, textAlign: 'center' }}>
+                  De resetlink is ongeldig of verlopen.
+                </p>
+                <a href="/forgot-password" style={{ color: '#7b9ef0', fontSize: 13 }}>
+                  Nieuwe link aanvragen
+                </a>
+              </>
+            ) : (
+              <>
+                <svg className="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24" style={{ color: '#5469d4' }}>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+                <p style={{ color: '#6e7681', fontSize: 13 }}>Link wordt geverifieerd…</p>
+              </>
+            )}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -12,6 +12,9 @@ export default function AuthCallbackPage() {
     const code = params.get('code');
     const next = params.get('next') || '/dashboard';
 
+    // Password recovery gebruikt geen code — Supabase stuurt de gebruiker
+    // direct naar de redirectTo URL met tokens in de hash.
+    // Die flow wordt volledig afgehandeld door /reset-password zelf.
     if (!code) {
       router.replace('/login?error=missing_code');
       return;
