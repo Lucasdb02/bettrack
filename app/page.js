@@ -75,12 +75,15 @@ function Header() {
           <Link
             href="/signup"
             style={{
-              backgroundColor: '#5469d4', color: '#fff', fontSize: 13.5, fontWeight: 600,
+              background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
+              color: '#fff', fontSize: 13.5, fontWeight: 600,
               textDecoration: 'none', padding: '8px 18px', borderRadius: 7,
-              transition: 'background-color 0.15s',
+              boxShadow: '0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              transition: 'opacity 0.15s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4356b8'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#5469d4'}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
             Aanmelden — Gratis
           </Link>
@@ -126,10 +129,12 @@ function Hero() {
           <Link
             href="/signup"
             style={{
-              backgroundColor: '#5469d4', color: '#fff', fontSize: 15, fontWeight: 700,
+              background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
+              color: '#fff', fontSize: 15, fontWeight: 700,
               textDecoration: 'none', padding: '13px 28px', borderRadius: 9,
               display: 'flex', alignItems: 'center', gap: 8,
-              boxShadow: '0 4px 24px rgba(84,105,212,0.45)',
+              boxShadow: '0 4px 28px rgba(84,105,212,0.55), inset 0 1px 0 rgba(255,255,255,0.2)',
+              border: '1px solid rgba(255,255,255,0.15)',
             }}
           >
             Gratis beginnen
@@ -139,7 +144,15 @@ function Hero() {
           </Link>
           <button
             onClick={() => scrollTo('functies')}
-            style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer' }}
+            style={{
+              background: 'rgba(255,255,255,0.07)',
+              backdropFilter: 'blur(12px) saturate(1.6)',
+              WebkitBackdropFilter: 'blur(12px) saturate(1.6)',
+              border: '1px solid rgba(255,255,255,0.18)',
+              color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 600,
+              padding: '13px 24px', borderRadius: 9, cursor: 'pointer',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 2px 12px rgba(0,0,0,0.2)',
+            }}
           >
             Bekijk functies
           </button>
@@ -191,46 +204,59 @@ function Hero() {
               ))}
             </div>
 
-            {/* Fake dashboard */}
-            <div style={{ flex: 1, padding: '20px 24px', backgroundColor: '#f6f9fc' }}>
+            {/* Fake dashboard — dark theme */}
+            <div style={{ flex: 1, padding: '20px 24px', backgroundColor: '#0d1117' }}>
               {/* Stat cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 14 }}>
                 {[
-                  { label: 'Totale P&L', value: '+€312.50', color: '#0e9f6e' },
-                  { label: 'Win Rate', value: '61.3%', color: '#1a1f36' },
-                  { label: 'ROI', value: '+8.7%', color: '#0e9f6e' },
-                  { label: 'Bets', value: '47', color: '#1a1f36' },
+                  { label: 'Totale P&L', value: '+€847', color: '#34D399' },
+                  { label: 'Win Rate', value: '61.3%', color: '#e6edf3' },
+                  { label: 'ROI', value: '+8.7%', color: '#34D399' },
+                  { label: 'Bets', value: '147', color: '#7b9ef0' },
                 ].map((c, i) => (
-                  <div key={i} style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, padding: '10px 12px' }}>
-                    <p style={{ fontSize: 9, color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>{c.label}</p>
-                    <p style={{ fontSize: 16, fontWeight: 800, color: c.color }}>{c.value}</p>
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '10px 12px' }}>
+                    <p style={{ fontSize: 8.5, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 5 }}>{c.label}</p>
+                    <p style={{ fontSize: 15, fontWeight: 800, color: c.color, letterSpacing: '-0.02em' }}>{c.value}</p>
                   </div>
                 ))}
               </div>
-              {/* Fake chart */}
-              <div style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, padding: '12px 14px', marginBottom: 10 }}>
-                <p style={{ fontSize: 10, fontWeight: 600, color: '#374151', marginBottom: 8 }}>Cumulatieve P&L</p>
-                <svg viewBox="0 0 400 80" style={{ width: '100%', height: 60 }}>
+              {/* Chart card */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '12px 14px', marginBottom: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <p style={{ fontSize: 10, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
+                  <span style={{ fontSize: 9, color: '#34D399', fontWeight: 600 }}>+€847 YTD</span>
+                </div>
+                <svg viewBox="0 0 400 72" style={{ width: '100%', height: 54 }}>
                   <defs>
-                    <linearGradient id="mockGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#5469d4" stopOpacity="0.2" />
-                      <stop offset="100%" stopColor="#5469d4" stopOpacity="0" />
+                    <linearGradient id="mockGradDark" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#7b9ef0" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#7b9ef0" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <path d="M0,70 L40,65 L80,58 L120,62 L160,45 L200,38 L240,42 L280,28 L320,20 L360,12 L400,8" fill="none" stroke="#5469d4" strokeWidth="2" />
-                  <path d="M0,70 L40,65 L80,58 L120,62 L160,45 L200,38 L240,42 L280,28 L320,20 L360,12 L400,8 L400,80 L0,80 Z" fill="url(#mockGrad)" />
+                  <path d="M0,68 L40,62 L80,55 L120,59 L160,42 L200,34 L240,38 L280,24 L320,15 L360,8 L400,4" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinejoin="round" />
+                  <path d="M0,68 L40,62 L80,55 L120,59 L160,42 L200,34 L240,38 L280,24 L320,15 L360,8 L400,4 L400,72 L0,72 Z" fill="url(#mockGradDark)" />
+                  {/* dots on recent points */}
+                  <circle cx="320" cy="15" r="2.5" fill="#7b9ef0" />
+                  <circle cx="360" cy="8" r="2.5" fill="#7b9ef0" />
+                  <circle cx="400" cy="4" r="3" fill="#7b9ef0" />
                 </svg>
               </div>
-              {/* Fake table rows */}
-              <div style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+              {/* Recent bets */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, overflow: 'hidden' }}>
+                <div style={{ padding: '7px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span style={{ fontSize: 9, fontWeight: 600, color: '#6e7681', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recente bets</span>
+                </div>
                 {[
-                  { match: 'Ajax vs PSV', result: '+€55', green: true },
-                  { match: 'Liverpool vs Chelsea', result: '-€25', green: false },
-                  { match: 'Sinner vs Alcaraz', result: '+€38', green: true },
+                  { match: 'Ajax vs PSV', market: '1X2 · Unibet', result: '+€55', win: true },
+                  { match: 'Liverpool vs Chelsea', market: 'BTTS · Bet365', result: '-€25', win: false },
+                  { match: 'Sinner vs Alcaraz', market: 'Winnaar · TOTO', result: '+€38', win: true },
                 ].map((r, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 12px', borderBottom: i < 2 ? '1px solid #f3f4f6' : 'none' }}>
-                    <span style={{ fontSize: 10, color: '#374151', fontWeight: 500 }}>{r.match}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: r.green ? '#0e9f6e' : '#e02424' }}>{r.result}</span>
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 12px', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                    <div>
+                      <span style={{ fontSize: 10, color: '#c9d1d9', fontWeight: 500, display: 'block' }}>{r.match}</span>
+                      <span style={{ fontSize: 8.5, color: '#6e7681' }}>{r.market}</span>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: r.win ? '#34D399' : '#FB7185' }}>{r.result}</span>
                   </div>
                 ))}
               </div>
@@ -253,37 +279,8 @@ function Features() {
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
         </svg>
       ),
-      title: 'Realtime P&L tracking',
-      desc: 'Volg je winst en verlies live. Zie exact hoeveel je verdient per sport, bookmaker en markt.',
-    },
-    {
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-        </svg>
-      ),
-      title: 'Maandelijks kalenderoverzicht',
-      desc: 'Zie elke dag als een cel in de kalender — groen voor winst, rood voor verlies. Klik voor details.',
-    },
-    {
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
-          <line x1="6" y1="20" x2="6" y2="14" /><line x1="2" y1="20" x2="22" y2="20" />
-        </svg>
-      ),
-      title: 'Diepgaande statistieken',
-      desc: 'Analyseer je ROI per sport, bookmaker en markt. Ontdek je sterkste en zwakste segmenten.',
-    },
-    {
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-      ),
-      title: 'Slim filteren & zoeken',
-      desc: 'Filter op sport, uitkomst of bookmaker. Vind elke bet in seconden met de zoekfunctie.',
+      title: 'Realtime P&L Dashboard',
+      desc: 'Volg je cumulatieve winst live met interactieve grafieken. Zie je ROI, win rate en yield per geselecteerde periode.',
     },
     {
       icon: (
@@ -293,45 +290,96 @@ function Features() {
         </svg>
       ),
       title: 'Uitgebreide bet invoer',
-      desc: 'Voer bets in met alle details: sport, markt, selectie, odds, inzet en bookmaker. Met live winstpreview.',
+      desc: 'Log bets met sport, wedstrijd, markt, selectie, odds en bookmaker. Live winstpreview berekend terwijl je typt.',
     },
     {
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
       ),
-      title: 'Privacy-first',
-      desc: 'Je data blijft lokaal opgeslagen. Geen verplichte accounts, geen data die we verkopen. Jij beheert alles.',
+      title: 'Bets overzicht & filters',
+      desc: 'Doorzoek je volledige betgeschiedenis. Filter op sport, bookmaker, uitkomst, markt of datumrange in seconden.',
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      ),
+      title: 'Maandoverzicht kalender',
+      desc: 'Elke dag als een gekleurd vakje — groen voor winst, rood voor verlies. Klik om de bets van die dag te zien.',
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
+          <line x1="6" y1="20" x2="6" y2="14" /><line x1="2" y1="20" x2="22" y2="20" />
+        </svg>
+      ),
+      title: 'Diepgaande statistieken',
+      desc: 'ROI-breakdown per sport, markt en bookmaker. Pie-charts, trendlijnen en rendement per categorie in één overzicht.',
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+          <line x1="12" y1="12" x2="12" y2="16" /><line x1="10" y1="14" x2="14" y2="14" />
+        </svg>
+      ),
+      title: 'Bookmaker beheer',
+      desc: 'Voeg al je bookmakers toe — van Bet365 tot TOTO. Vergelijk rendement per platform en ontdek waar je het beste presteert.',
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 3H5a2 2 0 00-2 2v4" /><path d="M9 21H5a2 2 0 01-2-2v-4" />
+          <path d="M15 3h4a2 2 0 012 2v4" /><path d="M15 21h4a2 2 0 002-2v-4" />
+          <rect x="7" y="8" width="10" height="8" rx="1" />
+        </svg>
+      ),
+      title: 'Professionele calculators',
+      desc: 'Ingebouwde tools: Arbitrage, Kelly Criterion, Vig Calculator, Expected Value en Odds Converter. Altijd bij de hand.',
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+      ),
+      title: 'AI screenshot import',
+      desc: 'Upload een foto van je betslip en onze AI leest automatisch alle details in. Bets loggen in seconden, zonder typen.',
     },
   ];
 
   return (
     <section id="functies" style={{ backgroundColor: '#fff', padding: '96px 40px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1160, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Functies</span>
           <h2 style={{ fontSize: 40, fontWeight: 800, color: '#0a1628', marginTop: 12, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
-            Alles wat je nodig hebt<br />om beter te wedden
+            Alles wat je nodig hebt<br />om slimmer te wedden
           </h2>
-          <p style={{ fontSize: 17, color: '#6b7280', marginTop: 16, maxWidth: 520, margin: '16px auto 0' }}>
-            Van eenvoudige bet-invoer tot diepgaande analyse — TrackMijnBets geeft je alle tools om patronen te ontdekken.
+          <p style={{ fontSize: 17, color: '#6b7280', marginTop: 16, maxWidth: 540, margin: '16px auto 0' }}>
+            Van bet-invoer tot AI-import en professionele calculators — TrackMijnBets heeft alles in één tool.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 22 }}>
           {items.map((item, i) => (
             <div
               key={i}
-              style={{ padding: '28px 30px', border: '1px solid #e5e7eb', borderRadius: 14, transition: 'border-color 0.2s, box-shadow 0.2s', cursor: 'default' }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c7d2f8'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(84,105,212,0.08)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.boxShadow = 'none'; }}
+              style={{ padding: '26px 26px', border: '1px solid #e5e7eb', borderRadius: 14, transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.2s', cursor: 'default' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c7d2f8'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(84,105,212,0.1)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: '#f0f4ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5469d4', marginBottom: 18 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: '#f0f4ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5469d4', marginBottom: 16 }}>
                 {item.icon}
               </div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0a1628', marginBottom: 10 }}>{item.title}</h3>
-              <p style={{ fontSize: 14.5, color: '#6b7280', lineHeight: 1.65 }}>{item.desc}</p>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0a1628', marginBottom: 8 }}>{item.title}</h3>
+              <p style={{ fontSize: 13.5, color: '#6b7280', lineHeight: 1.65 }}>{item.desc}</p>
             </div>
           ))}
         </div>
@@ -535,9 +583,11 @@ function FinalCTA() {
           href="/signup"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            backgroundColor: '#5469d4', color: '#fff', fontSize: 15.5, fontWeight: 700,
+            background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
+            color: '#fff', fontSize: 15.5, fontWeight: 700,
             textDecoration: 'none', padding: '14px 32px', borderRadius: 10,
-            boxShadow: '0 4px 28px rgba(84,105,212,0.5)',
+            boxShadow: '0 4px 32px rgba(84,105,212,0.6), inset 0 1px 0 rgba(255,255,255,0.22)',
+            border: '1px solid rgba(255,255,255,0.18)',
           }}
         >
           Gratis aanmelden

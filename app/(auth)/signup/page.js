@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '../../../lib/supabase';
 
-const GREEN = '#16a34a';
-const GREEN_DARK = '#15803d';
-const GREEN_GLOW = 'rgba(22,163,74,0.4)';
+const BLUE = '#5469d4';
+const BLUE_DARK = '#4356b8';
+const BLUE_GLOW = 'rgba(84,105,212,0.4)';
 
 function GoogleIcon() {
   return (
@@ -32,7 +32,7 @@ function SignupPanel() {
   return (
     <div
       className="hidden lg:flex flex-col justify-between h-full px-10 py-10"
-      style={{ background: 'linear-gradient(155deg, #021208 0%, #062010 60%, #082a12 100%)' }}
+      style={{ background: 'linear-gradient(155deg, #04111f 0%, #0a1628 60%, #0d1f38 100%)' }}
     >
       {/* Logo top */}
       <div className="flex items-center gap-2.5">
@@ -61,7 +61,7 @@ function SignupPanel() {
               <div
                 style={{
                   width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-                  background: 'rgba(22,163,74,0.12)', border: '1px solid rgba(22,163,74,0.2)',
+                  background: 'rgba(84,105,212,0.12)', border: '1px solid rgba(84,105,212,0.2)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
                 }}
               >
@@ -78,11 +78,11 @@ function SignupPanel() {
         {/* Trusted by badge */}
         <div
           style={{
-            background: 'rgba(22,163,74,0.08)', border: '1px solid rgba(22,163,74,0.18)',
+            background: 'rgba(84,105,212,0.08)', border: '1px solid rgba(84,105,212,0.18)',
             borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12,
           }}
         >
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke={GREEN} strokeWidth={2}>
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke={BLUE} strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <span style={{ color: '#8b949e', fontSize: 13 }}>
@@ -91,7 +91,7 @@ function SignupPanel() {
         </div>
       </div>
 
-      <p style={{ color: '#1e3a20', fontSize: 12, marginTop: 16 }}>
+      <p style={{ color: '#1e2d4a', fontSize: 12, marginTop: 16 }}>
         TrackMijnBets · Gratis forever plan beschikbaar
       </p>
     </div>
@@ -155,9 +155,9 @@ export default function SignupPage() {
         <div className="w-full max-w-[360px] text-center">
           <div
             className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-            style={{ background: 'rgba(22,163,74,0.12)', border: `1px solid rgba(22,163,74,0.25)` }}
+            style={{ background: 'rgba(84,105,212,0.12)', border: `1px solid rgba(84,105,212,0.25)` }}
           >
-            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke={GREEN} strokeWidth={2}>
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke={BLUE} strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
@@ -172,7 +172,7 @@ export default function SignupPage() {
           <Link
             href="/login"
             className="inline-flex items-center gap-1.5 mt-6 text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: GREEN }}
+            style={{ color: BLUE }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -265,7 +265,7 @@ export default function SignupPage() {
                   borderColor: 'rgba(255,255,255,0.1)',
                   color: '#e6edf3',
                 }}
-                onFocus={e => e.currentTarget.style.borderColor = GREEN}
+                onFocus={e => e.currentTarget.style.borderColor = BLUE}
                 onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
@@ -287,7 +287,7 @@ export default function SignupPage() {
                   borderColor: 'rgba(255,255,255,0.1)',
                   color: '#e6edf3',
                 }}
-                onFocus={e => e.currentTarget.style.borderColor = GREEN}
+                onFocus={e => e.currentTarget.style.borderColor = BLUE}
                 onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
@@ -309,7 +309,7 @@ export default function SignupPage() {
                   borderColor: 'rgba(255,255,255,0.1)',
                   color: '#e6edf3',
                 }}
-                onFocus={e => e.currentTarget.style.borderColor = GREEN}
+                onFocus={e => e.currentTarget.style.borderColor = BLUE}
                 onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
@@ -330,9 +330,9 @@ export default function SignupPage() {
               type="submit"
               disabled={loading}
               className="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-60"
-              style={{ background: GREEN, boxShadow: `0 2px 12px ${GREEN_GLOW}` }}
-              onMouseEnter={e => !loading && (e.currentTarget.style.background = GREEN_DARK)}
-              onMouseLeave={e => (e.currentTarget.style.background = GREEN)}
+              style={{ background: BLUE, boxShadow: `0 2px 12px ${BLUE_GLOW}` }}
+              onMouseEnter={e => !loading && (e.currentTarget.style.background = BLUE_DARK)}
+              onMouseLeave={e => (e.currentTarget.style.background = BLUE)}
             >
               {loading ? 'Account aanmaken...' : 'Account aanmaken — Gratis'}
             </button>
@@ -340,7 +340,7 @@ export default function SignupPage() {
 
           <p className="text-center text-sm mt-6" style={{ color: '#6e7681' }}>
             Al een account?{' '}
-            <Link href="/login" className="font-medium transition-opacity hover:opacity-70" style={{ color: GREEN }}>
+            <Link href="/login" className="font-medium transition-opacity hover:opacity-70" style={{ color: BLUE }}>
               Inloggen
             </Link>
           </p>
