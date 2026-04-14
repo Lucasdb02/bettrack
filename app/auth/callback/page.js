@@ -8,7 +8,9 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const code = new URLSearchParams(window.location.search).get('code');
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const next = params.get('next') || '/dashboard';
 
     if (!code) {
       router.replace('/login?error=missing_code');
@@ -21,7 +23,7 @@ export default function AuthCallbackPage() {
         console.error('[auth/callback] exchangeCodeForSession error:', error.message);
         router.replace('/login?error=auth_callback_failed');
       } else {
-        router.replace('/dashboard');
+        router.replace(next);
       }
     });
   }, [router]);
