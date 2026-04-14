@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
 
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://www.trackmijnbets.nl/auth/callback?next=/reset-password',
+      redirectTo: 'https://www.trackmijnbets.nl/reset-password',
     });
 
     if (error) {

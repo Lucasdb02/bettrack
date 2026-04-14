@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '../../../lib/supabase';
 
 export default function ResetPasswordPage() {
@@ -10,18 +11,31 @@ export default function ResetPasswordPage() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [status, setStatus] = useState('loading'); // 'loading' | 'ready' | 'expired'
 
   useEffect(() => {
-    // De callback heeft al setSession aangeroepen, dus controleer alleen of de gebruiker ingelogd is
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data, error }) => {
-      if (error || !data.user) {
-        router.replace('/forgot-password?error=session_expired');
-      } else {
-        setReady(true);
+    let recoveryReceived = false;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        recoveryReceived = true;
+        setStatus('ready');
+      } else if (event === 'SIGNED_IN' && !recoveryReceived) {
+        router.replace('/dashboard');
       }
     });
+
+    const timer = setTimeout(() => {
+      if (!recoveryReceived) {
+        setStatus('expired');
+      }
+    }, 10000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, [router]);
 
   async function handleSubmit(e) {
@@ -79,7 +93,7 @@ export default function ResetPasswordPage() {
           </p>
         </div>
 
-        {!ready ? (
+        {status === 'loading' && (
           <div className="flex flex-col items-center gap-3 py-8">
             <svg className="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24" style={{ color: '#5469d4' }}>
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -87,7 +101,35 @@ export default function ResetPasswordPage() {
             </svg>
             <p style={{ color: '#6e7681', fontSize: 13 }}>Sessie wordt geladen…</p>
           </div>
-        ) : (
+        )}
+
+        {status === 'expired' && (
+          <div className="flex flex-col items-center gap-4 py-8 text-center">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ background: 'rgba(251,113,133,0.08)', border: '1px solid rgba(251,113,133,0.2)' }}
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#f43f5e" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+            </div>
+            <div>
+              <p style={{ color: '#e6edf3', fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Link verlopen</p>
+              <p style={{ color: '#8b949e', fontSize: 13, lineHeight: 1.6 }}>
+                Deze resetlink is verlopen of al gebruikt. Vraag een nieuwe aan.
+              </p>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
+              style={{ color: '#7b9ef0' }}
+            >
+              Nieuwe resetlink aanvragen
+            </Link>
+          </div>
+        )}
+
+        {status === 'ready' && (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: '#8b949e' }}>
