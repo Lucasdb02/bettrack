@@ -87,7 +87,10 @@ html.dark .glass-card {
 
 .btn-primary-glass {
   background: linear-gradient(135deg, #6b82f0 0%, #5469d4 100%) !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-top: none !important;
+  border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+  border-left: none !important;
+  border-right: none !important;
   box-shadow: 0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.2) !important;
   transition: all 0.15s ease !important;
 }
@@ -95,6 +98,14 @@ html.dark .glass-card {
 .btn-primary-glass:hover:not(:disabled) {
   opacity: 0.88;
   box-shadow: 0 4px 24px rgba(84,105,212,0.6), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+/* ── App main content background ── */
+.app-main {
+  background-color: var(--bg-page);
+}
+html.dark .app-main {
+  background: linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%) !important;
 }
 
 /* Recharts SVG focus outline */

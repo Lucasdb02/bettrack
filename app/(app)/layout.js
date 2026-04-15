@@ -11,7 +11,7 @@ export default function AppLayout({ children }) {
         <AppShell>
           <SessionTimeout />
           <Sidebar />
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto app-main">
             {children}
           </main>
         </AppShell>
