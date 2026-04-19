@@ -58,6 +58,13 @@ body {
 .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
 .sidebar-scroll::-webkit-scrollbar-thumb { background: #1e4976; border-radius: 2px; }
 
+/* Global dark scrollbar for app */
+html.dark ::-webkit-scrollbar { width: 8px; height: 8px; }
+html.dark ::-webkit-scrollbar-track { background: #0a1017; }
+html.dark ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #2a5080; }
+html.dark { scrollbar-color: #1e3a5f #0a1017; }
+
 /* Table rows */
 .bet-row:hover { background-color: var(--row-hover); }
 

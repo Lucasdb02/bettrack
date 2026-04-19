@@ -28,7 +28,6 @@ function MiniBarChart() {
           y={48 - h * 0.48}
           width="8"
           height={h * 0.48}
-          rx="2"
           fill={i === bars.length - 1 ? '#7b9ef0' : 'rgba(123,158,240,0.35)'}
         />
       ))}
@@ -67,14 +66,14 @@ function DashboardPreview() {
   return (
     <div className="hidden lg:flex flex-col justify-between h-full px-10 py-10" style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)' }}>
       {/* Logo top */}
-      <div className="flex items-center gap-2.5">
+      <a href="https://www.trackmijnbets.nl" className="flex items-center gap-2.5" style={{ textDecoration: 'none' }}>
         <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(123,158,240,0.2)' }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
         </div>
         <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
-      </div>
+      </a>
 
       {/* Headline */}
       <div className="flex-1 flex flex-col justify-center gap-8 mt-8">
@@ -200,14 +199,14 @@ export default function LoginPage() {
       >
         <div className="w-full max-w-[360px]">
           {/* Logo (mobile only) */}
-          <div className="flex items-center gap-2.5 mb-8 lg:hidden">
+          <a href="https://www.trackmijnbets.nl" className="flex items-center gap-2.5 mb-8 lg:hidden" style={{ textDecoration: 'none' }}>
             <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(123,158,240,0.2)' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
               </svg>
             </div>
             <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 16 }}>TrackMijnBets</span>
-          </div>
+          </a>
 
           <div className="mb-7">
             <h1 style={{ color: '#e6edf3', fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 6 }}>
@@ -314,10 +313,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-60"
-              style={{ background: '#5469d4' }}
-              onMouseEnter={e => !loading && (e.currentTarget.style.background = '#4356b8')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#5469d4')}
+              className="btn-primary-glass w-full py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
             >
               {loading ? 'Inloggen...' : 'Inloggen'}
             </button>
