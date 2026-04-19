@@ -47,7 +47,7 @@ export default function ArbitragePage() {
         <p style={{fontSize:14,color:'var(--text-3)'}}>Bereken of er een risicoloze winstmogelijkheid bestaat tussen bookmakers.</p>
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'start'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
         {/* Inputs */}
         <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>

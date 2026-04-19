@@ -109,7 +109,7 @@ export default function OddsConverterPage() {
         ))}
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'start'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
         {/* Left: Inputs */}
         <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
@@ -118,26 +118,26 @@ export default function OddsConverterPage() {
               <input type="text" placeholder="2.10" value={values.decimal}
                 onChange={e=>handleChange('decimal',e.target.value)}
                 onFocus={()=>setActive('decimal')}
-                style={{...iStyle,borderColor:active==='decimal'?'var(--brand)':undefined,boxShadow:active==='decimal'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
+                style={{...iStyle,border:active==='decimal'?'1px solid var(--brand)':'1px solid var(--border)',boxShadow:active==='decimal'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
             </Field>
             <Field label="Fractionele odds" hint="Gebruik in het VK (b.v. 11/10)">
               <input type="text" placeholder="11/10" value={values.fractional}
                 onChange={e=>handleChange('fractional',e.target.value)}
                 onFocus={()=>setActive('fractional')}
-                style={{...iStyle,borderColor:active==='fractional'?'var(--brand)':undefined,boxShadow:active==='fractional'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
+                style={{...iStyle,border:active==='fractional'?'1px solid var(--brand)':'1px solid var(--border)',boxShadow:active==='fractional'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
             </Field>
             <Field label="Amerikaanse odds" hint="Moneyline (b.v. +110 of -200)">
               <input type="text" placeholder="+110" value={values.american}
                 onChange={e=>handleChange('american',e.target.value)}
                 onFocus={()=>setActive('american')}
-                style={{...iStyle,borderColor:active==='american'?'var(--brand)':undefined,boxShadow:active==='american'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
+                style={{...iStyle,border:active==='american'?'1px solid var(--brand)':'1px solid var(--border)',boxShadow:active==='american'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
             </Field>
             <Field label="Implied kans (%)" hint="Kans in procenten (b.v. 47.62)">
               <div style={{position:'relative'}}>
                 <input type="text" placeholder="47.62" value={values.implied}
                   onChange={e=>handleChange('implied',e.target.value)}
                   onFocus={()=>setActive('implied')}
-                  style={{...iStyle,paddingRight:28,borderColor:active==='implied'?'var(--brand)':undefined,boxShadow:active==='implied'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
+                  style={{...iStyle,paddingRight:28,border:active==='implied'?'1px solid var(--brand)':'1px solid var(--border)',boxShadow:active==='implied'?'0 0 0 3px rgba(84,105,212,0.15)':undefined}}/>
                 <span style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',fontSize:14}}>%</span>
               </div>
             </Field>
