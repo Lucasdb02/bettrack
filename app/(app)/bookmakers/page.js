@@ -735,16 +735,6 @@ export default function BookmakersPage() {
                     <span style={{ fontSize:15, fontWeight:700, color: stats.pnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>{fmtPnl(stats.pnl)}</span>
                   </div>
 
-                  {/* Net deposits */}
-                  {netTx !== 0 && (
-                    <div style={{ flex:'0 0 110px' }}>
-                      <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Deposits</p>
-                      <span style={{ fontSize:14, fontWeight:700, color: netTx >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>
-                        {netTx >= 0 ? '+' : ''}€{netTx.toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-
                   {/* Current balance */}
                   <div style={{ flex:'0 0 130px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Huidige Balance</p>

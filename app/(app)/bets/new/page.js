@@ -150,7 +150,7 @@ function HandmatigForm({ onSaved }) {
     setSaveError('');
     const result = await addBet({ ...form, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
     setSaving(false);
-    if (!result) { setSaveError('Opslaan mislukt. Controleer je verbinding en probeer opnieuw.'); return; }
+    if (!result) { setSaveError('Opslaan mislukt — zie browser console (F12) voor de exacte Supabase fout.'); return; }
     setOpgeslagen(true);
     setTimeout(() => { setOpgeslagen(false); setForm(LEEG); setTotaalUitbetaling(''); router.push('/bets'); }, 1000);
   };

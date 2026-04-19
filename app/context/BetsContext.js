@@ -49,18 +49,18 @@ export function BetsProvider({ children }) {
   }, []);
 
   const addBet = async (bet) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) { console.error('[addBet] auth error:', authError); return null; }
+    const row = toDbRow(bet, user.id);
+    console.log('[addBet] inserting row:', row);
     const { data, error } = await supabase
       .from('bets')
-      .insert(toDbRow(bet, user.id))
+      .insert(row)
       .select()
       .single();
-    if (!error && data) {
-      setBets((prev) => [data, ...prev]);
-      return data;
-    }
-    return null;
+    if (error) { console.error('[addBet] supabase error:', error); return null; }
+    setBets((prev) => [data, ...prev]);
+    return data;
   };
 
   const addBets = async (newBets) => {

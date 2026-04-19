@@ -57,7 +57,7 @@ function Header() {
             onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.75)'}
           >Inloggen</Link>
           <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13.5, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 7, boxShadow: '0 2px 16px rgba(84,105,212,0.45), inset 0 0 0 1px rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.28)', transition: 'opacity 0.15s' }}
+            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13.5, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 7, boxShadow: '0 2px 16px rgba(84,105,212,0.45)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)', transition: 'opacity 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >Aanmelden — Gratis</Link>
@@ -96,7 +96,7 @@ function Hero() {
 
         <div className="flex items-center justify-center gap-4" style={{ marginBottom: 64 }}>
           <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55), inset 0 0 0 1px rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.28)' }}
+            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)' }}
           >
             Gratis beginnen
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
@@ -751,7 +751,7 @@ function Prijzen() {
               <span style={{ fontSize: 44, fontWeight: 800, color: '#fff', lineHeight: 1 }}>€9</span>
               <span style={{ fontSize: 15, color: '#4a6885', marginBottom: 6 }}>/maand</span>
             </div>
-            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', backgroundColor: '#5469d4', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28, boxShadow: '0 4px 20px rgba(84,105,212,0.4)' }}>
+            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28, boxShadow: '0 4px 20px rgba(84,105,212,0.4)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)' }}>
               Pro starten
             </Link>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -781,7 +781,7 @@ function FinalCTA() {
           Doe mee met 2.400+ bettors die TrackMijnBets gebruiken om hun resultaten te verbeteren. Begin vandaag, gratis.
         </p>
         <Link href="/signup"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15.5, fontWeight: 700, textDecoration: 'none', padding: '14px 32px', borderRadius: 10, boxShadow: '0 4px 32px rgba(84,105,212,0.6), inset 0 0 0 1px rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.28)' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15.5, fontWeight: 700, textDecoration: 'none', padding: '14px 32px', borderRadius: 10, boxShadow: '0 4px 32px rgba(84,105,212,0.6)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)' }}
         >
           Gratis aanmelden
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
