@@ -127,7 +127,7 @@ function VoorkeurenTab({ prefs, setPrefs }) {
       </Section>
 
       <div style={{ display:'flex', justifyContent:'flex-end' }}>
-        <button onClick={save} style={{ padding:'9px 24px', borderRadius:7, fontSize:13.5, fontWeight:600, border: saved ? 'none' : '1px solid rgba(255,255,255,0.2)', cursor:'pointer', background: saved ? '#11B981' : 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', boxShadow: saved ? 'none' : '0 2px 16px rgba(84,105,212,0.45), inset 0 0 0 1px rgba(255,255,255,0.1)', transition:'all 0.2s', display:'flex', alignItems:'center', gap:8 }}>
+        <button onClick={save} style={{ padding:'9px 24px', borderRadius:7, fontSize:13.5, fontWeight:600, border: saved ? 'none' : '1px solid rgba(255,255,255,0.2)', cursor:'pointer', background: saved ? '#11B981' : 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', boxShadow: saved ? 'none' : '0 2px 16px rgba(84,105,212,0.45)', transition:'all 0.2s', display:'flex', alignItems:'center', gap:8 }}>
           {saved ? <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Opgeslagen!</> : 'Voorkeuren opslaan'}
         </button>
       </div>

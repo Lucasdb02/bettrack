@@ -106,6 +106,9 @@ html.dark .glass-card {
 
 /* ── App main content background ── */
 .app-main {
+  background: var(--bg-page);
+}
+html.dark .app-main {
   background: linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%);
 }
 

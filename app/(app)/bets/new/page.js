@@ -107,6 +107,8 @@ function HandmatigForm({ onSaved }) {
   const [form, setForm] = useState(LEEG);
   const [fouten, setFouten] = useState({});
   const [opgeslagen, setOpgeslagen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [totaalUitbetaling, setTotaalUitbetaling] = useState('');
 
   const set = (f, v) => { setForm(p=>({...p,[f]:v})); if(fouten[f]) setFouten(p=>({...p,[f]:undefined})); };
@@ -140,11 +142,15 @@ function HandmatigForm({ onSaved }) {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const err = valideer();
     if (Object.keys(err).length > 0) { setFouten(err); return; }
-    addBet({ ...form, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
+    setSaving(true);
+    setSaveError('');
+    const result = await addBet({ ...form, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
+    setSaving(false);
+    if (!result) { setSaveError('Opslaan mislukt. Controleer je verbinding en probeer opnieuw.'); return; }
     setOpgeslagen(true);
     setTimeout(() => { setOpgeslagen(false); setForm(LEEG); setTotaalUitbetaling(''); router.push('/bets'); }, 1000);
   };
@@ -237,13 +243,17 @@ function HandmatigForm({ onSaved }) {
         </div>
       </div>
 
+      {saveError && (
+        <p style={{fontSize:13,color:'#FB7185',marginBottom:10,padding:'10px 14px',backgroundColor:'rgba(251,113,133,0.1)',border:'1px solid rgba(251,113,133,0.3)',borderRadius:7}}>{saveError}</p>
+      )}
       <div className="flex items-center justify-between">
         <button type="button" onClick={()=>router.back()} style={{padding:'9px 18px',border:'1px solid var(--border)',borderRadius:7,fontSize:13.5,fontWeight:600,color:'var(--text-2)',backgroundColor:'var(--bg-card)',cursor:'pointer'}}>
           Annuleren
         </button>
-        <button type="submit" style={{padding:'9px 24px',background:opgeslagen?'#11B981':'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:opgeslagen?'none':'1px solid rgba(255,255,255,0.12)',boxShadow:opgeslagen?'none':'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:8,transition:'all 0.2s'}}>
+        <button type="submit" disabled={saving||opgeslagen} style={{padding:'9px 24px',background:opgeslagen?'#11B981':'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:opgeslagen?'none':'1px solid rgba(255,255,255,0.12)',boxShadow:opgeslagen?'none':'0 2px 16px rgba(84,105,212,0.45)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:saving?'wait':'pointer',display:'flex',alignItems:'center',gap:8,transition:'all 0.2s',opacity:saving?0.7:1}}>
           {opgeslagen
             ? <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Opgeslagen!</>
+            : saving ? 'Opslaan...'
             : <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Bet Opslaan</>
           }
         </button>
