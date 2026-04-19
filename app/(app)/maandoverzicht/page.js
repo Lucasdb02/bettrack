@@ -3,6 +3,7 @@ import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useFmt } from '../../context/PreferencesContext';
 import { uitkomstConfig, sportEmoji } from '../../lib/sports';
+import BookmakerIcon from '../../components/BookmakerIcon';
 import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -67,10 +68,10 @@ function DagModal({ datum, bets, pnl, onClose }) {
         {/* Table */}
         <div style={{overflowY:'auto',flexShrink:1}}>
           <table style={{width:'100%',borderCollapse:'collapse'}}>
-            <thead style={{position:'sticky',top:0,zIndex:1}}>
+            <thead>
               <tr style={{backgroundColor:subtle}}>
-                {['Wedstrijd','Sport','Markt','Selectie','Odds','Inzet','Bookmaker','Uitkomst','P&L'].map(h=>(
-                  <th key={h} style={{padding:'9px 14px',textAlign:'left',fontSize:10.5,fontWeight:700,color:text3,textTransform:'uppercase',letterSpacing:'0.05em',borderBottom:`1px solid ${border}`,whiteSpace:'nowrap'}}>
+                {['Wedstrijd','Selectie','Bookmaker','Odds','Inzet','Uitkomst','P&L'].map(h=>(
+                  <th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,color:text3,textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}}>
                     {h}
                   </th>
                 ))}
@@ -80,24 +81,27 @@ function DagModal({ datum, bets, pnl, onClose }) {
               {bets.map(bet => {
                 const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
                 const cfg = uitkomstConfig(bet.uitkomst);
+                const badgeBg = dark ? cfg.darkBg : cfg.bg;
+                const badgeBorder = dark ? cfg.darkBorder : cfg.border;
+                const badgeColor = dark ? cfg.darkTextColor : cfg.textColor;
                 return (
-                  <tr key={bet.id} style={{borderTop:`1px solid ${border}`}}>
-                    <td style={{padding:'11px 14px',fontSize:13,color:text1,fontWeight:500,maxWidth:140,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.wedstrijd}</td>
-                    <td style={{padding:'11px 14px',fontSize:12,whiteSpace:'nowrap'}}>
-                      <span style={{fontSize:13}}>{sportEmoji(bet.sport)}</span>{' '}
-                      <span style={{fontSize:11,fontWeight:600,color:text3}}>{bet.sport}</span>
+                  <tr key={bet.id} className="bet-row" style={{borderTop:`1px solid ${border}`,verticalAlign:'middle'}}>
+                    <td style={{padding:'12px 16px',fontSize:13,color:text1,fontWeight:500,maxWidth:160,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.wedstrijd}</td>
+                    <td style={{padding:'12px 16px',fontSize:13,color:text2}}>{bet.selectie}</td>
+                    <td style={{padding:'12px 16px',fontSize:13,color:text2}}>
+                      <div style={{display:'flex',alignItems:'center',gap:6}}>
+                        <BookmakerIcon naam={bet.bookmaker} size={15}/>
+                        {bet.bookmaker}
+                      </div>
                     </td>
-                    <td style={{padding:'11px 14px',fontSize:12.5,color:text3,whiteSpace:'nowrap'}}>{bet.markt}</td>
-                    <td style={{padding:'11px 14px',fontSize:13,color:text2,fontWeight:500}}>{bet.selectie}</td>
-                    <td style={{padding:'11px 14px',fontSize:13,fontWeight:700,color:text1}}>{Number(bet.odds).toFixed(3)}</td>
-                    <td style={{padding:'11px 14px',fontSize:13,color:text2}}>€{Number(bet.inzet).toFixed(2)}</td>
-                    <td style={{padding:'11px 14px',fontSize:12.5,color:text3}}>{bet.bookmaker}</td>
-                    <td style={{padding:'11px 14px'}}>
-                      <span style={{display:'inline-flex',alignItems:'center',padding:'2px 7px',borderRadius:4,fontSize:11,fontWeight:600,background:cfg.bg,color:cfg.textColor,border:`1px solid ${cfg.border}`,whiteSpace:'nowrap'}}>
+                    <td style={{padding:'12px 16px',fontSize:13,color:text1,fontWeight:600}}>{Number(bet.odds).toFixed(2)}</td>
+                    <td style={{padding:'12px 16px',fontSize:13,color:text2}}>€{Number(bet.inzet).toFixed(2)}</td>
+                    <td style={{padding:'12px 16px'}}>
+                      <span style={{display:'inline-flex',alignItems:'center',verticalAlign:'middle',background:badgeBg,color:badgeColor,border:`1px solid ${badgeBorder}`,padding:'2px 8px',borderRadius:4,fontSize:11.5,fontWeight:600,lineHeight:'18px',whiteSpace:'nowrap'}}>
                         {cfg.label}
                       </span>
                     </td>
-                    <td style={{padding:'11px 14px',fontSize:13,fontWeight:700,color:bet.uitkomst==='lopend'?text3:w>=0?'var(--color-win)':'var(--color-loss)'}}>
+                    <td style={{padding:'12px 16px',fontSize:13,fontWeight:600,color:bet.uitkomst==='lopend'?text3:w>=0?'var(--color-win)':'var(--color-loss)'}}>
                       {bet.uitkomst==='lopend'?'—':fmtPnl(w)}
                     </td>
                   </tr>
@@ -200,23 +204,8 @@ export default function MaandoverzichtPage() {
         ))}
       </div>
 
-      {barData.length>0&&(
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'22px 24px',marginBottom:24}}>
-          <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:16}}>Dagelijkse P&L — {MAANDEN[maand]} {jaar}</h2>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false}/>
-              <XAxis dataKey="dag" tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false}/>
-              <YAxis tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={50}/>
-              <Tooltip content={<BarTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
-              <Bar dataKey="pnl" radius={[3,3,0,0]} maxBarSize={28}>{barData.map((e,i)=><Cell key={i} fill={e.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}</Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
       {/* Calendar */}
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden',marginBottom:24}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',borderBottom:'1px solid var(--border-subtle)'}}>
           {DAGEN.map(d=><div key={d} style={{padding:'12px 0',textAlign:'center',fontSize:11.5,fontWeight:700,color:'var(--text-4)',textTransform:'uppercase',letterSpacing:'0.05em',backgroundColor:'var(--bg-subtle)'}}>{d}</div>)}
         </div>
@@ -268,6 +257,21 @@ export default function MaandoverzichtPage() {
           <span style={{fontSize:11.5,color:'var(--text-4)',marginLeft:'auto'}}>Klik op een dag om bets te zien</span>
         </div>
       </div>
+
+      {barData.length>0&&(
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'22px 24px',marginBottom:24}}>
+          <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:16}}>Dagelijkse P&L — {MAANDEN[maand]} {jaar}</h2>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false}/>
+              <XAxis dataKey="dag" tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false}/>
+              <YAxis tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={50}/>
+              <Tooltip content={<BarTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
+              <Bar dataKey="pnl" maxBarSize={28}>{barData.map((e,i)=><Cell key={i} fill={e.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Day detail modal */}
       {mounted && geselecteerd && dagData[geselecteerd]?.bets.length > 0 && (

@@ -366,7 +366,7 @@ export default function StatistiekenPage() {
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={52} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                <Bar dataKey="pnl" radius={[4, 4, 0, 0]} maxBarSize={44}>
+                <Bar dataKey="pnl" maxBarSize={44}>
                   {maandData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
                 </Bar>
               </BarChart>
@@ -385,7 +385,7 @@ export default function StatistiekenPage() {
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={46} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                <Bar dataKey="pnl" radius={[4, 4, 0, 0]} maxBarSize={30}>
+                <Bar dataKey="pnl" maxBarSize={30}>
                   {dagData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
                 </Bar>
               </BarChart>
@@ -436,7 +436,7 @@ export default function StatistiekenPage() {
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={50} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                <Bar dataKey="pnl" name="P&L" radius={[4, 4, 0, 0]} maxBarSize={44}>
+                <Bar dataKey="pnl" name="P&L" maxBarSize={44}>
                   {oddsData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
                 </Bar>
               </BarChart>
@@ -480,7 +480,7 @@ export default function StatistiekenPage() {
               <YAxis type="category" dataKey="key" tick={{ fontSize: 12, fill: 'var(--text-2)' }} axisLine={false} tickLine={false} width={90} tickFormatter={v => `${sportEmoji(v)} ${v}`} />
               <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine x={0} stroke="var(--border)" strokeWidth={1} />
-              <Bar dataKey="totalWinst" radius={[0, 4, 4, 0]} maxBarSize={22}>
+              <Bar dataKey="totalWinst" maxBarSize={22}>
                 {perSport.map((e, i) => <Cell key={i} fill={e.totalWinst >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
               </Bar>
             </BarChart>
