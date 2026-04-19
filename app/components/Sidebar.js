@@ -83,7 +83,7 @@ function NavItem({ item, active }) {
             : 'transparent',
           backdropFilter: active ? 'blur(12px) saturate(1.5)' : 'none',
           WebkitBackdropFilter: active ? 'blur(12px) saturate(1.5)' : 'none',
-          borderTop: 'none',
+          borderTop: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
           borderBottom: active ? '1px solid rgba(123,158,240,0.3)' : '1px solid transparent',
           borderLeft: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
           borderRight: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',

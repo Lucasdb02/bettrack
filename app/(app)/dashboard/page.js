@@ -1,7 +1,7 @@
 'use client';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
-import { useFmt, usePreferences, ALL_BOOKMAKERS } from '../../context/PreferencesContext';
+import { useFmt } from '../../context/PreferencesContext';
 import BookmakerIcon, { BOOKIE_BRAND_COLORS } from '../../components/BookmakerIcon';
 import { uitkomstConfig } from '../../lib/sports';
 import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
@@ -11,8 +11,9 @@ import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   PieChart, Pie, Label,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Cell, Legend
+  Cell, Legend, ReferenceLine,
 } from 'recharts';
+import { createClient } from '@/lib/supabase';
 
 const FALLBACK_BOOK_COLORS = ['#5469d4','#0e9f6e','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
 function bookColor(naam, idx) {
@@ -80,7 +81,7 @@ function fmtDate(d) {
 }
 
 /* ─── Shared tooltip ─── */
-function ChartTip({ active, payload, label }) {
+function ChartTip({ active, payload, label, suffix }) {
   const { dark } = useTheme();
   const { fmtPnl } = useFmt();
   if (!active || !payload?.length) return null;
@@ -88,6 +89,11 @@ function ChartTip({ active, payload, label }) {
   const border = dark ? '#2a3347' : '#e5e7eb';
   const textMuted = dark ? '#8b949e' : '#6b7280';
   const textSub = dark ? '#c9d1d9' : '#374151';
+  const fmtVal = (v) => {
+    if (typeof v !== 'number') return v;
+    if (suffix === '%') return `${v >= 0 ? '+' : ''}${v}%`;
+    return fmtPnl(v);
+  };
   return (
     <div style={{ backgroundColor: bg, border: `1px solid ${border}`, borderRadius:8, padding:'10px 14px', boxShadow:'0 8px 24px rgba(0,0,0,0.2)', fontSize:13, pointerEvents:'none' }}>
       <p style={{ color: textMuted, marginBottom:6, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>
@@ -95,7 +101,7 @@ function ChartTip({ active, payload, label }) {
         <div key={i} style={{ display:'flex', alignItems:'center', gap:7, marginBottom: i<payload.length-1?3:0 }}>
           <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:p.color, flexShrink:0 }}/>
           <span style={{ color: textSub, fontSize:12 }}>{p.name}:</span>
-          <span style={{ fontWeight:700, color:p.color }}>{typeof p.value==='number'?fmtPnl(p.value):p.value}</span>
+          <span style={{ fontWeight:700, color:p.color }}>{fmtVal(p.value)}</span>
         </div>
       ))}
     </div>
@@ -461,7 +467,6 @@ function DateRangeModal({ initial, onSave, onClose }) {
 export default function Dashboard() {
   const { bets, loaded } = useBets();
   const { fmtPnl, fmtAmt } = useFmt();
-  const { prefs } = usePreferences();
 
   const [periodFilter,  setPeriodFilter]  = useState('all');
   const [customRange,   setCustomRange]   = useState(null);
@@ -470,8 +475,24 @@ export default function Dashboard() {
   const [bookFilter,    setBookFilter]    = useState([]);
   const [mounted,       setMounted]       = useState(false);
   const [hoverIdx,      setHoverIdx]      = useState(null);
+  const [dbBookmakers,  setDbBookmakers]  = useState([]);
+  const [transactions,  setTransactions]  = useState([]);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      Promise.all([
+        supabase.from('bookmakers').select('*').eq('user_id', user.id),
+        supabase.from('transactions').select('*').eq('user_id', user.id),
+      ]).then(([bmRes, txRes]) => {
+        if (!bmRes.error && bmRes.data) setDbBookmakers(bmRes.data);
+        if (!txRes.error && txRes.data) setTransactions(txRes.data);
+      });
+    });
+  }, []);
 
   const allSporten    = useMemo(() => [...new Set(bets.map(b => b.sport||'Onbekend'))].sort(), [bets]);
   const allBookmakers = useMemo(() => [...new Set(bets.map(b => b.bookmaker||'Onbekend'))].sort(), [bets]);
@@ -520,17 +541,17 @@ export default function Dashboard() {
   }, [stats]);
 
   const bookieBalanceData = useMemo(() => {
-    return ALL_BOOKMAKERS
-      .filter(n => prefs.bookmakersConfig[n]?.actief)
-      .map((naam, i) => {
-        const cfg     = prefs.bookmakersConfig[naam] || {};
-        const pnl     = bets.filter(b => b.bookmaker === naam && b.uitkomst !== 'lopend')
-                            .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
-        const balance = (cfg.startBalance || 0) + pnl;
-        return { name: naam, value: Math.max(parseFloat(balance.toFixed(2)), 0), color: bookColor(naam, i) };
-      })
-      .filter(d => d.value > 0);
-  }, [bets, prefs]);
+    return dbBookmakers.map((bm, i) => {
+      const pnl = bets
+        .filter(b => b.bookmaker === bm.naam && b.uitkomst !== 'lopend')
+        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
+      const netTx = transactions
+        .filter(tx => tx.bookmaker_id === bm.id)
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0);
+      const balance = parseFloat(((bm.saldo || 0) + pnl + netTx).toFixed(2));
+      return { name: bm.naam, value: Math.max(balance, 0), color: bookColor(bm.naam, i) };
+    }).filter(d => d.value > 0);
+  }, [bets, dbBookmakers, transactions]);
 
   const bookmakers = useMemo(() => [...new Set(filtered.map(b => b.bookmaker||'Onbekend'))].slice(0,8), [filtered]);
 
@@ -728,13 +749,14 @@ export default function Dashboard() {
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Gestapeld per bookmaker</p></div>
           {stackedData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stackedData} margin={{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
+              <BarChart data={stackedData} margin={{top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%" barGap={2}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                 <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
                 <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={48}/>
                 <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
+                <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                 <Legend content={<BookieLegend/>}/>
-                {bookmakers.map((bk,i)=><Bar key={bk} dataKey={bk} stackId="a" fill={bookColor(bk,i)} fillOpacity={0.85} maxBarSize={32}/>)}
+                {bookmakers.map((bk,i)=><Bar key={bk} dataKey={bk} fill={bookColor(bk,i)} fillOpacity={0.85} maxBarSize={20} radius={[3,3,0,0]}/>)}
               </BarChart>
             </ResponsiveContainer>
           ):empty()}
