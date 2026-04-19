@@ -60,7 +60,7 @@ function Header() {
             style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13.5, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 7, boxShadow: '0 2px 16px rgba(84,105,212,0.45)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-          >Aanmelden — Gratis</Link>
+          >Aanmelden<span className="hidden sm:inline"> — Gratis</span></Link>
         </div>
       </div>
     </header>
@@ -96,7 +96,7 @@ function Hero() {
 
         <div className="lp-cta-row flex items-center justify-center gap-4" style={{ marginBottom: 64 }}>
           <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55), 0 0 0 1px rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.2)' }}
+            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55)', border: '1px solid rgba(255,255,255,0.2)' }}
           >
             Gratis beginnen
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
@@ -305,14 +305,14 @@ function AppShowcase() {
                   <span style={{ fontSize: 8.5, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</span>
                   <span style={{ fontSize: 8, color: '#34D399', fontWeight: 700 }}>+€847 YTD</span>
                 </div>
-                <svg viewBox="0 0 380 56" style={{ width: '100%', height: 42 }}>
+                <svg viewBox="0 -5 380 61" preserveAspectRatio="none" style={{ width: '100%', height: 42 }}>
                   <defs>
                     <linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#7b9ef0" stopOpacity="0.28" />
                       <stop offset="100%" stopColor="#7b9ef0" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <path d="M0,52 L38,47 L76,41 L114,45 L152,33 L190,26 L228,30 L266,18 L304,10 L342,5 L380,2" fill="none" stroke="#7b9ef0" strokeWidth="1.8" strokeLinejoin="round" />
+                  <path d="M0,52 L38,47 L76,41 L114,45 L152,33 L190,26 L228,30 L266,18 L304,10 L342,5 L380,2" fill="none" stroke="#7b9ef0" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
                   <path d="M0,52 L38,47 L76,41 L114,45 L152,33 L190,26 L228,30 L266,18 L304,10 L342,5 L380,2 L380,56 L0,56 Z" fill="url(#dashGrad)" />
                   <circle cx="304" cy="10" r="2.5" fill="#7b9ef0" />
                   <circle cx="342" cy="5" r="2.5" fill="#7b9ef0" />
@@ -355,7 +355,7 @@ function AppShowcase() {
                 {[{ label: 'Odds', value: '2.10' }, { label: 'Inzet', value: '€50' }].map((f, i) => (
                   <div key={i}>
                     <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{f.label}</p>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(84,105,212,0.4)', borderRadius: 6, padding: '7px 10px' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(84,105,212,0.4)', borderRadius: 6, padding: '7px 10px', display: 'flex', alignItems: 'center' }}>
                       <span style={{ fontSize: 10.5, color: '#7b9ef0', fontWeight: 600 }}>{f.value}</span>
                     </div>
                   </div>
@@ -560,7 +560,7 @@ function AppShowcase() {
                 ].map((f, i) => (
                   <div key={i}>
                     <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{f.label}</p>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, padding: '7px 10px' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, padding: '7px 10px', display: 'flex', alignItems: 'center' }}>
                       <span style={{ fontSize: 11, color: '#c9d1d9', fontWeight: 600 }}>{f.value}</span>
                     </div>
                   </div>

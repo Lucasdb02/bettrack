@@ -262,3 +262,224 @@ html.dark textarea {
   .lp-footer-section { padding: 32px 20px !important; }
   .lp-footer-inner { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 12px !important; }
 }
+
+/* ═══════════════════════════════════════
+   KALENDER — Mobile Tile Stijl
+   ═══════════════════════════════════════ */
+@media (max-width: 640px) {
+  .cal-page-wrap {
+    padding: 20px 14px !important;
+    max-width: 100% !important;
+  }
+
+  .cal-stats-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .cal-wrapper {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .cal-header {
+    border-bottom: none !important;
+    margin-bottom: 4px !important;
+    gap: 3px !important;
+  }
+
+  .cal-header > div {
+    background: transparent !important;
+    padding: 4px 0 8px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.03em !important;
+  }
+
+  .cal-grid {
+    gap: 3px !important;
+    background: transparent !important;
+  }
+
+  .cal-empty-cell {
+    border: none !important;
+    border-radius: 10px !important;
+    min-height: 54px !important;
+    background: rgba(255,255,255,0.02) !important;
+    opacity: 1 !important;
+  }
+
+  .cal-day-cell {
+    border: none !important;
+    border-radius: 10px !important;
+    min-height: 54px !important;
+    padding: 7px 7px 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Tile background colors per type */
+  html.dark .cal-day-cell[data-pnl="win"]     { background: rgba(10, 72, 56, 0.92) !important; }
+  html.dark .cal-day-cell[data-pnl="loss"]    { background: rgba(72, 10, 24, 0.92) !important; }
+  html.dark .cal-day-cell[data-pnl="neutral"] { background: rgba(255,255,255,0.05) !important; }
+  html.dark .cal-day-cell[data-has-bets="false"] { background: rgba(255,255,255,0.03) !important; }
+  html.dark .cal-empty-cell                   { background: rgba(255,255,255,0.02) !important; }
+
+  html:not(.dark) .cal-day-cell[data-pnl="win"]     { background: rgba(17,185,129,0.12) !important; }
+  html:not(.dark) .cal-day-cell[data-pnl="loss"]    { background: rgba(244,63,94,0.1) !important; }
+  html:not(.dark) .cal-day-cell[data-pnl="neutral"] { background: rgba(0,0,0,0.04) !important; }
+  html:not(.dark) .cal-day-cell[data-has-bets="false"] { background: rgba(0,0,0,0.03) !important; }
+  html:not(.dark) .cal-empty-cell                   { background: rgba(0,0,0,0.02) !important; }
+
+  /* Day number — klein, muted, geen cirkel */
+  .cal-day-num {
+    background: transparent !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.38) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0 !important;
+    display: block !important;
+    justify-content: unset !important;
+    align-items: unset !important;
+    flex-shrink: unset !important;
+  }
+
+  html:not(.dark) .cal-day-num { color: rgba(0,0,0,0.35) !important; }
+
+  /* Vandaag: blauwe dag-nummer tekst */
+  .cal-day-cell[data-today="true"] .cal-day-num {
+    color: #7b9ef0 !important;
+    font-weight: 700 !important;
+  }
+
+  /* P&L waarde — bold, naar onder */
+  .cal-day-pnl {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    margin-top: auto !important;
+  }
+
+  /* Bet count — verberg op mobiel */
+  .cal-day-count { display: none !important; }
+
+  /* Legenda — verberg op mobiel */
+  .cal-legend { display: none !important; }
+
+  /* Bar chart hoogte verkleinen */
+  .cal-barchart { padding: 16px 14px !important; }
+}
+
+/* ═══════════════════════════════════════
+   BETS — Mobile Card View
+   ═══════════════════════════════════════ */
+.bets-table-desktop { display: block; }
+.bets-cards-mobile  { display: none; }
+
+@media (max-width: 768px) {
+  .bets-table-desktop { display: none !important; }
+  .bets-cards-mobile  { display: flex !important; flex-direction: column; gap: 10px; }
+
+  .bet-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bet-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .bet-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .bet-card-match {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1.3;
+  }
+
+  .bet-card-selection {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.3;
+  }
+
+  .bet-card-market {
+    font-size: 11.5px;
+    color: var(--text-4);
+  }
+
+  .bet-card-numbers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .bet-card-num-cell {
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .bet-card-num-cell:not(:last-child) {
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  .bet-card-num-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-4);
+  }
+
+  .bet-card-num-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-1);
+  }
+
+  .bet-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .bet-card-bookmaker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+
+  .bet-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

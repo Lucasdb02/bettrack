@@ -308,10 +308,11 @@ export default function BetsPage() {
       <div style={{display:'flex',gap:20,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
         <span style={{fontSize:13,color:'var(--text-3)'}}><strong style={{color:'var(--text-1)'}}>{filtered.length}</strong> bets gevonden</span>
         <span style={{fontSize:13,color:'var(--text-3)'}}>P&L gefilterd: <strong style={{color:totaal>=0?'var(--color-win)':'var(--color-loss)'}}>{fmtPnl(totaal)}</strong></span>
-        <span style={{fontSize:12,color:'var(--text-4)',marginLeft:'auto'}}>Dubbelklik op een rij om te bewerken</span>
+        <span className="bets-table-desktop" style={{fontSize:12,color:'var(--text-4)',marginLeft:'auto'}}>Dubbelklik op een rij om te bewerken</span>
       </div>
 
-      <div className="table-scroll" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+      {/* Desktop table */}
+      <div className="bets-table-desktop table-scroll" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
         <table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead>
             <tr style={{backgroundColor:'var(--bg-subtle)'}}>
@@ -383,6 +384,82 @@ export default function BetsPage() {
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="bets-cards-mobile">
+        {filtered.length===0 ? (
+          <div style={{padding:'48px 0',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</div>
+        ) : filtered.map(bet => {
+          const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+          return (
+            <div key={bet.id} className="bet-card" onDoubleClick={()=>setEditBet(bet)}>
+              {/* Top row: date + sport + uitkomst badge */}
+              <div className="bet-card-top">
+                <div className="bet-card-meta">
+                  <span style={{fontSize:11,fontWeight:600,color:'var(--text-4)'}}>
+                    {new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}
+                  </span>
+                  <span style={{padding:'2px 7px',borderRadius:4,fontSize:10.5,fontWeight:600,backgroundColor:'var(--badge-bg)',color:'var(--badge-color)',display:'inline-flex',alignItems:'center',gap:3}}>
+                    {sportEmoji(bet.sport)} {bet.sport}
+                  </span>
+                </div>
+                <UitkomstBadge value={bet.uitkomst} />
+              </div>
+
+              {/* Match + selection */}
+              <div>
+                <div className="bet-card-match">{bet.wedstrijd}</div>
+                <div style={{display:'flex',gap:6,marginTop:3,flexWrap:'wrap'}}>
+                  <span className="bet-card-market">{bet.markt}</span>
+                  {bet.markt && bet.selectie && <span className="bet-card-market" style={{color:'var(--border)'}}>·</span>}
+                  <span className="bet-card-selection">{bet.selectie}</span>
+                </div>
+              </div>
+
+              {/* Odds / Inzet / P&L */}
+              <div className="bet-card-numbers">
+                <div className="bet-card-num-cell">
+                  <span className="bet-card-num-label">Odds</span>
+                  <span className="bet-card-num-value">{Number(bet.odds).toFixed(2)}</span>
+                </div>
+                <div className="bet-card-num-cell">
+                  <span className="bet-card-num-label">Inzet</span>
+                  <span className="bet-card-num-value">€{Number(bet.inzet).toFixed(2)}</span>
+                </div>
+                <div className="bet-card-num-cell">
+                  <span className="bet-card-num-label">P&L</span>
+                  <span className="bet-card-num-value" style={{color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)'}}>
+                    {bet.uitkomst==='lopend'?'—':fmtPnl(w)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Bottom: bookmaker + actions */}
+              <div className="bet-card-bottom">
+                <div className="bet-card-bookmaker">
+                  <BookmakerIcon naam={bet.bookmaker} size={15}/>
+                  <span>{bet.bookmaker}</span>
+                </div>
+                <div className="bet-card-actions" onClick={e=>e.stopPropagation()}>
+                  <button onClick={()=>setEditBet(bet)} style={{background:'none',border:'1px solid var(--border)',borderRadius:6,cursor:'pointer',color:'var(--text-3)',padding:'4px 10px',fontSize:11.5,fontWeight:600}}>
+                    Bewerken
+                  </button>
+                  {confirmDelete===bet.id ? (
+                    <div style={{display:'flex',gap:4}}>
+                      <button onClick={()=>{deleteBet(bet.id);setConfirmDelete(null);}} style={{padding:'4px 8px',backgroundColor:'#FB7185',color:'#fff',border:'none',borderRadius:5,fontSize:11,cursor:'pointer',fontWeight:600}}>Verwijder</button>
+                      <button onClick={()=>setConfirmDelete(null)} style={{padding:'4px 8px',backgroundColor:'var(--bg-subtle)',color:'var(--text-3)',border:'none',borderRadius:5,fontSize:11,cursor:'pointer'}}>Annuleer</button>
+                    </div>
+                  ) : (
+                    <button onClick={()=>setConfirmDelete(bet.id)} style={{background:'none',border:'none',cursor:'pointer',color:'var(--border)',padding:4}} title="Verwijder bet">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {mounted && editBet && (

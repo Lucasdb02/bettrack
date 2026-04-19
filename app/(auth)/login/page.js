@@ -40,15 +40,15 @@ function MiniLineChart() {
   const points = [20, 28, 22, 35, 30, 42, 38, 50, 45, 58, 52, 65, 70];
   const max = Math.max(...points);
   const min = Math.min(...points);
-  const h = 40, w = 200;
+  const w = 200, h = 40, pad = 3;
   const pts = points.map((p, i) => {
     const x = (i / (points.length - 1)) * w;
-    const y = h - ((p - min) / (max - min)) * h;
+    const y = pad + (h - pad) - ((p - min) / (max - min)) * (h - pad);
     return `${x},${y}`;
   }).join(' ');
-  const areaBottom = `${w},${h} 0,${h}`;
+  const areaBottom = `${w},${h + pad} 0,${h + pad}`;
   return (
-    <svg width="100%" height="44" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+    <svg width="100%" height="44" viewBox={`0 0 ${w} ${h + pad}`} preserveAspectRatio="none">
       <defs>
         <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#34D399" stopOpacity="0.3"/>
@@ -56,7 +56,7 @@ function MiniLineChart() {
         </linearGradient>
       </defs>
       <polyline points={`${pts} ${areaBottom}`} fill="url(#lineGrad)" stroke="none"/>
-      <polyline points={pts} fill="none" stroke="#34D399" strokeWidth="2" strokeLinejoin="round"/>
+      <polyline points={pts} fill="none" stroke="#34D399" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
     </svg>
   );
 }

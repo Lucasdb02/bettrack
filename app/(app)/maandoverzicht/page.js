@@ -175,7 +175,7 @@ export default function MaandoverzichtPage() {
   const todayKey = now.toISOString().split('T')[0];
 
   return (
-    <div style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+    <div className="cal-page-wrap" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
       <div className="flex items-center justify-between mb-7">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Maandoverzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>Dagelijkse analyse van je bettingresultaten</p></div>
         <div className="flex items-center gap-3">
@@ -189,7 +189,7 @@ export default function MaandoverzichtPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 mb-7" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
+      <div className="cal-stats-grid grid gap-4 mb-7" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
         {[
           {l:'Maand P&L',v:fmtPnl(maandStats.totalPnl),c:maandStats.totalPnl>=0?'var(--color-win)':'var(--color-loss)'},
           {l:'Bets',v:maandStats.all.length,c:'var(--text-1)'},
@@ -205,13 +205,13 @@ export default function MaandoverzichtPage() {
       </div>
 
       {/* Calendar */}
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden',marginBottom:24}}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',borderBottom:'1px solid var(--border-subtle)'}}>
+      <div className="cal-wrapper" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden',marginBottom:24}}>
+        <div className="cal-header" style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',borderBottom:'1px solid var(--border-subtle)'}}>
           {DAGEN.map(d=><div key={d} style={{padding:'12px 0',textAlign:'center',fontSize:11.5,fontWeight:700,color:'var(--text-4)',textTransform:'uppercase',letterSpacing:'0.05em',backgroundColor:'var(--bg-subtle)'}}>{d}</div>)}
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)'}}>
+        <div className="cal-grid" style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)'}}>
           {calendarDays.map((cell,i)=>{
-            if(!cell) return <div key={`e${i}`} style={{borderRight:i%7!==6?'1px solid var(--border-subtle)':'none',borderBottom:'1px solid var(--border-subtle)',minHeight:80,backgroundColor:'var(--bg-subtle)',opacity:0.4}}/>;
+            if(!cell) return <div key={`e${i}`} className="cal-empty-cell" style={{borderRight:i%7!==6?'1px solid var(--border-subtle)':'none',borderBottom:'1px solid var(--border-subtle)',minHeight:80,backgroundColor:'var(--bg-subtle)',opacity:0.4}}/>;
             const {dag,key,data}=cell;
             const isToday = todayKey === key;
             const hasBets = data && data.bets.length > 0;
@@ -224,11 +224,14 @@ export default function MaandoverzichtPage() {
             return (
               <div
                 key={key}
+                className="cal-day-cell"
+                data-pnl={hasBets ? (pnl > 0 ? 'win' : pnl < 0 ? 'loss' : 'neutral') : 'none'}
+                data-has-bets={hasBets ? 'true' : 'false'}
+                data-today={isToday ? 'true' : 'false'}
                 onClick={()=>hasBets&&setGeselecteerd(key)}
                 style={{borderRight:i%7!==6?'1px solid var(--border-subtle)':'none',borderBottom:'1px solid var(--border-subtle)',minHeight:84,padding:'10px 12px',backgroundColor:bg,cursor:hasBets?'pointer':'default',transition:'background-color 0.1s'}}
               >
-                {/* Day number */}
-                <div style={{
+                <div className="cal-day-num" style={{
                   width:26,height:26,borderRadius:'50%',
                   display:'flex',alignItems:'center',justifyContent:'center',
                   backgroundColor:isToday?'#5469d4':'transparent',
@@ -242,15 +245,15 @@ export default function MaandoverzichtPage() {
                 </div>
                 {hasBets&&(
                   <>
-                    <div style={{fontSize:12.5,fontWeight:700,color:pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)',lineHeight:1.2}}>{pnl===0?'—':fmtPnl(pnl)}</div>
-                    <div style={{fontSize:10.5,color:'var(--text-4)',marginTop:2}}>{data.bets.length} bet{data.bets.length!==1?'s':''}</div>
+                    <div className="cal-day-pnl" style={{fontSize:12.5,fontWeight:700,color:pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)',lineHeight:1.2}}>{pnl===0?'—':fmtPnl(pnl)}</div>
+                    <div className="cal-day-count" style={{fontSize:10.5,color:'var(--text-4)',marginTop:2}}>{data.bets.length} bet{data.bets.length!==1?'s':''}</div>
                   </>
                 )}
               </div>
             );
           })}
         </div>
-        <div style={{padding:'12px 20px',borderTop:'1px solid var(--border-subtle)',backgroundColor:'var(--bg-subtle)',display:'flex',gap:20,alignItems:'center'}}>
+        <div className="cal-legend" style={{padding:'12px 20px',borderTop:'1px solid var(--border-subtle)',backgroundColor:'var(--bg-subtle)',display:'flex',gap:20,alignItems:'center'}}>
           {[{c:'rgba(17,185,129,0.2)',l:'Winstdag'},{c:'rgba(244,63,94,0.15)',l:'Verliesdag'}].map(l=>(
             <div key={l.l} className="flex items-center gap-2"><div style={{width:12,height:12,borderRadius:3,backgroundColor:l.c}}/><span style={{fontSize:11.5,color:'var(--text-3)'}}>{l.l}</span></div>
           ))}
@@ -259,7 +262,7 @@ export default function MaandoverzichtPage() {
       </div>
 
       {barData.length>0&&(
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'22px 24px',marginBottom:24}}>
+        <div className="cal-barchart" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'22px 24px',marginBottom:24}}>
           <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:16}}>Dagelijkse P&L — {MAANDEN[maand]} {jaar}</h2>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>
