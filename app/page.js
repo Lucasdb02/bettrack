@@ -25,7 +25,7 @@ function Header() {
       transition: 'all 0.25s ease',
       padding: '0 40px',
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="lp-header-pad" style={{ maxWidth: 1200, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="flex items-center gap-2.5" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -35,7 +35,7 @@ function Header() {
           <span style={{ color: '#fff', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
         </div>
 
-        <nav className="flex items-center gap-1">
+        <nav className="lp-nav-links flex items-center gap-1">
           {[
             { label: 'Functies', id: 'functies' },
             { label: 'Hoe het werkt', id: 'hoe-het-werkt' },
@@ -51,13 +51,13 @@ function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/login"
+          <Link href="/login" className="lp-header-login"
             style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 6, transition: 'color 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.75)'}
           >Inloggen</Link>
           <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13.5, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 7, boxShadow: '0 2px 16px rgba(84,105,212,0.45)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)', transition: 'opacity 0.15s' }}
+            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13.5, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 7, boxShadow: '0 2px 16px rgba(84,105,212,0.45)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >Aanmelden — Gratis</Link>
@@ -70,33 +70,33 @@ function Header() {
 /* ── Hero ── */
 function Hero() {
   return (
-    <section style={{
+    <section className="lp-hero-section" style={{
       background: 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)',
       paddingTop: 140, paddingBottom: 100,
       position: 'relative', overflow: 'hidden',
     }}>
       <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: 700, height: 500, background: 'radial-gradient(ellipse, rgba(84,105,212,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 40px', textAlign: 'center', position: 'relative' }}>
+      <div className="lp-hero-inner" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 40px', textAlign: 'center', position: 'relative' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(84,105,212,0.2)', border: '1px solid rgba(84,105,212,0.35)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
           <span style={{ fontSize: 13, color: '#a5b8f5', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
         </div>
 
-        <h1 style={{ fontSize: 58, fontWeight: 800, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 20, maxWidth: 800, margin: '0 auto 20px' }}>
+        <h1 className="lp-hero-title" style={{ fontSize: 58, fontWeight: 800, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 20, maxWidth: 800, margin: '0 auto 20px' }}>
           Stop met gokken,{' '}
           <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             begin met analyseren
           </span>
         </h1>
 
-        <p style={{ fontSize: 19, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 580, margin: '0 auto 40px' }}>
+        <p className="lp-hero-sub" style={{ fontSize: 19, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 580, margin: '0 auto 40px' }}>
           Houd al je sportbets bij, analyseer je prestaties en ontdek precies waar je winst maakt — of verliest.
         </p>
 
-        <div className="flex items-center justify-center gap-4" style={{ marginBottom: 64 }}>
+        <div className="lp-cta-row flex items-center justify-center gap-4" style={{ marginBottom: 64 }}>
           <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)' }}
+            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55), 0 0 0 1px rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.2)' }}
           >
             Gratis beginnen
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
@@ -106,7 +106,7 @@ function Hero() {
           >Bekijk functies</button>
         </div>
 
-        <div className="flex items-center justify-center gap-8">
+        <div className="lp-stats-row flex items-center justify-center gap-8">
           {[
             { value: '2.400+', label: 'Actieve gebruikers' },
             { value: '€3.2M+', label: 'Bets gevolgd' },
@@ -121,7 +121,7 @@ function Hero() {
       </div>
 
       {/* App preview mockup */}
-      <div style={{ maxWidth: 1000, margin: '64px auto 0', padding: '0 40px', position: 'relative' }}>
+      <div className="lp-mockup-wrap" style={{ maxWidth: 1000, margin: '64px auto 0', padding: '0 40px', position: 'relative' }}>
         <div style={{ backgroundColor: '#0d1a2e', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05)', overflow: 'hidden' }}>
           {/* Window bar */}
           <div style={{ backgroundColor: '#1a2e45', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -134,7 +134,7 @@ function Hero() {
           {/* App mockup content */}
           <div style={{ display: 'flex', minHeight: 420 }}>
             {/* Sidebar — reflects real menu structure */}
-            <div style={{ width: 190, backgroundColor: '#0a1e32', padding: '16px 10px', borderRight: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+            <div className="lp-mockup-sidebar" style={{ width: 190, backgroundColor: '#0a1e32', padding: '16px 10px', borderRight: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center gap-2" style={{ marginBottom: 20, paddingLeft: 8 }}>
                 <div style={{ width: 22, height: 22, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 5, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -257,7 +257,7 @@ function Hero() {
 /* ── App Showcase (bento grid) ── */
 function AppShowcase() {
   return (
-    <section id="functies" style={{ backgroundColor: '#04111f', padding: '96px 40px' }}>
+    <section id="functies" className="lp-section-pad" style={{ backgroundColor: '#04111f', padding: '96px 40px' }}>
       <div style={{ maxWidth: 1160, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>De tool</span>
@@ -270,7 +270,7 @@ function AppShowcase() {
         </div>
 
         {/* Row 1: Dashboard (large) + Bet Invoeren (small) */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.65fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="lp-bento-row" style={{ display: 'grid', gridTemplateColumns: '1.65fr 1fr', gap: 16, marginBottom: 16 }}>
           {/* Dashboard block */}
           <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0a1628 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
@@ -373,7 +373,7 @@ function AppShowcase() {
         </div>
 
         {/* Row 2: Bets Overzicht + Statistieken */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 16, marginBottom: 16 }}>
+        <div className="lp-bento-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 16, marginBottom: 16 }}>
           {/* Bets Overzicht block */}
           <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0b1524 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
@@ -487,7 +487,7 @@ function AppShowcase() {
         </div>
 
         {/* Row 3: Maandoverzicht + Calculators */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 16 }}>
+        <div className="lp-bento-row" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 16 }}>
           {/* Maandoverzicht block */}
           <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0b1524 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
@@ -602,7 +602,7 @@ function HoeHetWerkt() {
   ];
 
   return (
-    <section id="hoe-het-werkt" style={{ backgroundColor: '#060e1a', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: '#060e1a', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Hoe het werkt</span>
@@ -611,11 +611,11 @@ function HoeHetWerkt() {
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+        <div className="lp-steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
           {steps.map((step, i) => (
             <div key={i} style={{ textAlign: 'center', position: 'relative' }}>
               {i < 2 && (
-                <div style={{ position: 'absolute', top: 28, left: 'calc(50% + 36px)', right: 'calc(-50% + 36px)', height: 1, backgroundColor: 'rgba(255,255,255,0.08)', zIndex: 0 }} />
+                <div className="lp-step-line" style={{ position: 'absolute', top: 28, left: 'calc(50% + 36px)', right: 'calc(-50% + 36px)', height: 1, backgroundColor: 'rgba(255,255,255,0.08)', zIndex: 0 }} />
               )}
               <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: '#5469d4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', position: 'relative', zIndex: 1, boxShadow: '0 0 24px rgba(84,105,212,0.4)' }}>
                 <span style={{ color: '#fff', fontWeight: 800, fontSize: 16 }}>{step.num}</span>
@@ -642,8 +642,8 @@ function AnalysePreview() {
   ];
 
   return (
-    <section id="analyse" style={{ backgroundColor: '#04111f', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+    <section id="analyse" className="lp-section-pad" style={{ backgroundColor: '#04111f', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="lp-analyse-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
         <div>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Maandoverzicht</span>
           <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', marginTop: 12, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 18 }}>
@@ -711,7 +711,7 @@ function AnalysePreview() {
 /* ── Pricing ── */
 function Prijzen() {
   return (
-    <section id="prijzen" style={{ backgroundColor: '#060e1a', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section id="prijzen" className="lp-section-pad" style={{ backgroundColor: '#060e1a', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ maxWidth: 880, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Prijzen</span>
@@ -719,7 +719,7 @@ function Prijzen() {
           <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', marginTop: 14 }}>Begin gratis. Upgrade wanneer jij er klaar voor bent.</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <div className="lp-pricing-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
           {/* Free */}
           <div style={{ backgroundColor: '#0d1a2e', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 16, padding: '36px 36px' }}>
             <p style={{ fontSize: 13.5, fontWeight: 700, color: 'rgba(255,255,255,0.4)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Gratis</p>
@@ -751,7 +751,7 @@ function Prijzen() {
               <span style={{ fontSize: 44, fontWeight: 800, color: '#fff', lineHeight: 1 }}>€9</span>
               <span style={{ fontSize: 15, color: '#4a6885', marginBottom: 6 }}>/maand</span>
             </div>
-            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28, boxShadow: '0 4px 20px rgba(84,105,212,0.4)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)' }}>
+            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28, boxShadow: '0 4px 20px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)' }}>
               Pro starten
             </Link>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -772,16 +772,16 @@ function Prijzen() {
 /* ── Final CTA ── */
 function FinalCTA() {
   return (
-    <section style={{ background: 'linear-gradient(135deg, #0a2540 0%, #0d1f38 100%)', padding: '100px 40px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section className="lp-final-cta-section" style={{ background: 'linear-gradient(135deg, #0a2540 0%, #0d1f38 100%)', padding: '100px 40px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ maxWidth: 620, margin: '0 auto' }}>
-        <h2 style={{ fontSize: 42, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 18 }}>
+        <h2 className="lp-final-cta-title" style={{ fontSize: 42, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 18 }}>
           Klaar om slimmer te wedden?
         </h2>
         <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.6)', marginBottom: 40, lineHeight: 1.6 }}>
           Doe mee met 2.400+ bettors die TrackMijnBets gebruiken om hun resultaten te verbeteren. Begin vandaag, gratis.
         </p>
-        <Link href="/signup"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15.5, fontWeight: 700, textDecoration: 'none', padding: '14px 32px', borderRadius: 10, boxShadow: '0 4px 32px rgba(84,105,212,0.6)', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.18)' }}
+        <Link href="/signup" className="lp-final-cta-btn"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15.5, fontWeight: 700, textDecoration: 'none', padding: '14px 32px', borderRadius: 10, boxShadow: '0 4px 32px rgba(84,105,212,0.6)', border: '1px solid rgba(255,255,255,0.2)' }}
         >
           Gratis aanmelden
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -797,8 +797,8 @@ function FinalCTA() {
 /* ── Footer ── */
 function Footer() {
   return (
-    <footer style={{ backgroundColor: '#04111f', padding: '40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+    <footer className="lp-footer-section" style={{ backgroundColor: '#04111f', padding: '40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="lp-footer-inner" style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div className="flex items-center gap-2">
           <div style={{ backgroundColor: '#5469d4', width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

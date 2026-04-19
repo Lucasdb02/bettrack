@@ -272,8 +272,8 @@ export default function BetsPage() {
   const sel = {padding:'7px 12px',border:'1px solid var(--border)',borderRadius:6,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',cursor:'pointer'};
 
   return (
-    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }}>
-      <div className="flex items-center justify-between mb-6">
+    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
+      <div className="flex items-center justify-between mb-6 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Overzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>{bets.length} bets in totaal</p></div>
         <Link href="/bets/new" style={{background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',padding:'9px 18px',borderRadius:7,fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7,boxShadow:'0 2px 16px rgba(84,105,212,0.45)',border:'1px solid rgba(255,255,255,0.2)'}}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -311,7 +311,7 @@ export default function BetsPage() {
         <span style={{fontSize:12,color:'var(--text-4)',marginLeft:'auto'}}>Dubbelklik op een rij om te bewerken</span>
       </div>
 
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+      <div className="table-scroll" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
         <table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead>
             <tr style={{backgroundColor:'var(--bg-subtle)'}}>

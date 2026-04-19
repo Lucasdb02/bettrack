@@ -631,10 +631,10 @@ export default function Dashboard() {
   const empty = (h=220) => <div style={{height:h,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-4)',fontSize:14}}>Voeg bets toe om de grafiek te zien</div>;
 
   return (
-    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }}>
+    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 page-header">
         <div>
           <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Dashboard</h1>
           <p style={{ fontSize:14, color:'var(--text-3)' }}>Overzicht van al je bets en resultaten</p>
@@ -678,7 +678,7 @@ export default function Dashboard() {
       )}
 
       {/* Stat cards */}
-      <div className="grid gap-4 mb-7" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
+      <div className="grid gap-4 mb-7 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
         <StatCard label="Totale P&L" value={fmtPnl(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
         <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
         <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
@@ -744,7 +744,7 @@ export default function Dashboard() {
       })()}
 
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
+      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24 }}>
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Gestapeld per bookmaker</p></div>
           {stackedData.length>0?(
@@ -850,7 +850,7 @@ export default function Dashboard() {
       </div>
 
       {/* ROI + Balance per Bookmaker */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
+      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24 }}>
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
           {roiData.length>0?(

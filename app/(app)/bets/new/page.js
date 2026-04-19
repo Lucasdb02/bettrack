@@ -166,7 +166,7 @@ function HandmatigForm({ onSaved }) {
 
         <div style={{padding:'20px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
           <h2 style={sh}>Wedstrijd Info</h2>
-          <div className="grid gap-4" style={{gridTemplateColumns:'1fr 1fr'}}>
+          <div className="grid gap-4 grid-2-to-1" style={{gridTemplateColumns:'1fr 1fr'}}>
             <FF label="Datum" required>
               <input type="date" value={form.datum} onChange={e=>set('datum',e.target.value)} style={iStyle}/>
             </FF>
@@ -189,7 +189,7 @@ function HandmatigForm({ onSaved }) {
 
         <div style={{padding:'20px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
           <h2 style={sh}>Bet Details</h2>
-          <div className="grid gap-4" style={{gridTemplateColumns:'1fr 1fr 1fr',marginBottom:16}}>
+          <div className="grid gap-4 grid-3-to-1" style={{gridTemplateColumns:'1fr 1fr 1fr',marginBottom:16}}>
             <div style={{gridColumn:'1/-1'}}>
               <FF label="Selectie" required hint="Wat bet je op?">
                 <input type="text" placeholder="bv. Ajax, Over 2.5" value={form.selectie} onChange={e=>set('selectie',e.target.value)} style={{...iStyle,borderColor:fouten.selectie?'#FB7185':'var(--border)'}}/>
@@ -218,7 +218,7 @@ function HandmatigForm({ onSaved }) {
 
         <div style={{padding:'20px 24px'}}>
           <h2 style={sh}>Administratie</h2>
-          <div className="grid gap-4" style={{gridTemplateColumns:'1fr 1fr'}}>
+          <div className="grid gap-4 grid-2-to-1" style={{gridTemplateColumns:'1fr 1fr'}}>
             <FF label="Bookmaker" required>
               <select value={form.bookmaker} onChange={e=>set('bookmaker',e.target.value)} style={iStyle}>
                 {BOOKMAKERS.map(b=><option key={b}>{b}</option>)}
@@ -1055,7 +1055,7 @@ export default function NieuweBetPage() {
   );
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }} className="app-page">
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Toevoegen</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Voeg bets handmatig in of importeer automatisch via je Chrome Extension</p>

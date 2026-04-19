@@ -131,7 +131,8 @@ export default function Sidebar() {
   };
 
   return (
-    <aside style={{ background: 'rgba(5,12,28,0.94)', backdropFilter: 'blur(24px) saturate(1.5)', WebkitBackdropFilter: 'blur(24px) saturate(1.5)', borderRight: '1px solid rgba(255,255,255,0.06)', width: '220px', minHeight: '100vh' }} className="flex flex-col flex-shrink-0 sticky top-0 h-screen">
+    <>
+    <aside style={{ background: 'rgba(5,12,28,0.94)', backdropFilter: 'blur(24px) saturate(1.5)', WebkitBackdropFilter: 'blur(24px) saturate(1.5)', borderRight: '1px solid rgba(255,255,255,0.06)', width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
       {/* Logo */}
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '18px 16px' }} className="flex items-center gap-3">
@@ -275,5 +276,22 @@ export default function Sidebar() {
         </Link>
       </div>
     </aside>
+
+    {/* Mobile bottom navigation */}
+    <nav className="mobile-bottom-nav">
+      {mainNav.map((item) => (
+        <Link key={item.href} href={item.href} className={`mobile-nav-item${isActive(item.href) ? ' active' : ''}`}>
+          {item.icon}
+          <span>{item.label.replace('Bets Overzicht', 'Overzicht').replace('Bet Invoeren', 'Invoeren').replace('Maandoverzicht', 'Kalender')}</span>
+        </Link>
+      ))}
+      <Link href="/account" className={`mobile-nav-item${pathname === '/account' ? ' active' : ''}`}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Account</span>
+      </Link>
+    </nav>
+    </>
   );
 }
