@@ -474,11 +474,18 @@ export default function Dashboard() {
   const [sportFilter,   setSportFilter]   = useState([]);
   const [bookFilter,    setBookFilter]    = useState([]);
   const [mounted,       setMounted]       = useState(false);
+  const [isMobile,      setIsMobile]      = useState(false);
   const [hoverIdx,      setHoverIdx]      = useState(null);
   const [dbBookmakers,  setDbBookmakers]  = useState([]);
   const [transactions,  setTransactions]  = useState([]);
 
   useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -686,7 +693,7 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid gap-4 mb-7 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
-        <StatCard label="Totale P&L" value={fmtPnl(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
+        <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
         <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
         <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
         <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}/>
@@ -703,9 +710,9 @@ export default function Dashboard() {
         const pnlColor = dispPnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
         const roiColor = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
         return (
-          <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24, marginBottom:24 }}>
+          <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24, marginBottom:24 }}>
             {/* Header row */}
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
+            <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               {/* Left: P&L + ROI */}
               <div>
                 <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>Cumulatieve P&L</p>
@@ -724,7 +731,7 @@ export default function Dashboard() {
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart
                   data={cumulData}
-                  margin={{top:5,right:10,left:0,bottom:0}}
+                  margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}}
                   tabIndex={-1}
                   onMouseMove={(e) => { if (e?.activeTooltipIndex !== undefined) setHoverIdx(e.activeTooltipIndex); }}
                   onMouseLeave={() => setHoverIdx(null)}
@@ -737,7 +744,7 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                   <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
-                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={55}/>
+                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 42 : 55} mirror={isMobile}/>
                   <Tooltip
                     content={() => null}
                     cursor={{ stroke: 'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }}
@@ -752,14 +759,14 @@ export default function Dashboard() {
 
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24 }}>
-          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Gestapeld per bookmaker</p></div>
+        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24 }}>
+          <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Gestapeld per bookmaker</p></div>
           {stackedData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stackedData} margin={{top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%" barGap={2}>
+              <BarChart data={stackedData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%" barGap={2}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                 <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
-                <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={48}/>
+                <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 42 : 48} mirror={isMobile}/>
                 <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                 <Legend content={<BookieLegend/>}/>
@@ -937,7 +944,7 @@ export default function Dashboard() {
           <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
         </div>
         <table style={{width:'100%',borderCollapse:'collapse'}}>
-          <thead><tr style={{backgroundColor:'var(--bg-subtle)'}}>{['Datum','Wedstrijd','Selectie','Bookmaker','Odds','Inzet','Uitkomst','P&L'].map(h=><th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
+          <thead><tr>{['Datum','Wedstrijd','Selectie','Bookmaker','Odds','Inzet','Uitkomst','P&L'].map(h=><th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
           <tbody>
             {recent.map(bet=>{
               const w=berekenWinst(bet.uitkomst,Number(bet.odds),Number(bet.inzet));

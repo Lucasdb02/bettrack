@@ -111,6 +111,11 @@ html.dark .glass-card {
 html.dark .app-main {
   background: linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%);
 }
+@media (max-width: 768px) {
+  html.dark .app-main {
+    background: #060e1a;
+  }
+}
 
 /* Recharts SVG focus outline */
 .recharts-wrapper { outline: none !important; }
@@ -174,6 +179,13 @@ html.dark textarea {
 .mobile-nav-item.active { color: #7b9ef0; }
 .mobile-nav-item span { line-height: 1.2; text-align: center; }
 
+/* ── Dashboard chart cards: header padding retained, card goes edge-to-edge on mobile ── */
+.dash-chart-section { /* no-op on desktop */ }
+.dash-chart-hdr     { /* no-op on desktop */ }
+
+/* ── Statistieken: 6-stat grid ── */
+.stats-grid-6 { grid-template-columns: repeat(6, 1fr); }
+
 @media (max-width: 768px) {
   /* ── App shell layout ── */
   .sidebar-desktop { display: none !important; }
@@ -185,6 +197,19 @@ html.dark textarea {
     padding: 20px 16px !important;
     max-width: 100% !important;
   }
+
+  /* ── Dashboard chart cards: remove horizontal padding so chart fills full width ── */
+  .dash-chart-section {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .dash-chart-hdr {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* ── Statistieken 6-stat grid: 3 columns on mobile ── */
+  .stats-grid-6 { grid-template-columns: repeat(3, 1fr) !important; }
 
   /* ── Responsive grids ── */
   .grid-4-to-2 { grid-template-columns: repeat(2, 1fr) !important; }

@@ -179,7 +179,7 @@ function GroepTabel({ data, title, type }) {
       </div>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr style={{ backgroundColor: 'var(--bg-subtle)' }}>
+          <tr>
             {['Categorie', 'Bets', 'W', 'V', 'Win Rate', 'Inzet', 'P&L', 'ROI'].map(h => (
               <th key={h} style={{ padding: '9px 14px', textAlign: 'left', fontSize: 10.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--border)', whiteSpace: 'nowrap' }}>{h}</th>
             ))}
@@ -331,7 +331,7 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: 'repeat(6,1fr)' }}>
+      <div className="stats-grid-6 grid gap-4 mb-6">
         {[
           { label: 'Gem. odds',     v: gemOdds,         sub: `${settled.length} bets` },
           { label: 'Gem. inzet',    v: `€${gemInzet}`,  sub: 'Per bet' },
@@ -354,7 +354,7 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Maandelijkse P&L + Dag van de Week */}
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 20, marginBottom: 20 }}>
+      <div className="chart-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
         <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Maandelijkse P&L</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Winst/verlies per maand</p>
@@ -443,7 +443,7 @@ export default function StatistiekenPage() {
             </ResponsiveContainer>
             <table style={{ width: '100%', borderCollapse: 'collapse', alignSelf: 'start' }}>
               <thead>
-                <tr style={{ backgroundColor: 'var(--bg-subtle)' }}>
+                <tr>
                   {['Bracket', 'Bets', 'Win%', 'ROI', 'P&L'].map(h => (
                     <th key={h} style={{ padding: '8px 10px', textAlign: h === 'Bracket' ? 'left' : 'right', fontSize: 10.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--border)' }}>{h}</th>
                   ))}
