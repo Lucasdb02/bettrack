@@ -67,8 +67,32 @@ function EditBetModal({bet, onSave, onClose}) {
     tags: bet.tags||[],
   });
   const [fouten, setFouten] = useState({});
+  const [totaalUitbetaling, setTotaalUitbetaling] = useState(() => {
+    if (bet.odds && bet.inzet) return (Number(bet.odds) * Number(bet.inzet)).toFixed(2);
+    return '';
+  });
 
   const set = (f, v) => { setForm(p=>({...p,[f]:v})); if(fouten[f]) setFouten(p=>({...p,[f]:undefined})); };
+
+  const setWithCalc = (f, v) => {
+    set(f, v);
+    if (f === 'odds') {
+      const o = Number(v), s = Number(form.inzet);
+      if (o >= 1 && s > 0) setTotaalUitbetaling((o * s).toFixed(2));
+    } else if (f === 'inzet') {
+      const o = Number(form.odds), s = Number(v);
+      if (o >= 1 && s > 0) setTotaalUitbetaling((o * s).toFixed(2));
+    }
+  };
+
+  const handleTotaalChange = (v) => {
+    setTotaalUitbetaling(v);
+    const t = Number(v), s = Number(form.inzet);
+    if (t > 0 && s > 0) {
+      const newOdds = t / s;
+      if (newOdds >= 1) set('odds', newOdds.toFixed(3));
+    }
+  };
 
   const valideer = () => {
     const e={};
@@ -143,20 +167,23 @@ function EditBetModal({bet, onSave, onClose}) {
           {/* Bet details */}
           <div>
             <p style={{fontSize:11.5,fontWeight:700,color:text3,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:12}}>Bet Details</p>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
-              <div style={{gridColumn:'1/2'}}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:12}}>
+              <div style={{gridColumn:'1/-1'}}>
                 <FF label="Selectie" required text2={text2}>
                   <input type="text" value={form.selectie} onChange={e=>set('selectie',e.target.value)} style={{...iS,borderColor:fouten.selectie?'#e02424':border}}/>
                   {fouten.selectie&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.selectie}</p>}
                 </FF>
               </div>
               <FF label="Odds" required text2={text2}>
-                <input type="number" step="0.001" min="1" value={form.odds} onChange={e=>set('odds',e.target.value)} style={{...iS,borderColor:fouten.odds?'#e02424':border}}/>
+                <input type="number" step="0.001" min="1" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iS,borderColor:fouten.odds?'#e02424':border}}/>
                 {fouten.odds&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.odds}</p>}
               </FF>
               <FF label="Inzet (€)" required text2={text2}>
-                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>set('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border}}/>
+                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border}}/>
                 {fouten.inzet&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.inzet}</p>}
+              </FF>
+              <FF label="Totale uitbetaling (€)" text2={text2}>
+                <input type="number" step="0.01" min="0" placeholder="Bijv. 105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={iS}/>
               </FF>
             </div>
             {pot&&(
@@ -288,7 +315,7 @@ export default function BetsPage() {
         <table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead>
             <tr style={{backgroundColor:'var(--bg-subtle)'}}>
-              {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Tags','Bookmaker',''].map(h=>(
+              {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker',''].map(h=>(
                 <th key={h} style={{padding:'10px 14px',textAlign:'left',fontSize:10.5,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap',borderBottom:'1px solid var(--border)'}}>
                   {h}
                 </th>
@@ -297,7 +324,7 @@ export default function BetsPage() {
           </thead>
           <tbody>
             {filtered.length===0 ? (
-              <tr><td colSpan={11} style={{padding:'48px 24px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</td></tr>
+              <tr><td colSpan={10} style={{padding:'48px 24px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</td></tr>
             ) : filtered.map(bet => {
               const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
               return (
@@ -332,16 +359,6 @@ export default function BetsPage() {
                   </td>
                   <td style={{padding:'11px 14px',fontSize:13,fontWeight:700,color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)',verticalAlign:'middle',whiteSpace:'nowrap'}}>
                     {bet.uitkomst==='lopend'?'—':fmtPnl(w)}
-                  </td>
-                  <td style={{padding:'11px 14px',verticalAlign:'middle',maxWidth:160}}>
-                    {(bet.tags||[]).length > 0 && (
-                      <div style={{display:'flex',flexWrap:'wrap',gap:3}}>
-                        {(bet.tags||[]).slice(0,3).map(t=><TagChip key={t} tag={t} size="sm"/>)}
-                        {(bet.tags||[]).length > 3 && (
-                          <span style={{fontSize:10.5,color:'var(--text-4)',alignSelf:'center'}}>+{(bet.tags||[]).length-3}</span>
-                        )}
-                      </div>
-                    )}
                   </td>
                   <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',verticalAlign:'middle'}}>
                     <div style={{display:'flex',alignItems:'center',gap:6}}>

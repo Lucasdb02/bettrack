@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase';
 
 const BetsContext = createContext();
 
-const SCHEMA_FIELDS = ['datum', 'sport', 'wedstrijd', 'markt', 'selectie', 'odds', 'inzet', 'uitkomst', 'bookmaker', 'notities'];
+const SCHEMA_FIELDS = ['datum', 'sport', 'wedstrijd', 'markt', 'selectie', 'odds', 'inzet', 'uitkomst', 'bookmaker', 'notities', 'tags'];
 
 function toDbRow(bet, userId) {
   const row = { user_id: userId };
@@ -90,6 +90,7 @@ export function BetsProvider({ children }) {
   };
 
   const updateBet = async (id, updates) => {
+    setBets((prev) => prev.map((b) => (b.id === id ? { ...b, ...updates } : b)));
     const dbUpdates = {};
     for (const field of SCHEMA_FIELDS) {
       if (updates[field] !== undefined) dbUpdates[field] = updates[field];
@@ -102,7 +103,9 @@ export function BetsProvider({ children }) {
       .single();
     if (!error && data) {
       setBets((prev) => prev.map((b) => (b.id === id ? data : b)));
+      return true;
     }
+    return false;
   };
 
   const deleteBet = async (id) => {

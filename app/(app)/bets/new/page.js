@@ -107,8 +107,29 @@ function HandmatigForm({ onSaved }) {
   const [form, setForm] = useState(LEEG);
   const [fouten, setFouten] = useState({});
   const [opgeslagen, setOpgeslagen] = useState(false);
+  const [totaalUitbetaling, setTotaalUitbetaling] = useState('');
 
   const set = (f, v) => { setForm(p=>({...p,[f]:v})); if(fouten[f]) setFouten(p=>({...p,[f]:undefined})); };
+
+  const setWithCalc = (f, v) => {
+    set(f, v);
+    if (f === 'odds') {
+      const o = Number(v), s = Number(form.inzet);
+      if (o >= 1 && s > 0) setTotaalUitbetaling((o * s).toFixed(2));
+    } else if (f === 'inzet') {
+      const o = Number(form.odds), s = Number(v);
+      if (o >= 1 && s > 0) setTotaalUitbetaling((o * s).toFixed(2));
+    }
+  };
+
+  const handleTotaalChange = (v) => {
+    setTotaalUitbetaling(v);
+    const t = Number(v), s = Number(form.inzet);
+    if (t > 0 && s > 0) {
+      const newOdds = t / s;
+      if (newOdds >= 1) set('odds', newOdds.toFixed(3));
+    }
+  };
 
   const valideer = () => {
     const e = {};
@@ -125,7 +146,7 @@ function HandmatigForm({ onSaved }) {
     if (Object.keys(err).length > 0) { setFouten(err); return; }
     addBet({ ...form, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
     setOpgeslagen(true);
-    setTimeout(() => { setOpgeslagen(false); setForm(LEEG); router.push('/bets'); }, 1000);
+    setTimeout(() => { setOpgeslagen(false); setForm(LEEG); setTotaalUitbetaling(''); router.push('/bets'); }, 1000);
   };
 
   const pot = form.odds && form.inzet && !isNaN(Number(form.odds)) && !isNaN(Number(form.inzet))
@@ -162,20 +183,23 @@ function HandmatigForm({ onSaved }) {
 
         <div style={{padding:'20px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
           <h2 style={sh}>Bet Details</h2>
-          <div className="grid gap-4" style={{gridTemplateColumns:'1fr 1fr 1fr'}}>
-            <div style={{gridColumn:'1/2'}}>
+          <div className="grid gap-4" style={{gridTemplateColumns:'1fr 1fr 1fr',marginBottom:16}}>
+            <div style={{gridColumn:'1/-1'}}>
               <FF label="Selectie" required hint="Wat bet je op?">
                 <input type="text" placeholder="bv. Ajax, Over 2.5" value={form.selectie} onChange={e=>set('selectie',e.target.value)} style={{...iStyle,borderColor:fouten.selectie?'#FB7185':'var(--border)'}}/>
                 {fouten.selectie && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.selectie}</p>}
               </FF>
             </div>
             <FF label="Odds" required>
-              <input type="number" step="0.001" min="1" placeholder="2.100" value={form.odds} onChange={e=>set('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)'}}/>
+              <input type="number" step="0.001" min="1" placeholder="2.100" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)'}}/>
               {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
             </FF>
             <FF label="Inzet (€)" required>
-              <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>set('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)'}}/>
+              <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)'}}/>
               {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
+            </FF>
+            <FF label="Totale uitbetaling (€)" hint="Vul in → odds wordt auto-berekend">
+              <input type="number" step="0.01" min="0" placeholder="105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={iStyle}/>
             </FF>
           </div>
           {pot && (
