@@ -25,7 +25,7 @@ function bookieColor(naam, activeList) {
 }
 
 /* ── Build stacked chart data ── */
-function buildChartData(bets, activeBookies, bookmakersConfig, period, customRange) {
+function buildChartData(bets, activeBookies, bookmakersConfig, period, customRange, transactions, dbBookmakers) {
   let from, to;
   if (period === 'all') {
     const settled = bets.filter(b => b.uitkomst !== 'lopend');
@@ -79,7 +79,14 @@ function buildChartData(bets, activeBookies, bookmakersConfig, period, customRan
           return b.bookmaker === naam && t < cutoff && t >= startDate;
         })
         .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
-      const bal = parseFloat((startBalance + pnl).toFixed(2));
+
+      const bm = dbBookmakers?.find(b => b.naam === naam);
+      const netTx = bm && transactions ? transactions
+        .filter(tx => tx.bookmaker_id === bm.id && new Date(tx.datum).getTime() < cutoff)
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0)
+        : 0;
+
+      const bal = parseFloat((startBalance + pnl + netTx).toFixed(2));
       point[naam] = bal > 0 ? bal : 0;
     });
     return point;
@@ -218,6 +225,7 @@ export default function BookmakersPage() {
   // Supabase state
   const [dbBookmakers, setDbBookmakers] = useState([]); // [{id, naam, saldo, start_datum}]
   const [loadedBm, setLoadedBm]         = useState(false);
+  const [transactions, setTransactions] = useState([]); // [{id, bookmaker_id, type, amount, datum, notitie}]
 
   const [editBalance, setEditBalance]     = useState({});
   const [editDate,    setEditDate]        = useState({});
@@ -226,22 +234,31 @@ export default function BookmakersPage() {
   const [customRange, setCustomRange]     = useState(null);
   const [filterBookies, setFilterBookies] = useState([]);
 
+  // Transaction form state
+  const [txBookie,  setTxBookie]  = useState('');
+  const [txType,    setTxType]    = useState('deposit');
+  const [txAmount,  setTxAmount]  = useState('');
+  const [txDate,    setTxDate]    = useState(() => new Date().toISOString().split('T')[0]);
+  const [txLoading, setTxLoading] = useState(false);
+
   const supabase = createClient();
 
-  // Fetch bookmakers from Supabase on mount
+  // Fetch bookmakers + transactions from Supabase on mount
   useEffect(() => {
-    async function fetchBookmakers() {
+    async function fetchData() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setLoadedBm(true); return; }
-      const { data, error } = await supabase
-        .from('bookmakers')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: true });
-      if (!error && data) setDbBookmakers(data);
+
+      const [bmRes, txRes] = await Promise.all([
+        supabase.from('bookmakers').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
+        supabase.from('transactions').select('*').eq('user_id', user.id).order('datum', { ascending: true }),
+      ]);
+
+      if (!bmRes.error && bmRes.data) setDbBookmakers(bmRes.data);
+      if (!txRes.error && txRes.data) setTransactions(txRes.data);
       setLoadedBm(true);
     }
-    fetchBookmakers();
+    fetchData();
   }, []);
 
   // Derived lists
@@ -284,17 +301,28 @@ export default function BookmakersPage() {
   }, [bets]);
 
   const chartData = useMemo(
-    () => buildChartData(bets, visibleBookies, bookmakersConfig, period, customRange),
-    [bets, visibleBookies, bookmakersConfig, period, customRange]
+    () => buildChartData(bets, visibleBookies, bookmakersConfig, period, customRange, transactions, dbBookmakers),
+    [bets, visibleBookies, bookmakersConfig, period, customRange, transactions, dbBookmakers]
   );
+
+  const netTxPerBookie = useMemo(() => {
+    const map = {};
+    dbBookmakers.forEach(bm => {
+      map[bm.naam] = transactions
+        .filter(tx => tx.bookmaker_id === bm.id)
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0);
+    });
+    return map;
+  }, [transactions, dbBookmakers]);
 
   const totalBalance = useMemo(
     () => activeBookies.reduce((s, n) => {
       const cfg   = getConfig(n);
       const stats = pnlPerBookie[n] || { pnl:0 };
-      return s + cfg.startBalance + stats.pnl;
+      const netTx = netTxPerBookie[n] || 0;
+      return s + cfg.startBalance + stats.pnl + netTx;
     }, 0),
-    [activeBookies, bookmakersConfig, pnlPerBookie]
+    [activeBookies, bookmakersConfig, pnlPerBookie, netTxPerBookie]
   );
 
   const displayStats = useMemo(() => {
@@ -350,6 +378,31 @@ export default function BookmakersPage() {
       setDbBookmakers(prev => prev.map(b => b.naam === naam ? { ...b, start_datum: val } : b));
     }
     setEditDate(p => { const n={...p}; delete n[naam]; return n; });
+  };
+
+  const addTransaction = async () => {
+    const amt = parseFloat(txAmount);
+    if (!txBookie || !txAmount || isNaN(amt) || amt <= 0) return;
+    setTxLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setTxLoading(false); return; }
+    const bm = dbBookmakers.find(b => b.naam === txBookie);
+    if (!bm) { setTxLoading(false); return; }
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert({ user_id: user.id, bookmaker_id: bm.id, type: txType, amount: amt, datum: txDate })
+      .select()
+      .single();
+    if (!error && data) {
+      setTransactions(prev => [...prev, data].sort((a, b) => new Date(a.datum) - new Date(b.datum)));
+    }
+    setTxAmount('');
+    setTxLoading(false);
+  };
+
+  const deleteTransaction = async (id) => {
+    const { error } = await supabase.from('transactions').delete().eq('id', id);
+    if (!error) setTransactions(prev => prev.filter(tx => tx.id !== id));
   };
 
   if (!loadedBm) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
@@ -427,8 +480,10 @@ export default function BookmakersPage() {
         </div>
       )}
 
-      {/* ── Add bookmaker ── */}
+      {/* ── Add bookmaker + Deposits/Withdrawals ── */}
       <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'20px 24px', marginBottom:24 }}>
+
+        {/* — Bookmaker toevoegen — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Bookmaker toevoegen</h2>
         <div style={{ display:'flex', gap:10, alignItems:'center' }}>
           <div style={{ position:'relative', flex:1, maxWidth:320 }}>
@@ -451,8 +506,9 @@ export default function BookmakersPage() {
               padding:'9px 20px',
               background: selectedToAdd ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : 'var(--bg-subtle)',
               color: selectedToAdd ? '#fff' : 'var(--text-4)',
-              border: selectedToAdd ? '1px solid rgba(255,255,255,0.12)' : '1px solid var(--border)',
-              boxShadow: selectedToAdd ? '0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)' : 'none',
+              border: selectedToAdd ? 'none' : '1px solid var(--border)',
+              borderBottom: selectedToAdd ? '1px solid rgba(255,255,255,0.18)' : '1px solid var(--border)',
+              boxShadow: selectedToAdd ? '0 2px 16px rgba(84,105,212,0.45)' : 'none',
               borderRadius:7, fontSize:13.5, fontWeight:600,
               cursor: selectedToAdd ? 'pointer' : 'default',
               display:'flex', alignItems:'center', gap:7,
@@ -464,6 +520,132 @@ export default function BookmakersPage() {
         </div>
         {inactiveBookies.length === 0 && (
           <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:10 }}>Alle bookmakers zijn al toegevoegd.</p>
+        )}
+
+        {/* — Divider — */}
+        <div style={{ margin:'20px -24px', borderTop:'1px solid var(--border)' }} />
+
+        {/* — Deposits + Withdrawals — */}
+        <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Deposits + Withdrawals</h2>
+
+        <div style={{ display:'flex', gap:8, flexWrap:'wrap', alignItems:'flex-end' }}>
+          {/* Bookmaker select */}
+          <div style={{ position:'relative', flex:'0 0 160px' }}>
+            <select
+              value={txBookie}
+              onChange={e => setTxBookie(e.target.value)}
+              style={{ width:'100%', padding:'9px 30px 9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color: txBookie ? 'var(--text-1)' : 'var(--text-4)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer' }}
+            >
+              <option value="">Bookmaker...</option>
+              {activeBookies.map(naam => <option key={naam} value={naam}>{naam}</option>)}
+            </select>
+            <svg style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', pointerEvents:'none', color:'var(--text-3)' }} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+
+          {/* Type toggle */}
+          <div style={{ display:'flex', border:'1px solid var(--border)', borderRadius:7, overflow:'hidden', flexShrink:0 }}>
+            {[
+              { val:'deposit',    label:'Storting' },
+              { val:'withdrawal', label:'Opname'   },
+            ].map(opt => (
+              <button
+                key={opt.val}
+                onClick={() => setTxType(opt.val)}
+                style={{
+                  padding:'8px 14px', fontSize:13, fontWeight:600, border:'none', cursor:'pointer',
+                  background: txType === opt.val
+                    ? (opt.val === 'deposit' ? 'rgba(52,211,153,0.15)' : 'rgba(251,113,133,0.15)')
+                    : 'var(--bg-input)',
+                  color: txType === opt.val
+                    ? (opt.val === 'deposit' ? 'var(--color-win)' : 'var(--color-loss)')
+                    : 'var(--text-3)',
+                  transition:'all 0.12s',
+                }}
+              >{opt.label}</button>
+            ))}
+          </div>
+
+          {/* Amount */}
+          <div style={{ position:'relative', flex:'0 0 130px' }}>
+            <span style={{ position:'absolute', left:9, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13, pointerEvents:'none' }}>€</span>
+            <input
+              type="number" min="0.01" step="0.01"
+              placeholder="0.00"
+              value={txAmount}
+              onChange={e => setTxAmount(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && addTransaction()}
+              style={{ width:'100%', padding:'9px 10px 9px 24px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)' }}
+            />
+          </div>
+
+          {/* Date */}
+          <input
+            type="date"
+            value={txDate}
+            onChange={e => setTxDate(e.target.value)}
+            style={{ padding:'9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)', flex:'0 0 150px' }}
+          />
+
+          {/* Submit */}
+          <button
+            onClick={addTransaction}
+            disabled={txLoading || !txBookie || !txAmount}
+            style={{
+              padding:'9px 18px', fontSize:13, fontWeight:600,
+              background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : txType === 'deposit'
+                ? 'linear-gradient(135deg, #34d399 0%, #059669 100%)'
+                : 'linear-gradient(135deg, #fb7185 0%, #e11d48 100%)',
+              color: (!txBookie || !txAmount) ? 'var(--text-4)' : '#fff',
+              border: 'none',
+              borderBottom: (!txBookie || !txAmount) ? '1px solid var(--border)' : txType === 'deposit'
+                ? '1px solid rgba(255,255,255,0.2)'
+                : '1px solid rgba(255,255,255,0.2)',
+              boxShadow: (!txBookie || !txAmount) ? 'none' : '0 2px 12px rgba(0,0,0,0.2)',
+              borderRadius:7, cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
+              display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Registreren
+          </button>
+        </div>
+
+        {/* Transaction history */}
+        {transactions.length > 0 && (
+          <div style={{ marginTop:16, display:'flex', flexDirection:'column', gap:2 }}>
+            <p style={{ fontSize:11, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:6 }}>Recente transacties</p>
+            {[...transactions].reverse().slice(0, 8).map(tx => {
+              const bmNaam = dbBookmakers.find(b => b.id === tx.bookmaker_id)?.naam || '—';
+              const isDeposit = tx.type === 'deposit';
+              return (
+                <div key={tx.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 10px', borderRadius:7, backgroundColor:'var(--bg-subtle)' }}>
+                  <span style={{ fontSize:12, fontWeight:700, color: isDeposit ? 'var(--color-win)' : 'var(--color-loss)', width:76, flexShrink:0 }}>
+                    {isDeposit ? '+' : '-'}€{Number(tx.amount).toFixed(2)}
+                  </span>
+                  <span style={{ fontSize:12, fontWeight:600, color:'var(--text-2)', flex:1 }}>{bmNaam}</span>
+                  <span style={{ fontSize:11.5, color:'var(--text-4)', flexShrink:0 }}>
+                    {new Date(tx.datum).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' })}
+                  </span>
+                  <span style={{ fontSize:11, color:'var(--text-4)', flexShrink:0, fontWeight:500 }}>
+                    {isDeposit ? 'Storting' : 'Opname'}
+                  </span>
+                  <button
+                    onClick={() => deleteTransaction(tx.id)}
+                    title="Verwijder"
+                    style={{ background:'none', border:'none', cursor:'pointer', color:'var(--border)', padding:'2px 4px', flexShrink:0, lineHeight:1 }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-loss)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--border)'}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {activeBookies.length === 0 && (
+          <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:8 }}>Voeg eerst een bookmaker toe om deposits/withdrawals te registreren.</p>
         )}
       </div>
 
@@ -479,7 +661,8 @@ export default function BookmakersPage() {
             const cfg            = getConfig(naam);
             const stats          = pnlPerBookie[naam] || { pnl:0, bets:0, gewonnen:0, verloren:0 };
             const lopend         = lopendPerBookie[naam] || 0;
-            const currentBalance = cfg.startBalance + stats.pnl;
+            const netTx          = netTxPerBookie[naam] || 0;
+            const currentBalance = cfg.startBalance + stats.pnl + netTx;
             const isEditing      = naam in editBalance;
             const color          = bookieColor(naam, activeBookies);
 
@@ -551,6 +734,16 @@ export default function BookmakersPage() {
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>P&L bets</p>
                     <span style={{ fontSize:15, fontWeight:700, color: stats.pnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>{fmtPnl(stats.pnl)}</span>
                   </div>
+
+                  {/* Net deposits */}
+                  {netTx !== 0 && (
+                    <div style={{ flex:'0 0 110px' }}>
+                      <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Deposits</p>
+                      <span style={{ fontSize:14, fontWeight:700, color: netTx >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>
+                        {netTx >= 0 ? '+' : ''}€{netTx.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Current balance */}
                   <div style={{ flex:'0 0 130px' }}>

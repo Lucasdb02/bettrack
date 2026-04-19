@@ -87,7 +87,7 @@ function NavItem({ item, active }) {
           borderBottom: active ? '1px solid rgba(123,158,240,0.3)' : '1px solid transparent',
           borderLeft: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
           borderRight: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
-          boxShadow: active ? 'inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 8px rgba(0,0,0,0.2)' : 'none',
+          boxShadow: active ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
           textDecoration: 'none', transition: 'all 0.18s ease',
         }}
         onMouseEnter={(e) => {
