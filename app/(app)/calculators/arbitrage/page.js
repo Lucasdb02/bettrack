@@ -41,7 +41,7 @@ export default function ArbitragePage() {
   }, [odds, inzet]);
 
   return (
-    <div style={{maxWidth:900,margin:'0 auto',padding:'40px 32px'}}>
+    <div style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Arbitrage Calculator</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Bereken of er een risicoloze winstmogelijkheid bestaat tussen bookmakers.</p>

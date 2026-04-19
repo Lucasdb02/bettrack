@@ -58,8 +58,8 @@ const PRESETS = [
 ];
 
 export default function OddsConverterPage() {
-  const [active, setActive] = useState('decimal');
-  const [values, setValues] = useState({ decimal:'2.10', fractional:'', american:'', implied:'' });
+  const [active, setActive] = useState(null);
+  const [values, setValues] = useState({ decimal:'', fractional:'', american:'', implied:'' });
 
   const decimal = useMemo(() => {
     if (active==='decimal') return parseFloat(values.decimal)||null;
@@ -86,12 +86,12 @@ export default function OddsConverterPage() {
   };
 
   const loadPreset = (dec) => {
-    setActive('decimal');
+    setActive(null);
     setValues({ decimal:dec, fractional:'', american:'', implied:'' });
   };
 
   return (
-    <div style={{maxWidth:900,margin:'0 auto',padding:'40px 32px'}}>
+    <div style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Odds Converter</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Converteer odds tussen alle gangbare formaten. Typ in één veld om de andere direct te berekenen.</p>
