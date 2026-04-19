@@ -166,7 +166,7 @@ html.dark textarea {
   flex: 1;
   padding: 5px 4px;
   text-decoration: none;
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 500;
   color: #4a6885;
   transition: color 0.15s;
@@ -198,18 +198,18 @@ html.dark textarea {
     max-width: 100% !important;
   }
 
-  /* ── Dashboard chart cards: remove horizontal padding so chart fills full width ── */
+  /* ── Dashboard chart cards: horizontal padding aligned with header text ── */
   .dash-chart-section {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-  .dash-chart-hdr {
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
+  .dash-chart-hdr {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 
-  /* ── Statistieken 6-stat grid: 3 columns on mobile ── */
-  .stats-grid-6 { grid-template-columns: repeat(3, 1fr) !important; }
+  /* ── Statistieken 6-stat grid: 3 columns on mobile, no overflow ── */
+  .stats-grid-6 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 
   /* ── Responsive grids ── */
   .grid-4-to-2 { grid-template-columns: repeat(2, 1fr) !important; }

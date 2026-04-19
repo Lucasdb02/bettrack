@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useFmt } from '../../context/PreferencesContext';
@@ -235,6 +235,14 @@ export default function StatistiekenPage() {
   const { bets, loaded } = useBets();
   const { fmtPnl } = useFmt();
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   // filters
   const [fSport, setFSport] = useState('');
   const [fBookmaker, setFBookmaker] = useState('');
@@ -363,7 +371,7 @@ export default function StatistiekenPage() {
               <BarChart data={maandData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={52} />
+                <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 52} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
                 <Bar dataKey="pnl" maxBarSize={44}>
@@ -382,7 +390,7 @@ export default function StatistiekenPage() {
               <BarChart data={dagData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="dag" tick={{ fontSize: 11, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={46} />
+                <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 46} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
                 <Bar dataKey="pnl" maxBarSize={30}>
@@ -414,7 +422,7 @@ export default function StatistiekenPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
               <XAxis dataKey="i" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false}
                 label={{ value: 'Bet #', position: 'insideBottomRight', offset: -4, fontSize: 10.5, fill: 'var(--text-4)' }} />
-              <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={55} />
+              <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} />
               <Tooltip content={<Tip />} cursor={{ stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
               <Line type="monotone" dataKey="pnl" stroke={curveColor} strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0, fill: curveColor }} />
@@ -433,7 +441,7 @@ export default function StatistiekenPage() {
               <BarChart data={oddsData} margin={{ top: 4, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={50} />
+                <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 50} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
                 <Bar dataKey="pnl" name="P&L" maxBarSize={44}>

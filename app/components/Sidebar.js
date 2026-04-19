@@ -279,7 +279,7 @@ export default function Sidebar() {
 
     {/* Mobile bottom navigation */}
     <nav className="mobile-bottom-nav">
-      {mainNav.filter(item => item.href !== '/bets/new').map((item) => (
+      {[...mainNav.filter(item => item.href !== '/bets/new'), ...bookmakerNav].map((item) => (
         <Link key={item.href} href={item.href} className={`mobile-nav-item${isActive(item.href) ? ' active' : ''}`}>
           {item.icon}
           <span>{item.label.replace('Bets Overzicht', 'Overzicht').replace('Maandoverzicht', 'Kalender')}</span>

@@ -744,7 +744,7 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                   <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
-                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 42 : 55} mirror={isMobile}/>
+                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile}/>
                   <Tooltip
                     content={() => null}
                     cursor={{ stroke: 'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }}
@@ -766,7 +766,7 @@ export default function Dashboard() {
               <BarChart data={stackedData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%" barGap={2}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                 <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
-                <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 42 : 48} mirror={isMobile}/>
+                <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 48} mirror={isMobile}/>
                 <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                 <Legend content={<BookieLegend/>}/>
@@ -943,7 +943,7 @@ export default function Dashboard() {
           <h2 style={{fontSize:15,fontWeight:600,color:'var(--text-1)'}}>Recente Bets</h2>
           <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
         </div>
-        <table style={{width:'100%',borderCollapse:'collapse'}}>
+        <table className="bets-table-desktop" style={{width:'100%',borderCollapse:'collapse'}}>
           <thead><tr>{['Datum','Wedstrijd','Selectie','Bookmaker','Odds','Inzet','Uitkomst','P&L'].map(h=><th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
           <tbody>
             {recent.map(bet=>{
@@ -962,6 +962,36 @@ export default function Dashboard() {
             {recent.length===0&&<tr><td colSpan={7} style={{padding:'32px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</td></tr>}
           </tbody>
         </table>
+        <div className="bets-cards-mobile" style={{padding:'0 12px 12px'}}>
+          {recent.map(bet=>{
+            const w=berekenWinst(bet.uitkomst,Number(bet.odds),Number(bet.inzet));
+            return (
+              <div key={bet.id} className="bet-card">
+                <div className="bet-card-top">
+                  <div className="bet-card-meta">
+                    <span style={{fontSize:11,color:'var(--text-4)'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}</span>
+                    <UitkomstBadge u={bet.uitkomst}/>
+                  </div>
+                </div>
+                <div className="bet-card-match">{bet.wedstrijd}</div>
+                <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                  {bet.markt&&<span className="bet-card-market">{bet.markt}</span>}
+                  {bet.markt&&bet.selectie&&<span className="bet-card-market" style={{color:'var(--border)'}}>·</span>}
+                  {bet.selectie&&<span className="bet-card-selection">{bet.selectie}</span>}
+                </div>
+                <div className="bet-card-numbers">
+                  <div className="bet-card-num-cell"><span className="bet-card-num-label">Odds</span><span className="bet-card-num-value">{Number(bet.odds).toFixed(2)}</span></div>
+                  <div className="bet-card-num-cell"><span className="bet-card-num-label">Inzet</span><span className="bet-card-num-value">€{Number(bet.inzet).toFixed(2)}</span></div>
+                  <div className="bet-card-num-cell"><span className="bet-card-num-label">P&L</span><span className="bet-card-num-value" style={{color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)'}}>{bet.uitkomst==='lopend'?'—':fmtPnl(w)}</span></div>
+                </div>
+                <div className="bet-card-bottom">
+                  <div className="bet-card-bookmaker"><BookmakerIcon naam={bet.bookmaker} size={14}/>{bet.bookmaker}</div>
+                </div>
+              </div>
+            );
+          })}
+          {recent.length===0&&<p style={{padding:'24px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</p>}
+        </div>
       </div>
     </div>
   );

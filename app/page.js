@@ -7,6 +7,24 @@ function scrollTo(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+/* ── Catmull-Rom → cubic Bezier SVG path ── */
+function mkSmoothPath(pts) {
+  const t = 0.3;
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const cp1x = (p1[0] + (p2[0] - p0[0]) * t).toFixed(1);
+    const cp1y = (p1[1] + (p2[1] - p0[1]) * t).toFixed(1);
+    const cp2x = (p2[0] - (p3[0] - p1[0]) * t).toFixed(1);
+    const cp2y = (p2[1] - (p3[1] - p1[1]) * t).toFixed(1);
+    d += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+
 /* ── Sticky header ── */
 function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -207,19 +225,23 @@ function Hero() {
                   <p style={{ fontSize: 9, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
                   <span style={{ fontSize: 8.5, color: '#34D399', fontWeight: 600 }}>+€847 dit jaar</span>
                 </div>
-                <svg viewBox="0 0 440 64" style={{ width: '100%', height: 48 }}>
-                  <defs>
-                    <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#7b9ef0" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="#7b9ef0" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M0,60 L44,56 L88,50 L132,54 L176,38 L220,30 L264,34 L308,20 L352,12 L396,6 L440,3" fill="none" stroke="#7b9ef0" strokeWidth="1.8" strokeLinejoin="round" />
-                  <path d="M0,60 L44,56 L88,50 L132,54 L176,38 L220,30 L264,34 L308,20 L352,12 L396,6 L440,3 L440,64 L0,64 Z" fill="url(#heroGrad)" />
-                  <circle cx="352" cy="12" r="2.5" fill="#7b9ef0" />
-                  <circle cx="396" cy="6" r="2.5" fill="#7b9ef0" />
-                  <circle cx="440" cy="3" r="3" fill="#7b9ef0" />
-                </svg>
+                {(() => {
+                  const pts = [[0,60],[44,56],[88,50],[132,54],[176,38],[220,30],[264,34],[308,20],[352,12],[396,6],[440,3]];
+                  const line = mkSmoothPath(pts);
+                  const area = line + ' L440,64 L0,64 Z';
+                  return (
+                    <svg viewBox="0 0 440 64" preserveAspectRatio="none" style={{ width: '100%', height: 48 }}>
+                      <defs>
+                        <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#5469d4" stopOpacity="0.18" />
+                          <stop offset="95%" stopColor="#5469d4" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path d={area} fill="url(#heroGrad)" stroke="none" />
+                      <path d={line} fill="none" stroke="#5469d4" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+                    </svg>
+                  );
+                })()}
               </div>
 
               {/* Recent bets */}
@@ -305,19 +327,23 @@ function AppShowcase() {
                   <span style={{ fontSize: 8.5, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</span>
                   <span style={{ fontSize: 8, color: '#34D399', fontWeight: 700 }}>+€847 YTD</span>
                 </div>
-                <svg viewBox="0 -5 380 61" preserveAspectRatio="none" style={{ width: '100%', height: 42 }}>
-                  <defs>
-                    <linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#7b9ef0" stopOpacity="0.28" />
-                      <stop offset="100%" stopColor="#7b9ef0" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M0,52 L38,47 L76,41 L114,45 L152,33 L190,26 L228,30 L266,18 L304,10 L342,5 L380,2" fill="none" stroke="#7b9ef0" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
-                  <path d="M0,52 L38,47 L76,41 L114,45 L152,33 L190,26 L228,30 L266,18 L304,10 L342,5 L380,2 L380,56 L0,56 Z" fill="url(#dashGrad)" />
-                  <circle cx="304" cy="10" r="2.5" fill="#7b9ef0" />
-                  <circle cx="342" cy="5" r="2.5" fill="#7b9ef0" />
-                  <circle cx="380" cy="2" r="3" fill="#7b9ef0" />
-                </svg>
+                {(() => {
+                  const pts = [[0,52],[38,47],[76,41],[114,45],[152,33],[190,26],[228,30],[266,18],[304,10],[342,5],[380,2]];
+                  const line = mkSmoothPath(pts);
+                  const area = line + ' L380,56 L0,56 Z';
+                  return (
+                    <svg viewBox="0 0 380 56" preserveAspectRatio="none" style={{ width: '100%', height: 42 }}>
+                      <defs>
+                        <linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#5469d4" stopOpacity="0.18" />
+                          <stop offset="95%" stopColor="#5469d4" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path d={area} fill="url(#dashGrad)" stroke="none" />
+                      <path d={line} fill="none" stroke="#5469d4" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+                    </svg>
+                  );
+                })()}
               </div>
             </div>
           </div>

@@ -35,28 +35,46 @@ function MiniBarChart() {
   );
 }
 
+/* ── Catmull-Rom → cubic Bezier SVG path ── */
+function mkSmoothPath(pts) {
+  const t = 0.3;
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const cp1x = (p1[0] + (p2[0] - p0[0]) * t).toFixed(1);
+    const cp1y = (p1[1] + (p2[1] - p0[1]) * t).toFixed(1);
+    const cp2x = (p2[0] - (p3[0] - p1[0]) * t).toFixed(1);
+    const cp2y = (p2[1] - (p3[1] - p1[1]) * t).toFixed(1);
+    d += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+
 /* ── Mini line chart ── */
 function MiniLineChart() {
-  const points = [20, 28, 22, 35, 30, 42, 38, 50, 45, 58, 52, 65, 70];
-  const max = Math.max(...points);
-  const min = Math.min(...points);
+  const values = [20, 28, 22, 35, 30, 42, 38, 50, 45, 58, 52, 65, 70];
+  const max = Math.max(...values);
+  const min = Math.min(...values);
   const w = 200, h = 40, pad = 3;
-  const pts = points.map((p, i) => {
-    const x = (i / (points.length - 1)) * w;
-    const y = pad + (h - pad) - ((p - min) / (max - min)) * (h - pad);
-    return `${x},${y}`;
-  }).join(' ');
-  const areaBottom = `${w},${h + pad} 0,${h + pad}`;
+  const pts = values.map((p, i) => [
+    (i / (values.length - 1)) * w,
+    pad + (h - pad) - ((p - min) / (max - min)) * (h - pad),
+  ]);
+  const line = mkSmoothPath(pts);
+  const area = line + ` L${w},${h + pad} L0,${h + pad} Z`;
   return (
     <svg width="100%" height="44" viewBox={`0 0 ${w} ${h + pad}`} preserveAspectRatio="none">
       <defs>
-        <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#34D399" stopOpacity="0.3"/>
-          <stop offset="100%" stopColor="#34D399" stopOpacity="0"/>
+        <linearGradient id="loginLineGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#5469d4" stopOpacity="0.18"/>
+          <stop offset="95%" stopColor="#5469d4" stopOpacity="0"/>
         </linearGradient>
       </defs>
-      <polyline points={`${pts} ${areaBottom}`} fill="url(#lineGrad)" stroke="none"/>
-      <polyline points={pts} fill="none" stroke="#34D399" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+      <path d={area} fill="url(#loginLineGrad)" stroke="none"/>
+      <path d={line} fill="none" stroke="#5469d4" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
     </svg>
   );
 }

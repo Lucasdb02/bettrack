@@ -118,13 +118,20 @@ function DagModal({ datum, bets, pnl, onClose }) {
 
 export default function MaandoverzichtPage() {
   const {bets,loaded}=useBets();
-  const {fmtPnl} = useFmt();
+  const {fmtPnl,fmtAmt} = useFmt();
   const now=new Date();
   const [jaar,setJaar]=useState(now.getFullYear());
   const [maand,setMaand]=useState(now.getMonth());
   const [geselecteerd,setGeselecteerd]=useState(null);
   const [mounted,setMounted]=useState(false);
+  const [isMobile,setIsMobile]=useState(false);
   useEffect(()=>setMounted(true),[]);
+  useEffect(()=>{
+    const check=()=>setIsMobile(window.innerWidth<768);
+    check();
+    window.addEventListener('resize',check);
+    return ()=>window.removeEventListener('resize',check);
+  },[]);
 
   const dagData=useMemo(()=>{
     const map={};
@@ -191,7 +198,7 @@ export default function MaandoverzichtPage() {
 
       <div className="cal-stats-grid grid gap-4 mb-7" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
         {[
-          {l:'Maand P&L',v:fmtPnl(maandStats.totalPnl),c:maandStats.totalPnl>=0?'var(--color-win)':'var(--color-loss)'},
+          {l:'Maand P&L',v:isMobile?fmtAmt(maandStats.totalPnl):fmtPnl(maandStats.totalPnl),c:maandStats.totalPnl>=0?'var(--color-win)':'var(--color-loss)'},
           {l:'Bets',v:maandStats.all.length,c:'var(--text-1)'},
           {l:'Win Rate',v:`${(maandStats.won.length+maandStats.lost.length)>0?((maandStats.won.length/(maandStats.won.length+maandStats.lost.length))*100).toFixed(0):0}%`,c:'var(--text-1)'},
           {l:'Winstdagen',v:maandStats.winstDagen,c:'var(--color-win)'},
@@ -268,7 +275,7 @@ export default function MaandoverzichtPage() {
             <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false}/>
               <XAxis dataKey="dag" tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false}/>
-              <YAxis tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={50}/>
+              <YAxis tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:50} mirror={isMobile}/>
               <Tooltip content={<BarTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
               <Bar dataKey="pnl" maxBarSize={28}>{barData.map((e,i)=><Cell key={i} fill={e.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}</Bar>
             </BarChart>
