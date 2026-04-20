@@ -3,6 +3,7 @@ import { BetsProvider } from "../context/BetsContext";
 import { PreferencesProvider } from "../context/PreferencesContext";
 import { AppShell } from "../components/AppShell";
 import SessionTimeout from "../components/SessionTimeout";
+import AppMain from "../components/AppMain";
 
 export default function AppLayout({ children }) {
   return (
@@ -11,9 +12,9 @@ export default function AppLayout({ children }) {
         <AppShell>
           <SessionTimeout />
           <Sidebar />
-          <main className="flex-1 overflow-auto app-main">
+          <AppMain>
             {children}
-          </main>
+          </AppMain>
         </AppShell>
       </BetsProvider>
     </PreferencesProvider>

@@ -485,7 +485,7 @@ export default function BookmakersPage() {
 
         {/* — Bookmaker toevoegen — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Bookmaker toevoegen</h2>
-        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+        <div className="bm-add-row" style={{ display:'flex', gap:10, alignItems:'center' }}>
           <div style={{ position:'relative', flex:1, maxWidth:320 }}>
             <select
               value={selectedToAdd}
@@ -528,9 +528,9 @@ export default function BookmakersPage() {
         {/* — Deposits + Withdrawals — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Deposits + Withdrawals</h2>
 
-        <div style={{ display:'flex', gap:8, flexWrap:'wrap', alignItems:'flex-end' }}>
+        <div className="bm-tx-row" style={{ display:'flex', gap:8, flexWrap:'wrap', alignItems:'flex-end' }}>
           {/* Bookmaker select */}
-          <div style={{ position:'relative', flex:'0 0 160px' }}>
+          <div className="bm-tx-bookie" style={{ position:'relative', flex:'0 0 160px' }}>
             <select
               value={txBookie}
               onChange={e => setTxBookie(e.target.value)}
@@ -543,7 +543,7 @@ export default function BookmakersPage() {
           </div>
 
           {/* Type toggle */}
-          <div style={{ display:'flex', border:'1px solid var(--border)', borderRadius:7, overflow:'hidden', flexShrink:0 }}>
+          <div className="bm-tx-type" style={{ display:'flex', border:'1px solid var(--border)', borderRadius:7, overflow:'hidden', flexShrink:0 }}>
             {[
               { val:'deposit',    label:'Storting' },
               { val:'withdrawal', label:'Opname'   },
@@ -566,7 +566,7 @@ export default function BookmakersPage() {
           </div>
 
           {/* Amount */}
-          <div style={{ position:'relative', flex:'0 0 130px' }}>
+          <div className="bm-tx-amount" style={{ position:'relative', flex:'0 0 130px' }}>
             <span style={{ position:'absolute', left:9, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13, pointerEvents:'none' }}>€</span>
             <input
               type="number" min="0.01" step="0.01"
@@ -583,11 +583,13 @@ export default function BookmakersPage() {
             type="date"
             value={txDate}
             onChange={e => setTxDate(e.target.value)}
+            className="bm-tx-date"
             style={{ padding:'9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)', flex:'0 0 150px' }}
           />
 
           {/* Submit */}
           <button
+            className="bm-tx-submit"
             onClick={addTransaction}
             disabled={txLoading || !txBookie || !txAmount}
             style={{
@@ -672,18 +674,18 @@ export default function BookmakersPage() {
               : null;
 
             return (
-              <div key={naam} style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'16px 20px' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'nowrap', minWidth:0 }}>
+              <div key={naam} className="bm-card" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'16px 20px' }}>
+                <div className="bm-card-inner" style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'nowrap', minWidth:0 }}>
 
                   {/* Color dot + icon + name */}
-                  <div style={{ display:'flex', alignItems:'center', gap:8, flex:'0 0 150px', minWidth:0 }}>
+                  <div className="bm-name-section" style={{ display:'flex', alignItems:'center', gap:8, flex:'0 0 150px', minWidth:0 }}>
                     <div style={{ width:10, height:10, borderRadius:'50%', backgroundColor:color, flexShrink:0 }}/>
                     <BookmakerIcon naam={naam} size={20}/>
                     <span style={{ fontSize:14, fontWeight:700, color:'var(--text-1)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{naam}</span>
                   </div>
 
                   {/* Startdatum */}
-                  <div style={{ flex:'0 0 148px' }}>
+                  <div className="bm-field-date" style={{ flex:'0 0 148px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Startdatum</p>
                     {isEditingDate ? (
                       <div style={{ display:'flex', gap:5, alignItems:'center' }}>
@@ -705,7 +707,7 @@ export default function BookmakersPage() {
                   </div>
 
                   {/* Start balance */}
-                  <div style={{ flex:'0 0 155px' }}>
+                  <div className="bm-field-startbal" style={{ flex:'0 0 155px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Startbalance</p>
                     {isEditing ? (
                       <div style={{ display:'flex', gap:5, alignItems:'center' }}>
@@ -730,19 +732,19 @@ export default function BookmakersPage() {
                   </div>
 
                   {/* P&L */}
-                  <div style={{ flex:'0 0 100px' }}>
+                  <div className="bm-field-pnl" style={{ flex:'0 0 100px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>P&L bets</p>
                     <span style={{ fontSize:15, fontWeight:700, color: stats.pnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>{fmtPnl(stats.pnl)}</span>
                   </div>
 
                   {/* Current balance */}
-                  <div style={{ flex:'0 0 130px' }}>
+                  <div className="bm-field-curbal" style={{ flex:'0 0 130px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Huidige Balance</p>
                     <span style={{ fontSize:15, fontWeight:800, color: currentBalance >= 0 ? 'var(--text-1)' : 'var(--color-loss)' }}>€{currentBalance.toFixed(2)}</span>
                   </div>
 
                   {/* Bet stats */}
-                  <div style={{ flex:'0 0 100px' }}>
+                  <div className="bm-field-bets" style={{ flex:'0 0 100px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Bets</p>
                     <div style={{ fontSize:13, color:'var(--text-2)', whiteSpace:'nowrap' }}>{stats.bets} settled</div>
                     {stats.bets > 0 && <div style={{ display:'flex', gap:5, marginTop:2 }}><span style={{ fontSize:11.5, color:'var(--color-win)', fontWeight:600 }}>{stats.gewonnen}W</span><span style={{ fontSize:11.5, color:'var(--color-loss)', fontWeight:600 }}>{stats.verloren}V</span></div>}
@@ -750,14 +752,14 @@ export default function BookmakersPage() {
                   </div>
 
                   {/* Balance progress bar */}
-                  <div style={{ flex:1, minWidth:40 }}>
+                  <div className="bm-field-progress" style={{ flex:1, minWidth:40 }}>
                     <div style={{ height:6, backgroundColor:'var(--border)', borderRadius:99, overflow:'hidden' }}>
                       <div style={{ height:'100%', borderRadius:99, backgroundColor: stats.pnl >= 0 ? color : '#F43F5E', width:`${Math.min(cfg.startBalance > 0 ? Math.abs(stats.pnl/cfg.startBalance)*100 : 0, 100)}%`, transition:'width 0.4s ease' }}/>
                     </div>
                   </div>
 
                   {/* Remove */}
-                  <button onClick={() => removeBookmaker(naam)} title="Verwijder" style={{ background:'none', border:'none', cursor:'pointer', color:'var(--border)', padding:4, flexShrink:0 }}>
+                  <button className="bm-remove" onClick={() => removeBookmaker(naam)} title="Verwijder" style={{ background:'none', border:'none', cursor:'pointer', color:'var(--border)', padding:4, flexShrink:0 }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                   </button>
                 </div>

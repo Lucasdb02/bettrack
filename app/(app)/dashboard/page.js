@@ -845,10 +845,10 @@ export default function Dashboard() {
         <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Cumulatieve P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p></div>
         {bookLineData.length>1?(
           <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={bookLineData} margin={{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
+            <LineChart data={bookLineData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
               <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
-              <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={55}/>
+              <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:55} mirror={isMobile}/>
               <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
               <Legend content={<BookieLegend/>}/>
               {bookmakers.map((bk,i)=><Line key={bk} type="monotone" dataKey={bk} stroke={bookColor(bk,i)} strokeWidth={2} dot={false} activeDot={{r:4,stroke:'#fff',strokeWidth:2}}/>)}
@@ -863,10 +863,10 @@ export default function Dashboard() {
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
           {roiData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={roiData} layout="vertical" margin={{top:0,right:20,left:10,bottom:0}} tabIndex={-1}>
+              <BarChart data={roiData} layout="vertical" margin={isMobile?{top:0,right:8,left:0,bottom:0}:{top:0,right:20,left:10,bottom:0}} tabIndex={-1}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false}/>
                 <XAxis type="number" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`${v}%`}/>
-                <YAxis type="category" dataKey="bk" tick={(props) => <BookieYTick {...props} colorMap={Object.fromEntries(bookmakers.map((bk,i)=>[bk,bookColor(bk,i)]))}/>} axisLine={false} tickLine={false} width={96}/>
+                <YAxis type="category" dataKey="bk" tick={(props) => <BookieYTick {...props} colorMap={Object.fromEntries(bookmakers.map((bk,i)=>[bk,bookColor(bk,i)]))}/>} axisLine={false} tickLine={false} width={isMobile?72:96}/>
                 <Tooltip content={<ChartTip prefix="" suffix="%"/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                 <Bar dataKey="roi" name="ROI" radius={[0,4,4,0]} maxBarSize={22}>
                   {roiData.map((e,i)=><Cell key={i} fill={e.roi>=0?bookColor(e.bk,i):'#F43F5E'} fillOpacity={0.85}/>)}

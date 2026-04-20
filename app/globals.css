@@ -165,9 +165,7 @@ html.dark textarea {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 100;
-  background: linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%);
-  backdrop-filter: blur(20px) saturate(1.5);
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  background: #080D14;
   border-top: 1px solid rgba(255,255,255,0.07);
   padding: 6px 0 0;
   padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
@@ -220,8 +218,17 @@ html.dark textarea {
   .mobile-top-header { display: flex !important; }
   .mobile-bottom-nav { display: flex !important; }
   .app-main {
-    padding-top: calc(54px + env(safe-area-inset-top, 0px)) !important;
+    padding-top: 0 !important;
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .app-main.mobile-header-shown {
+    padding-top: calc(54px + env(safe-area-inset-top, 0px)) !important;
+  }
+  /* Touch-action for mobile header links */
+  .mobile-top-header a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
   }
 
   /* ── App page containers ── */
@@ -240,8 +247,8 @@ html.dark textarea {
     padding-right: 0 !important;
   }
 
-  /* ── Statistieken 6-stat grid: 3 columns on mobile, no overflow ── */
-  .stats-grid-6 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  /* ── Statistieken 6-stat grid: 2 columns on mobile, 3 rows ── */
+  .stats-grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 
   /* ── Responsive grids ── */
   .grid-4-to-2 { grid-template-columns: repeat(2, 1fr) !important; }
@@ -538,5 +545,104 @@ html.dark textarea {
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+}
+
+/* ═══════════════════════════════════════
+   BOOKMAKERS — Mobile Card View
+   ═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Active bookmaker cards: card-like layout */
+  .bm-card-inner {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+    row-gap: 10px !important;
+  }
+  .bm-name-section {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .bm-remove {
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    margin-left: 4px !important;
+  }
+  .bm-field-date,
+  .bm-field-startbal {
+    flex: 0 0 50% !important;
+    box-sizing: border-box !important;
+    padding-right: 8px !important;
+  }
+  .bm-field-pnl,
+  .bm-field-curbal {
+    flex: 0 0 50% !important;
+    box-sizing: border-box !important;
+    padding-right: 8px !important;
+  }
+  .bm-field-bets {
+    flex: 0 0 50% !important;
+    box-sizing: border-box !important;
+    padding-right: 8px !important;
+  }
+  .bm-field-progress {
+    flex: 0 0 100% !important;
+  }
+
+  /* Form: add bookmaker row → stacked */
+  .bm-add-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .bm-add-row > div:first-child {
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  .bm-add-row > button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Form: deposits/withdrawals → 2-column grid */
+  .bm-tx-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    align-items: end !important;
+  }
+  .bm-tx-bookie { grid-column: 1 / -1 !important; }
+  .bm-tx-type   { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-amount { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-date   { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-submit { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; justify-content: center; }
+
+  /* Compact form input sizes on mobile */
+  .bm-tx-row input,
+  .bm-tx-row select {
+    padding: 7px 10px !important;
+    font-size: 13px !important;
+  }
+  .bm-tx-type button {
+    padding: 7px 10px !important;
+    font-size: 12px !important;
+  }
+  .bm-add-row input,
+  .bm-add-row select {
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   STATISTIEKEN — Odds Range inner grid
+   ═══════════════════════════════════════ */
+.odds-range-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+@media (max-width: 768px) {
+  .odds-range-inner {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 }

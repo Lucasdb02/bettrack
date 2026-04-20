@@ -436,7 +436,7 @@ export default function StatistiekenPage() {
         <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px', marginBottom: 24 }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Odds Range Analyse</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>In welke odds bracket presteer je het best?</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
+          <div className="odds-range-inner">
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={oddsData} margin={{ top: 4, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
@@ -485,7 +485,7 @@ export default function StatistiekenPage() {
             <BarChart data={perSport} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" horizontal={false} />
               <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} />
-              <YAxis type="category" dataKey="key" tick={{ fontSize: 12, fill: 'var(--text-2)' }} axisLine={false} tickLine={false} width={90} tickFormatter={v => `${sportEmoji(v)} ${v}`} />
+              <YAxis type="category" dataKey="key" tick={{ fontSize: 12, fill: 'var(--text-2)' }} axisLine={false} tickLine={false} width={isMobile ? 60 : 90} tickFormatter={v => `${sportEmoji(v)} ${v}`} />
               <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine x={0} stroke="var(--border)" strokeWidth={1} />
               <Bar dataKey="totalWinst" maxBarSize={22}>

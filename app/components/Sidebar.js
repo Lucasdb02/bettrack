@@ -289,14 +289,14 @@ export default function Sidebar() {
         <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 15, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
       </div>
       <div className="flex items-center gap-2">
-        <Link href="/account" style={{ textDecoration: 'none' }}>
+        <Link href="/account" style={{ textDecoration: 'none', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}>
           <div style={{ width: 30, height: 30, borderRadius: 7, background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
           </div>
         </Link>
-        <Link href="https://www.trackmijnbets.nl/bets/new" style={{ textDecoration: 'none' }}>
+        <Link href="/bets/new" style={{ textDecoration: 'none', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}>
           <div style={{ width: 30, height: 30, borderRadius: 7, background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', border: '1px solid rgba(255,255,255,0.2)', flexShrink: 0, boxShadow: '0 2px 10px rgba(84,105,212,0.4)' }} className="flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>

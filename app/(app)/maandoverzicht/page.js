@@ -252,7 +252,7 @@ export default function MaandoverzichtPage() {
                 </div>
                 {hasBets&&(
                   <>
-                    <div className="cal-day-pnl" style={{fontSize:12.5,fontWeight:700,color:pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)',lineHeight:1.2}}>{pnl===0?'—':fmtPnl(pnl)}</div>
+                    <div className="cal-day-pnl" style={{fontSize:12.5,fontWeight:700,color:pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)',lineHeight:1.2}}>{pnl===0?'—':isMobile?`€${Math.abs(pnl).toFixed(2)}`:fmtPnl(pnl)}</div>
                     <div className="cal-day-count" style={{fontSize:10.5,color:'var(--text-4)',marginTop:2}}>{data.bets.length} bet{data.bets.length!==1?'s':''}</div>
                   </>
                 )}
