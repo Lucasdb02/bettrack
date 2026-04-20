@@ -651,12 +651,6 @@ export default function Dashboard() {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Bet Invoeren
         </Link>
-        {/* Account icoon — alleen mobiel */}
-        <Link href="/account" className="flex md:hidden" style={{ width:38, height:38, borderRadius:'50%', background:'rgba(84,105,212,0.2)', border:'1px solid rgba(123,158,240,0.3)', alignItems:'center', justifyContent:'center', textDecoration:'none', flexShrink:0 }}>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-        </Link>
       </div>
 
       {/* Filter bar */}
