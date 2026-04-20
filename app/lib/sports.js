@@ -1,7 +1,8 @@
 export const SPORT_EMOJIS = {
   'Voetbal':           '⚽',
   'Tennis':            '🎾',
-  'Basketball':        '🏀',
+  'Basketbal':         '🏀',
+  'Basketball':        '🏀',  // legacy alias
   'Hockey':            '🏒',
   'Formule 1':         '🏎️',
   'Wielrennen':        '🚴',
@@ -11,7 +12,7 @@ export const SPORT_EMOJIS = {
   'Overig':            '🎰',
 };
 
-export const SPORTEN = Object.keys(SPORT_EMOJIS);
+export const SPORTEN = ['Voetbal','Tennis','Basketbal','Hockey','Formule 1','Wielrennen','Darts','Snooker','American Football','Overig'];
 
 export function sportEmoji(sport) {
   return SPORT_EMOJIS[sport] || '🎰';

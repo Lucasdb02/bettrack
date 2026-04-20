@@ -646,3 +646,40 @@ html.dark textarea {
     gap: 16px !important;
   }
 }
+
+/* ═══════════════════════════════════════
+   BOOKMAKERS — Mobile: hide progress bar, X to top-right
+   ═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .bm-field-progress {
+    display: none !important;
+  }
+  .bm-card {
+    position: relative !important;
+  }
+  .bm-remove {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    margin-left: 0 !important;
+    align-self: auto !important;
+    color: var(--text-3) !important;
+    padding: 4px !important;
+  }
+  .bm-name-section {
+    padding-right: 32px !important;
+  }
+  .bm-tx-row {
+    align-items: center !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   DASHBOARD — Stat card icon mobile position
+   ═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .stat-card-icon {
+    margin-top: -6px !important;
+    margin-right: -6px !important;
+  }
+}

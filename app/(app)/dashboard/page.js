@@ -149,7 +149,7 @@ function StatCard({ label, value, sub, color, icon }) {
           <p style={{ fontSize:26, fontWeight:700, color:color||'var(--text-1)', lineHeight:1 }}>{value}</p>
           {sub && <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:6 }}>{sub}</p>}
         </div>
-        {icon && <div style={{ backgroundColor:'var(--bg-brand)', width:40, height:40, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
+        {icon && <div className="stat-card-icon" style={{ backgroundColor:'var(--bg-brand)', width:40, height:40, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
       </div>
     </div>
   );

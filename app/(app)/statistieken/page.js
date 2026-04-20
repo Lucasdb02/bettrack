@@ -170,7 +170,7 @@ function Tip({ active, payload, label }) {
 
 // ── GroepTabel ─────────────────────────────────────────────────────────────────
 
-function GroepTabel({ data, title, type }) {
+function GroepTabel({ data, title, type, isMobile }) {
   const { fmtPnl } = useFmt();
   return (
     <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', marginBottom: 24 }}>
@@ -194,7 +194,7 @@ function GroepTabel({ data, title, type }) {
                   : <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                       {type === 'bookmaker'
                         ? <BookmakerIcon naam={row.key} size={16} />
-                        : <span style={{ fontSize: 16, lineHeight: 1 }}>{sportEmoji(row.key)}</span>
+                        : (!isMobile || type !== 'markt') && <span style={{ fontSize: 16, lineHeight: 1 }}>{sportEmoji(row.key)}</span>
                       }
                       {row.key}
                     </div>
@@ -204,12 +204,16 @@ function GroepTabel({ data, title, type }) {
               <td style={{ padding: '11px 14px', fontSize: 13, color: 'var(--color-win)', fontWeight: 600 }}>{row.gewonnen}</td>
               <td style={{ padding: '11px 14px', fontSize: 13, color: 'var(--color-loss)', fontWeight: 600 }}>{row.verloren}</td>
               <td style={{ padding: '11px 14px', fontSize: 13 }}>
-                <div className="flex items-center gap-2">
-                  <div style={{ flex: 1, height: 5, backgroundColor: 'var(--border)', borderRadius: 99, overflow: 'hidden', minWidth: 50 }}>
-                    <div style={{ width: `${row.winRate}%`, height: '100%', backgroundColor: 'var(--brand)', borderRadius: 99 }} />
+                {isMobile ? (
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-1)' }}>{row.winRate}%</span>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div style={{ flex: 1, height: 5, backgroundColor: 'var(--border)', borderRadius: 99, overflow: 'hidden', minWidth: 50 }}>
+                      <div style={{ width: `${row.winRate}%`, height: '100%', backgroundColor: 'var(--brand)', borderRadius: 99 }} />
+                    </div>
+                    <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-1)', minWidth: 34 }}>{row.winRate}%</span>
                   </div>
-                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-1)', minWidth: 34 }}>{row.winRate}%</span>
-                </div>
+                )}
               </td>
               <td style={{ padding: '11px 14px', fontSize: 13, color: 'var(--text-2)' }}>€{row.totalInzet.toFixed(2)}</td>
               <td style={{ padding: '11px 14px', fontSize: 13, fontWeight: 700, color: row.totalWinst >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>{fmtPnl(row.totalWinst)}</td>
@@ -233,7 +237,7 @@ const iFilter = {
 
 export default function StatistiekenPage() {
   const { bets, loaded } = useBets();
-  const { fmtPnl } = useFmt();
+  const { fmtPnl, fmtAmt } = useFmt();
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -466,7 +470,7 @@ export default function StatistiekenPage() {
                       <td style={{ padding: '9px 10px', fontSize: 13, color: 'var(--text-2)', textAlign: 'right' }}>{row.bets}</td>
                       <td style={{ padding: '9px 10px', fontSize: 13, color: 'var(--text-2)', textAlign: 'right' }}>{wr}</td>
                       <td style={{ padding: '9px 10px', fontSize: 13, fontWeight: 600, color: row.roi >= 0 ? 'var(--color-win)' : 'var(--color-loss)', textAlign: 'right' }}>{row.roi >= 0 ? '+' : ''}{row.roi}%</td>
-                      <td style={{ padding: '9px 10px', fontSize: 13, fontWeight: 700, color: row.pnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)', textAlign: 'right' }}>{fmtPnl(row.pnl)}</td>
+                      <td style={{ padding: '9px 10px', fontSize: 13, fontWeight: 700, color: row.pnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)', textAlign: 'right' }}>{isMobile ? fmtAmt(Math.abs(row.pnl)) : fmtPnl(row.pnl)}</td>
                     </tr>
                   );
                 })}
@@ -497,10 +501,10 @@ export default function StatistiekenPage() {
       )}
 
       {/* Detail tables */}
-      {perSport.length     > 0 && <GroepTabel data={perSport}     title="Analyse per Sport"     type="sport" />}
-      {perBookmaker.length > 0 && <GroepTabel data={perBookmaker} title="Analyse per Bookmaker" type="bookmaker" />}
-      {perMarkt.length     > 0 && <GroepTabel data={perMarkt}     title="Analyse per Markt"     type="markt" />}
-      {perTag.length       > 0 && <GroepTabel data={perTag}       title="Analyse per Tag"       type="tag" />}
+      {perSport.length     > 0 && <GroepTabel data={perSport}     title="Analyse per Sport"     type="sport"     isMobile={isMobile} />}
+      {perBookmaker.length > 0 && <GroepTabel data={perBookmaker} title="Analyse per Bookmaker" type="bookmaker" isMobile={isMobile} />}
+      {perMarkt.length     > 0 && <GroepTabel data={perMarkt}     title="Analyse per Markt"     type="markt"     isMobile={isMobile} />}
+      {perTag.length       > 0 && <GroepTabel data={perTag}       title="Analyse per Tag"       type="tag"       isMobile={isMobile} />}
 
     </div>
   );
