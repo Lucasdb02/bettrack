@@ -277,6 +277,28 @@ export default function Sidebar() {
       </div>
     </aside>
 
+    {/* Mobile top header */}
+    <header className="mobile-top-header">
+      <div className="flex items-center gap-2.5">
+        <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+        </div>
+        <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 15, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
+      </div>
+      <Link
+        href="/account"
+        style={{ textDecoration: 'none' }}
+      >
+        <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+      </Link>
+    </header>
+
     {/* Mobile bottom navigation */}
     <nav className="mobile-bottom-nav">
       {[...mainNav.filter(item => item.href !== '/bets/new'), ...bookmakerNav].map((item) => (

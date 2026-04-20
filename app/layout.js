@@ -12,6 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="nl" className="h-full scroll-smooth" suppressHydrationWarning>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="h-full antialiased" suppressHydrationWarning>
