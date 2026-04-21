@@ -45,11 +45,11 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
   return createPortal(
     <div
       onClick={onClose}
-      style={{position:'fixed',inset:0,zIndex:10000,backgroundColor:'rgba(0,0,0,0.55)',display:'flex',alignItems:isMobile?'flex-end':'center',justifyContent:'center',padding:isMobile?0:16}}
+      style={{position:'fixed',inset:0,zIndex:10000,backgroundColor:'rgba(0,0,0,0.55)',display:'flex',alignItems:'center',justifyContent:'center',padding:isMobile?12:24}}
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:isMobile?'16px 16px 0 0':12,width:'100%',maxWidth:isMobile?'100%':960,maxHeight:isMobile?'85vh':'80vh',display:'flex',flexDirection:'column',boxShadow:'0 24px 64px rgba(0,0,0,0.4)'}}
+        style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:12,width:'100%',maxWidth:isMobile?480:960,maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'0 24px 64px rgba(0,0,0,0.4)'}}
       >
         {/* Header */}
         <div style={{padding:'20px 24px',borderBottom:`1px solid ${border}`,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
@@ -235,11 +235,11 @@ export default function MaandoverzichtPage() {
       <div className="flex items-center justify-between mb-7 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Maandoverzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>Dagelijkse analyse van je bettingresultaten</p></div>
         <div className="flex items-center" style={{gap:isMobile?4:12}}>
-          <button onClick={prev} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:8,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
+          <button onClick={prev} style={{width:34,height:34,border:isMobile?'none':'1px solid var(--border)',borderRadius:8,backgroundColor:isMobile?'transparent':'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <span style={{fontSize:15,fontWeight:700,color:'var(--text-1)',minWidth:isMobile?'auto':140,textAlign:'center',whiteSpace:'nowrap'}}>{MAANDEN[maand]} {jaar}</span>
-          <button onClick={next} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:8,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
+          <button onClick={next} style={{width:34,height:34,border:isMobile?'none':'1px solid var(--border)',borderRadius:8,backgroundColor:isMobile?'transparent':'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>

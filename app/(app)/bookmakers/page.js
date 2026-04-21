@@ -569,7 +569,7 @@ export default function BookmakersPage() {
 
           {/* Amount */}
           <div className="bm-tx-amount" style={{ position:'relative', flex:'0 0 130px' }}>
-            <span style={{ position:'absolute', left:9, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13, pointerEvents:'none' }}>€</span>
+            <span className="bm-tx-euro" style={{ position:'absolute', left:9, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13, pointerEvents:'none', zIndex:1 }}>€</span>
             <input
               type="number" min="0.01" step="0.01"
               placeholder="0.00"
@@ -618,14 +618,14 @@ export default function BookmakersPage() {
               const isDeposit = tx.type === 'deposit';
               return (
                 <div key={tx.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 10px', borderRadius:7, backgroundColor:'var(--bg-subtle)' }}>
-                  <span style={{ fontSize:12, fontWeight:700, color: isDeposit ? 'var(--color-win)' : 'var(--color-loss)', width:76, flexShrink:0 }}>
+                  <span style={{ fontSize:12, fontWeight:700, color: isDeposit ? 'var(--color-win)' : 'var(--color-loss)', width:76, flexShrink:0, lineHeight:1 }}>
                     {isDeposit ? '+' : '-'}€{Number(tx.amount).toFixed(2)}
                   </span>
-                  <span style={{ fontSize:12, fontWeight:600, color:'var(--text-2)', flex:1 }}>{bmNaam}</span>
-                  <span style={{ fontSize:11.5, color:'var(--text-4)', flexShrink:0 }}>
+                  <span style={{ fontSize:12, fontWeight:600, color:'var(--text-2)', flex:1, lineHeight:1 }}>{bmNaam}</span>
+                  <span style={{ fontSize:11.5, color:'var(--text-4)', flexShrink:0, lineHeight:1 }}>
                     {new Date(tx.datum).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' })}
                   </span>
-                  <span style={{ fontSize:11, color:'var(--text-4)', flexShrink:0, fontWeight:500 }}>
+                  <span style={{ fontSize:11, color:'var(--text-4)', flexShrink:0, fontWeight:500, lineHeight:1 }}>
                     {isDeposit ? 'Storting' : 'Opname'}
                   </span>
                   <button

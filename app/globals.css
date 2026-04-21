@@ -619,9 +619,17 @@ html.dark textarea {
     padding: 7px 10px !important;
     font-size: 13px !important;
   }
+  .bm-tx-amount input {
+    padding-left: 24px !important;
+  }
   .bm-tx-type button {
     padding: 7px 10px !important;
     font-size: 12px !important;
+    flex: 1 !important;
+  }
+  .bm-tx-submit {
+    padding: 7px 10px !important;
+    font-size: 13px !important;
   }
   .bm-add-row input,
   .bm-add-row select {
