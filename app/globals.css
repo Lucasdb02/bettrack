@@ -1,144 +1,317 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ── Light mode (default) ── */
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS — Light mode (default)
+   ══════════════════════════════════════════════ */
 :root {
-  --color-win:  #34D399;
-  --color-loss: #FB7185;
-  --bg-page:    #f6f9fc;
-  --bg-card:    #ffffff;
-  --bg-subtle:  #f9fafb;
-  --bg-input:   #f9fafb;
-  --bg-brand:   #f0f4ff;
-  --border:         #e5e7eb;
-  --border-subtle:  #f3f4f6;
-  --text-1:  #1a1f36;
-  --text-2:  #374151;
-  --text-3:  #6b7280;
-  --text-4:  #9ca3af;
-  --badge-bg:    #f3f4f6;
-  --badge-color: #374151;
-  --brand:       #5469d4;
-  --brand-soft:  #c7d2f8;
+  /* Status */
+  --color-win:  #059669;
+  --color-loss: #e11d48;
+
+  /* Surfaces */
+  --bg-page:        #f8fafc;
+  --bg-card:        #ffffff;
+  --bg-subtle:      #f1f5f9;
+  --bg-input:       #ffffff;
+  --bg-brand:       #eef2ff;
+  --bg-brand-hover: #e0e7ff;
+
+  /* Borders */
+  --border:         #e2e8f0;
+  --border-subtle:  #f1f5f9;
+  --border-strong:  #cbd5e1;
+
+  /* Text */
+  --text-1:  #0f172a;
+  --text-2:  #334155;
+  --text-3:  #64748b;
+  --text-4:  #94a3b8;
+
+  /* Badges */
+  --badge-bg:    #f1f5f9;
+  --badge-color: #475569;
+
+  /* Brand — indigo */
+  --brand:       #6366f1;
+  --brand-soft:  #c7d2fe;
+  --brand-hover: #4f46e5;
+
+  /* Misc */
   --tooltip-bg:  #ffffff;
+  --row-hover:   #f8fafc;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.10), 0 4px 10px rgba(0,0,0,0.05);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.06);
+
+  /* Sidebar */
+  --sidebar-bg:           #ffffff;
+  --sidebar-border:       #e2e8f0;
+  --nav-section:          #94a3b8;
+  --nav-item-text:        #64748b;
+  --nav-item-hover-text:  #0f172a;
+  --nav-item-hover-bg:    #f8fafc;
+  --nav-item-active-text: #4f46e5;
+  --nav-item-active-bg:   #eef2ff;
+  --nav-item-active-border: #6366f1;
+  --nav-icon:             #94a3b8;
+  --nav-icon-active:      #6366f1;
+  --sidebar-logo-text:    #0f172a;
+  --sidebar-logo-sub:     #64748b;
+  --sidebar-footer-bg:    #f8fafc;
 }
 
-/* ── Dark mode ── */
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS — Dark mode
+   ══════════════════════════════════════════════ */
 html.dark {
-  --bg-page:    #080D14;
-  --bg-card:    rgba(14,22,44,0.72);
-  --bg-subtle:  rgba(20,30,56,0.5);
-  --bg-input:   rgba(6,12,24,0.85);
-  --bg-brand:   rgba(84,105,212,0.14);
-  --border:         rgba(255,255,255,0.09);
-  --border-subtle:  rgba(255,255,255,0.05);
-  --text-1:  #e6edf3;
-  --text-2:  #c9d1d9;
-  --text-3:  #8b949e;
-  --text-4:  #6e7681;
-  --badge-bg:    rgba(28,36,56,0.8);
+  --color-win:  #34d399;
+  --color-loss: #fb7185;
+
+  --bg-page:        #07091a;
+  --bg-card:        rgba(12,16,36,0.82);
+  --bg-subtle:      rgba(16,22,48,0.65);
+  --bg-input:       rgba(6,8,22,0.95);
+  --bg-brand:       rgba(99,102,241,0.1);
+  --bg-brand-hover: rgba(99,102,241,0.18);
+
+  --border:         rgba(255,255,255,0.07);
+  --border-subtle:  rgba(255,255,255,0.04);
+  --border-strong:  rgba(255,255,255,0.12);
+
+  --text-1:  #f1f5f9;
+  --text-2:  #cbd5e1;
+  --text-3:  #64748b;
+  --text-4:  #475569;
+
+  --badge-bg:    rgba(18,24,56,0.9);
   --badge-color: #94a3b8;
-  --brand:       #7b9ef0;
-  --brand-soft:  #3d5099;
-  --tooltip-bg:  rgba(16,24,44,0.97);
-  --row-hover:   rgba(22,32,60,0.7);
+
+  --brand:       #818cf8;
+  --brand-soft:  #4338ca;
+  --brand-hover: #6366f1;
+
+  --tooltip-bg:  rgba(7,9,22,0.97);
+  --row-hover:   rgba(14,20,48,0.65);
+
+  --shadow-xs: 0 1px 3px rgba(0,0,0,0.35);
+  --shadow-sm: 0 2px 6px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
+  --shadow-xl: 0 24px 80px rgba(0,0,0,0.7);
+
+  --sidebar-bg:           rgba(7,9,22,0.98);
+  --sidebar-border:       rgba(255,255,255,0.05);
+  --nav-section:          rgba(99,102,241,0.3);
+  --nav-item-text:        #475569;
+  --nav-item-hover-text:  #94a3b8;
+  --nav-item-hover-bg:    rgba(255,255,255,0.04);
+  --nav-item-active-text: #e2e8f0;
+  --nav-item-active-bg:   rgba(99,102,241,0.13);
+  --nav-item-active-border: #818cf8;
+  --nav-icon:             #2d3f60;
+  --nav-icon-active:      #818cf8;
+  --sidebar-logo-text:    #f1f5f9;
+  --sidebar-logo-sub:     #2d3f60;
+  --sidebar-footer-bg:    rgba(0,0,0,0.2);
 }
 
+/* ══════════════════════════════════════════════
+   BASE
+   ══════════════════════════════════════════════ */
 * { box-sizing: border-box; }
 
 body {
   background-color: var(--bg-page);
   color: var(--text-1);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
+  font-feature-settings: 'cv11', 'ss01';
 }
 
-/* Sidebar scrollbar */
-.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+/* ── Scrollbars ── */
+.sidebar-scroll::-webkit-scrollbar { width: 3px; }
 .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-.sidebar-scroll::-webkit-scrollbar-thumb { background: #1e4976; border-radius: 2px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 2px; }
 
-/* Global dark scrollbar for app */
-html.dark ::-webkit-scrollbar { width: 8px; height: 8px; }
-html.dark ::-webkit-scrollbar-track { background: #0a1017; }
-html.dark ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
-html.dark ::-webkit-scrollbar-thumb:hover { background: #2a5080; }
-html.dark { scrollbar-color: #1e3a5f #0a1017; }
+html.dark ::-webkit-scrollbar { width: 7px; height: 7px; }
+html.dark ::-webkit-scrollbar-track { background: #070917; }
+html.dark ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 4px; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.45); }
+html.dark { scrollbar-color: rgba(99,102,241,0.25) #070917; }
 
-/* Table rows */
+/* ── Table rows ── */
 .bet-row:hover { background-color: var(--row-hover); }
 
-/* ── Liquid glass utility classes ── */
-html.dark .glass-card {
-  background: rgba(10,16,34,0.78) !important;
-  backdrop-filter: blur(24px) saturate(1.5) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(1.5) !important;
-  border-color: rgba(255,255,255,0.09) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06) !important;
-}
-
-.btn-glass {
-  background: rgba(255,255,255,0.07) !important;
-  backdrop-filter: blur(12px) saturate(1.5);
-  -webkit-backdrop-filter: blur(12px) saturate(1.5);
-  border: 1px solid rgba(255,255,255,0.16) !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
-  transition: all 0.15s ease !important;
-}
-
-.btn-glass:hover:not(:disabled) {
-  background: rgba(255,255,255,0.12) !important;
-  border-bottom-color: rgba(255,255,255,0.24) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
-}
-
-.btn-primary-glass {
-  background: linear-gradient(135deg, #6b82f0 0%, #5469d4 100%) !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
-  box-shadow: 0 2px 16px rgba(84,105,212,0.45) !important;
-  transition: all 0.15s ease !important;
-}
-
-.btn-primary-glass:hover:not(:disabled) {
-  opacity: 0.88;
-  box-shadow: 0 4px 24px rgba(84,105,212,0.6) !important;
-}
-
-/* ── App main content background ── */
-.app-main {
-  background: var(--bg-page);
-}
-html.dark .app-main {
-  background: linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%);
-}
-
-/* Recharts SVG focus outline */
-.recharts-wrapper { outline: none !important; }
-.recharts-wrapper svg { outline: none !important; }
-.recharts-wrapper:focus { outline: none !important; }
-.recharts-wrapper svg:focus { outline: none !important; }
-.recharts-wrapper *:focus { outline: none !important; }
+/* ── Recharts focus fix ── */
+.recharts-wrapper,
+.recharts-wrapper svg,
+.recharts-wrapper:focus,
+.recharts-wrapper svg:focus,
+.recharts-wrapper *:focus,
 svg:focus { outline: none !important; }
 
-/* Input focus ring */
+/* ── Input focus ring ── */
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--brand) !important;
-  box-shadow: 0 0 0 3px rgba(84, 105, 212, 0.15);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+}
+html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.2) !important;
+}
+html.dark input, html.dark select, html.dark textarea { color-scheme: dark; }
+
+/* ══════════════════════════════════════════════
+   APP SHELL
+   ══════════════════════════════════════════════ */
+.app-main {
+  background: var(--bg-page);
+  min-height: 100vh;
+}
+html.dark .app-main {
+  background: radial-gradient(ellipse 120% 60% at 50% 0%, rgba(30,24,80,0.55) 0%, #07091a 60%);
 }
 
-/* Dark mode — native inputs/selects */
-html.dark input,
-html.dark select,
-html.dark textarea {
-  color-scheme: dark;
+/* ══════════════════════════════════════════════
+   UTILITY BUTTON CLASSES
+   ══════════════════════════════════════════════ */
+
+/* Primary — indigo gradient */
+.btn-primary,
+.btn-primary-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none;
+}
+.btn-primary:hover:not(:disabled),
+.btn-primary-glass:hover:not(:disabled) {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.55), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled),
+.btn-primary-glass:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 6px rgba(99,102,241,0.3) !important;
 }
 
-/* ═══════════════════════════════════════
-   MOBILE RESPONSIVE — max-width: 768px
-   ═══════════════════════════════════════ */
+/* Secondary — ghost */
+.btn-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-card) !important;
+  color: var(--text-2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs) !important;
+  transition: all 0.15s ease !important;
+}
+.btn-glass:hover:not(:disabled) {
+  background: var(--bg-subtle) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text-1) !important;
+}
+html.dark .btn-glass {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(12px);
+}
+html.dark .btn-glass:hover:not(:disabled) {
+  background: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
 
-/* Mobile top header — hidden on desktop */
+/* Danger */
+.btn-danger {
+  background: transparent !important;
+  color: #e11d48 !important;
+  border: 1px solid rgba(225,29,72,0.25) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  transition: all 0.15s !important;
+}
+.btn-danger:hover:not(:disabled) {
+  background: rgba(225,29,72,0.08) !important;
+  border-color: rgba(225,29,72,0.5) !important;
+}
+
+/* ══════════════════════════════════════════════
+   CARD UTILITY
+   ══════════════════════════════════════════════ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+html.dark .card {
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.glass-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+html.dark .glass-card {
+  backdrop-filter: blur(24px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.5) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+
+/* ══════════════════════════════════════════════
+   STAT CARD VARIANTS (colored icon backgrounds)
+   ══════════════════════════════════════════════ */
+.stat-icon-indigo {
+  background: linear-gradient(135deg, #818cf8, #6366f1);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+}
+.stat-icon-emerald {
+  background: linear-gradient(135deg, #34d399, #059669);
+  box-shadow: 0 4px 12px rgba(5,150,105,0.35);
+}
+.stat-icon-rose {
+  background: linear-gradient(135deg, #fb7185, #e11d48);
+  box-shadow: 0 4px 12px rgba(225,29,72,0.35);
+}
+.stat-icon-amber {
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  box-shadow: 0 4px 12px rgba(217,119,6,0.35);
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE — top header & bottom nav
+   ══════════════════════════════════════════════ */
 .mobile-top-header {
   display: none;
   position: fixed;
@@ -150,18 +323,17 @@ html.dark textarea {
   padding-right: 16px;
   align-items: center;
   justify-content: space-between;
-  background: #080D14;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: var(--sidebar-bg);
+  border-bottom: 1px solid var(--sidebar-border);
 }
 
-/* Mobile bottom nav — hidden on desktop */
 .mobile-bottom-nav {
   display: none;
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 100;
-  background: #080D14;
-  border-top: 1px solid rgba(255,255,255,0.07);
+  background: var(--sidebar-bg);
+  border-top: 1px solid var(--sidebar-border);
   padding: 6px 0 0;
   padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   align-items: stretch;
@@ -178,40 +350,37 @@ html.dark textarea {
   text-decoration: none;
   font-size: 8.5px;
   font-weight: 500;
-  color: #4a6885;
+  color: var(--nav-item-text);
   transition: color 0.15s;
   border: none;
   background: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-
 .mobile-nav-item.active {
-  color: #7b9ef0;
-  background: linear-gradient(135deg, #7b9ef0 0%, #5469d4 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--brand);
 }
 .mobile-nav-item.active svg {
-  color: #7b9ef0;
-  -webkit-text-fill-color: initial;
-  filter: drop-shadow(0 0 6px rgba(123,158,240,0.5));
+  color: var(--brand);
+  filter: drop-shadow(0 0 5px rgba(99,102,241,0.5));
 }
 .mobile-nav-item span { line-height: 1.2; text-align: center; }
 
-/* ── Dashboard chart cards: header padding retained, card goes edge-to-edge on mobile ── */
-.dash-chart-section { /* no-op on desktop */ }
-.dash-chart-hdr     { /* no-op on desktop */ }
-
-/* ── Statistieken: 6-stat grid ── */
+/* ══════════════════════════════════════════════
+   DASHBOARD
+   ══════════════════════════════════════════════ */
+.dash-chart-section { }
+.dash-chart-hdr { }
 .stats-grid-6 { grid-template-columns: repeat(6, 1fr); }
 
+/* ══════════════════════════════════════════════
+   RESPONSIVE — max 768px
+   ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* ── App shell layout ── */
   .sidebar-desktop { display: none !important; }
   .mobile-top-header { display: flex !important; }
   .mobile-bottom-nav { display: flex !important; }
+
   .app-main {
     padding-top: 0 !important;
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
@@ -219,228 +388,97 @@ html.dark textarea {
   .app-main.mobile-header-shown {
     padding-top: calc(54px + env(safe-area-inset-top, 0px)) !important;
   }
-  /* Touch-action for mobile header links */
   .mobile-top-header a {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
   }
 
-  /* ── App page containers ── */
-  .app-page {
-    padding: 20px 16px !important;
-    max-width: 100% !important;
-  }
+  .app-page { padding: 20px 16px !important; max-width: 100% !important; }
 
-  /* ── Dashboard chart cards: horizontal padding aligned with header text ── */
-  .dash-chart-section {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-  .dash-chart-hdr {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
+  .dash-chart-section { padding-left: 16px !important; padding-right: 16px !important; }
+  .dash-chart-hdr { padding-left: 0 !important; padding-right: 0 !important; }
 
-  /* ── Statistieken 6-stat grid: 2 columns on mobile, 3 rows ── */
   .stats-grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-
-  /* ── Responsive grids ── */
   .grid-4-to-2 { grid-template-columns: repeat(2, 1fr) !important; }
-  .grid-4-to-1,
-  .grid-3-to-1,
-  .grid-2-to-1 { grid-template-columns: 1fr !important; }
+  .grid-4-to-1, .grid-3-to-1, .grid-2-to-1 { grid-template-columns: 1fr !important; }
 
-  /* ── Scrollable tables ── */
   .table-scroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
   .table-scroll table { min-width: 640px; }
 
-  /* ── Page headers ── */
   .page-header { flex-wrap: wrap !important; gap: 10px !important; margin-bottom: 16px !important; }
   .page-header h1 { font-size: 20px !important; }
 
-  /* ── 2-column chart rows ── */
   .chart-2col { grid-template-columns: 1fr !important; }
 
-  /* ══════ HOMEPAGE ══════ */
-
-  /* Header nav */
+  /* ── Homepage ── */
   .lp-nav-links { display: none !important; }
   .lp-header-pad { padding: 0 16px !important; }
   .lp-header-login { display: none !important; }
-
-  /* Hero */
   .lp-hero-section { padding-top: 96px !important; padding-bottom: 48px !important; }
   .lp-hero-inner { padding: 0 20px !important; }
   .lp-hero-title { font-size: 34px !important; letter-spacing: -0.02em !important; margin-bottom: 16px !important; }
   .lp-hero-sub { font-size: 15px !important; margin-bottom: 28px !important; }
-  .lp-cta-row {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    max-width: 300px !important;
-    margin: 0 auto 44px !important;
-    gap: 12px !important;
-  }
-  .lp-cta-row a,
-  .lp-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; }
+  .lp-cta-row { flex-direction: column !important; align-items: stretch !important; max-width: 300px !important; margin: 0 auto 44px !important; gap: 12px !important; }
+  .lp-cta-row a, .lp-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; }
   .lp-stats-row { gap: 16px !important; justify-content: center !important; }
   .lp-stats-row > div { min-width: 80px; }
-
-  /* Mockup */
   .lp-mockup-wrap { padding: 0 16px !important; margin-top: 32px !important; }
   .lp-mockup-sidebar { display: none !important; }
-
-  /* Section padding */
   .lp-section-pad { padding-left: 20px !important; padding-right: 20px !important; padding-top: 64px !important; padding-bottom: 64px !important; }
   .lp-section-title { font-size: 28px !important; }
   .lp-section-sub { font-size: 15px !important; }
-
-  /* Functies bento grid */
   .lp-bento-row { grid-template-columns: 1fr !important; }
-
-  /* Hoe het werkt */
   .lp-steps-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
   .lp-step-line { display: none !important; }
-
-  /* Analyse section */
   .lp-analyse-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .lp-analyse-title { font-size: 28px !important; }
-
-  /* Calculators / bento */
   .lp-calc-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-
-  /* Pricing */
   .lp-pricing-grid { grid-template-columns: 1fr !important; max-width: 360px !important; margin-left: auto !important; margin-right: auto !important; }
-
-  /* Final CTA */
   .lp-final-cta-section { padding: 64px 20px !important; }
   .lp-final-cta-title { font-size: 30px !important; }
   .lp-final-cta-btn { display: flex !important; width: 100% !important; max-width: 300px !important; margin: 0 auto 16px !important; justify-content: center !important; }
-
-  /* Footer */
   .lp-footer-section { padding: 32px 20px !important; }
   .lp-footer-inner { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 12px !important; }
 }
 
-/* ═══════════════════════════════════════
-   KALENDER — Mobile Tile Stijl
-   ═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   KALENDER — Mobile tile stijl
+   ══════════════════════════════════════════════ */
 @media (max-width: 640px) {
-  .cal-page-wrap {
-    padding: 20px 16px !important;
-    max-width: 100% !important;
-  }
+  .cal-page-wrap { padding: 20px 16px !important; max-width: 100% !important; }
+  .cal-stats-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; margin-bottom: 16px !important; }
+  .cal-wrapper { background: transparent !important; border: none !important; border-radius: 0 !important; margin-bottom: 12px !important; }
+  .cal-header { border-bottom: none !important; margin-bottom: 4px !important; gap: 3px !important; }
+  .cal-header > div { background: transparent !important; padding: 4px 0 8px !important; font-size: 10px !important; letter-spacing: 0.03em !important; }
+  .cal-grid { gap: 3px !important; background: transparent !important; }
+  .cal-empty-cell { border: 1px solid rgba(255,255,255,0.04) !important; border-radius: 10px !important; aspect-ratio: 1 / 1 !important; min-height: auto !important; overflow: hidden !important; opacity: 1 !important; }
+  .cal-day-cell { border: 1px solid rgba(255,255,255,0.06) !important; border-radius: 10px !important; aspect-ratio: 1 / 1 !important; min-height: auto !important; overflow: hidden !important; padding: 7px 7px 6px !important; display: flex !important; flex-direction: column !important; }
 
-  .cal-stats-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
-    margin-bottom: 16px !important;
-  }
-
-  .cal-wrapper {
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    margin-bottom: 12px !important;
-  }
-
-  .cal-header {
-    border-bottom: none !important;
-    margin-bottom: 4px !important;
-    gap: 3px !important;
-  }
-
-  .cal-header > div {
-    background: transparent !important;
-    padding: 4px 0 8px !important;
-    font-size: 10px !important;
-    letter-spacing: 0.03em !important;
-  }
-
-  .cal-grid {
-    gap: 3px !important;
-    background: transparent !important;
-  }
-
-  .cal-empty-cell {
-    border: 1px solid rgba(255,255,255,0.04) !important;
-    border-radius: 10px !important;
-    aspect-ratio: 1 / 1 !important;
-    min-height: auto !important;
-    overflow: hidden !important;
-    opacity: 1 !important;
-  }
-
-  .cal-day-cell {
-    border: 1px solid rgba(255,255,255,0.06) !important;
-    border-radius: 10px !important;
-    aspect-ratio: 1 / 1 !important;
-    min-height: auto !important;
-    overflow: hidden !important;
-    padding: 7px 7px 6px !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  /* Tile background colors — matching uitkomst badge colors */
-  html.dark .cal-day-cell[data-pnl="win"]        { background: rgba(17,185,129,0.22) !important; border-color: rgba(17,185,129,0.45) !important; }
-  html.dark .cal-day-cell[data-pnl="loss"]       { background: rgba(244,63,94,0.22)  !important; border-color: rgba(244,63,94,0.45)  !important; }
-  html.dark .cal-day-cell[data-pnl="neutral"]    { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.08) !important; }
-  html.dark .cal-day-cell[data-has-bets="false"] { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.04) !important; }
-  html.dark .cal-empty-cell                      { background: rgba(255,255,255,0.02) !important; border-color: rgba(255,255,255,0.03) !important; }
+  html.dark .cal-day-cell[data-pnl="win"]        { background: rgba(52,211,153,0.15) !important; border-color: rgba(52,211,153,0.35) !important; }
+  html.dark .cal-day-cell[data-pnl="loss"]       { background: rgba(251,113,133,0.15) !important; border-color: rgba(251,113,133,0.35) !important; }
+  html.dark .cal-day-cell[data-pnl="neutral"]    { background: rgba(255,255,255,0.04) !important; border-color: rgba(255,255,255,0.07) !important; }
+  html.dark .cal-day-cell[data-has-bets="false"] { background: rgba(255,255,255,0.02) !important; border-color: rgba(255,255,255,0.04) !important; }
+  html.dark .cal-empty-cell                      { background: rgba(255,255,255,0.015) !important; border-color: rgba(255,255,255,0.03) !important; }
 
   html:not(.dark) .cal-day-cell[data-pnl="win"]        { background: #f0fdf4 !important; border-color: #bbf7d0 !important; }
-  html:not(.dark) .cal-day-cell[data-pnl="loss"]       { background: #fef2f2 !important; border-color: #fecaca !important; }
-  html:not(.dark) .cal-day-cell[data-pnl="neutral"]    { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.07) !important; }
-  html:not(.dark) .cal-day-cell[data-has-bets="false"] { background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.05) !important; }
-  html:not(.dark) .cal-empty-cell                      { background: rgba(0,0,0,0.02) !important; border-color: rgba(0,0,0,0.04) !important; }
+  html:not(.dark) .cal-day-cell[data-pnl="loss"]       { background: #fff1f2 !important; border-color: #fecdd3 !important; }
+  html:not(.dark) .cal-day-cell[data-pnl="neutral"]    { background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.06) !important; }
+  html:not(.dark) .cal-day-cell[data-has-bets="false"] { background: rgba(0,0,0,0.02) !important; border-color: rgba(0,0,0,0.04) !important; }
+  html:not(.dark) .cal-empty-cell                      { background: rgba(0,0,0,0.015) !important; border-color: rgba(0,0,0,0.04) !important; }
 
-  /* Day number — klein, muted, geen cirkel */
-  .cal-day-num {
-    background: transparent !important;
-    width: auto !important;
-    height: auto !important;
-    border-radius: 0 !important;
-    font-size: 10px !important;
-    font-weight: 500 !important;
-    color: rgba(255,255,255,0.38) !important;
-    line-height: 1.2 !important;
-    margin-bottom: 0 !important;
-    display: block !important;
-    justify-content: unset !important;
-    align-items: unset !important;
-    flex-shrink: unset !important;
-  }
-
-  html:not(.dark) .cal-day-num { color: rgba(0,0,0,0.35) !important; }
-
-  /* Vandaag: blauwe dag-nummer tekst */
-  .cal-day-cell[data-today="true"] .cal-day-num {
-    color: #7b9ef0 !important;
-    font-weight: 700 !important;
-  }
-
-  /* P&L waarde — bold, naar onder */
-  .cal-day-pnl {
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    line-height: 1.2 !important;
-    margin-top: auto !important;
-  }
-
-  /* Bet count — verberg op mobiel */
+  .cal-day-num { background: transparent !important; width: auto !important; height: auto !important; border-radius: 0 !important; font-size: 10px !important; font-weight: 500 !important; color: rgba(255,255,255,0.35) !important; line-height: 1.2 !important; margin-bottom: 0 !important; display: block !important; }
+  html:not(.dark) .cal-day-num { color: rgba(0,0,0,0.3) !important; }
+  .cal-day-cell[data-today="true"] .cal-day-num { color: var(--brand) !important; font-weight: 700 !important; }
+  .cal-day-pnl { font-size: 11px !important; font-weight: 700 !important; line-height: 1.2 !important; margin-top: auto !important; }
   .cal-day-count { display: none !important; }
-
-  /* Legenda — verberg op mobiel */
   .cal-legend { display: none !important; }
-
-  /* Bar chart hoogte verkleinen */
   .cal-barchart { padding: 16px 14px !important; }
 }
 
-/* ═══════════════════════════════════════
-   BETS — Mobile Card View
-   ═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   BETS — Mobile card view
+   ══════════════════════════════════════════════ */
 .bets-table-desktop { display: block; }
 .bets-cards-mobile  { display: none; }
 
@@ -448,250 +486,66 @@ html.dark textarea {
   .bets-table-desktop { display: none !important; }
   .bets-cards-mobile  { display: flex !important; flex-direction: column; gap: 10px; }
 
-  .bet-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .bet-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  .bet-card-meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .bet-card-match {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-1);
-    line-height: 1.3;
-  }
-
-  .bet-card-selection {
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.3;
-  }
-
-  .bet-card-market {
-    font-size: 11.5px;
-    color: var(--text-4);
-  }
-
-  .bet-card-numbers {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0;
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .bet-card-num-cell {
-    padding: 8px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .bet-card-num-cell:not(:last-child) {
-    border-right: 1px solid var(--border-subtle);
-  }
-
-  .bet-card-num-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-4);
-  }
-
-  .bet-card-num-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-1);
-  }
-
-  .bet-card-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  .bet-card-bookmaker {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    color: var(--text-3);
-  }
-
-  .bet-card-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .bet-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow-xs); }
+  .bet-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .bet-card-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .bet-card-match { font-size: 14px; font-weight: 700; color: var(--text-1); line-height: 1.3; }
+  .bet-card-selection { font-size: 13px; color: var(--text-2); line-height: 1.3; }
+  .bet-card-market { font-size: 11.5px; color: var(--text-4); }
+  .bet-card-numbers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; }
+  .bet-card-num-cell { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .bet-card-num-cell:not(:last-child) { border-right: 1px solid var(--border-subtle); }
+  .bet-card-num-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-4); }
+  .bet-card-num-value { font-size: 14px; font-weight: 700; color: var(--text-1); }
+  .bet-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .bet-card-bookmaker { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-3); }
+  .bet-card-actions { display: flex; align-items: center; gap: 6px; }
 }
 
-/* ═══════════════════════════════════════
-   BOOKMAKERS — Mobile Card View
-   ═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   BOOKMAKERS — Mobile card view
+   ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Active bookmaker cards: card-like layout */
-  .bm-card-inner {
-    flex-wrap: wrap !important;
-    align-items: flex-start !important;
-    gap: 0 !important;
-    row-gap: 10px !important;
-  }
-  .bm-name-section {
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-  }
-  .bm-remove {
-    flex-shrink: 0 !important;
-    align-self: center !important;
-    margin-left: 4px !important;
-  }
-  .bm-field-date,
-  .bm-field-startbal {
-    flex: 0 0 50% !important;
-    box-sizing: border-box !important;
-    padding-right: 8px !important;
-  }
-  .bm-field-pnl,
-  .bm-field-curbal {
-    flex: 0 0 50% !important;
-    box-sizing: border-box !important;
-    padding-right: 8px !important;
-  }
-  .bm-field-bets {
-    flex: 0 0 50% !important;
-    box-sizing: border-box !important;
-    padding-right: 8px !important;
-  }
-  .bm-field-progress {
-    flex: 0 0 100% !important;
-  }
-
-  /* Form: add bookmaker row → stacked */
-  .bm-add-row {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-  .bm-add-row > div:first-child {
-    max-width: 100% !important;
-    flex: 1 1 100% !important;
-  }
-  .bm-add-row > button {
-    width: 100% !important;
-    justify-content: center !important;
-  }
-
-  /* Form: deposits/withdrawals → 2-column grid */
-  .bm-tx-row {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    align-items: end !important;
-  }
+  .bm-card-inner { flex-wrap: wrap !important; align-items: flex-start !important; gap: 0 !important; row-gap: 10px !important; }
+  .bm-name-section { flex: 1 1 auto !important; min-width: 0 !important; }
+  .bm-remove { flex-shrink: 0 !important; align-self: center !important; margin-left: 4px !important; }
+  .bm-field-date, .bm-field-startbal { flex: 0 0 50% !important; box-sizing: border-box !important; padding-right: 8px !important; }
+  .bm-field-pnl, .bm-field-curbal { flex: 0 0 50% !important; box-sizing: border-box !important; padding-right: 8px !important; }
+  .bm-field-bets { flex: 0 0 50% !important; box-sizing: border-box !important; padding-right: 8px !important; }
+  .bm-field-progress { flex: 0 0 100% !important; }
+  .bm-add-row { flex-direction: column !important; align-items: stretch !important; }
+  .bm-add-row > div:first-child { max-width: 100% !important; flex: 1 1 100% !important; }
+  .bm-add-row > button { width: 100% !important; justify-content: center !important; }
+  .bm-tx-row { display: grid !important; grid-template-columns: 1fr 1fr !important; align-items: end !important; }
   .bm-tx-bookie { grid-column: 1 / -1 !important; }
-  .bm-tx-type   { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-type { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
   .bm-tx-amount { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; }
-  .bm-tx-date   { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-date { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
   .bm-tx-submit { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; justify-content: center; }
-
-  /* Compact form input sizes on mobile */
-  .bm-tx-row input,
-  .bm-tx-row select {
-    padding: 7px 10px !important;
-    font-size: 13px !important;
-  }
-  .bm-tx-amount input {
-    padding-left: 24px !important;
-  }
-  .bm-tx-type button {
-    padding: 7px 10px !important;
-    font-size: 12px !important;
-    flex: 1 !important;
-  }
-  .bm-tx-submit {
-    padding: 7px 10px !important;
-    font-size: 13px !important;
-  }
-  .bm-add-row input,
-  .bm-add-row select {
-    padding: 8px 10px !important;
-    font-size: 13px !important;
-  }
+  .bm-tx-row input, .bm-tx-row select { padding: 7px 10px !important; font-size: 13px !important; }
+  .bm-tx-amount input { padding-left: 24px !important; }
+  .bm-tx-type button { padding: 7px 10px !important; font-size: 12px !important; flex: 1 !important; }
+  .bm-tx-submit { padding: 7px 10px !important; font-size: 13px !important; }
+  .bm-add-row input, .bm-add-row select { padding: 8px 10px !important; font-size: 13px !important; }
+  .bm-field-progress { display: none !important; }
+  .bm-card { position: relative !important; }
+  .bm-remove { position: absolute !important; top: 12px !important; right: 12px !important; margin-left: 0 !important; align-self: auto !important; color: var(--text-3) !important; padding: 4px !important; }
+  .bm-name-section { padding-right: 32px !important; }
+  .bm-tx-row { align-items: center !important; }
 }
 
-/* ═══════════════════════════════════════
-   STATISTIEKEN — Odds Range inner grid
-   ═══════════════════════════════════════ */
-.odds-range-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-}
+/* ══════════════════════════════════════════════
+   STATISTIEKEN — Odds range inner grid
+   ══════════════════════════════════════════════ */
+.odds-range-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 @media (max-width: 768px) {
-  .odds-range-inner {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-  }
+  .odds-range-inner { grid-template-columns: 1fr !important; gap: 16px !important; }
 }
 
-/* ═══════════════════════════════════════
-   BOOKMAKERS — Mobile: hide progress bar, X to top-right
-   ═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   DASHBOARD — Stat card icon position
+   ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .bm-field-progress {
-    display: none !important;
-  }
-  .bm-card {
-    position: relative !important;
-  }
-  .bm-remove {
-    position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
-    margin-left: 0 !important;
-    align-self: auto !important;
-    color: var(--text-3) !important;
-    padding: 4px !important;
-  }
-  .bm-name-section {
-    padding-right: 32px !important;
-  }
-  .bm-tx-row {
-    align-items: center !important;
-  }
-}
-
-/* ═══════════════════════════════════════
-   DASHBOARD — Stat card icon mobile position
-   ═══════════════════════════════════════ */
-@media (max-width: 768px) {
-  .stat-card-icon {
-    margin-top: -6px !important;
-    margin-right: -6px !important;
-  }
-
-  /* Remove border under "Recente Bets" header on mobile */
-  .dash-recent-hdr {
-    border-bottom: none !important;
-    padding-bottom: 8px !important;
-  }
+  .stat-card-icon { margin-top: -6px !important; margin-right: -6px !important; }
+  .dash-recent-hdr { border-bottom: none !important; padding-bottom: 8px !important; }
 }

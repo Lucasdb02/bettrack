@@ -111,7 +111,7 @@ export default function OddsConverterPage() {
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
         {/* Left: Inputs */}
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
           <div style={{display:'flex',flexDirection:'column',gap:16}}>
             <Field label="Decimale odds" hint="Standaard in Europa (b.v. 2.10)">
@@ -145,13 +145,13 @@ export default function OddsConverterPage() {
         </div>
 
         {/* Right: Results */}
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Resultaat</h2>
           {!r ? (
             <p style={{color:'var(--text-4)',fontSize:14,textAlign:'center',padding:'32px 0'}}>Voer een geldige waarde in om te berekenen.</p>
           ) : (
             <>
-              <div style={{padding:'20px',borderRadius:10,marginBottom:20,backgroundColor:'var(--bg-brand)',border:'1px solid var(--brand-soft)',textAlign:'center'}}>
+              <div style={{padding:'20px',borderRadius:12,marginBottom:20,backgroundColor:'var(--bg-brand)',border:'1px solid var(--brand-soft)',textAlign:'center'}}>
                 <p style={{fontSize:12,fontWeight:700,color:'var(--brand)',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>Implied kans</p>
                 <p style={{fontSize:40,fontWeight:800,color:'var(--brand)',lineHeight:1}}>{r.implied}%</p>
                 <div style={{height:6,backgroundColor:'var(--border)',borderRadius:99,overflow:'hidden',marginTop:16,marginBottom:4}}>
@@ -185,7 +185,7 @@ export default function OddsConverterPage() {
         </div>
       </div>
 
-      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:10,padding:'20px 24px',marginTop:24}}>
+      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',marginTop:24}}>
         <h3 style={{fontSize:13.5,fontWeight:700,color:'var(--text-1)',marginBottom:12}}>Conversieformules</h3>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
           {[

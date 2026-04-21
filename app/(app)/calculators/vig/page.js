@@ -36,7 +36,7 @@ export default function VigPage() {
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:16,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
           {/* Type selector */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6,marginBottom:20}}>
@@ -55,7 +55,7 @@ export default function VigPage() {
           </div>
         </div>
 
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Resultaat</h2>
           {!r ? (
             <p style={{color:'var(--text-4)',fontSize:14,textAlign:'center',padding:'32px 0'}}>Voer odds in voor alle uitkomsten.</p>
@@ -81,7 +81,7 @@ export default function VigPage() {
                     </div>
                     <div style={{display:'flex',justifyContent:'space-between',padding:'4px 0 9px'}}>
                       <span style={{fontSize:13,color:'var(--text-3)'}}>Uitkomst {i+1} — eerlijke odds</span>
-                      <span style={{fontSize:14,fontWeight:700,color:'#5469d4'}}>{r.fairOdds[i].toFixed(3)}</span>
+                      <span style={{fontSize:14,fontWeight:700,color:'var(--brand)'}}>{r.fairOdds[i].toFixed(3)}</span>
                     </div>
                   </div>
                 ))}
@@ -91,7 +91,7 @@ export default function VigPage() {
         </div>
       </div>
 
-      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:10,padding:'20px 24px',marginTop:24}}>
+      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',marginTop:24}}>
         <h3 style={{fontSize:13.5,fontWeight:700,color:'var(--text-1)',marginBottom:8}}>Wat is Vig?</h3>
         <p style={{fontSize:13.5,color:'var(--text-3)',lineHeight:1.7}}>
           De Vig (ook: juice, overround of marge) is de ingebouwde winstmarge van een bookmaker. Bij een "eerlijke" 50/50 wedstrijd zouden beide kanten odds van 2.00 krijgen. Als de bookmaker 1.90 biedt, is de implied probability 52.6% per kant — samen 105.2%, waardoor de vig 5.2% is. Lagere vig = meer waarde voor de wedder.

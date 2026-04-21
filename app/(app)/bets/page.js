@@ -1,6 +1,5 @@
 'use client';
 import { useBets, berekenWinst } from '../../context/BetsContext';
-import { useTheme } from '../../context/ThemeContext';
 import { useFmt } from '../../context/PreferencesContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
 import { SPORTEN, sportEmoji, UITKOMSTEN, uitkomstConfig } from '../../lib/sports';
@@ -44,14 +43,12 @@ function FF({label,required,children,text2}) {
 }
 
 function EditBetModal({bet, onSave, onClose, saveError}) {
-  const { dark } = useTheme();
-  const bg = dark ? '#161c2a' : '#ffffff';
-  const bgSection = dark ? '#1e2738' : '#f9fafb';
-  const border = dark ? '#2a3347' : '#e5e7eb';
-  const text1 = dark ? '#e6edf3' : '#1a1f36';
-  const text2 = dark ? '#c9d1d9' : '#374151';
-  const text3 = dark ? '#8b949e' : '#6b7280';
-  const bgInput = dark ? '#0d1117' : '#ffffff';
+  const bg = 'var(--bg-card)';
+  const border = 'var(--border)';
+  const text1 = 'var(--text-1)';
+  const text2 = 'var(--text-2)';
+  const text3 = 'var(--text-3)';
+  const bgInput = 'var(--bg-input)';
 
   const [form, setForm] = useState({
     datum: bet.datum||'',
@@ -231,7 +228,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
             <button onClick={onClose} style={{padding:'8px 18px',border:`1px solid ${border}`,borderRadius:7,fontSize:13.5,fontWeight:600,color:text2,backgroundColor:bg,cursor:'pointer'}}>
               Annuleren
             </button>
-            <button onClick={handleSave} style={{padding:'8px 22px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:'1px solid rgba(255,255,255,0.2)',boxShadow:'0 2px 16px rgba(84,105,212,0.45)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
+            <button onClick={handleSave} className="btn-primary-glass" style={{padding:'8px 22px',fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
               Opslaan
             </button>
           </div>
@@ -287,7 +284,7 @@ export default function BetsPage() {
     <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
       <div className="flex items-center justify-between mb-6 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Overzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>{bets.length} bets in totaal</p></div>
-        <Link href="/bets/new" style={{background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',padding:'9px 18px',borderRadius:7,fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7,boxShadow:'0 2px 16px rgba(84,105,212,0.45)',border:'1px solid rgba(255,255,255,0.2)'}}>
+        <Link href="/bets/new" className="btn-primary-glass" style={{padding:'9px 18px',fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7}}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Bet Invoeren
         </Link>
@@ -324,7 +321,7 @@ export default function BetsPage() {
       </div>
 
       {/* Desktop table */}
-      <div className="bets-table-desktop table-scroll" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+      <div className="bets-table-desktop table-scroll" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
         <table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead>
             <tr style={{backgroundColor:'var(--bg-subtle)'}}>

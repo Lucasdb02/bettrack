@@ -46,7 +46,7 @@ export default function KellyPage() {
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
           <div style={{display:'flex',flexDirection:'column',gap:16}}>
             <Field label="Decimale odds" hint="De odds die je bookmaker aanbiedt">
@@ -79,7 +79,7 @@ export default function KellyPage() {
           </div>
         </div>
 
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Resultaat</h2>
           {!r ? (
             <p style={{color:'var(--text-4)',fontSize:14,textAlign:'center',padding:'32px 0'}}>Voer geldige waarden in om te berekenen.</p>
@@ -120,7 +120,7 @@ export default function KellyPage() {
         </div>
       </div>
 
-      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:10,padding:'20px 24px',marginTop:24}}>
+      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',marginTop:24}}>
         <h3 style={{fontSize:13.5,fontWeight:700,color:'var(--text-1)',marginBottom:8}}>Kelly Criterium formule</h3>
         <p style={{fontSize:13.5,color:'var(--text-3)',lineHeight:1.7}}>
           <strong style={{color:'var(--text-1)'}}>f = (b·p – q) / b</strong> — waarbij <em>b</em> de netto winstquote is (odds – 1), <em>p</em> de geschatte winkans en <em>q = 1 – p</em>. Het resultaat <em>f</em> is het optimale percentage van je bankroll om in te zetten. Veel professionele wedders gebruiken half Kelly om risico te beperken.

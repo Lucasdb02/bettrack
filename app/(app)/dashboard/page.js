@@ -82,25 +82,20 @@ function fmtDate(d) {
 
 /* ─── Shared tooltip ─── */
 function ChartTip({ active, payload, label, suffix }) {
-  const { dark } = useTheme();
   const { fmtPnl } = useFmt();
   if (!active || !payload?.length) return null;
-  const bg = dark ? '#1c2335' : '#ffffff';
-  const border = dark ? '#2a3347' : '#e5e7eb';
-  const textMuted = dark ? '#8b949e' : '#6b7280';
-  const textSub = dark ? '#c9d1d9' : '#374151';
   const fmtVal = (v) => {
     if (typeof v !== 'number') return v;
     if (suffix === '%') return `${v >= 0 ? '+' : ''}${v}%`;
     return fmtPnl(v);
   };
   return (
-    <div style={{ backgroundColor: bg, border: `1px solid ${border}`, borderRadius:8, padding:'10px 14px', boxShadow:'0 8px 24px rgba(0,0,0,0.2)', fontSize:13, pointerEvents:'none' }}>
-      <p style={{ color: textMuted, marginBottom:6, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>
+    <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:10, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:13, pointerEvents:'none' }}>
+      {label && <p style={{ color:'var(--text-3)', marginBottom:6, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
       {payload.map((p,i) => (
         <div key={i} style={{ display:'flex', alignItems:'center', gap:7, marginBottom: i<payload.length-1?3:0 }}>
           <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:p.color, flexShrink:0 }}/>
-          <span style={{ color: textSub, fontSize:12 }}>{p.name}:</span>
+          <span style={{ color:'var(--text-3)', fontSize:12 }}>{p.name}:</span>
           <span style={{ fontWeight:700, color:p.color }}>{fmtVal(p.value)}</span>
         </div>
       ))}
@@ -140,16 +135,20 @@ function BookieYTick({ x, y, payload, colorMap }) {
 }
 
 /* ─── Stat card ─── */
-function StatCard({ label, value, sub, color, icon }) {
+function StatCard({ label, value, sub, color, icon, iconClass }) {
   return (
-    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'20px 24px' }}>
+    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)', transition:'box-shadow 0.15s' }}>
       <div className="flex items-start justify-between">
         <div style={{ minWidth:0 }}>
-          <p style={{ fontSize:11.5, color:'var(--text-3)', fontWeight:600, marginBottom:8, textTransform:'uppercase', letterSpacing:'0.06em' }}>{label}</p>
-          <p style={{ fontSize:26, fontWeight:700, color:color||'var(--text-1)', lineHeight:1 }}>{value}</p>
-          {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:6, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
+          <p style={{ fontSize:11, color:'var(--text-3)', fontWeight:700, marginBottom:10, textTransform:'uppercase', letterSpacing:'0.08em' }}>{label}</p>
+          <p style={{ fontSize:26, fontWeight:800, color:color||'var(--text-1)', lineHeight:1, letterSpacing:'-0.02em' }}>{value}</p>
+          {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:7, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
         </div>
-        {icon && <div className="stat-card-icon" style={{ backgroundColor:'var(--bg-brand)', width:30, height:30, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
+        {icon && (
+          <div className={`stat-card-icon ${iconClass||''}`} style={{ width:34, height:34, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, background: iconClass ? undefined : 'var(--bg-brand)' }}>
+            {icon}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -283,18 +282,19 @@ function PeriodDropdown({ filter, onSelect, customRange }) {
 function MultiSelect({ label, icon, options, selected, onChange }) {
   const { dark } = useTheme();
   const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
-  const count       = selected.length;
-  const allSelected = count === 0;
+  const allSelected = selected === null;
+  const count       = selected ? selected.length : 0;
 
   const toggleOpt = (val) => {
     if (allSelected) {
       onChange(options.filter(v => v !== val));
     } else {
-      const next = selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val];
-      onChange(next.length === options.length ? [] : next);
+      const curr = selected || [];
+      const next = curr.includes(val) ? curr.filter(v => v !== val) : [...curr, val];
+      onChange(next.length === options.length ? null : next);
     }
   };
-  const clear = (e) => { e.stopPropagation(); onChange([]); };
+  const clear = (e) => { e.stopPropagation(); onChange(null); };
 
   const dropBg    = dark ? 'var(--bg-card)'       : '#fff';
   const dropBdr   = dark ? 'var(--border)'        : '#e5e7eb';
@@ -331,8 +331,8 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
             borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
             minWidth:190, maxHeight:280, overflowY:'auto',
           }}>
-            {/* "Alle" master toggle at top */}
-            <button onClick={() => { if (!allSelected) onChange([]); }} style={{
+            {/* "Alle" master toggle at top — toggles between all selected and none selected */}
+            <button onClick={() => onChange(allSelected ? [] : null)} style={{
               display:'flex', alignItems:'center', gap:9, width:'100%',
               textAlign:'left', padding:'9px 16px', fontSize:13,
               color: allSelected ? txtActive : txtDef,
@@ -348,7 +348,7 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
               Alle {label.toLowerCase()}s
             </button>
             {options.map(opt => {
-              const checked = allSelected || selected.includes(opt);
+              const checked = allSelected || (selected && selected.includes(opt));
               return (
                 <button key={opt} onClick={() => toggleOpt(opt)} style={{
                   display:'flex', alignItems:'center', gap:9, width:'100%',
@@ -421,8 +421,8 @@ function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, on
                 textAlign:'center', lineHeight:'34px', height:34,
                 fontSize:13, cursor:'pointer',
                 fontWeight: isToday ? 700 : 400,
-                borderRadius: isSelected ? 6 : inRange ? 0 : 4,
-                backgroundColor: isSelected ? '#1e3a8a' : inRange ? rangeColor : 'transparent',
+                borderRadius: isSelected ? 6 : inRange ? 6 : 4,
+                backgroundColor: isSelected ? 'var(--brand)' : inRange ? rangeColor : 'transparent',
                 color: isSelected ? '#fff' : dayTxt,
                 outline: isToday && !isSelected ? `2px solid ${todayRing}` : 'none',
                 outlineOffset: -2,
@@ -556,7 +556,7 @@ function DateRangeModal({ initial, onSave, onClose }) {
         <div style={{ display:'flex', justifyContent:'flex-end', gap:10 }}>
           <button onClick={onClose} style={{ padding:'9px 20px', borderRadius:7, border:`1px solid ${bdr}`, backgroundColor:'transparent', color: bodyTxt, fontSize:13, fontWeight:500, cursor:'pointer' }}>Annuleren</button>
           <button onClick={() => { if (canSave) { onSave({ from:fromDate, to:toDate }); onClose(); } }} disabled={!canSave}
-            style={{ padding:'9px 22px', borderRadius:7, border:'none', backgroundColor: canSave ? '#1e3a8a' : (dark ? '#374151' : '#9ca3af'), color:'#fff', fontSize:13, fontWeight:600, cursor: canSave ? 'pointer' : 'not-allowed' }}>
+            style={{ padding:'9px 22px', borderRadius:7, border:'none', backgroundColor: canSave ? 'var(--brand)' : (dark ? '#374151' : '#9ca3af'), color:'#fff', fontSize:13, fontWeight:600, cursor: canSave ? 'pointer' : 'not-allowed' }}>
             Opslaan
           </button>
         </div>
@@ -574,8 +574,8 @@ export default function Dashboard() {
   const [periodFilter,  setPeriodFilter]  = useState('all');
   const [customRange,   setCustomRange]   = useState(null);
   const [showCalendar,  setShowCalendar]  = useState(false);
-  const [sportFilter,   setSportFilter]   = useState([]);
-  const [bookFilter,    setBookFilter]    = useState([]);
+  const [sportFilter,   setSportFilter]   = useState(null);
+  const [bookFilter,    setBookFilter]    = useState(null);
   const [mounted,       setMounted]       = useState(false);
   const [isMobile,      setIsMobile]      = useState(false);
   const [hoverIdx,      setHoverIdx]      = useState(null);
@@ -614,8 +614,8 @@ export default function Dashboard() {
 
   const filtered = useMemo(() => {
     let r = filterBets(bets, periodFilter, customRange);
-    if (sportFilter.length) r = r.filter(b => sportFilter.includes(b.sport||'Onbekend'));
-    if (bookFilter.length)  r = r.filter(b => bookFilter.includes(b.bookmaker||'Onbekend'));
+    if (sportFilter && sportFilter.length) r = r.filter(b => sportFilter.includes(b.sport||'Onbekend'));
+    if (bookFilter  && bookFilter.length)  r = r.filter(b => bookFilter.includes(b.bookmaker||'Onbekend'));
     return r;
   }, [bets, periodFilter, customRange, sportFilter, bookFilter]);
 
@@ -750,7 +750,7 @@ export default function Dashboard() {
           <p style={{ fontSize:14, color:'var(--text-3)' }}>Overzicht van al je bets en resultaten</p>
         </div>
         {/* Bet Invoeren — alleen desktop */}
-        <Link href="/bets/new" className="hidden md:flex" style={{ background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', padding:'9px 18px', borderRadius:7, fontSize:13.5, fontWeight:600, textDecoration:'none', alignItems:'center', gap:7, boxShadow:'0 2px 16px rgba(84,105,212,0.45)', border:'1px solid rgba(255,255,255,0.2)' }}>
+        <Link href="/bets/new" className="hidden md:flex btn-primary-glass" style={{ textDecoration:'none' }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Bet Invoeren
         </Link>
@@ -784,10 +784,18 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid gap-4 mb-7 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
-        <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
-        <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
-        <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
-        <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}/>
+        <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'}
+          iconClass={stats.totalWinst>=0?'stat-icon-emerald':'stat-icon-rose'}
+          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
+        <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`}
+          iconClass="stat-icon-indigo"
+          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
+        <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'}
+          iconClass={stats.roi>=0?'stat-icon-emerald':'stat-icon-rose'}
+          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
+        <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`}
+          iconClass="stat-icon-amber"
+          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}/>
       </div>
 
       {/* Chart 1: Cumulative P&L */}
@@ -801,7 +809,7 @@ export default function Dashboard() {
         const pnlColor = dispPnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
         const roiColor = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
         return (
-          <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24, marginBottom:24 }}>
+          <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:24 }}>
             {/* Header row */}
             <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               {/* Left: P&L + ROI */}
@@ -850,7 +858,7 @@ export default function Dashboard() {
 
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
-        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24 }}>
+        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
           <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Gestapeld per bookmaker</p></div>
           {stackedData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
@@ -868,7 +876,7 @@ export default function Dashboard() {
         </div>
 
         {/* Balance per bookmaker donut */}
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24, userSelect:'none' }}>
+        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
           {bookieBalanceData.length > 0 ? (() => {
             const total = bookieBalanceData.reduce((s,d)=>s+d.value,0);
             return (
@@ -938,7 +946,7 @@ export default function Dashboard() {
       </div>
 
       {/* Cumulatieve P&L per Bookmaker */}
-      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24, marginBottom:24 }}>
+      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:24 }}>
         <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Cumulatieve P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p></div>
         {bookLineData.length>1?(
           <ResponsiveContainer width="100%" height={220}>
@@ -956,7 +964,7 @@ export default function Dashboard() {
 
       {/* ROI + Balance per Bookmaker */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24 }}>
+        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
           {roiData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
@@ -974,7 +982,7 @@ export default function Dashboard() {
         </div>
 
         {/* Status Breakdown donut */}
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:24, userSelect:'none' }}>
+        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling van alle bet statussen</p></div>
           {(() => {
             const total = statusData.reduce((s,d)=>s+d.value,0);

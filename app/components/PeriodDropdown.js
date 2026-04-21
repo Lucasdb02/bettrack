@@ -104,7 +104,7 @@ function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, on
               style={{
                 textAlign:'center', lineHeight:'34px', height:34, fontSize:13, cursor:'pointer',
                 fontWeight: isToday ? 700 : 400,
-                borderRadius: isSelected ? '50%' : inRange ? 0 : 4,
+                borderRadius: isSelected ? 6 : inRange ? 6 : 4,
                 backgroundColor: isSelected ? '#1e3a8a' : inRange ? rangeColor : 'transparent',
                 color: isSelected ? '#fff' : dayTxt,
                 outline: isToday && !isSelected ? `2px solid ${todayRing}` : 'none',
@@ -227,7 +227,7 @@ function DateRangeModal({ initial, onSave, onClose }) {
         <div style={{ display:'flex', justifyContent:'flex-end', gap:10 }}>
           <button onClick={onClose} style={{ padding:'9px 20px', borderRadius:7, border:`1px solid ${bdr}`, backgroundColor:'transparent', color: bodyTxt, fontSize:13, fontWeight:500, cursor:'pointer' }}>Annuleren</button>
           <button onClick={() => { if (canSave) { onSave({ from:fromDate, to:toDate }); onClose(); } }} disabled={!canSave}
-            style={{ padding:'9px 22px', borderRadius:7, border:'none', backgroundColor: canSave ? '#1e3a8a' : (dark ? '#374151' : '#9ca3af'), color:'#fff', fontSize:13, fontWeight:600, cursor: canSave ? 'pointer' : 'not-allowed' }}>
+            style={{ padding:'9px 22px', borderRadius:7, border:'none', backgroundColor: canSave ? 'var(--brand)' : (dark ? '#374151' : '#cbd5e1'), color:'#fff', fontSize:13, fontWeight:600, cursor: canSave ? 'pointer' : 'not-allowed' }}>
             Opslaan
           </button>
         </div>

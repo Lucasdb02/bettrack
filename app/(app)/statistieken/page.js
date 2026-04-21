@@ -6,10 +6,48 @@ import { useFmt } from '../../context/PreferencesContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
 import { TagChip } from '../../components/TagInput';
 import { sportEmoji } from '../../lib/sports';
+import PeriodDropdown from '../../components/PeriodDropdown';
+import MultiSelect from '../../components/MultiSelect';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell, ReferenceLine,
 } from 'recharts';
+
+// ── period filter helpers ──────────────────────────────────────────────────────
+
+function getDateRange(filter) {
+  const now  = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tom   = new Date(today); tom.setDate(tom.getDate() + 1);
+  const d = today.getDay() || 7;
+  switch (filter) {
+    case 'today':     return { from: today, to: tom };
+    case 'yesterday': { const y = new Date(today); y.setDate(y.getDate()-1); return { from:y, to:today }; }
+    case 'last7':     { const f = new Date(today); f.setDate(f.getDate()-7); return { from:f, to:tom }; }
+    case 'lastWeek':  { const mon = new Date(today); mon.setDate(today.getDate()-(d+6)); const nxt = new Date(mon); nxt.setDate(mon.getDate()+7); return { from:mon, to:nxt }; }
+    case 'last28':    { const f = new Date(today); f.setDate(f.getDate()-28); return { from:f, to:tom }; }
+    case 'lastMonth': { const f = new Date(now.getFullYear(), now.getMonth()-1, 1); const t = new Date(now.getFullYear(), now.getMonth(), 1); return { from:f, to:t }; }
+    case 'thisMonth': { const f = new Date(now.getFullYear(), now.getMonth(), 1); return { from:f, to:tom }; }
+    case 'thisYear':  { const f = new Date(now.getFullYear(), 0, 1); return { from:f, to:tom }; }
+    case 'last3m':    { const f = new Date(today); f.setMonth(f.getMonth()-3); return { from:f, to:tom }; }
+    case 'last6m':    { const f = new Date(today); f.setMonth(f.getMonth()-6); return { from:f, to:tom }; }
+    case 'lastYear':  { const f = new Date(now.getFullYear()-1, 0, 1); const t = new Date(now.getFullYear(), 0, 1); return { from:f, to:t }; }
+    default: return null;
+  }
+}
+
+function filterBetsByPeriod(bets, filter, customRange) {
+  if (filter === 'all') return bets;
+  if (filter === 'custom') {
+    if (!customRange) return bets;
+    const { from, to } = customRange;
+    const end = new Date(to); end.setDate(end.getDate()+1);
+    return bets.filter(b => { const d = new Date(b.datum); return d >= from && d < end; });
+  }
+  const range = getDateRange(filter);
+  if (!range) return bets;
+  return bets.filter(b => { const d = new Date(b.datum); return d >= range.from && d < range.to; });
+}
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -151,16 +189,12 @@ function huidigeReeks(bets) {
 // ── chart tooltips ─────────────────────────────────────────────────────────────
 
 function Tip({ active, payload, label }) {
-  const { dark } = useTheme();
   const { fmtPnl } = useFmt();
   if (!active || !payload?.length) return null;
   const v = payload[0].value;
-  const bg = dark ? '#1c2335' : '#ffffff';
-  const border = dark ? '#2a3347' : '#e5e7eb';
-  const muted = dark ? '#8b949e' : '#6b7280';
   return (
-    <div style={{ backgroundColor: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', fontSize: 13 }}>
-      {label && <p style={{ color: muted, marginBottom: 4, fontWeight: 600 }}>{label}</p>}
+    <div style={{ backgroundColor: 'var(--tooltip-bg)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', boxShadow: 'var(--shadow-lg)', fontSize: 13 }}>
+      {label && <p style={{ color: 'var(--text-3)', marginBottom: 4, fontWeight: 600 }}>{label}</p>}
       <p style={{ fontWeight: 700, color: v >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>
         {typeof v === 'number' ? fmtPnl(v) : v}
       </p>
@@ -173,7 +207,7 @@ function Tip({ active, payload, label }) {
 function GroepTabel({ data, title, type, isMobile }) {
   const { fmtPnl } = useFmt();
   return (
-    <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', marginBottom: 24 }}>
+    <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
       <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
         <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-1)' }}>{title}</h2>
       </div>
@@ -226,12 +260,6 @@ function GroepTabel({ data, title, type, isMobile }) {
   );
 }
 
-// ── filter style ───────────────────────────────────────────────────────────────
-
-const iFilter = {
-  padding: '7px 11px', border: '1px solid var(--border)', borderRadius: 8,
-  fontSize: 13, color: 'var(--text-2)', backgroundColor: 'var(--bg-card)', cursor: 'pointer',
-};
 
 // ── page ───────────────────────────────────────────────────────────────────────
 
@@ -248,27 +276,23 @@ export default function StatistiekenPage() {
   }, []);
 
   // filters
-  const [fSport, setFSport] = useState('');
-  const [fBookmaker, setFBookmaker] = useState('');
-  const [fMarkt, setFMarkt] = useState('');
-  const [fDateFrom, setFDateFrom] = useState('');
-  const [fDateTo, setFDateTo] = useState('');
+  const [periodFilter, setPeriodFilter] = useState('all');
+  const [customRange,  setCustomRange]  = useState(null);
+  const [sportFilter,  setSportFilter]  = useState(null);
+  const [bookFilter,   setBookFilter]   = useState(null);
 
-  const allSports     = useMemo(() => [...new Set(bets.map(b => b.sport))].sort(),     [bets]);
-  const allBookmakers = useMemo(() => [...new Set(bets.map(b => b.bookmaker))].sort(), [bets]);
-  const allMarkten    = useMemo(() => [...new Set(bets.map(b => b.markt))].sort(),     [bets]);
+  const allSporten    = useMemo(() => [...new Set(bets.map(b => b.sport||'Onbekend'))].sort(),     [bets]);
+  const allBookmakers = useMemo(() => [...new Set(bets.map(b => b.bookmaker||'Onbekend'))].sort(), [bets]);
 
-  const filtered = useMemo(() => bets.filter(b => {
-    if (fSport     && b.sport     !== fSport)     return false;
-    if (fBookmaker && b.bookmaker !== fBookmaker) return false;
-    if (fMarkt     && b.markt     !== fMarkt)     return false;
-    if (fDateFrom  && b.datum < fDateFrom)        return false;
-    if (fDateTo    && b.datum > fDateTo)          return false;
-    return true;
-  }), [bets, fSport, fBookmaker, fMarkt, fDateFrom, fDateTo]);
+  const filtered = useMemo(() => {
+    let r = filterBetsByPeriod(bets, periodFilter, customRange);
+    if (sportFilter && sportFilter.length) r = r.filter(b => sportFilter.includes(b.sport||'Onbekend'));
+    if (bookFilter  && bookFilter.length)  r = r.filter(b => bookFilter.includes(b.bookmaker||'Onbekend'));
+    return r;
+  }, [bets, periodFilter, customRange, sportFilter, bookFilter]);
 
   const settled = useMemo(() => filtered.filter(b => b.uitkomst !== 'lopend'), [filtered]);
-  const hasFilters = fSport || fBookmaker || fMarkt || fDateFrom || fDateTo;
+  const hasFilters = periodFilter !== 'all' || (sportFilter?.length > 0) || (bookFilter?.length > 0);
 
   // computed data
   const perSport     = useMemo(() => groepeerOp(settled, 'sport'),     [settled]);
@@ -315,26 +339,30 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Filter bar */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 24 }}>
-        <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginRight: 4 }}>Filter</span>
-        <input type="date" value={fDateFrom} onChange={e => setFDateFrom(e.target.value)} style={iFilter} title="Van datum" />
-        <span style={{ fontSize: 12, color: 'var(--text-4)' }}>–</span>
-        <input type="date" value={fDateTo} onChange={e => setFDateTo(e.target.value)} style={iFilter} title="Tot datum" />
-        <select value={fSport} onChange={e => setFSport(e.target.value)} style={iFilter}>
-          <option value="">Alle sporten</option>
-          {allSports.map(s => <option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
-        </select>
-        <select value={fBookmaker} onChange={e => setFBookmaker(e.target.value)} style={iFilter}>
-          <option value="">Alle bookmakers</option>
-          {allBookmakers.map(b => <option key={b} value={b}>{b}</option>)}
-        </select>
-        <select value={fMarkt} onChange={e => setFMarkt(e.target.value)} style={iFilter}>
-          <option value="">Alle markten</option>
-          {allMarkten.map(m => <option key={m} value={m}>{m}</option>)}
-        </select>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
+        <PeriodDropdown
+          filter={periodFilter}
+          onSelect={(f) => { if (f !== 'custom') setPeriodFilter(f); }}
+          customRange={customRange}
+          onCustomRange={(range) => { setCustomRange(range); setPeriodFilter('custom'); }}
+        />
+        <MultiSelect
+          label="Sport"
+          icon={<svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M256.07-0.047C114.467-0.047-0.326,114.746-0.326,256.349S114.467,512.744,256.07,512.744s256.395-114.792,256.395-256.395S397.673-0.047,256.07-0.047z M466.667,224v0.064c-19.353,12.05-40.515,20.917-62.677,26.261c-4.595-68.333-27.183-134.234-65.472-191.019C406.956,88.198,455.48,150.56,466.667,224z M256,42.667c5.397,0,10.667,0.405,15.979,0.811c53.223,58.444,84.842,133.342,89.6,212.245c-29.153,0.997-58.199-4.013-85.333-14.72c-4.247-72.136-38.705-139.14-94.912-184.555C205.188,47.391,230.484,42.722,256,42.667z M138.389,78.187c20.041,13.069,37.744,29.41,52.373,48.341C126.816,169.409,77.017,230.285,47.659,301.461C28.668,215.422,64.766,126.591,138.389,78.187z M71.595,362.773c21.296-81.459,71.492-152.392,141.227-199.573c12.627,25.943,19.835,54.187,21.184,83.008c-58.22,44.242-94.81,111.213-100.587,184.107C108.191,412.512,87.102,389.474,71.595,362.773z M256,469.333c-27.6-0.008-54.934-5.399-80.469-15.872c-0.47-27.519,4.398-54.867,14.336-80.533c70.121,31.128,147.992,40.413,223.467,26.645C373.07,443.969,315.934,469.303,256,469.333z M209.067,334.72c13.523-20.959,30.63-39.373,50.539-54.4c30.156,12.194,62.363,18.515,94.891,18.624c39.574-0.004,78.615-9.129,114.091-26.667c-1.999,26.074-8.82,51.551-20.117,75.136C369.697,371.777,284.821,367.277,209.067,334.72z"/></svg>}
+          options={allSporten}
+          selected={sportFilter}
+          onChange={setSportFilter}
+        />
+        <MultiSelect
+          label="Bookmaker"
+          icon={<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>}
+          options={allBookmakers}
+          selected={bookFilter}
+          onChange={setBookFilter}
+        />
         {hasFilters && (
           <button
-            onClick={() => { setFSport(''); setFBookmaker(''); setFMarkt(''); setFDateFrom(''); setFDateTo(''); }}
+            onClick={() => { setPeriodFilter('all'); setCustomRange(null); setSportFilter(null); setBookFilter(null); }}
             style={{ padding: '7px 11px', borderRadius: 8, border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-3)', fontSize: 12.5, cursor: 'pointer' }}
           >
             Wis filters
@@ -357,7 +385,7 @@ export default function StatistiekenPage() {
             c: huidig.type === 'win' ? 'var(--color-win)' : huidig.type === 'loss' ? 'var(--color-loss)' : 'var(--text-1)',
           },
         ].map(s => (
-          <div key={s.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '18px 20px' }}>
+          <div key={s.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '18px 20px', boxShadow: 'var(--shadow-sm)' }}>
             <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{s.label}</p>
             <p style={{ fontSize: 22, fontWeight: 700, color: s.c || 'var(--text-1)', lineHeight: 1 }}>{s.v}</p>
             <p style={{ fontSize: 11.5, color: 'var(--text-4)', marginTop: 5 }}>{s.sub}</p>
@@ -367,7 +395,7 @@ export default function StatistiekenPage() {
 
       {/* Maandelijkse P&L + Dag van de Week */}
       <div className="chart-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
-        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px' }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Maandelijkse P&L</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Winst/verlies per maand</p>
           {maandData.length > 0 ? (
@@ -386,7 +414,7 @@ export default function StatistiekenPage() {
           ) : empty(185)}
         </div>
 
-        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px' }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Dag van de Week</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Op welke dag presteer je het best?</p>
           {settled.length > 0 ? (
@@ -438,7 +466,7 @@ export default function StatistiekenPage() {
 
       {/* Odds Range Analyse */}
       {oddsData.length > 0 && (
-        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px', marginBottom: 24 }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Odds Range Analyse</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>In welke odds bracket presteer je het best?</p>
           <div className="odds-range-inner">
@@ -483,7 +511,7 @@ export default function StatistiekenPage() {
 
       {/* P&L per Sport chart */}
       {perSport.length > 0 && (
-        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px', marginBottom: 24 }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>P&L per Sport</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Waar verdien je het meest?</p>
           <ResponsiveContainer width="100%" height={Math.max(160, perSport.length * 36)}>

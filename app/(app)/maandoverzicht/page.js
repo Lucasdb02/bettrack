@@ -13,26 +13,22 @@ const DAGEN=['Ma','Di','Wo','Do','Vr','Za','Zo'];
 const dagVanWeek = d => (d.getDay()+6)%7;
 
 function BarTip({active,payload,label}) {
-  const {dark} = useTheme();
   const {fmtPnl} = useFmt();
   if(!active||!payload?.length) return null;
   const v=payload[0].value;
-  const bg = dark ? '#1c2335' : '#ffffff';
-  const border = dark ? '#2a3347' : '#e5e7eb';
-  const textMuted = dark ? '#8b949e' : '#6b7280';
-  return <div style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:8,padding:'8px 12px',fontSize:12,boxShadow:'0 4px 12px rgba(0,0,0,0.2)'}}><p style={{color:textMuted,marginBottom:3,fontWeight:600}}>{label}</p><p style={{fontWeight:700,color:v>=0?'var(--color-win)':'var(--color-loss)'}}>{fmtPnl(v)}</p></div>;
+  return <div style={{backgroundColor:'var(--tooltip-bg)',border:'1px solid var(--border)',borderRadius:8,padding:'8px 12px',fontSize:12,boxShadow:'var(--shadow-lg)'}}><p style={{color:'var(--text-3)',marginBottom:3,fontWeight:600}}>{label}</p><p style={{fontWeight:700,color:v>=0?'var(--color-win)':'var(--color-loss)'}}>{fmtPnl(v)}</p></div>;
 }
 
 function DagModal({ datum, bets, pnl, onClose, isMobile }) {
   const { dark } = useTheme();
   const { fmtPnl } = useFmt();
 
-  const bg     = dark ? '#161c2a' : '#ffffff';
-  const border = dark ? '#2a3347' : '#e5e7eb';
-  const text1  = dark ? '#e6edf3' : '#1a1f36';
-  const text2  = dark ? '#c9d1d9' : '#374151';
-  const text3  = dark ? '#8b949e' : '#6b7280';
-  const subtle = dark ? '#1c2335' : '#f9fafb';
+  const bg     = 'var(--bg-card)';
+  const border = 'var(--border)';
+  const text1  = 'var(--text-1)';
+  const text2  = 'var(--text-2)';
+  const text3  = 'var(--text-3)';
+  const subtle = 'var(--bg-subtle)';
 
   useEffect(() => {
     const h = e => { if (e.key === 'Escape') onClose(); };
@@ -49,7 +45,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:12,width:'100%',maxWidth:isMobile?480:960,maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'0 24px 64px rgba(0,0,0,0.4)'}}
+        style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:12,width:'100%',maxWidth:isMobile?480:960,maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'var(--shadow-lg)'}}
       >
         {/* Header */}
         <div style={{padding:'20px 24px',borderBottom:`1px solid ${border}`,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
@@ -253,7 +249,7 @@ export default function MaandoverzichtPage() {
           {l:'Winstdagen',v:maandStats.winstDagen,c:'var(--color-win)'},
           {l:'Verliesdagen',v:maandStats.verliesdagen,c:'var(--color-loss)'},
         ].map(s=>(
-          <div key={s.l} style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'16px 20px'}}>
+          <div key={s.l} style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'16px 20px',boxShadow:'var(--shadow-sm)'}}>
             <p style={{fontSize:11,color:'var(--text-3)',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}>{s.l}</p>
             <p style={{fontSize:22,fontWeight:700,color:s.c,lineHeight:1}}>{s.v}</p>
           </div>
@@ -261,7 +257,7 @@ export default function MaandoverzichtPage() {
       </div>
 
       {/* Calendar */}
-      <div className="cal-wrapper" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden',marginBottom:24}}>
+      <div className="cal-wrapper" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',marginBottom:24,boxShadow:'var(--shadow-sm)'}}>
         <div className="cal-header" style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',borderBottom:'1px solid var(--border-subtle)'}}>
           {DAGEN.map(d=><div key={d} style={{padding:'12px 0',textAlign:'center',fontSize:11.5,fontWeight:700,color:'var(--text-4)',textTransform:'uppercase',letterSpacing:'0.05em',backgroundColor:'var(--bg-subtle)'}}>{d}</div>)}
         </div>
@@ -274,8 +270,8 @@ export default function MaandoverzichtPage() {
             const pnl = data?.pnl ?? 0;
             const int = hasBets ? Math.min(Math.abs(pnl)/maxAbs,1) : 0;
             let bg = 'var(--bg-card)';
-            if(hasBets&&pnl>0) bg=isMobile?'#113038':`rgba(17,185,129,${0.05+int*0.2})`;
-            else if(hasBets&&pnl<0) bg=isMobile?'#301A31':`rgba(244,63,94,${0.05+int*0.18})`;
+            if(hasBets&&pnl>0) bg=`rgba(17,185,129,${0.05+int*0.22})`;
+            else if(hasBets&&pnl<0) bg=`rgba(244,63,94,${0.05+int*0.20})`;
             else if(hasBets) bg='var(--bg-subtle)';
             const pnlColor = pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)';
             return (
@@ -290,7 +286,7 @@ export default function MaandoverzichtPage() {
               >
                 {isMobile ? (
                   <>
-                    <div style={{fontSize:11,fontWeight:400,color:isToday?'#fff':hasBets?'rgba(200,200,200,0.6)':'var(--text-4)',backgroundColor:isToday?'#5469d4':'transparent',borderRadius:'50%',width:20,height:20,display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,marginBottom:hasBets?3:0}}>
+                    <div style={{fontSize:11,fontWeight:400,color:isToday?'#fff':hasBets?'var(--text-2)':'var(--text-4)',backgroundColor:isToday?'var(--brand)':'transparent',borderRadius:'50%',width:20,height:20,display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,marginBottom:hasBets?3:0}}>
                       {dag}
                     </div>
                     {hasBets&&(
@@ -299,7 +295,7 @@ export default function MaandoverzichtPage() {
                   </>
                 ) : (
                   <>
-                    <div className="cal-day-num" style={{width:26,height:26,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',backgroundColor:isToday?'#5469d4':'transparent',fontSize:12.5,fontWeight:isToday?700:hasBets?600:400,color:isToday?'#fff':hasBets?'var(--text-1)':'var(--text-4)',lineHeight:1,marginBottom:4,flexShrink:0}}>
+                    <div className="cal-day-num" style={{width:26,height:26,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',backgroundColor:isToday?'var(--brand)':'transparent',fontSize:12.5,fontWeight:isToday?700:hasBets?600:400,color:isToday?'#fff':hasBets?'var(--text-1)':'var(--text-4)',lineHeight:1,marginBottom:4,flexShrink:0}}>
                       {dag}
                     </div>
                     {hasBets&&(
@@ -323,7 +319,7 @@ export default function MaandoverzichtPage() {
       </div>
 
       {barData.length>0&&(
-        <div className="cal-barchart" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'22px 24px',marginBottom:24}}>
+        <div className="cal-barchart" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'22px 24px',marginBottom:24,boxShadow:'var(--shadow-sm)'}}>
           <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:16}}>Dagelijkse P&L — {MAANDEN[maand]} {jaar}</h2>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>

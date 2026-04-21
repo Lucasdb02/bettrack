@@ -11,7 +11,7 @@ const TABS = [
 
 function TabBtn({ active, onClick, children }) {
   return (
-    <button onClick={onClick} style={{ padding:'8px 18px', border:'none', borderBottom: active ? '2px solid #5469d4' : '2px solid transparent', backgroundColor:'transparent', fontSize:13.5, fontWeight: active ? 600 : 400, color: active ? '#5469d4' : 'var(--text-3)', cursor:'pointer', transition:'all 0.15s', marginBottom:-1 }}>
+    <button onClick={onClick} style={{ padding:'8px 18px', border:'none', borderBottom: active ? '2px solid var(--brand)' : '2px solid transparent', backgroundColor:'transparent', fontSize:13.5, fontWeight: active ? 600 : 400, color: active ? 'var(--brand)' : 'var(--text-3)', cursor:'pointer', transition:'all 0.15s', marginBottom:-1 }}>
       {children}
     </button>
   );
@@ -19,7 +19,7 @@ function TabBtn({ active, onClick, children }) {
 
 function Section({ title, children }) {
   return (
-    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, overflow:'hidden', marginBottom:20 }}>
+    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', marginBottom:20, boxShadow:'var(--shadow-sm)' }}>
       <div style={{ padding:'16px 24px', borderBottom:'1px solid var(--border-subtle)' }}>
         <h2 style={{ fontSize:14, fontWeight:700, color:'var(--text-1)' }}>{title}</h2>
       </div>
@@ -66,7 +66,7 @@ function OverzichtTab({ prefs, bets }) {
   return (
     <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
       {stats.map(s => (
-        <div key={s.label} style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'18px 22px' }}>
+        <div key={s.label} style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 22px', boxShadow:'var(--shadow-sm)' }}>
           <p style={{ fontSize:11.5, color:'var(--text-3)', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>{s.label}</p>
           <p style={{ fontSize:22, fontWeight:700, color: s.color || 'var(--text-1)', lineHeight:1 }}>{s.value}</p>
         </div>
@@ -112,7 +112,7 @@ function VoorkeurenTab({ prefs, setPrefs }) {
         <Row label="Weergave" hint="Kies of P&L wordt weergegeven in euro's of units door de hele app." last>
           <div style={{ display:'flex', gap:8 }}>
             {[{ v:'euro', l:"Euro's (€)" }, { v:'units', l:'Units (u)' }].map(opt => (
-              <button key={opt.v} onClick={() => set('weergaveEenheden', opt.v)} style={{ flex:1, padding:'8px 12px', borderRadius:7, fontSize:13, fontWeight:600, cursor:'pointer', border:'1px solid', backgroundColor: local.weergaveEenheden === opt.v ? '#5469d4' : 'var(--bg-card)', color: local.weergaveEenheden === opt.v ? '#fff' : 'var(--text-2)', borderColor: local.weergaveEenheden === opt.v ? '#5469d4' : 'var(--border)' }}>
+              <button key={opt.v} onClick={() => set('weergaveEenheden', opt.v)} style={{ flex:1, padding:'8px 12px', borderRadius:7, fontSize:13, fontWeight:600, cursor:'pointer', border:'1px solid', backgroundColor: local.weergaveEenheden === opt.v ? 'var(--brand)' : 'var(--bg-card)', color: local.weergaveEenheden === opt.v ? '#fff' : 'var(--text-2)', borderColor: local.weergaveEenheden === opt.v ? 'var(--brand)' : 'var(--border)' }}>
                 {opt.l}
               </button>
             ))}
@@ -127,7 +127,7 @@ function VoorkeurenTab({ prefs, setPrefs }) {
       </Section>
 
       <div style={{ display:'flex', justifyContent:'flex-end' }}>
-        <button onClick={save} style={{ padding:'9px 24px', borderRadius:7, fontSize:13.5, fontWeight:600, border: saved ? 'none' : '1px solid rgba(255,255,255,0.2)', cursor:'pointer', background: saved ? '#11B981' : 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', boxShadow: saved ? 'none' : '0 2px 16px rgba(84,105,212,0.45)', transition:'all 0.2s', display:'flex', alignItems:'center', gap:8 }}>
+        <button onClick={save} className={saved ? '' : 'btn-primary-glass'} style={{ padding:'9px 24px', fontSize:13.5, fontWeight:600, cursor:'pointer', background: saved ? 'var(--color-win)' : undefined, color:'#fff', border: saved ? 'none' : undefined, borderRadius:7, transition:'all 0.2s', display:'flex', alignItems:'center', gap:8 }}>
           {saved ? <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Opgeslagen!</> : 'Voorkeuren opslaan'}
         </button>
       </div>

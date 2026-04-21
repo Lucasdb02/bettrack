@@ -3,7 +3,6 @@ import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useFmt, ALL_BOOKMAKERS } from '../../context/PreferencesContext';
 import { useBets, berekenWinst } from '../../context/BetsContext';
-import { useTheme } from '../../context/ThemeContext';
 import BookmakerIcon, { BOOKIE_BRAND_COLORS } from '../../components/BookmakerIcon';
 import { getDateRange, fmtBucketLabel } from '../../lib/dateUtils';
 import PeriodDropdown from '../../components/PeriodDropdown';
@@ -95,27 +94,22 @@ function buildChartData(bets, activeBookies, bookmakersConfig, period, customRan
 
 /* ── Custom stacked tooltip ── */
 function StackedTip({ active, payload, label, activeBookies }) {
-  const { dark } = useTheme();
   if (!active || !payload?.length) return null;
-  const bg     = dark ? '#1c2335' : '#ffffff';
-  const border = dark ? '#2a3347' : '#e5e7eb';
-  const text3  = dark ? '#8b949e' : '#6b7280';
-  const text2  = dark ? '#c9d1d9' : '#374151';
-  const total  = payload.reduce((s, p) => s + (p.value || 0), 0);
+  const total = payload.reduce((s, p) => s + (p.value || 0), 0);
 
   return (
-    <div style={{ backgroundColor:bg, border:`1px solid ${border}`, borderRadius:8, padding:'10px 14px', boxShadow:'0 8px 24px rgba(0,0,0,0.2)', fontSize:12, minWidth:160 }}>
-      <p style={{ color:text3, fontWeight:700, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:8 }}>{label}</p>
+    <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:8, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:12, minWidth:160 }}>
+      <p style={{ color:'var(--text-3)', fontWeight:700, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:8 }}>{label}</p>
       {[...payload].reverse().map((p, i) => (
         <div key={i} style={{ display:'flex', alignItems:'center', gap:7, marginBottom:3 }}>
           <div style={{ width:8, height:8, borderRadius:2, backgroundColor:p.fill, flexShrink:0 }}/>
-          <span style={{ color:text2, flex:1 }}>{p.dataKey}</span>
-          <span style={{ fontWeight:700, color:text2 }}>€{p.value?.toFixed(2)}</span>
+          <span style={{ color:'var(--text-2)', flex:1 }}>{p.dataKey}</span>
+          <span style={{ fontWeight:700, color:'var(--text-2)' }}>€{p.value?.toFixed(2)}</span>
         </div>
       ))}
-      <div style={{ borderTop:`1px solid ${border}`, marginTop:6, paddingTop:6, display:'flex', justifyContent:'space-between' }}>
-        <span style={{ color:text3, fontWeight:700 }}>Totaal</span>
-        <span style={{ fontWeight:800, color:text2 }}>€{total.toFixed(2)}</span>
+      <div style={{ borderTop:'1px solid var(--border)', marginTop:6, paddingTop:6, display:'flex', justifyContent:'space-between' }}>
+        <span style={{ color:'var(--text-3)', fontWeight:700 }}>Totaal</span>
+        <span style={{ fontWeight:800, color:'var(--text-1)' }}>€{total.toFixed(2)}</span>
       </div>
     </div>
   );
@@ -182,12 +176,12 @@ function BookmakerFilterDropdown({ bookmakers, selected, onChange }) {
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
           <div style={{
             position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
-            backgroundColor:'#fff', border:'1px solid #e5e7eb',
-            borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
+            backgroundColor:'var(--bg-card)', border:'1px solid var(--border)',
+            borderRadius:10, boxShadow:'var(--shadow-lg)',
             minWidth:180, maxHeight:240, overflowY:'auto',
           }}>
-            <div style={{ padding:'6px 8px', borderBottom:'1px solid #f3f4f6' }}>
-              <button onClick={() => onChange([])} style={{ width:'100%', textAlign:'left', padding:'5px 8px', fontSize:12, color:'#6b7280', backgroundColor:'transparent', border:'none', cursor:'pointer', borderRadius:4 }}>
+            <div style={{ padding:'6px 8px', borderBottom:'1px solid var(--border-subtle)' }}>
+              <button onClick={() => onChange([])} style={{ width:'100%', textAlign:'left', padding:'5px 8px', fontSize:12, color:'var(--text-3)', backgroundColor:'transparent', border:'none', cursor:'pointer', borderRadius:4 }}>
                 Alles deselecteren
               </button>
             </div>
@@ -197,13 +191,13 @@ function BookmakerFilterDropdown({ bookmakers, selected, onChange }) {
                 <button key={naam} onClick={() => toggleOpt(naam)} style={{
                   display:'flex', alignItems:'center', gap:9, width:'100%',
                   textAlign:'left', padding:'9px 16px', fontSize:13,
-                  color: checked ? '#3b5bdb' : '#1a1f36',
-                  backgroundColor: checked ? '#eef2ff' : 'transparent',
+                  color: checked ? 'var(--brand)' : 'var(--text-1)',
+                  backgroundColor: checked ? 'var(--bg-brand)' : 'transparent',
                   border:'none', cursor:'pointer', transition:'background 0.1s',
                 }}
-                onMouseEnter={e => { if (!checked) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
+                onMouseEnter={e => { if (!checked) e.currentTarget.style.backgroundColor = 'var(--row-hover)'; }}
                 onMouseLeave={e => { if (!checked) e.currentTarget.style.backgroundColor = 'transparent'; }}>
-                  <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${checked ? '#3b5bdb' : '#d1d5db'}`, backgroundColor: checked ? '#3b5bdb' : 'transparent', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${checked ? 'var(--brand)' : 'var(--border-strong)'}`, backgroundColor: checked ? 'var(--brand)' : 'transparent', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
                     {checked && <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2 6 5 9 10 3"/></svg>}
                   </div>
                   {naam}
@@ -418,7 +412,7 @@ export default function BookmakersPage() {
 
       {/* ── Balance chart ── */}
       {activeBookies.length > 0 && (
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'22px 24px', marginBottom:24 }}>
+        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'22px 24px', marginBottom:24, boxShadow:'var(--shadow-sm)' }}>
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:20, flexWrap:'wrap', gap:12 }}>
             <div>
               <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:4 }}>Totale Balance</p>
@@ -483,7 +477,7 @@ export default function BookmakersPage() {
       )}
 
       {/* ── Add bookmaker + Deposits/Withdrawals ── */}
-      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'20px 24px', marginBottom:24 }}>
+      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', marginBottom:24, boxShadow:'var(--shadow-sm)' }}>
 
         {/* — Bookmaker toevoegen — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Bookmaker toevoegen</h2>
@@ -504,14 +498,10 @@ export default function BookmakersPage() {
           <button
             onClick={addBookmaker}
             disabled={!selectedToAdd}
+            className={selectedToAdd ? 'btn-primary-glass' : ''}
             style={{
-              padding:'9px 20px',
-              background: selectedToAdd ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : 'var(--bg-subtle)',
-              color: selectedToAdd ? '#fff' : 'var(--text-4)',
-              border: selectedToAdd ? 'none' : '1px solid var(--border)',
-              borderBottom: selectedToAdd ? '1px solid rgba(255,255,255,0.18)' : '1px solid var(--border)',
-              boxShadow: selectedToAdd ? '0 2px 16px rgba(84,105,212,0.45)' : 'none',
-              borderRadius:7, fontSize:13.5, fontWeight:600,
+              padding:'9px 20px', fontSize:13.5, fontWeight:600,
+              ...(!selectedToAdd ? { background:'var(--bg-subtle)', color:'var(--text-4)', border:'1px solid var(--border)', borderRadius:7 } : {}),
               cursor: selectedToAdd ? 'pointer' : 'default',
               display:'flex', alignItems:'center', gap:7,
             }}
@@ -591,16 +581,13 @@ export default function BookmakersPage() {
 
           {/* Submit */}
           <button
-            className="bm-tx-submit"
+            className={`bm-tx-submit${(!txBookie || !txAmount) ? '' : ' btn-primary-glass'}`}
             onClick={addTransaction}
             disabled={txLoading || !txBookie || !txAmount}
             style={{
               padding:'9px 18px', fontSize:13.5, fontWeight:600,
-              background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
-              color: (!txBookie || !txAmount) ? 'var(--text-4)' : '#fff',
-              border: (!txBookie || !txAmount) ? '1px solid var(--border)' : '1px solid rgba(255,255,255,0.2)',
-              boxShadow: (!txBookie || !txAmount) ? 'none' : '0 2px 16px rgba(84,105,212,0.45)',
-              borderRadius:7, cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
+              ...((!txBookie || !txAmount) ? { background:'var(--bg-subtle)', color:'var(--text-4)', border:'1px solid var(--border)', borderRadius:7 } : {}),
+              cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
               display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap',
             }}
           >
@@ -671,7 +658,7 @@ export default function BookmakersPage() {
               : null;
 
             return (
-              <div key={naam} className="bm-card" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'16px 20px' }}>
+              <div key={naam} className="bm-card" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'16px 20px', boxShadow:'var(--shadow-sm)' }}>
                 <div className="bm-card-inner" style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'nowrap', minWidth:0 }}>
 
                   {/* Color dot + icon + name */}
@@ -691,9 +678,9 @@ export default function BookmakersPage() {
                           value={editDate[naam]}
                           onChange={e => setEditDate(p => ({ ...p, [naam]: e.target.value }))}
                           onKeyDown={e => { if(e.key==='Enter') commitDate(naam); if(e.key==='Escape') setEditDate(p => { const n={...p}; delete n[naam]; return n; }); }}
-                          style={{ padding:'4px 6px', border:'1px solid #5469d4', borderRadius:6, fontSize:12, color:'var(--text-1)', backgroundColor:'var(--bg-input)', width:120 }}
+                          style={{ padding:'4px 6px', border:'1px solid var(--brand)', borderRadius:6, fontSize:12, color:'var(--text-1)', backgroundColor:'var(--bg-input)', width:120 }}
                         />
-                        <button onClick={() => commitDate(naam)} style={{ padding:'4px 7px', background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', border:'1px solid rgba(255,255,255,0.12)', borderRadius:6, fontSize:12, cursor:'pointer' }}>✓</button>
+                        <button onClick={() => commitDate(naam)} className="btn-primary-glass" style={{ padding:'4px 7px', fontSize:12, cursor:'pointer' }}>✓</button>
                       </div>
                     ) : (
                       <button onClick={() => setEditDate(p => ({ ...p, [naam]: cfg.startDate || '' }))} style={{ background:'none', border:'none', padding:0, cursor:'pointer', textAlign:'left', display:'flex', alignItems:'baseline', gap:5 }}>
@@ -715,10 +702,10 @@ export default function BookmakersPage() {
                             value={editBalance[naam]}
                             onChange={e => setEditBalance(p => ({ ...p, [naam]: e.target.value }))}
                             onKeyDown={e => { if(e.key==='Enter') commitBalance(naam); if(e.key==='Escape') setEditBalance(p => { const n={...p}; delete n[naam]; return n; }); }}
-                            style={{ width:'100%', padding:'4px 7px 4px 20px', border:'1px solid #5469d4', borderRadius:6, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)' }}
+                            style={{ width:'100%', padding:'4px 7px 4px 20px', border:'1px solid var(--brand)', borderRadius:6, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)' }}
                           />
                         </div>
-                        <button onClick={() => commitBalance(naam)} style={{ padding:'4px 7px', background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color:'#fff', border:'1px solid rgba(255,255,255,0.12)', borderRadius:6, fontSize:12, cursor:'pointer' }}>✓</button>
+                        <button onClick={() => commitBalance(naam)} className="btn-primary-glass" style={{ padding:'4px 7px', fontSize:12, cursor:'pointer' }}>✓</button>
                       </div>
                     ) : (
                       <button onClick={() => setEditBalance(p => ({ ...p, [naam]: String(cfg.startBalance) }))} style={{ background:'none', border:'none', padding:0, cursor:'pointer', textAlign:'left', display:'flex', alignItems:'baseline', gap:5 }}>

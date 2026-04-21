@@ -162,7 +162,7 @@ function HandmatigForm({ onSaved }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden',marginBottom:20}}>
+      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',marginBottom:20}}>
 
         <div style={{padding:'20px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
           <h2 style={sh}>Wedstrijd Info</h2>
@@ -250,7 +250,7 @@ function HandmatigForm({ onSaved }) {
         <button type="button" onClick={()=>router.back()} style={{padding:'9px 18px',border:'1px solid var(--border)',borderRadius:7,fontSize:13.5,fontWeight:600,color:'var(--text-2)',backgroundColor:'var(--bg-card)',cursor:'pointer'}}>
           Annuleren
         </button>
-        <button type="submit" disabled={saving||opgeslagen} style={{padding:'9px 24px',background:opgeslagen?'#11B981':'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:opgeslagen?'none':'1px solid rgba(255,255,255,0.12)',boxShadow:opgeslagen?'none':'0 2px 16px rgba(84,105,212,0.45)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:saving?'wait':'pointer',display:'flex',alignItems:'center',gap:8,transition:'all 0.2s',opacity:saving?0.7:1}}>
+        <button type="submit" disabled={saving||opgeslagen} className={opgeslagen ? '' : 'btn-primary-glass'} style={{padding:'9px 24px',background:opgeslagen?'var(--color-win)':undefined,color:'#fff',border:opgeslagen?'none':undefined,borderRadius:7,fontSize:13.5,fontWeight:600,cursor:saving?'wait':'pointer',display:'flex',alignItems:'center',gap:8,transition:'all 0.2s',opacity:saving?0.7:1}}>
           {opgeslagen
             ? <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Opgeslagen!</>
             : saving ? 'Opslaan...'
@@ -325,7 +325,7 @@ function AutomatischImport() {
   return (
     <div>
       {/* Instructie kaart */}
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'20px 24px',marginBottom:20}}>
+      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',marginBottom:20}}>
         <div style={{display:'flex',alignItems:'flex-start',gap:16}}>
           <div style={{width:40,height:40,borderRadius:9,backgroundColor:'var(--bg-brand)',border:'1px solid var(--brand-soft)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -353,7 +353,7 @@ function AutomatischImport() {
           </div>
           <p style={{fontSize:15,fontWeight:600,color:'var(--text-1)',marginBottom:6}}>Klaar om te importeren</p>
           <p style={{fontSize:13,color:'var(--text-3)',marginBottom:24}}>Verbindt met je Chrome Extension API om bets op te halen</p>
-          <button onClick={ophalen} style={{padding:'10px 28px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:'1px solid rgba(255,255,255,0.12)',boxShadow:'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',borderRadius:7,fontSize:14,fontWeight:600,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>
+          <button onClick={ophalen} className="btn-primary-glass" style={{padding:'10px 28px',fontSize:14,fontWeight:600,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
               <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
@@ -374,7 +374,7 @@ function AutomatischImport() {
 
       {/* Error */}
       {status === 'error' && (
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <div style={{padding:'16px 20px',borderRadius:9,backgroundColor:'rgba(244,63,94,0.1)',border:'1px solid rgba(244,63,94,0.3)',marginBottom:20}}>
             <p style={{fontSize:14,fontWeight:700,color:'#FB7185',marginBottom:4}}>Verbinding mislukt</p>
             <p style={{fontSize:13,color:'var(--text-3)'}}>{errorMsg}</p>
@@ -387,7 +387,7 @@ function AutomatischImport() {
               <li>Staat CORS ingeschakeld in de extension API?</li>
             </ul>
           </div>
-          <button onClick={ophalen} style={{padding:'9px 20px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:'1px solid rgba(255,255,255,0.12)',boxShadow:'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
+          <button onClick={ophalen} className="btn-primary-glass" style={{padding:'9px 20px',fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
             Opnieuw proberen
           </button>
         </div>
@@ -395,7 +395,7 @@ function AutomatischImport() {
 
       {/* Preview */}
       {status === 'preview' && (
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden'}}>
           {/* Header */}
           <div style={{padding:'16px 20px',borderBottom:'1px solid var(--border-subtle)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <div>
@@ -409,7 +409,8 @@ function AutomatischImport() {
               <button
                 onClick={importeer}
                 disabled={selected.size === 0}
-                style={{padding:'7px 20px',background:selected.size===0?'var(--bg-subtle)':'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:selected.size===0?'var(--text-4)':'#fff',border:selected.size===0?'1px solid var(--border)':'1px solid rgba(255,255,255,0.12)',boxShadow:selected.size===0?'none':'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',borderRadius:6,fontSize:13,fontWeight:600,cursor:selected.size===0?'default':'pointer',display:'flex',alignItems:'center',gap:6,transition:'all 0.15s'}}
+                className={selected.size > 0 ? 'btn-primary-glass' : ''}
+                style={{padding:'7px 20px',fontSize:13,fontWeight:600,cursor:selected.size===0?'default':'pointer',display:'flex',alignItems:'center',gap:6,transition:'all 0.15s',...(selected.size===0?{background:'var(--bg-subtle)',color:'var(--text-4)',border:'1px solid var(--border)',borderRadius:6}:{})}}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 Importeer {selected.size > 0 ? `${selected.size} bets` : ''}
@@ -542,13 +543,12 @@ function AutomatischImport() {
 // ── Edit modal for screenshot preview rows ────────────────────────────────────
 
 function EditPreviewModal({ bet, onSave, onClose }) {
-  const { dark } = useTheme();
-  const bg       = dark ? '#161c2a' : '#ffffff';
-  const border   = dark ? '#2a3347' : '#e5e7eb';
-  const text1    = dark ? '#e6edf3' : '#1a1f36';
-  const text2    = dark ? '#c9d1d9' : '#374151';
-  const text3    = dark ? '#8b949e' : '#6b7280';
-  const bgInput  = dark ? '#0d1117' : '#ffffff';
+  const bg      = 'var(--bg-card)';
+  const border  = 'var(--border)';
+  const text1   = 'var(--text-1)';
+  const text2   = 'var(--text-2)';
+  const text3   = 'var(--text-3)';
+  const bgInput = 'var(--bg-input)';
 
   const [form, setForm] = useState({ ...bet });
   const [fouten, setFouten] = useState({});
@@ -647,7 +647,7 @@ function EditPreviewModal({ bet, onSave, onClose }) {
               </FField>
             </div>
             {pot && (
-              <div style={{ marginTop: 12, padding: '10px 14px', backgroundColor: dark ? 'rgba(84,105,212,0.15)' : '#eff6ff', borderRadius: 8, border: `1px solid ${dark ? 'rgba(84,105,212,0.3)' : '#bfdbfe'}`, display: 'flex', gap: 20 }}>
+              <div style={{ marginTop: 12, padding: '10px 14px', backgroundColor: 'var(--bg-brand)', borderRadius: 8, border: '1px solid var(--brand-soft)', display: 'flex', gap: 20 }}>
                 <div><p style={{ fontSize: 10.5, color: text3, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Potentiële winst</p><p style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-win)' }}>+€{pot}</p></div>
                 <div><p style={{ fontSize: 10.5, color: text3, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Totale uitbetaling</p><p style={{ fontSize: 15, fontWeight: 700, color: text1 }}>€{(Number(form.odds) * Number(form.inzet)).toFixed(2)}</p></div>
               </div>
@@ -680,7 +680,7 @@ function EditPreviewModal({ bet, onSave, onClose }) {
         {/* Footer */}
         <div style={{ padding: '16px 24px', borderTop: `1px solid ${border}`, display: 'flex', justifyContent: 'flex-end', gap: 10, position: 'sticky', bottom: 0, backgroundColor: bg }}>
           <button onClick={onClose} style={{ padding: '8px 18px', border: `1px solid ${border}`, borderRadius: 7, fontSize: 13.5, fontWeight: 600, color: text2, backgroundColor: bg, cursor: 'pointer' }}>Annuleren</button>
-          <button onClick={handleSave} style={{ padding: '8px 22px', background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)', borderRadius: 7, fontSize: 13.5, fontWeight: 600, cursor: 'pointer' }}>Opslaan</button>
+          <button onClick={handleSave} className="btn-primary-glass" style={{ padding: '8px 22px', fontSize: 13.5, fontWeight: 600, cursor: 'pointer' }}>Opslaan</button>
         </div>
       </div>
     </div>,
@@ -816,7 +816,7 @@ function ScreenshotImport() {
   return (
     <div>
       {/* Instructie kaart */}
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'20px 24px',marginBottom:20}}>
+      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',marginBottom:20}}>
         <div style={{display:'flex',alignItems:'flex-start',gap:16}}>
           <div style={{width:40,height:40,borderRadius:9,backgroundColor:'var(--bg-brand)',border:'1px solid var(--brand-soft)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -839,7 +839,7 @@ function ScreenshotImport() {
           onDrop={onDrop}
           onDragOver={e => e.preventDefault()}
           onClick={() => document.getElementById('ss-file-input').click()}
-          style={{textAlign:'center',padding:'56px 24px',backgroundColor:'var(--bg-card)',border:'2px dashed var(--border)',borderRadius:10,cursor:'pointer',transition:'border-color 0.15s'}}
+          style={{textAlign:'center',padding:'56px 24px',backgroundColor:'var(--bg-card)',border:'2px dashed var(--border)',borderRadius:12,cursor:'pointer',transition:'border-color 0.15s'}}
           onMouseEnter={e => e.currentTarget.style.borderColor='var(--brand)'}
           onMouseLeave={e => e.currentTarget.style.borderColor='var(--border)'}
         >
@@ -851,7 +851,7 @@ function ScreenshotImport() {
           </div>
           <p style={{fontSize:15,fontWeight:600,color:'var(--text-1)',marginBottom:6}}>Sleep een screenshot hierheen</p>
           <p style={{fontSize:13,color:'var(--text-3)',marginBottom:20}}>of klik om een bestand te kiezen · PNG, JPG, WEBP</p>
-          <span style={{padding:'9px 24px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',borderRadius:7,fontSize:13.5,fontWeight:600,pointerEvents:'none',boxShadow:'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',border:'1px solid rgba(255,255,255,0.12)'}}>
+          <span className="btn-primary-glass" style={{padding:'9px 24px',fontSize:13.5,fontWeight:600,pointerEvents:'none'}}>
             Afbeelding kiezen
           </span>
         </div>
@@ -859,7 +859,7 @@ function ScreenshotImport() {
 
       {/* Analysing */}
       {status === 'analysing' && (
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden'}}>
           {imgUrl && <img src={imgUrl} alt="screenshot" style={{width:'100%',maxHeight:280,objectFit:'cover',display:'block',borderBottom:'1px solid var(--border-subtle)',opacity:0.6}}/>}
           <div style={{textAlign:'center',padding:'32px 24px'}}>
             <div style={{width:40,height:40,border:'3px solid var(--border)',borderTopColor:'var(--brand)',borderRadius:'50%',margin:'0 auto 14px',animation:'spin 0.8s linear infinite'}}/>
@@ -872,12 +872,12 @@ function ScreenshotImport() {
 
       {/* Error */}
       {status === 'error' && (
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <div style={{padding:'16px 20px',borderRadius:9,backgroundColor:'rgba(244,63,94,0.1)',border:'1px solid rgba(244,63,94,0.3)',marginBottom:20}}>
             <p style={{fontSize:14,fontWeight:700,color:'#FB7185',marginBottom:4}}>Analyse mislukt</p>
             <p style={{fontSize:13,color:'var(--text-3)'}}>{errorMsg}</p>
           </div>
-          <button onClick={reset} style={{padding:'9px 20px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:'1px solid rgba(255,255,255,0.12)',boxShadow:'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
+          <button onClick={reset} className="btn-primary-glass" style={{padding:'9px 20px',fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
             Opnieuw proberen
           </button>
         </div>
@@ -888,7 +888,7 @@ function ScreenshotImport() {
         <div style={{display:'flex',flexDirection:'column',gap:16}}>
           {/* Thumbnail + reset */}
           {imgUrl && (
-            <div style={{position:'relative',borderRadius:10,overflow:'hidden',border:'1px solid var(--border)',maxHeight:180}}>
+            <div style={{position:'relative',borderRadius:12,overflow:'hidden',border:'1px solid var(--border)',maxHeight:180}}>
               <img src={imgUrl} alt="screenshot" style={{width:'100%',maxHeight:180,objectFit:'cover',display:'block'}}/>
               <button onClick={reset} title="Afbeelding verwijderen"
                 style={{position:'absolute',top:10,right:10,width:30,height:30,borderRadius:6,backgroundColor:'rgba(0,0,0,0.6)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
@@ -898,7 +898,7 @@ function ScreenshotImport() {
           )}
 
           {/* Table — matches bets overview style */}
-          <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+          <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden'}}>
             {/* Header bar */}
             <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border-subtle)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
               <div>
@@ -910,7 +910,8 @@ function ScreenshotImport() {
                   Nieuwe afbeelding
                 </button>
                 <button onClick={importeer} disabled={selected.size===0}
-                  style={{padding:'7px 20px',background:selected.size===0?'var(--bg-subtle)':'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:selected.size===0?'var(--text-4)':'#fff',border:selected.size===0?'1px solid var(--border)':'1px solid rgba(255,255,255,0.12)',boxShadow:selected.size===0?'none':'0 2px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.18)',borderRadius:6,fontSize:13,fontWeight:600,cursor:selected.size===0?'default':'pointer',display:'flex',alignItems:'center',gap:6,transition:'all 0.15s'}}>
+                  className={selected.size > 0 ? 'btn-primary-glass' : ''}
+                  style={{padding:'7px 20px',fontSize:13,fontWeight:600,cursor:selected.size===0?'default':'pointer',display:'flex',alignItems:'center',gap:6,transition:'all 0.15s',...(selected.size===0?{background:'var(--bg-subtle)',color:'var(--text-4)',border:'1px solid var(--border)',borderRadius:6}:{})}}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   Importeer {selected.size > 0 ? `${selected.size} bets` : ''}
                 </button>
@@ -1062,7 +1063,7 @@ export default function NieuweBetPage() {
       </div>
 
       {/* Tab switcher */}
-      <div style={{display:'flex',gap:4,padding:4,backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:10,marginBottom:24}}>
+      <div style={{display:'flex',gap:4,padding:4,backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:12,marginBottom:24}}>
         {tabBtn('handmatig', 'Handmatig',
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         )}

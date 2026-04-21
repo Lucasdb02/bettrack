@@ -49,7 +49,7 @@ export default function ArbitragePage() {
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
         {/* Inputs */}
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
           <div style={{display:'flex',flexDirection:'column',gap:16}}>
             {[0,1,2].map(i=>(
@@ -64,7 +64,7 @@ export default function ArbitragePage() {
         </div>
 
         {/* Results */}
-        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'24px'}}>
+        <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Resultaat</h2>
 
           {!result ? (
@@ -97,7 +97,7 @@ export default function ArbitragePage() {
       </div>
 
       {/* Info box */}
-      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:10,padding:'20px 24px',marginTop:24}}>
+      <div style={{backgroundColor:'var(--bg-subtle)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',marginTop:24}}>
         <h3 style={{fontSize:13.5,fontWeight:700,color:'var(--text-1)',marginBottom:8}}>Hoe werkt arbitrage?</h3>
         <p style={{fontSize:13.5,color:'var(--text-3)',lineHeight:1.7}}>
           Arbitrage (ook wel "surebet") is mogelijk wanneer verschillende bookmakers zodanig verschillende odds bieden dat de totale implied probability onder de 100% valt. Door op alle uitkomsten te wedden in de juiste verhouding, is een gegarandeerde winst mogelijk — ongeacht de uitkomst.
