@@ -235,11 +235,11 @@ export default function MaandoverzichtPage() {
       <div className="flex items-center justify-between mb-7 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Maandoverzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>Dagelijkse analyse van je bettingresultaten</p></div>
         <div className="flex items-center" style={{gap:isMobile?4:12}}>
-          <button onClick={prev} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:7,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
+          <button onClick={prev} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:8,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <span style={{fontSize:15,fontWeight:700,color:'var(--text-1)',minWidth:isMobile?'auto':140,textAlign:'center',whiteSpace:'nowrap'}}>{MAANDEN[maand]} {jaar}</span>
-          <button onClick={next} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:7,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
+          <button onClick={next} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:8,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>

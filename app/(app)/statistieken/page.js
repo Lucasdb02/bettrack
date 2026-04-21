@@ -229,8 +229,8 @@ function GroepTabel({ data, title, type, isMobile }) {
 // ── filter style ───────────────────────────────────────────────────────────────
 
 const iFilter = {
-  padding: '7px 10px', border: '1px solid var(--border)', borderRadius: 6,
-  fontSize: 12.5, color: 'var(--text-1)', backgroundColor: 'var(--bg-input)', cursor: 'pointer',
+  padding: '7px 11px', border: '1px solid var(--border)', borderRadius: 8,
+  fontSize: 13, color: 'var(--text-2)', backgroundColor: 'var(--bg-card)', cursor: 'pointer',
 };
 
 // ── page ───────────────────────────────────────────────────────────────────────
@@ -315,7 +315,7 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Filter bar */}
-      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 20px', marginBottom: 24, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 24 }}>
         <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginRight: 4 }}>Filter</span>
         <input type="date" value={fDateFrom} onChange={e => setFDateFrom(e.target.value)} style={iFilter} title="Van datum" />
         <span style={{ fontSize: 12, color: 'var(--text-4)' }}>–</span>
@@ -335,7 +335,7 @@ export default function StatistiekenPage() {
         {hasFilters && (
           <button
             onClick={() => { setFSport(''); setFBookmaker(''); setFMarkt(''); setFDateFrom(''); setFDateTo(''); }}
-            style={{ padding: '7px 12px', borderRadius: 6, border: '1px solid var(--border)', backgroundColor: 'var(--bg-subtle)', color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+            style={{ padding: '7px 11px', borderRadius: 8, border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-3)', fontSize: 12.5, cursor: 'pointer' }}
           >
             Wis filters
           </button>

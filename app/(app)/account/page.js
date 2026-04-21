@@ -174,12 +174,14 @@ export default function AccountPage() {
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
 
   return (
-    <div style={{ maxWidth:820, margin:'0 auto', padding:'40px 32px' }}>
-      <div className="mb-6">
-        <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>
-          {prefs.gebruikersnaam ? `Hallo, ${prefs.gebruikersnaam}` : 'Mijn Account'}
-        </h1>
-        <p style={{ fontSize:14, color:'var(--text-3)' }}>Beheer je voorkeuren en accountinstellingen</p>
+    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
+      <div className="flex items-center justify-between mb-6 page-header">
+        <div>
+          <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>
+            {prefs.gebruikersnaam ? `Hallo, ${prefs.gebruikersnaam}` : 'Mijn Account'}
+          </h1>
+          <p style={{ fontSize:14, color:'var(--text-3)' }}>Beheer je voorkeuren en accountinstellingen</p>
+        </div>
       </div>
       <div style={{ borderBottom:'1px solid var(--border)', marginBottom:28, display:'flex', gap:4 }}>
         {TABS.map(t => <TabBtn key={t.id} active={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</TabBtn>)}

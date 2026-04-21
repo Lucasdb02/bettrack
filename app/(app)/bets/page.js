@@ -281,7 +281,7 @@ export default function BetsPage() {
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{color:'var(--text-4)'}}>Laden...</div>;
 
-  const sel = {padding:'7px 12px',border:'1px solid var(--border)',borderRadius:6,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',cursor:'pointer'};
+  const sel = {padding:'7px 11px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',cursor:'pointer'};
 
   return (
     <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
@@ -293,10 +293,10 @@ export default function BetsPage() {
         </Link>
       </div>
 
-      <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:10,padding:'16px 20px',marginBottom:20,display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}}>
+      <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginBottom:20}}>
         <div style={{position:'relative',flex:1,minWidth:200}}>
           <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Zoeken op wedstrijd, selectie of bookmaker..." value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',padding:'7px 12px 7px 30px',border:'1px solid var(--border)',borderRadius:6,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-input)'}}/>
+          <input type="text" placeholder="Zoeken op wedstrijd, selectie of bookmaker..." value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',padding:'7px 12px 7px 30px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)'}}/>
         </div>
         <select value={filterS} onChange={e=>setFilterS(e.target.value)} style={sel}>
           <option value="alle">Alle sporten</option>
@@ -313,7 +313,7 @@ export default function BetsPage() {
           </select>
         )}
         {(filterU!=='alle'||filterS!=='alle'||filterT!=='alle'||zoeken)&&(
-          <button onClick={()=>{setFilterU('alle');setFilterS('alle');setFilterT('alle');setZoeken('');}} style={{padding:'7px 12px',border:'1px solid var(--border)',borderRadius:6,fontSize:12.5,color:'var(--text-3)',backgroundColor:'var(--bg-card)',cursor:'pointer'}}>Filters wissen</button>
+          <button onClick={()=>{setFilterU('alle');setFilterS('alle');setFilterT('alle');setZoeken('');}} style={{padding:'7px 11px',border:'1px solid var(--border)',borderRadius:8,fontSize:12.5,color:'var(--text-3)',backgroundColor:'var(--bg-card)',cursor:'pointer'}}>Filters wissen</button>
         )}
       </div>
 

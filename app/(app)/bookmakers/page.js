@@ -408,10 +408,12 @@ export default function BookmakersPage() {
   if (!loadedBm) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
 
   return (
-    <div style={{ maxWidth:1060, margin:'0 auto', padding:'40px 32px' }}>
-      <div className="mb-8">
-        <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Bookmakers</h1>
-        <p style={{ fontSize:14, color:'var(--text-3)' }}>Selecteer je bookmakers en houd je balances bij</p>
+    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
+      <div className="flex items-center justify-between mb-6 page-header">
+        <div>
+          <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Bookmakers</h1>
+          <p style={{ fontSize:14, color:'var(--text-3)' }}>Selecteer je bookmakers en houd je balances bij</p>
+        </div>
       </div>
 
       {/* ── Balance chart ── */}
@@ -528,7 +530,7 @@ export default function BookmakersPage() {
         {/* — Deposits + Withdrawals — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Deposits + Withdrawals</h2>
 
-        <div className="bm-tx-row" style={{ display:'flex', gap:8, flexWrap:'wrap', alignItems:'flex-end' }}>
+        <div className="bm-tx-row" style={{ display:'flex', gap:8, flexWrap:'wrap', alignItems:'center' }}>
           {/* Bookmaker select */}
           <div className="bm-tx-bookie" style={{ position:'relative', flex:'0 0 160px' }}>
             <select
@@ -552,7 +554,7 @@ export default function BookmakersPage() {
                 key={opt.val}
                 onClick={() => setTxType(opt.val)}
                 style={{
-                  padding:'8px 14px', fontSize:13, fontWeight:600, border:'none', cursor:'pointer',
+                  padding:'9px 14px', fontSize:13, fontWeight:600, border:'none', cursor:'pointer',
                   background: txType === opt.val
                     ? (opt.val === 'deposit' ? 'rgba(52,211,153,0.15)' : 'rgba(251,113,133,0.15)')
                     : 'var(--bg-input)',
@@ -593,16 +595,11 @@ export default function BookmakersPage() {
             onClick={addTransaction}
             disabled={txLoading || !txBookie || !txAmount}
             style={{
-              padding:'9px 18px', fontSize:13, fontWeight:600,
-              background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : txType === 'deposit'
-                ? 'linear-gradient(135deg, #34d399 0%, #059669 100%)'
-                : 'linear-gradient(135deg, #fb7185 0%, #e11d48 100%)',
+              padding:'9px 18px', fontSize:13.5, fontWeight:600,
+              background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
               color: (!txBookie || !txAmount) ? 'var(--text-4)' : '#fff',
-              border: 'none',
-              borderBottom: (!txBookie || !txAmount) ? '1px solid var(--border)' : txType === 'deposit'
-                ? '1px solid rgba(255,255,255,0.2)'
-                : '1px solid rgba(255,255,255,0.2)',
-              boxShadow: (!txBookie || !txAmount) ? 'none' : '0 2px 12px rgba(0,0,0,0.2)',
+              border: (!txBookie || !txAmount) ? '1px solid var(--border)' : '1px solid rgba(255,255,255,0.2)',
+              boxShadow: (!txBookie || !txAmount) ? 'none' : '0 2px 16px rgba(84,105,212,0.45)',
               borderRadius:7, cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
               display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap',
             }}
