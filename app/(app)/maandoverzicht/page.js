@@ -232,7 +232,7 @@ export default function MaandoverzichtPage() {
 
   return (
     <div className="cal-page-wrap" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
-      <div className="flex items-center justify-between mb-7">
+      <div className="flex items-center justify-between mb-7 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Maandoverzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>Dagelijkse analyse van je bettingresultaten</p></div>
         <div className="flex items-center" style={{gap:isMobile?4:12}}>
           <button onClick={prev} style={{width:34,height:34,border:'1px solid var(--border)',borderRadius:7,backgroundColor:'var(--bg-card)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-2)'}}>
@@ -277,7 +277,7 @@ export default function MaandoverzichtPage() {
             if(hasBets&&pnl>0) bg=isMobile?'#113038':`rgba(17,185,129,${0.05+int*0.2})`;
             else if(hasBets&&pnl<0) bg=isMobile?'#301A31':`rgba(244,63,94,${0.05+int*0.18})`;
             else if(hasBets) bg='var(--bg-subtle)';
-            const pnlColor = isMobile?(pnl>0?'#75EA92':'#EE4253'):(pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)');
+            const pnlColor = pnl>0?'var(--color-win)':pnl<0?'var(--color-loss)':'var(--text-3)';
             return (
               <div
                 key={key}

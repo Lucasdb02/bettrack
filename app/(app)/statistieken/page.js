@@ -194,9 +194,9 @@ function GroepTabel({ data, title, type, isMobile }) {
                   : <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                       {type === 'bookmaker'
                         ? <BookmakerIcon naam={row.key} size={16} />
-                        : (!isMobile || type !== 'markt') && <span style={{ fontSize: 16, lineHeight: 1 }}>{sportEmoji(row.key)}</span>
+                        : <span style={{ fontSize: 16, lineHeight: 1 }}>{sportEmoji(row.key)}</span>
                       }
-                      {row.key}
+                      {(!isMobile || (type !== 'sport' && type !== 'bookmaker')) && row.key}
                     </div>
                 }
               </td>
@@ -306,10 +306,10 @@ export default function StatistiekenPage() {
   const curveColor = curve.length > 0 && curve[curve.length - 1].pnl >= 0 ? '#11B981' : '#F43F5E';
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }} className="app-page">
 
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 page-header">
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)', marginBottom: 4 }}>Statistieken</h1>
         <p style={{ fontSize: 14, color: 'var(--text-3)' }}>Diepgaande analyse van je bettinggedrag</p>
       </div>
@@ -372,9 +372,9 @@ export default function StatistiekenPage() {
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Winst/verlies per maand</p>
           {maandData.length > 0 ? (
             <ResponsiveContainer width="100%" height={185}>
-              <BarChart data={maandData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <BarChart data={maandData} margin={{ top: 4, right: 8, left: 0, bottom: isMobile ? 28 : 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} interval={isMobile ? 'preserveStartEnd' : 0} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 52} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
@@ -422,10 +422,11 @@ export default function StatistiekenPage() {
         </div>
         {curve.length > 1 ? (
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={curve} margin={{ top: 4, right: 10, left: 0, bottom: 0 }}>
+            <LineChart data={curve} margin={{ top: 4, right: 10, left: 0, bottom: isMobile ? 4 : 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
               <XAxis dataKey="i" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false}
-                label={{ value: 'Bet #', position: 'insideBottomRight', offset: -4, fontSize: 10.5, fill: 'var(--text-4)' }} />
+                interval={isMobile ? Math.max(1, Math.ceil(curve.length / 5)) : 'preserveStartEnd'}
+                label={!isMobile ? { value: 'Bet #', position: 'insideBottomRight', offset: -4, fontSize: 10.5, fill: 'var(--text-4)' } : undefined} />
               <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} />
               <Tooltip content={<Tip />} cursor={{ stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
@@ -442,9 +443,9 @@ export default function StatistiekenPage() {
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>In welke odds bracket presteer je het best?</p>
           <div className="odds-range-inner">
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={oddsData} margin={{ top: 4, right: 10, left: 0, bottom: 0 }}>
+              <BarChart data={oddsData} margin={{ top: 4, right: 10, left: 0, bottom: isMobile ? 28 : 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 50} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
@@ -489,7 +490,7 @@ export default function StatistiekenPage() {
             <BarChart data={perSport} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" horizontal={false} />
               <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} />
-              <YAxis type="category" dataKey="key" tick={{ fontSize: 12, fill: 'var(--text-2)' }} axisLine={false} tickLine={false} width={isMobile ? 60 : 90} tickFormatter={v => `${sportEmoji(v)} ${v}`} />
+              <YAxis type="category" dataKey="key" tick={{ fontSize: 12, fill: 'var(--text-2)' }} axisLine={false} tickLine={false} width={isMobile ? 28 : 90} tickFormatter={v => isMobile ? sportEmoji(v) : `${sportEmoji(v)} ${v}`} />
               <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine x={0} stroke="var(--border)" strokeWidth={1} />
               <Bar dataKey="totalWinst" maxBarSize={22}>

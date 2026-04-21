@@ -3,7 +3,7 @@ import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useFmt } from '../../context/PreferencesContext';
 import BookmakerIcon, { BOOKIE_BRAND_COLORS } from '../../components/BookmakerIcon';
-import { uitkomstConfig } from '../../lib/sports';
+import { uitkomstConfig, sportEmoji } from '../../lib/sports';
 import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
@@ -933,7 +933,7 @@ export default function Dashboard() {
 
       {/* Recent bets */}
       <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, overflow:'hidden' }}>
-        <div className="flex items-center justify-between" style={{padding:'18px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
+        <div className="flex items-center justify-between dash-recent-hdr" style={{padding:'18px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
           <h2 style={{fontSize:15,fontWeight:600,color:'var(--text-1)'}}>Recente Bets</h2>
           <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
         </div>
@@ -963,9 +963,12 @@ export default function Dashboard() {
               <div key={bet.id} className="bet-card">
                 <div className="bet-card-top">
                   <div className="bet-card-meta">
-                    <span style={{fontSize:11,color:'var(--text-4)'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}</span>
-                    <UitkomstBadge u={bet.uitkomst}/>
+                    <span style={{fontSize:11,fontWeight:600,color:'var(--text-4)'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}</span>
+                    <span style={{padding:'2px 7px',borderRadius:4,fontSize:10.5,fontWeight:600,backgroundColor:'var(--badge-bg)',color:'var(--badge-color)',display:'inline-flex',alignItems:'center',gap:3}}>
+                      {sportEmoji(bet.sport)}{' '}{bet.sport}
+                    </span>
                   </div>
+                  <UitkomstBadge u={bet.uitkomst}/>
                 </div>
                 <div className="bet-card-match">{bet.wedstrijd}</div>
                 <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>

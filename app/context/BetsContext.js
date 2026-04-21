@@ -90,7 +90,12 @@ export function BetsProvider({ children }) {
   };
 
   const updateBet = async (id, updates) => {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) { console.error('[updateBet] auth error:', authError); return false; }
+
+    const prevBets = bets;
     setBets((prev) => prev.map((b) => (b.id === id ? { ...b, ...updates } : b)));
+
     const dbUpdates = {};
     for (const field of SCHEMA_FIELDS) {
       if (updates[field] !== undefined) dbUpdates[field] = updates[field];
@@ -99,12 +104,19 @@ export function BetsProvider({ children }) {
       .from('bets')
       .update(dbUpdates)
       .eq('id', id)
+      .eq('user_id', user.id)
       .select()
       .single();
-    if (!error && data) {
+    if (error) {
+      console.error('[updateBet] supabase error:', error);
+      setBets(prevBets);
+      return false;
+    }
+    if (data) {
       setBets((prev) => prev.map((b) => (b.id === id ? data : b)));
       return true;
     }
+    setBets(prevBets);
     return false;
   };
 

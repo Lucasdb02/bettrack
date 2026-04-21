@@ -43,7 +43,7 @@ function FF({label,required,children,text2}) {
   );
 }
 
-function EditBetModal({bet, onSave, onClose}) {
+function EditBetModal({bet, onSave, onClose, saveError}) {
   const { dark } = useTheme();
   const bg = dark ? '#161c2a' : '#ffffff';
   const bgSection = dark ? '#1e2738' : '#f9fafb';
@@ -223,13 +223,18 @@ function EditBetModal({bet, onSave, onClose}) {
         </div>
 
         {/* Footer */}
-        <div style={{padding:'16px 24px',borderTop:`1px solid ${border}`,display:'flex',justifyContent:'flex-end',gap:10,position:'sticky',bottom:0,backgroundColor:bg}}>
-          <button onClick={onClose} style={{padding:'8px 18px',border:`1px solid ${border}`,borderRadius:7,fontSize:13.5,fontWeight:600,color:text2,backgroundColor:bg,cursor:'pointer'}}>
-            Annuleren
-          </button>
-          <button onClick={handleSave} style={{padding:'8px 22px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:'1px solid rgba(255,255,255,0.2)',boxShadow:'0 2px 16px rgba(84,105,212,0.45)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
-            Opslaan
-          </button>
+        <div style={{padding:'16px 24px',borderTop:`1px solid ${border}`,position:'sticky',bottom:0,backgroundColor:bg}}>
+          {saveError && (
+            <p style={{fontSize:12.5,color:'#e02424',marginBottom:10,textAlign:'center'}}>{saveError}</p>
+          )}
+          <div style={{display:'flex',justifyContent:'flex-end',gap:10}}>
+            <button onClick={onClose} style={{padding:'8px 18px',border:`1px solid ${border}`,borderRadius:7,fontSize:13.5,fontWeight:600,color:text2,backgroundColor:bg,cursor:'pointer'}}>
+              Annuleren
+            </button>
+            <button onClick={handleSave} style={{padding:'8px 22px',background:'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',color:'#fff',border:'1px solid rgba(255,255,255,0.2)',boxShadow:'0 2px 16px rgba(84,105,212,0.45)',borderRadius:7,fontSize:13.5,fontWeight:600,cursor:'pointer'}}>
+              Opslaan
+            </button>
+          </div>
         </div>
       </div>
     </div>,
@@ -262,9 +267,16 @@ export default function BetsPage() {
 
   const { fmtPnl } = useFmt();
 
-  const handleSave = useCallback((updates) => {
-    updateBet(editBet.id, updates);
-    setEditBet(null);
+  const [saveError, setSaveError] = useState(null);
+
+  const handleSave = useCallback(async (updates) => {
+    const ok = await updateBet(editBet.id, updates);
+    if (ok) {
+      setEditBet(null);
+      setSaveError(null);
+    } else {
+      setSaveError('Opslaan mislukt. Controleer de console voor details.');
+    }
   }, [editBet, updateBet]);
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{color:'var(--text-4)'}}>Laden...</div>;
@@ -466,7 +478,8 @@ export default function BetsPage() {
         <EditBetModal
           bet={editBet}
           onSave={handleSave}
-          onClose={()=>setEditBet(null)}
+          onClose={()=>{setEditBet(null);setSaveError(null);}}
+          saveError={saveError}
         />
       )}
     </div>
