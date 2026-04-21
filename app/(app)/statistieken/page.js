@@ -374,7 +374,7 @@ export default function StatistiekenPage() {
             <ResponsiveContainer width="100%" height={185}>
               <BarChart data={maandData} margin={{ top: 4, right: 8, left: 0, bottom: isMobile ? 28 : 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} interval={isMobile ? 'preserveStartEnd' : 0} />
+                <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} interval={isMobile ? Math.max(0, Math.ceil(maandData.length / 5) - 1) : 0} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 52} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
@@ -445,7 +445,7 @@ export default function StatistiekenPage() {
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={oddsData} margin={{ top: 4, right: 10, left: 0, bottom: isMobile ? 28 : 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} />
+                <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} interval={isMobile ? Math.max(0, Math.ceil(oddsData.length / 5) - 1) : 0} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 50} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />

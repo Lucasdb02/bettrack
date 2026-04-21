@@ -328,7 +328,7 @@ export default function MaandoverzichtPage() {
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false}/>
-              <XAxis dataKey="dag" tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false}/>
+              <XAxis dataKey="dag" tick={{fontSize:10,fill:'var(--text-4)'}} axisLine={false} tickLine={false} interval={0}/>
               <YAxis tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:50} mirror={isMobile}/>
               <Tooltip content={<BarTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
               <Bar dataKey="pnl" maxBarSize={28}>{barData.map((e,i)=><Cell key={i} fill={e.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}</Bar>

@@ -450,7 +450,7 @@ export default function BookmakersPage() {
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={chartData} margin={{ top:0, right:8, left:0, bottom:0 }} barCategoryGap="25%">
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false}/>
-                <XAxis dataKey="label" tick={{ fontSize:11, fill:'var(--text-4)' }} axisLine={false} tickLine={false}/>
+                <XAxis dataKey="label" tick={{ fontSize:11, fill:'var(--text-4)' }} axisLine={false} tickLine={false} interval={chartData.length <= 9 ? 0 : Math.ceil(chartData.length / 8) - 1}/>
                 <YAxis tick={{ fontSize:11, fill:'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={56}/>
                 <Tooltip
                   content={<StackedTip activeBookies={activeBookies}/>}

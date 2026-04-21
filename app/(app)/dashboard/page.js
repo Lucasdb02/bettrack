@@ -144,15 +144,20 @@ function StatCard({ label, value, sub, color, icon }) {
   return (
     <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, padding:'20px 24px' }}>
       <div className="flex items-start justify-between">
-        <div>
+        <div style={{ minWidth:0 }}>
           <p style={{ fontSize:11.5, color:'var(--text-3)', fontWeight:600, marginBottom:8, textTransform:'uppercase', letterSpacing:'0.06em' }}>{label}</p>
           <p style={{ fontSize:26, fontWeight:700, color:color||'var(--text-1)', lineHeight:1 }}>{value}</p>
-          {sub && <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:6 }}>{sub}</p>}
+          {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:6, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
         </div>
         {icon && <div className="stat-card-icon" style={{ backgroundColor:'var(--bg-brand)', width:30, height:30, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
       </div>
     </div>
   );
+}
+
+function xTick(len, mob) {
+  const max = mob ? 5 : 9;
+  return len <= max ? 0 : Math.ceil(len / max) - 1;
 }
 
 /* ─── uitkomst badge ─── */
@@ -203,14 +208,22 @@ function usePortalDropdown() {
 
 /* ─── Period dropdown ─── */
 function PeriodDropdown({ filter, onSelect, customRange }) {
+  const { dark } = useTheme();
   const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
-  const current = PERIOD_OPTIONS.find(o => o.filter === filter);
-  const isCustom = filter === 'custom';
+  const isCustom    = filter === 'custom';
   const isNonDefault = filter !== 'all';
 
   const label = isCustom && customRange
     ? `${fmtDate(customRange.from)} – ${fmtDate(customRange.to)}`
     : 'Periode';
+
+  const dropBg    = dark ? 'var(--bg-card)'    : '#fff';
+  const dropBdr   = dark ? 'var(--border)'     : '#e5e7eb';
+  const divider   = dark ? 'var(--border-subtle)' : '#f3f4f6';
+  const txtActive = dark ? 'var(--brand)'      : '#3b5bdb';
+  const bgActive  = dark ? 'var(--bg-brand)'   : '#eef2ff';
+  const txtDef    = dark ? 'var(--text-1)'     : '#1a1f36';
+  const hoverBg   = dark ? 'var(--bg-subtle)'  : '#f9fafb';
 
   return (
     <>
@@ -231,28 +244,29 @@ function PeriodDropdown({ filter, onSelect, customRange }) {
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
           <div style={{
             position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
-            backgroundColor:'#fff', border:'1px solid #e5e7eb',
+            backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
             borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
             overflow:'hidden', minWidth:220,
           }}>
-            {PERIOD_OPTIONS.map((opt, i) => {
-              const isLast = opt.filter === 'custom';
+            {PERIOD_OPTIONS.map((opt) => {
+              const isLast   = opt.filter === 'custom';
+              const isActive = filter === opt.filter;
               return (
                 <button key={opt.filter} onClick={() => { onSelect(opt.filter); close(); }} style={{
                   display:'flex', alignItems:'center', justifyContent:'space-between',
                   width:'100%', textAlign:'left', padding:'10px 16px',
-                  fontSize:14, fontWeight: filter === opt.filter ? 600 : 400,
-                  color: filter === opt.filter ? '#3b5bdb' : '#1a1f36',
-                  backgroundColor: filter === opt.filter ? '#eef2ff' : 'transparent',
-                  border:'none', borderTop: isLast ? '1px solid #f3f4f6' : 'none',
+                  fontSize:14, fontWeight: isActive ? 600 : 400,
+                  color: isActive ? txtActive : txtDef,
+                  backgroundColor: isActive ? bgActive : 'transparent',
+                  border:'none', borderTop: isLast ? `1px solid ${divider}` : 'none',
                   marginTop: isLast ? 4 : 0,
                   cursor:'pointer', transition:'background 0.1s',
                 }}
-                onMouseEnter={e => { if (filter !== opt.filter) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
-                onMouseLeave={e => { if (filter !== opt.filter) e.currentTarget.style.backgroundColor = 'transparent'; }}>
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.backgroundColor = hoverBg; }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}>
                   {opt.label}
-                  {filter === opt.filter && (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b5bdb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  {isActive && (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={txtActive} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   )}
                 </button>
               );
@@ -267,11 +281,22 @@ function PeriodDropdown({ filter, onSelect, customRange }) {
 
 /* ─── Multi-select dropdown (portal) ─── */
 function MultiSelect({ label, icon, options, selected, onChange }) {
+  const { dark } = useTheme();
   const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
-  const count = selected.length;
+  const count       = selected.length;
+  const allSelected = count === 0;
 
   const toggleOpt = (val) => onChange(selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val]);
   const clear = (e) => { e.stopPropagation(); onChange([]); };
+
+  const dropBg    = dark ? 'var(--bg-card)'       : '#fff';
+  const dropBdr   = dark ? 'var(--border)'        : '#e5e7eb';
+  const divider   = dark ? 'var(--border-subtle)' : '#f3f4f6';
+  const txtActive = dark ? 'var(--brand)'         : '#3b5bdb';
+  const bgActive  = dark ? 'var(--bg-brand)'      : '#eef2ff';
+  const txtDef    = dark ? 'var(--text-1)'        : '#1a1f36';
+  const hoverBg   = dark ? 'var(--bg-subtle)'     : '#f9fafb';
+  const chkBdr    = dark ? '#4b5563'              : '#d1d5db';
 
   return (
     <>
@@ -295,28 +320,39 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
           <div style={{
             position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
-            backgroundColor:'#fff', border:'1px solid #e5e7eb',
+            backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
             borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
-            minWidth:180, maxHeight:240, overflowY:'auto',
+            minWidth:190, maxHeight:280, overflowY:'auto',
           }}>
-            <div style={{ padding:'6px 8px', borderBottom:'1px solid #f3f4f6' }}>
-              <button onClick={() => onChange([])} style={{ width:'100%', textAlign:'left', padding:'5px 8px', fontSize:12, color:'#6b7280', backgroundColor:'transparent', border:'none', cursor:'pointer', borderRadius:4 }}>
-                Alles deselecteren
-              </button>
-            </div>
+            {/* "Alle" master toggle at top */}
+            <button onClick={() => { if (!allSelected) onChange([]); }} style={{
+              display:'flex', alignItems:'center', gap:9, width:'100%',
+              textAlign:'left', padding:'9px 16px', fontSize:13,
+              color: allSelected ? txtActive : txtDef,
+              backgroundColor: allSelected ? bgActive : 'transparent',
+              border:'none', borderBottom:`1px solid ${divider}`, cursor:'pointer',
+              transition:'background 0.1s',
+            }}
+            onMouseEnter={e => { if (!allSelected) e.currentTarget.style.backgroundColor = hoverBg; }}
+            onMouseLeave={e => { if (!allSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}>
+              <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${allSelected ? txtActive : chkBdr}`, backgroundColor: allSelected ? txtActive : 'transparent', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                {allSelected && <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2 6 5 9 10 3"/></svg>}
+              </div>
+              Alle {label.toLowerCase()}s
+            </button>
             {options.map(opt => {
               const checked = selected.includes(opt);
               return (
                 <button key={opt} onClick={() => toggleOpt(opt)} style={{
                   display:'flex', alignItems:'center', gap:9, width:'100%',
                   textAlign:'left', padding:'9px 16px', fontSize:13,
-                  color: checked ? '#3b5bdb' : '#1a1f36',
-                  backgroundColor: checked ? '#eef2ff' : 'transparent',
+                  color: checked ? txtActive : txtDef,
+                  backgroundColor: checked ? bgActive : 'transparent',
                   border:'none', cursor:'pointer', transition:'background 0.1s',
                 }}
-                onMouseEnter={e => { if (!checked) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
+                onMouseEnter={e => { if (!checked) e.currentTarget.style.backgroundColor = hoverBg; }}
                 onMouseLeave={e => { if (!checked) e.currentTarget.style.backgroundColor = 'transparent'; }}>
-                  <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${checked ? '#3b5bdb' : '#d1d5db'}`, backgroundColor: checked ? '#3b5bdb' : 'transparent', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${checked ? txtActive : chkBdr}`, backgroundColor: checked ? txtActive : 'transparent', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
                     {checked && <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2 6 5 9 10 3"/></svg>}
                   </div>
                   {opt}
@@ -333,22 +369,29 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
 
 /* ─── Calendar month grid ─── */
 function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, onDayClick, onDayHover }) {
+  const { dark } = useTheme();
   const today = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d; }, []);
   const firstDow = new Date(year, month, 1).getDay();
-  const offset   = (firstDow === 0 ? 6 : firstDow - 1); // Mon-first
+  const offset   = (firstDow === 0 ? 6 : firstDow - 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const cells = [];
   for (let i = 0; i < offset; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
 
+  const headTxt   = dark ? 'var(--text-1)' : '#1a1f36';
+  const dayHdrTxt = dark ? 'var(--text-3)' : '#9ca3af';
+  const dayTxt    = dark ? 'var(--text-1)' : '#1a1f36';
+  const rangeColor = dark ? 'rgba(84,105,212,0.2)' : 'rgba(59,91,219,0.1)';
+  const todayRing  = dark ? 'var(--brand)' : '#1e3a8a';
+
   return (
     <div style={{ flex:1 }}>
-      <p style={{ textAlign:'center', fontSize:15, fontWeight:600, color:'#1a1f36', marginBottom:12 }}>
+      <p style={{ textAlign:'center', fontSize:15, fontWeight:600, color: headTxt, marginBottom:12 }}>
         {NL_MONTHS[month]} {year}
       </p>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', marginBottom:6 }}>
-        {NL_DAYS.map(d => <div key={d} style={{ textAlign:'center', fontSize:11, fontWeight:700, color:'#9ca3af', padding:'3px 0' }}>{d}</div>)}
+        {NL_DAYS.map(d => <div key={d} style={{ textAlign:'center', fontSize:11, fontWeight:700, color: dayHdrTxt, padding:'3px 0' }}>{d}</div>)}
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:1 }}>
         {cells.map((date, i) => {
@@ -372,9 +415,9 @@ function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, on
                 fontSize:13, cursor:'pointer',
                 fontWeight: isToday ? 700 : 400,
                 borderRadius: isSelected ? '50%' : inRange ? 0 : 4,
-                backgroundColor: isSelected ? '#1e3a8a' : inRange ? 'rgba(59,91,219,0.1)' : 'transparent',
-                color: isSelected ? '#fff' : '#1a1f36',
-                outline: isToday && !isSelected ? '2px solid #1e3a8a' : 'none',
+                backgroundColor: isSelected ? '#1e3a8a' : inRange ? rangeColor : 'transparent',
+                color: isSelected ? '#fff' : dayTxt,
+                outline: isToday && !isSelected ? `2px solid ${todayRing}` : 'none',
                 outlineOffset: -2,
                 transition:'background 0.1s',
               }}
@@ -388,72 +431,125 @@ function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, on
 
 /* ─── Date range modal ─── */
 function DateRangeModal({ initial, onSave, onClose }) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const [navMonth, setNavMonth] = useState(today.getMonth() > 0 ? today.getMonth() - 1 : 0);
-  const [navYear,  setNavYear]  = useState(today.getMonth() > 0 ? today.getFullYear() : today.getFullYear() - 1);
+  const { dark } = useTheme();
+  const [isMob, setIsMob] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMob(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
-  const leftMonth  = navMonth;
-  const leftYear   = navYear;
-  const rightMonth = (navMonth + 1) % 12;
-  const rightYear  = navMonth === 11 ? navYear + 1 : navYear;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const [navMonth, setNavMonth] = useState(today.getMonth());
+  const [navYear,  setNavYear]  = useState(today.getFullYear());
 
   const [fromDate,  setFromDate]  = useState(initial?.from || null);
   const [toDate,    setToDate]    = useState(initial?.to   || null);
   const [selecting, setSelecting] = useState('from');
   const [hoverDate, setHoverDate] = useState(null);
 
+  // desktop: left = navMonth-1, right = navMonth
+  const rightMonth = navMonth;
+  const rightYear  = navYear;
+  const leftMonth  = navMonth === 0 ? 11 : navMonth - 1;
+  const leftYear   = navMonth === 0 ? navYear - 1 : navYear;
+
   const handleDayClick = (date) => {
     if (selecting === 'from' || !fromDate) {
       setFromDate(date); setToDate(null); setSelecting('to');
     } else {
       if (date < fromDate) { setToDate(fromDate); setFromDate(date); }
-      else { setToDate(date); }
+      else setToDate(date);
       setSelecting('from');
     }
   };
 
   const prev = () => { if (navMonth === 0) { setNavMonth(11); setNavYear(y => y-1); } else setNavMonth(m => m-1); };
   const next = () => { if (navMonth === 11) { setNavMonth(0);  setNavYear(y => y+1); } else setNavMonth(m => m+1); };
-
   const canSave = fromDate && toDate;
 
+  const YEARS = Array.from({ length: 12 }, (_, i) => today.getFullYear() - 6 + i);
+
+  // theme vars
+  const modalBg  = dark ? 'var(--bg-card)'    : '#fff';
+  const bdr      = dark ? 'var(--border)'     : '#e5e7eb';
+  const headTxt  = dark ? 'var(--text-1)'     : '#1a1f36';
+  const mutedTxt = dark ? 'var(--text-3)'     : '#9ca3af';
+  const bodyTxt  = dark ? 'var(--text-2)'     : '#374151';
+  const navBtnBg = dark ? 'var(--bg-subtle)'  : '#f9fafb';
+  const selBg    = dark ? 'var(--bg-subtle)'  : '#f9fafb';
+  const selTxt   = dark ? 'var(--text-1)'     : '#1a1f36';
+  const divColor = dark ? 'var(--border)'     : '#f3f4f6';
+
+  const selectStyle = {
+    padding:'5px 10px', borderRadius:7, border:`1px solid ${bdr}`,
+    backgroundColor: selBg, color: selTxt,
+    fontSize:14, fontWeight:600, cursor:'pointer', outline:'none',
+  };
+
+  const mobileStyle = isMob ? {
+    position:'fixed', bottom:0, left:0, right:0,
+    borderRadius:'16px 16px 0 0', padding:'20px 16px 28px',
+    maxHeight:'90dvh', overflowY:'auto',
+  } : {
+    borderRadius:12, padding:'28px 32px', width:640, maxWidth:'95vw',
+  };
+
   return createPortal(
-    <div style={{ position:'fixed', inset:0, zIndex:99999, backgroundColor:'rgba(0,0,0,0.45)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ backgroundColor:'#fff', borderRadius:12, padding:'28px 32px', width:640, maxWidth:'95vw', boxShadow:'0 24px 64px rgba(0,0,0,0.22)' }}>
+    <div style={{ position:'fixed', inset:0, zIndex:99999, backgroundColor:'rgba(0,0,0,0.45)', display:'flex', alignItems: isMob ? 'flex-end' : 'center', justifyContent:'center' }}>
+      <div style={{ backgroundColor: modalBg, boxShadow:'0 24px 64px rgba(0,0,0,0.22)', ...mobileStyle }}>
         {/* Header */}
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
-          <h2 style={{ fontSize:20, fontWeight:700, color:'#1a1f36' }}>Aangepaste periode</h2>
-          <button onClick={onClose} style={{ width:34, height:34, borderRadius:8, border:'1px solid #e5e7eb', backgroundColor:'transparent', cursor:'pointer', color:'#6b7280', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
+          <h2 style={{ fontSize:18, fontWeight:700, color: headTxt }}>Aangepaste periode</h2>
+          <button onClick={onClose} style={{ width:34, height:34, borderRadius:8, border:`1px solid ${bdr}`, backgroundColor:'transparent', cursor:'pointer', color: mutedTxt, fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
         </div>
 
         {/* Navigation */}
-        <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:20 }}>
-          <button onClick={prev} style={{ width:32, height:32, borderRadius:7, border:'1px solid #e5e7eb', backgroundColor:'#f9fafb', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
+          <button onClick={prev} style={{ width:32, height:32, borderRadius:7, border:`1px solid ${bdr}`, backgroundColor: navBtnBg, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={mutedTxt} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-          <div style={{ flex:1 }}/>
-          <button onClick={next} style={{ width:32, height:32, borderRadius:7, border:'1px solid #e5e7eb', backgroundColor:'#f9fafb', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          {isMob ? (
+            <>
+              <select value={navMonth} onChange={e => setNavMonth(Number(e.target.value))} style={{ ...selectStyle, flex:1 }}>
+                {NL_MONTHS.map((m, i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+              <select value={navYear} onChange={e => setNavYear(Number(e.target.value))} style={{ ...selectStyle, width:80 }}>
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </>
+          ) : (
+            <div style={{ flex:1 }}/>
+          )}
+          <button onClick={next} style={{ width:32, height:32, borderRadius:7, border:`1px solid ${bdr}`, backgroundColor: navBtnBg, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={mutedTxt} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
 
-        {/* Two calendars */}
-        <div style={{ display:'flex', gap:32, marginBottom:24 }} onMouseLeave={() => setHoverDate(null)}>
-          <CalendarMonth year={leftYear}  month={leftMonth}  fromDate={fromDate} toDate={toDate} hoverDate={hoverDate} selecting={selecting} onDayClick={handleDayClick} onDayHover={setHoverDate}/>
-          <div style={{ width:1, backgroundColor:'#f3f4f6' }}/>
-          <CalendarMonth year={rightYear} month={rightMonth} fromDate={fromDate} toDate={toDate} hoverDate={hoverDate} selecting={selecting} onDayClick={handleDayClick} onDayHover={setHoverDate}/>
-        </div>
+        {/* Calendar(s) */}
+        {isMob ? (
+          <div style={{ marginBottom:16 }} onMouseLeave={() => setHoverDate(null)}>
+            <CalendarMonth year={navYear} month={navMonth} fromDate={fromDate} toDate={toDate} hoverDate={hoverDate} selecting={selecting} onDayClick={handleDayClick} onDayHover={setHoverDate}/>
+          </div>
+        ) : (
+          <div style={{ display:'flex', gap:32, marginBottom:24 }} onMouseLeave={() => setHoverDate(null)}>
+            <CalendarMonth year={leftYear}  month={leftMonth}  fromDate={fromDate} toDate={toDate} hoverDate={hoverDate} selecting={selecting} onDayClick={handleDayClick} onDayHover={setHoverDate}/>
+            <div style={{ width:1, backgroundColor: divColor }}/>
+            <CalendarMonth year={rightYear} month={rightMonth} fromDate={fromDate} toDate={toDate} hoverDate={hoverDate} selecting={selecting} onDayClick={handleDayClick} onDayHover={setHoverDate}/>
+          </div>
+        )}
 
         {/* Selection hint */}
-        <p style={{ fontSize:12.5, color:'#9ca3af', marginBottom:20, textAlign:'center' }}>
+        <p style={{ fontSize:12.5, color: mutedTxt, marginBottom:16, textAlign:'center' }}>
           {!fromDate ? 'Klik op een startdatum' : !toDate ? 'Klik op een einddatum' : `${fmtDate(fromDate)} – ${fmtDate(toDate)}`}
         </p>
 
         {/* Actions */}
         <div style={{ display:'flex', justifyContent:'flex-end', gap:10 }}>
-          <button onClick={onClose} style={{ padding:'9px 20px', borderRadius:7, border:'1px solid #e5e7eb', backgroundColor:'transparent', color:'#374151', fontSize:13, fontWeight:500, cursor:'pointer' }}>Annuleren</button>
+          <button onClick={onClose} style={{ padding:'9px 20px', borderRadius:7, border:`1px solid ${bdr}`, backgroundColor:'transparent', color: bodyTxt, fontSize:13, fontWeight:500, cursor:'pointer' }}>Annuleren</button>
           <button onClick={() => { if (canSave) { onSave({ from:fromDate, to:toDate }); onClose(); } }} disabled={!canSave}
-            style={{ padding:'9px 22px', borderRadius:7, border:'none', backgroundColor: canSave ? '#1e3a8a' : '#9ca3af', color:'#fff', fontSize:13, fontWeight:600, cursor: canSave ? 'pointer' : 'not-allowed' }}>
+            style={{ padding:'9px 22px', borderRadius:7, border:'none', backgroundColor: canSave ? '#1e3a8a' : (dark ? '#374151' : '#9ca3af'), color:'#fff', fontSize:13, fontWeight:600, cursor: canSave ? 'pointer' : 'not-allowed' }}>
             Opslaan
           </button>
         </div>
@@ -737,7 +833,7 @@ export default function Dashboard() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-                  <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
+                  <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
                   <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile}/>
                   <Tooltip
                     content={() => null}
@@ -759,7 +855,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={stackedData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%" barGap={2}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-                <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
+                <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(stackedData.length, isMobile)}/>
                 <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 48} mirror={isMobile}/>
                 <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
@@ -847,7 +943,7 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={bookLineData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-              <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
+              <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(bookLineData.length, isMobile)}/>
               <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:55} mirror={isMobile}/>
               <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
               <Legend content={<BookieLegend/>}/>
