@@ -24,7 +24,7 @@
 
 /* ── Dark mode ── */
 html.dark {
-  --bg-page:    #080c14;
+  --bg-page:    #080D14;
   --bg-card:    rgba(14,22,44,0.72);
   --bg-subtle:  rgba(20,30,56,0.5);
   --bg-input:   rgba(6,12,24,0.85);
@@ -113,7 +113,7 @@ html.dark .app-main {
 }
 @media (max-width: 768px) {
   html.dark .app-main {
-    background: #060e1a;
+    background: #080D14;
   }
 }
 
@@ -155,7 +155,7 @@ html.dark textarea {
   padding-right: 16px;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%);
+  background: #080D14;
   border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 

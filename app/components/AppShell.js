@@ -2,7 +2,7 @@
 import { useTheme } from '../context/ThemeContext';
 
 const DARK = {
-  '--bg-page':       '#080c14',
+  '--bg-page':       '#080D14',
   '--bg-card':       'rgba(14,22,44,0.72)',
   '--bg-subtle':     'rgba(20,30,56,0.5)',
   '--bg-input':      'rgba(6,12,24,0.85)',
