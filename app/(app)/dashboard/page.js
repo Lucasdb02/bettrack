@@ -286,7 +286,14 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
   const count       = selected.length;
   const allSelected = count === 0;
 
-  const toggleOpt = (val) => onChange(selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val]);
+  const toggleOpt = (val) => {
+    if (allSelected) {
+      onChange(options.filter(v => v !== val));
+    } else {
+      const next = selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val];
+      onChange(next.length === options.length ? [] : next);
+    }
+  };
   const clear = (e) => { e.stopPropagation(); onChange([]); };
 
   const dropBg    = dark ? 'var(--bg-card)'       : '#fff';
@@ -341,7 +348,7 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
               Alle {label.toLowerCase()}s
             </button>
             {options.map(opt => {
-              const checked = selected.includes(opt);
+              const checked = allSelected || selected.includes(opt);
               return (
                 <button key={opt} onClick={() => toggleOpt(opt)} style={{
                   display:'flex', alignItems:'center', gap:9, width:'100%',
@@ -414,7 +421,7 @@ function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, on
                 textAlign:'center', lineHeight:'34px', height:34,
                 fontSize:13, cursor:'pointer',
                 fontWeight: isToday ? 700 : 400,
-                borderRadius: isSelected ? '50%' : inRange ? 0 : 4,
+                borderRadius: isSelected ? 6 : inRange ? 0 : 4,
                 backgroundColor: isSelected ? '#1e3a8a' : inRange ? rangeColor : 'transparent',
                 color: isSelected ? '#fff' : dayTxt,
                 outline: isToday && !isSelected ? `2px solid ${todayRing}` : 'none',
@@ -764,12 +771,6 @@ export default function Dashboard() {
           options={allBookmakers} selected={bookFilter} onChange={setBookFilter}
         />
 
-        {(periodFilter !== 'all' || sportFilter.length > 0 || bookFilter.length > 0) && (
-          <button onClick={() => { setPeriodFilter('all'); setCustomRange(null); setSportFilter([]); setBookFilter([]); }}
-            style={{ fontSize:12, color:'var(--text-3)', backgroundColor:'transparent', border:'none', cursor:'pointer', textDecoration:'underline', padding:'4px' }}>
-            Filters wissen
-          </button>
-        )}
       </div>
 
       {/* Date range modal */}
