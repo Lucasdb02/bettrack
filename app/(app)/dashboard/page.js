@@ -148,7 +148,8 @@ function BookieXTick({ x, y, payload }) {
 
 function GradBar({ x, y, width, height, fill }) {
   if (!width || !height || Math.abs(height) < 0.5) return null;
-  const r = Math.min(7, width / 2, Math.abs(height) / 2);
+  const barY = height >= 0 ? y : y + height;
+  const barH = Math.abs(height);
   const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
   const uid = `gb${fKey}${Math.round(x * 10)}x${Math.round(Math.abs(y) * 10)}`;
   return (
@@ -163,9 +164,9 @@ function GradBar({ x, y, width, height, fill }) {
           <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
         </linearGradient>
       </defs>
-      <rect x={x} y={y} width={width} height={Math.abs(height)} rx={r} ry={r} fill={`url(#f${uid})`}/>
-      <rect x={x + 0.75} y={y + 0.75} width={width - 1.5} height={Math.abs(height) - 1.5}
-        rx={Math.max(0, r - 0.75)} ry={Math.max(0, r - 0.75)}
+      <rect x={x} y={barY} width={width} height={barH} rx={0} ry={0} fill={`url(#f${uid})`}/>
+      <rect x={x + 0.75} y={barY + 0.75} width={width - 1.5} height={barH - 1.5}
+        rx={0} ry={0}
         fill="none" stroke={`url(#s${uid})`} strokeWidth={1.5}/>
     </g>
   );
@@ -1098,7 +1099,7 @@ export default function Dashboard() {
           <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
         </div>
         <div style={{overflowX:'auto', WebkitOverflowScrolling:'touch'}}>
-        <table className="bets-table-desktop" style={{width:'100%',minWidth:820,borderCollapse:'collapse'}}>
+        <table className="bets-table-desktop" style={{width:'auto',minWidth:820,borderCollapse:'collapse'}}>
           <thead>
             <tr style={{backgroundColor:'var(--bg-subtle)'}}>
               {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker'].map(h=>(
