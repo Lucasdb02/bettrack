@@ -114,7 +114,7 @@ function CumulTip({ active, payload, label }) {
       {label && <p style={{ color:'var(--text-3)', marginBottom:7, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
       {cum && (
         <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
-          <div style={{ width:16, height:2, backgroundColor:'#5469d4', borderRadius:1, flexShrink:0 }}/>
+          <div style={{ width:8, height:2, backgroundColor:'#5469d4', borderRadius:1, flexShrink:0 }}/>
           <span style={{ color:'var(--text-3)', fontSize:12 }}>Cumulatief:</span>
           <span style={{ fontWeight:700, color: cum.value >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(cum.value)}</span>
         </div>
@@ -905,7 +905,7 @@ export default function Dashboard() {
                     <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                    <div style={{ width:16, height:2, backgroundColor:'#f59e0b', borderRadius:1, borderTop:'1px dashed #f59e0b' }}/>
+                    <div style={{ width:8, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
                     <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
                   </div>
                 </div>
@@ -932,7 +932,7 @@ export default function Dashboard() {
                   <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                   <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                   <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2.5} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                  <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={2.5} strokeDasharray="4 3" dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                  <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={2.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                 </ComposedChart>
               </ResponsiveContainer>
             ) : empty()}
@@ -970,15 +970,15 @@ export default function Dashboard() {
                   )}
                 </div>
                 {/* Bottom stats */}
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', border:'1px solid var(--border)', borderRadius:8, overflow:'hidden' }}>
-                  <div style={{ padding:'14px 16px' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                  <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
                     <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Totale inzet</p>
                     <p style={{ fontSize:20, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{totalInzet.toFixed(2)}</p>
                   </div>
-                  <div style={{ padding:'14px 16px', borderLeft:'1px solid var(--border)' }}>
+                  <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
                     <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winst</p>
                     <p style={{ fontSize:20, fontWeight:800, color: totalWinst >= 0 ? '#11B981' : '#F43F5E', lineHeight:1 }}>
-                      {totalWinst >= 0 ? '+' : ''}{fmtPnl(totalWinst)}
+                      {fmtPnl(totalWinst)}
                     </p>
                   </div>
                 </div>
@@ -1167,12 +1167,12 @@ export default function Dashboard() {
               <col style={{ width:'10%' }}/>
               <col style={{ width:'12%' }}/>
               <col style={{ width:'10%' }}/>
-              <col style={{ width:'19%' }}/>
+              <col style={{ width:'14%' }}/>
               <col style={{ width:'7%' }}/>
               <col style={{ width:'8%' }}/>
               <col style={{ width:'11%' }}/>
               <col style={{ width:'7%' }}/>
-              <col style={{ width:'7%' }}/>
+              <col style={{ width:'12%' }}/>
             </colgroup>
             <thead>
               <tr style={{ backgroundColor:'var(--bg-subtle)' }}>

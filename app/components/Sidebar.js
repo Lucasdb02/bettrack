@@ -1,9 +1,10 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { createClient } from '../../lib/supabase';
+import { useBets, berekenWinst } from '../context/BetsContext';
 
 const mainNav = [
   {
@@ -166,6 +167,37 @@ export default function Sidebar() {
   const router = useRouter();
   const { dark, toggle } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { bets } = useBets();
+  const [dbBookmakers, setDbBookmakers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    async function fetchBalanceData() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const [{ data: bms }, { data: txs }] = await Promise.all([
+        supabase.from('bookmakers').select('id,naam,saldo').eq('user_id', user.id),
+        supabase.from('transactions').select('bookmaker_id,type,amount').eq('user_id', user.id),
+      ]);
+      if (bms) setDbBookmakers(bms);
+      if (txs) setTransactions(txs);
+    }
+    fetchBalanceData();
+  }, []);
+
+  const totalBalance = useMemo(() => {
+    const settledBets = bets.filter(b => b.uitkomst !== 'lopend');
+    return dbBookmakers.reduce((sum, bm) => {
+      const pnl = settledBets
+        .filter(b => b.bookmaker === bm.naam)
+        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
+      const netTx = transactions
+        .filter(tx => tx.bookmaker_id === bm.id)
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0);
+      return sum + (bm.saldo || 0) + pnl + netTx;
+    }, 0);
+  }, [dbBookmakers, transactions, bets]);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -207,7 +239,14 @@ export default function Sidebar() {
         </ul>
 
         {/* Bookmakers */}
-        <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Bookmakers</p>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginBottom: 5, marginTop: 20 }}>
+          <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Bookmakers</p>
+          {dbBookmakers.length > 0 && (
+            <span style={{ fontSize: 10.5, fontWeight: 700, color: totalBalance >= 0 ? '#4a8fa8' : '#a05070' }}>
+              €{totalBalance.toFixed(2)} balance
+            </span>
+          )}
+        </div>
         <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
           {bookmakerNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
         </ul>

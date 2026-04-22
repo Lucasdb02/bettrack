@@ -287,6 +287,7 @@ export default function MaandoverzichtPage() {
             const isToday = todayKey === key;
             const hasBets = data && data.bets.length > 0;
             const pnl = data?.pnl ?? 0;
+            const lopendInzet = data?.bets.filter(b=>b.uitkomst==='lopend').reduce((s,b)=>s+Number(b.inzet),0) ?? 0;
             const int = hasBets ? Math.min(Math.abs(pnl)/maxAbs,1) : 0;
             let bg = 'var(--bg-card)';
             if(hasBets&&pnl>0) bg=`rgba(17,185,129,${0.05+int*0.22})`;
@@ -309,7 +310,9 @@ export default function MaandoverzichtPage() {
                       {dag}
                     </div>
                     {hasBets&&(
-                      <div style={{fontSize:12,fontWeight:700,color:pnlColor,lineHeight:1.1}}>{pnl===0?'—':fmtAmt(Math.abs(pnl))}</div>
+                      <div style={{fontSize:12,fontWeight:700,color:pnl!==0?pnlColor:'var(--text-3)',lineHeight:1.1}}>
+                        {pnl!==0?fmtAmt(Math.abs(pnl)):lopendInzet>0?`€${lopendInzet.toFixed(2)}`:'—'}
+                      </div>
                     )}
                   </>
                 ) : (
@@ -319,7 +322,9 @@ export default function MaandoverzichtPage() {
                     </div>
                     {hasBets&&(
                       <>
-                        <div className="cal-day-pnl" style={{fontSize:12.5,fontWeight:700,color:pnlColor,lineHeight:1.2}}>{pnl===0?'—':fmtPnl(pnl)}</div>
+                        <div className="cal-day-pnl" style={{fontSize:12.5,fontWeight:700,color:pnl!==0?pnlColor:'var(--text-3)',lineHeight:1.2}}>
+                          {pnl!==0?fmtPnl(pnl):lopendInzet>0?`€${lopendInzet.toFixed(2)}`:'—'}
+                        </div>
                         <div className="cal-day-count" style={{fontSize:10.5,color:'var(--text-4)',marginTop:2}}>{data.bets.length} bet{data.bets.length!==1?'s':''}</div>
                       </>
                     )}
