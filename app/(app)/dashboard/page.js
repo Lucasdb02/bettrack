@@ -8,7 +8,7 @@ import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import {
-  AreaChart, Area, BarChart, Bar, LineChart, Line,
+  AreaChart, Area, BarChart, Bar, LineChart, Line, ComposedChart,
   PieChart, Pie, Label,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   Cell, Legend, ReferenceLine,
@@ -103,6 +103,33 @@ function ChartTip({ active, payload, label, suffix }) {
   );
 }
 
+/* ─── Cumulative P&L tooltip ─── */
+function CumulTip({ active, payload, label }) {
+  const { fmtPnl } = useFmt();
+  if (!active || !payload?.length) return null;
+  const cum = payload.find(p => p.dataKey === 'pnl');
+  const day = payload.find(p => p.dataKey === 'dayPnl');
+  return (
+    <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:10, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:13, pointerEvents:'none' }}>
+      {label && <p style={{ color:'var(--text-3)', marginBottom:7, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
+      {cum && (
+        <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
+          <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:'#5469d4', flexShrink:0 }}/>
+          <span style={{ color:'var(--text-3)', fontSize:12 }}>Cumulatief:</span>
+          <span style={{ fontWeight:700, color: cum.value >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(cum.value)}</span>
+        </div>
+      )}
+      {day && (
+        <div style={{ display:'flex', alignItems:'center', gap:7 }}>
+          <div style={{ width:8, height:2, backgroundColor:'#f59e0b', borderRadius:1, flexShrink:0 }}/>
+          <span style={{ color:'var(--text-3)', fontSize:12 }}>Dagelijks:</span>
+          <span style={{ fontWeight:700, color: day.value >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(day.value)}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Bookmaker legend + Y-axis tick with icons ─── */
 function BookieLegend({ payload }) {
   if (!payload?.length) return null;
@@ -150,25 +177,8 @@ function GradBar({ x, y, width, height, fill }) {
   if (!width || !height || Math.abs(height) < 0.5) return null;
   const barY = height >= 0 ? y : y + height;
   const barH = Math.abs(height);
-  const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
-  const uid = `gb${fKey}${Math.round(x * 10)}x${Math.round(Math.abs(y) * 10)}`;
   return (
-    <g>
-      <defs>
-        <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={fill} stopOpacity={0.95}/>
-          <stop offset="100%" stopColor={fill} stopOpacity={0.75}/>
-        </linearGradient>
-        <linearGradient id={`s${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity={0.28}/>
-          <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
-        </linearGradient>
-      </defs>
-      <rect x={x} y={barY} width={width} height={barH} rx={0} ry={0} fill={`url(#f${uid})`}/>
-      <rect x={x + 0.75} y={barY + 0.75} width={width - 1.5} height={barH - 1.5}
-        rx={0} ry={0}
-        fill="none" stroke={`url(#s${uid})`} strokeWidth={1.5}/>
-    </g>
+    <rect x={x} y={barY} width={width} height={barH} rx={0} ry={0} fill={fill}/>
   );
 }
 
@@ -702,19 +712,23 @@ export default function Dashboard() {
 
   const cumulData = useMemo(() => {
     let cumPnl = 0, cumInzet = 0, cumW = 0, cumL = 0, cumP = 0;
+    const dayPnlMap = {};
     const map = {};
     [...filtered].filter(b => b.uitkomst !== 'lopend')
       .sort((a, b) => new Date(a.datum) - new Date(b.datum))
       .forEach(b => {
         const lbl = new Date(b.datum).toLocaleDateString('nl-NL', {day:'numeric', month:'short'});
-        cumPnl   += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet));
+        const w = berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet));
+        cumPnl   += w;
         cumInzet += Number(b.inzet);
         if (['gewonnen','half_gewonnen'].includes(b.uitkomst))       cumW++;
         else if (['verloren','half_verloren'].includes(b.uitkomst))  cumL++;
         else if (['push','void','onbeslist'].includes(b.uitkomst))   cumP++;
+        dayPnlMap[lbl] = parseFloat(((dayPnlMap[lbl] || 0) + w).toFixed(2));
         map[lbl] = {
-          pnl:  parseFloat(cumPnl.toFixed(2)),
-          roi:  cumInzet > 0 ? parseFloat((cumPnl / cumInzet * 100).toFixed(1)) : 0,
+          pnl:    parseFloat(cumPnl.toFixed(2)),
+          dayPnl: dayPnlMap[lbl],
+          roi:    cumInzet > 0 ? parseFloat((cumPnl / cumInzet * 100).toFixed(1)) : 0,
           w: cumW, l: cumL, p: cumP,
         };
       });
@@ -758,8 +772,8 @@ export default function Dashboard() {
       const now = new Date();
       const year = now.getFullYear();
       const month = now.getMonth();
-      const daysInMonth = new Date(year, month+1, 0).getDate();
-      for (let d = 1; d <= daysInMonth; d++) {
+      const today = now.getDate();
+      for (let d = 1; d <= today; d++) {
         const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         if (!map[key]) {
           const lbl = new Date(year, month, d).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
@@ -854,35 +868,52 @@ export default function Dashboard() {
 
       {/* Chart 1: Cumulative P&L */}
       {(() => {
-        const hp       = hoverIdx !== null ? cumulData[hoverIdx] : null;
-        const dispPnl  = hp ? hp.pnl  : stats.totalWinst;
-        const dispRoi  = hp ? hp.roi  : stats.roi;
-        const dispW    = hp ? hp.w    : stats.wins;
-        const dispL    = hp ? hp.l    : stats.losses;
-        const dispP    = hp ? hp.p    : stats.pushes;
-        const pnlColor = dispPnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
-        const roiColor = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
+        const hp         = hoverIdx !== null ? cumulData[hoverIdx] : null;
+        const dispPnl    = hp ? hp.pnl    : stats.totalWinst;
+        const dispRoi    = hp ? hp.roi    : stats.roi;
+        const dispDayPnl = hp ? hp.dayPnl : null;
+        const dispW      = hp ? hp.w      : stats.wins;
+        const dispL      = hp ? hp.l      : stats.losses;
+        const dispP      = hp ? hp.p      : stats.pushes;
+        const roiColor   = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
         return (
           <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:24 }}>
             {/* Header row */}
             <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
-              {/* Left: P&L + ROI */}
+              {/* Left: P&L + ROI + daily */}
               <div>
                 <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>Cumulatieve P&L</p>
                 <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
                   <span style={{ fontSize:28, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
                   <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
                 </div>
+                {dispDayPnl !== null && (
+                  <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
+                    <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
+                    <span style={{ fontSize:12, color:'var(--text-4)' }}>Dagelijks:</span>
+                    <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(dispDayPnl)}</span>
+                  </div>
+                )}
               </div>
-              {/* Right: Record */}
+              {/* Right: Record + legend */}
               <div style={{ textAlign:'right' }}>
                 <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>Record</p>
                 <span style={{ fontSize:28, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
+                <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                    <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
+                    <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                    <div style={{ width:16, height:2, backgroundColor:'#f59e0b', borderRadius:1, borderTop:'1px dashed #f59e0b' }}/>
+                    <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
+                  </div>
+                </div>
               </div>
             </div>
             {cumulData.length > 1 ? (
               <ResponsiveContainer width="100%" height={220}>
-                <AreaChart
+                <ComposedChart
                   data={cumulData}
                   margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}}
                   tabIndex={-1}
@@ -898,12 +929,11 @@ export default function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                   <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
                   <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile}/>
-                  <Tooltip
-                    content={() => null}
-                    cursor={{ stroke: 'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }}
-                  />
+                  <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
+                  <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                   <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2.5} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                </AreaChart>
+                  <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 3" dot={false} activeDot={{r:4,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                </ComposedChart>
               </ResponsiveContainer>
             ) : empty()}
           </div>
@@ -912,22 +942,48 @@ export default function Dashboard() {
 
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
-        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
-          <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Winst en verlies per dag</p></div>
-          {dailyData.length>0?(
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={dailyData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-                <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(dailyData.length, isMobile)}/>
-                <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 48} mirror={isMobile}/>
-                <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
-                <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                <Bar dataKey="pnl" name="P&L" maxBarSize={24} shape={GradBar}>
-                  {dailyData.map((entry,i)=><Cell key={i} fill={entry.pnl>=0?'#11B981':'#F43F5E'}/>)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          ):empty()}
+        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
+          <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Statistieken per dag</p></div>
+          {dailyData.length > 0 ? (() => {
+            const totalDays   = dailyData.filter(d => d.pnl !== 0).length || dailyData.length;
+            const sumPnl      = dailyData.reduce((s, d) => s + d.pnl, 0);
+            const gemPnl      = sumPnl / totalDays;
+            const bestDag     = Math.max(...dailyData.map(d => d.pnl));
+            const slechtDag   = Math.min(...dailyData.map(d => d.pnl));
+            const winstDagen  = dailyData.filter(d => d.pnl > 0).length;
+            const verliesDagen= dailyData.filter(d => d.pnl < 0).length;
+            const gemColor    = gemPnl >= 0 ? '#11B981' : '#F43F5E';
+            return (
+              <div style={{ display:'flex', flexDirection:'column', flex:1, gap:12 }}>
+                {/* Big center number */}
+                <div style={{ background:'var(--bg-page)', borderRadius:10, flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'24px 16px', minHeight:120 }}>
+                  <span style={{ fontSize:48, fontWeight:800, color:gemColor, lineHeight:1, letterSpacing:'-0.03em' }}>
+                    {fmtPnl(parseFloat(gemPnl.toFixed(2)))}
+                  </span>
+                  <span style={{ fontSize:12, color:'var(--text-4)', marginTop:6, fontWeight:500 }}>gemiddeld per dag</span>
+                </div>
+                {/* Bottom stats */}
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', border:'1px solid var(--border)', borderRadius:8, overflow:'hidden' }}>
+                  <div style={{ padding:'11px 15px' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Beste dag</p>
+                    <p style={{ fontSize:18, fontWeight:800, color:'#11B981', lineHeight:1 }}>{fmtPnl(bestDag)}</p>
+                  </div>
+                  <div style={{ padding:'11px 15px', borderLeft:'1px solid var(--border)' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Slechtste dag</p>
+                    <p style={{ fontSize:18, fontWeight:800, color:'#F43F5E', lineHeight:1 }}>{fmtPnl(slechtDag)}</p>
+                  </div>
+                  <div style={{ padding:'11px 15px', borderTop:'1px solid var(--border)' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winstdagen</p>
+                    <p style={{ fontSize:18, fontWeight:800, color:'#11B981', lineHeight:1 }}>{winstDagen}</p>
+                  </div>
+                  <div style={{ padding:'11px 15px', borderTop:'1px solid var(--border)', borderLeft:'1px solid var(--border)' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Verlies&shy;dagen</p>
+                    <p style={{ fontSize:18, fontWeight:800, color:'#F43F5E', lineHeight:1 }}>{verliesDagen}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })() : empty()}
         </div>
 
         {/* Balance per bookmaker donut */}

@@ -63,51 +63,15 @@ const WEEKDAGEN = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
 
 function GradBar({ x, y, width, height, fill }) {
   if (!width || !height || Math.abs(height) < 0.5) return null;
-  const r = Math.min(7, width / 2, Math.abs(height) / 2);
-  const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
-  const uid = `stgb${fKey}${Math.round(x * 10)}x${Math.round(Math.abs(y) * 10)}`;
   return (
-    <g>
-      <defs>
-        <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={fill} stopOpacity={0.95}/>
-          <stop offset="100%" stopColor={fill} stopOpacity={0.75}/>
-        </linearGradient>
-        <linearGradient id={`s${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity={0.28}/>
-          <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
-        </linearGradient>
-      </defs>
-      <rect x={x} y={y} width={width} height={Math.abs(height)} rx={r} ry={r} fill={`url(#f${uid})`}/>
-      <rect x={x + 0.75} y={y + 0.75} width={width - 1.5} height={Math.abs(height) - 1.5}
-        rx={Math.max(0, r - 0.75)} ry={Math.max(0, r - 0.75)}
-        fill="none" stroke={`url(#s${uid})`} strokeWidth={1.5}/>
-    </g>
+    <rect x={x} y={y} width={width} height={Math.abs(height)} rx={0} ry={0} fill={fill}/>
   );
 }
 
 function GradBarH({ x, y, width, height, fill }) {
   if (!width || !height || Math.abs(width) < 0.5) return null;
-  const r = Math.min(7, Math.abs(width) / 2, height / 2);
-  const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
-  const uid = `stgbh${fKey}${Math.round(Math.abs(x) * 10)}y${Math.round(Math.abs(y) * 10)}`;
   return (
-    <g>
-      <defs>
-        <linearGradient id={`fh${uid}`} x1="1" y1="0" x2="0" y2="0">
-          <stop offset="0%" stopColor={fill} stopOpacity={0.95}/>
-          <stop offset="100%" stopColor={fill} stopOpacity={0.75}/>
-        </linearGradient>
-        <linearGradient id={`sh${uid}`} x1="1" y1="0" x2="0" y2="0">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity={0.28}/>
-          <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
-        </linearGradient>
-      </defs>
-      <rect x={x} y={y} width={Math.abs(width)} height={height} rx={r} ry={r} fill={`url(#fh${uid})`}/>
-      <rect x={x + 0.75} y={y + 0.75} width={Math.abs(width) - 1.5} height={height - 1.5}
-        rx={Math.max(0, r - 0.75)} ry={Math.max(0, r - 0.75)}
-        fill="none" stroke={`url(#sh${uid})`} strokeWidth={1.5}/>
-    </g>
+    <rect x={x} y={y} width={Math.abs(width)} height={height} rx={0} ry={0} fill={fill}/>
   );
 }
 

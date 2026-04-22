@@ -455,7 +455,7 @@ export default function BookmakersPage() {
                   <Bar key={naam} dataKey={naam} stackId="balance" fill={bookieColor(naam, activeBookies)} radius={[0,0,0,0]}/>
                 ))}
                 {visibleBookies.length > 0 && (
-                  <Bar key={`${visibleBookies[visibleBookies.length-1]}_top`} dataKey={visibleBookies[visibleBookies.length-1]} stackId="balance" fill={bookieColor(visibleBookies[visibleBookies.length-1], activeBookies)} radius={[4,4,0,0]} hide/>
+                  <Bar key={`${visibleBookies[visibleBookies.length-1]}_top`} dataKey={visibleBookies[visibleBookies.length-1]} stackId="balance" fill={bookieColor(visibleBookies[visibleBookies.length-1], activeBookies)} radius={[0,0,0,0]} hide/>
                 )}
               </BarChart>
             </ResponsiveContainer>
