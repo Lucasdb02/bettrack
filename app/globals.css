@@ -325,8 +325,8 @@ html.dark .glass-card {
   padding-right: 16px;
   align-items: center;
   justify-content: space-between;
-  background: var(--sidebar-bg);
-  border-bottom: 1px solid var(--sidebar-border);
+  background: #070917;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .mobile-bottom-nav {
@@ -334,8 +334,8 @@ html.dark .glass-card {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 100;
-  background: var(--sidebar-bg);
-  border-top: 1px solid var(--sidebar-border);
+  background: #070917;
+  border-top: 1px solid rgba(255,255,255,0.06);
   padding: 6px 0 0;
   padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   align-items: stretch;
@@ -352,7 +352,7 @@ html.dark .glass-card {
   text-decoration: none;
   font-size: 8.5px;
   font-weight: 500;
-  color: var(--nav-item-text);
+  color: #7090b0;
   transition: color 0.15s;
   border: none;
   background: none;
@@ -360,10 +360,10 @@ html.dark .glass-card {
   -webkit-tap-highlight-color: transparent;
 }
 .mobile-nav-item.active {
-  color: var(--brand);
+  color: #818cf8;
 }
 .mobile-nav-item.active svg {
-  color: var(--brand);
+  color: #818cf8;
   filter: drop-shadow(0 0 5px rgba(99,102,241,0.5));
 }
 .mobile-nav-item span { line-height: 1.2; text-align: center; }
@@ -450,7 +450,7 @@ html.dark .glass-card {
 @media (max-width: 640px) {
   .cal-page-wrap { padding: 20px 16px !important; max-width: 100% !important; }
   .cal-stats-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; margin-bottom: 16px !important; }
-  .cal-wrapper { background: transparent !important; border: none !important; border-radius: 0 !important; margin-bottom: 12px !important; }
+  .cal-wrapper { background: transparent !important; border: none !important; border-radius: 0 !important; margin-bottom: 12px !important; box-shadow: none !important; }
   .cal-header { border-bottom: none !important; margin-bottom: 4px !important; gap: 3px !important; }
   .cal-header > div { background: transparent !important; padding: 4px 0 8px !important; font-size: 10px !important; letter-spacing: 0.03em !important; }
   .cal-grid { gap: 3px !important; background: transparent !important; }
@@ -505,6 +505,12 @@ html.dark .glass-card {
 }
 
 /* ══════════════════════════════════════════════
+   BOOKMAKERS — Transaction row equal height
+   ══════════════════════════════════════════════ */
+.bm-tx-row .bm-tx-submit { height: 38px !important; }
+.bm-tx-row .bm-tx-type   { height: 38px !important; }
+
+/* ══════════════════════════════════════════════
    BOOKMAKERS — Mobile card view
    ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -522,7 +528,7 @@ html.dark .glass-card {
   .bm-tx-bookie { grid-column: 1 / -1 !important; }
   .bm-tx-type { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
   .bm-tx-amount { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; }
-  .bm-tx-date { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-date { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; min-width: 0 !important; }
   .bm-tx-submit { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; justify-content: center; }
   .bm-tx-row input, .bm-tx-row select { padding: 7px 10px !important; font-size: 13px !important; }
   .bm-tx-amount input { padding-left: 24px !important; }
@@ -550,4 +556,27 @@ html.dark .glass-card {
 @media (max-width: 768px) {
   .stat-card-icon { margin-top: -6px !important; margin-right: -6px !important; }
   .dash-recent-hdr { border-bottom: none !important; padding-bottom: 8px !important; }
+}
+
+/* ══════════════════════════════════════════════
+   CALCULATORS — Mobile stacked layout
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .calc-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ══════════════════════════════════════════════
+   ACCOUNT — Mobile stats grid
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .account-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ══════════════════════════════════════════════
+   BETS — Filter bar mobile (all 3 on one line)
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .bet-filter-bar { flex-wrap: nowrap !important; gap: 6px !important; }
+  .bet-filter-bar > div { flex: 1 1 0 !important; min-width: 0 !important; }
+  .bet-filter-extra { display: none !important; }
 }

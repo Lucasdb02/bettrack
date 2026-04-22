@@ -27,13 +27,13 @@ export default function EVPage() {
   }, [odds, prob, inzet, bets]);
 
   return (
-    <div style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+    <div className="app-page" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Expected Value Calculator</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Bereken de verwachte waarde (EV) van een bet op basis van jouw geschatte kans.</p>
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
+      <div className="calc-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
         <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:20,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
           <div style={{display:'flex',flexDirection:'column',gap:16}}>

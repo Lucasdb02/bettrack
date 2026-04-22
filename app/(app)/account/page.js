@@ -64,7 +64,7 @@ function OverzichtTab({ prefs, bets }) {
   ];
 
   return (
-    <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
+    <div className="account-stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
       {stats.map(s => (
         <div key={s.label} style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 22px', boxShadow:'var(--shadow-sm)' }}>
           <p style={{ fontSize:11.5, color:'var(--text-3)', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>{s.label}</p>

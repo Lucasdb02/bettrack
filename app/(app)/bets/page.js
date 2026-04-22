@@ -267,6 +267,14 @@ export default function BetsPage() {
   const { fmtPnl } = useFmt();
 
   const [saveError, setSaveError] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const handleSave = useCallback(async (updates) => {
     const ok = await updateBet(editBet.id, updates);
@@ -292,27 +300,42 @@ export default function BetsPage() {
         </Link>
       </div>
 
-      <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginBottom:20}}>
-        <div style={{position:'relative',flex:1,minWidth:200}}>
+      <div className="bet-filter-bar" style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginBottom:20}}>
+        {/* Search */}
+        <div style={{position:'relative',flex:1,minWidth:isMobile?0:200}}>
           <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Zoeken op wedstrijd, selectie of bookmaker..." value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',padding:'7px 12px 7px 30px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)'}}/>
+          <input type="text" placeholder={isMobile?'Zoeken...':'Zoeken op wedstrijd, selectie of bookmaker...'} value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',height:36,padding:'0 12px 0 32px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',boxSizing:'border-box'}}/>
         </div>
-        <select value={filterS} onChange={e=>setFilterS(e.target.value)} style={sel}>
-          <option value="alle">Alle sporten</option>
-          {sporten.filter(s=>s!=='alle').map(s=><option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
-        </select>
-        <select value={filterU} onChange={e=>setFilterU(e.target.value)} style={sel}>
-          <option value="alle">Alle uitkomsten</option>
-          {UITKOMSTEN.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select>
-        {allTags.length > 0 && (
-          <select value={filterT} onChange={e=>setFilterT(e.target.value)} style={sel}>
-            <option value="alle">Alle tags</option>
-            {allTags.map(t=><option key={t} value={t}>{t}</option>)}
+        {/* Sport */}
+        <div style={{position:'relative',flexShrink:0}}>
+          <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none',zIndex:1}} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20M12 2a14.5 14.5 0 010 20M2 12h20"/></svg>
+          <select value={filterS} onChange={e=>setFilterS(e.target.value)} style={{height:36,paddingLeft:30,paddingRight:28,paddingTop:0,paddingBottom:0,border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',appearance:'none',WebkitAppearance:'none',cursor:'pointer',boxSizing:'border-box',fontFamily:'inherit'}}>
+            <option value="alle">Alle sporten</option>
+            {sporten.filter(s=>s!=='alle').map(s=><option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
           </select>
+          <svg style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        {/* Uitkomst */}
+        <div style={{position:'relative',flexShrink:0}}>
+          <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none',zIndex:1}} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <select value={filterU} onChange={e=>setFilterU(e.target.value)} style={{height:36,paddingLeft:30,paddingRight:28,paddingTop:0,paddingBottom:0,border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',appearance:'none',WebkitAppearance:'none',cursor:'pointer',boxSizing:'border-box',fontFamily:'inherit'}}>
+            <option value="alle">Alle uitkomsten</option>
+            {UITKOMSTEN.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+          <svg style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        {allTags.length > 0 && (
+          <div className="bet-filter-extra" style={{position:'relative',flexShrink:0}}>
+            <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none',zIndex:1}} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <select value={filterT} onChange={e=>setFilterT(e.target.value)} style={{height:36,paddingLeft:30,paddingRight:28,paddingTop:0,paddingBottom:0,border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',appearance:'none',WebkitAppearance:'none',cursor:'pointer',boxSizing:'border-box',fontFamily:'inherit'}}>
+              <option value="alle">Alle tags</option>
+              {allTags.map(t=><option key={t} value={t}>{t}</option>)}
+            </select>
+            <svg style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         )}
         {(filterU!=='alle'||filterS!=='alle'||filterT!=='alle'||zoeken)&&(
-          <button onClick={()=>{setFilterU('alle');setFilterS('alle');setFilterT('alle');setZoeken('');}} style={{padding:'7px 11px',border:'1px solid var(--border)',borderRadius:8,fontSize:12.5,color:'var(--text-3)',backgroundColor:'var(--bg-card)',cursor:'pointer'}}>Filters wissen</button>
+          <button className="bet-filter-extra" onClick={()=>{setFilterU('alle');setFilterS('alle');setFilterT('alle');setZoeken('');}} style={{height:36,padding:'0 12px',border:'1px solid var(--border)',borderRadius:8,fontSize:12.5,color:'var(--text-3)',backgroundColor:'var(--bg-card)',cursor:'pointer',flexShrink:0,boxSizing:'border-box'}}>Filters wissen</button>
         )}
       </div>
 

@@ -228,7 +228,9 @@ function GroepTabel({ data, title, type, isMobile }) {
                   : <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                       {type === 'bookmaker'
                         ? <BookmakerIcon naam={row.key} size={16} />
-                        : <span style={{ fontSize: 16, lineHeight: 1 }}>{sportEmoji(row.key)}</span>
+                        : type === 'sport'
+                          ? <span style={{ fontSize: 16, lineHeight: 1 }}>{sportEmoji(row.key)}</span>
+                          : null
                       }
                       {(!isMobile || (type !== 'sport' && type !== 'bookmaker')) && row.key}
                     </div>

@@ -29,13 +29,13 @@ export default function VigPage() {
   const set = (i,v) => { const n=[...inputs]; n[i]=v; setInputs(n); };
 
   return (
-    <div style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+    <div className="app-page" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Vig Calculator</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Bereken de bookmaker-marge (vig/overround) en de eerlijke odds zonder winstmarge.</p>
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
+      <div className="calc-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'stretch'}}>
         <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-1)',marginBottom:16,textTransform:'uppercase',letterSpacing:'0.05em'}}>Invoer</h2>
           {/* Type selector */}

@@ -6,7 +6,7 @@ import { uitkomstConfig, sportEmoji } from '../../lib/sports';
 import BookmakerIcon from '../../components/BookmakerIcon';
 import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const MAANDEN=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const DAGEN=['Ma','Di','Wo','Do','Vr','Za','Zo'];
@@ -200,10 +200,28 @@ export default function MaandoverzichtPage() {
     const settled=all.filter(b=>b.uitkomst!=='lopend');
     const won=settled.filter(b=>b.uitkomst==='gewonnen'),lost=settled.filter(b=>b.uitkomst==='verloren');
     const totalPnl=entries.reduce((s,d)=>s+d.pnl,0);
-    return {totalPnl,all,settled,won,lost,winstDagen:entries.filter(d=>d.pnl>0).length,verliesdagen:entries.filter(d=>d.pnl<0).length};
+    const totalInzet=all.reduce((s,b)=>s+Number(b.inzet),0);
+    return {totalPnl,totalInzet,all,settled,won,lost,winstDagen:entries.filter(d=>d.pnl>0).length,verliesdagen:entries.filter(d=>d.pnl<0).length};
   },[dagData]);
 
-  const barData=useMemo(()=>Object.keys(dagData).sort().map(d=>({dag:new Date(d).getDate(),pnl:parseFloat(dagData[d].pnl.toFixed(2))})),[dagData]);
+  const BOOK_COLORS_ARR=['#6366f1','#22d3ee','#f59e0b','#10b981','#f43f5e','#a78bfa','#34d399','#fb923c','#60a5fa','#e879f9'];
+
+  const bookmakersMaand=useMemo(()=>{
+    const bks=new Set();
+    Object.values(dagData).forEach(d=>d.bets.forEach(b=>bks.add(b.bookmaker)));
+    return Array.from(bks).sort();
+  },[dagData]);
+
+  const bookColorMaand=(bk)=>BOOK_COLORS_ARR[bookmakersMaand.indexOf(bk)%BOOK_COLORS_ARR.length];
+
+  const stackedMaandData=useMemo(()=>Object.keys(dagData).sort().map(datum=>{
+    const entry={datum:String(new Date(datum).getDate())};
+    bookmakersMaand.forEach(bk=>{entry[bk]=0;});
+    dagData[datum].bets.forEach(b=>{
+      if(b.uitkomst!=='lopend') entry[b.bookmaker]=(entry[b.bookmaker]||0)+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet));
+    });
+    return entry;
+  }),[dagData,bookmakersMaand]);
 
   const calendarDays=useMemo(()=>{
     const first=new Date(jaar,maand,1),last=new Date(jaar,maand+1,0);
@@ -241,11 +259,12 @@ export default function MaandoverzichtPage() {
         </div>
       </div>
 
-      <div className="cal-stats-grid grid gap-4 mb-7" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
+      <div className="cal-stats-grid grid gap-4 mb-7" style={{gridTemplateColumns:'repeat(6,1fr)'}}>
         {[
           {l:'Maand P&L',v:isMobile?fmtAmt(maandStats.totalPnl):fmtPnl(maandStats.totalPnl),c:maandStats.totalPnl>=0?'var(--color-win)':'var(--color-loss)'},
           {l:'Bets',v:maandStats.all.length,c:'var(--text-1)'},
           {l:'Win Rate',v:`${(maandStats.won.length+maandStats.lost.length)>0?((maandStats.won.length/(maandStats.won.length+maandStats.lost.length))*100).toFixed(0):0}%`,c:'var(--text-1)'},
+          {l:'Totale Inzet',v:`€${maandStats.totalInzet.toFixed(0)}`,c:'var(--text-1)'},
           {l:'Winstdagen',v:maandStats.winstDagen,c:'var(--color-win)'},
           {l:'Verliesdagen',v:maandStats.verliesdagen,c:'var(--color-loss)'},
         ].map(s=>(
@@ -318,16 +337,43 @@ export default function MaandoverzichtPage() {
         </div>
       </div>
 
-      {barData.length>0&&(
+      {stackedMaandData.length>0&&bookmakersMaand.length>0&&(
         <div className="cal-barchart" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'22px 24px',marginBottom:24,boxShadow:'var(--shadow-sm)'}}>
-          <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:16}}>Dagelijkse P&L — {MAANDEN[maand]} {jaar}</h2>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={barData} margin={{top:0,right:8,left:0,bottom:0}}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false}/>
-              <XAxis dataKey="dag" tick={{fontSize:10,fill:'var(--text-4)'}} axisLine={false} tickLine={false} interval={0}/>
-              <YAxis tick={{fontSize:10.5,fill:'var(--text-4)'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:50} mirror={isMobile}/>
-              <Tooltip content={<BarTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
-              <Bar dataKey="pnl" maxBarSize={28}>{barData.map((e,i)=><Cell key={i} fill={e.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}</Bar>
+          <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:4}}>Dagelijkse P&L per Bookmaker</h2>
+          <p style={{fontSize:12,color:'var(--text-4)',marginBottom:16}}>Gestapeld per bookmaker — {MAANDEN[maand]} {jaar}</p>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={stackedMaandData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} barCategoryGap="30%" barGap={2}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+              <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
+              <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:44} mirror={isMobile}/>
+              <Tooltip
+                wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}
+                cursor={{fill:'var(--border)',opacity:0.3}}
+                content={({active,payload,label})=>{
+                  if(!active||!payload?.length) return null;
+                  const total=payload.reduce((s,p)=>s+(p.value||0),0);
+                  return (
+                    <div style={{backgroundColor:'var(--tooltip-bg)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 14px',boxShadow:'var(--shadow-lg)',fontSize:12,pointerEvents:'none'}}>
+                      <p style={{fontWeight:700,color:'var(--text-1)',marginBottom:6}}>Dag {label}</p>
+                      {payload.map(p=>(
+                        <div key={p.name} style={{display:'flex',alignItems:'center',gap:8,marginBottom:3}}>
+                          <div style={{width:8,height:8,borderRadius:'50%',backgroundColor:p.fill,flexShrink:0}}/>
+                          <span style={{color:'var(--text-3)'}}>{p.name}</span>
+                          <span style={{fontWeight:700,color:p.value>=0?'var(--color-win)':'var(--color-loss)',marginLeft:'auto'}}>{p.value>=0?'+':''}{fmtPnl(p.value)}</span>
+                        </div>
+                      ))}
+                      <div style={{borderTop:'1px solid var(--border-subtle)',marginTop:6,paddingTop:6,display:'flex',justifyContent:'space-between'}}>
+                        <span style={{color:'var(--text-3)',fontWeight:600}}>Totaal</span>
+                        <span style={{fontWeight:700,color:total>=0?'var(--color-win)':'var(--color-loss)'}}>{total>=0?'+':''}{fmtPnl(total)}</span>
+                      </div>
+                    </div>
+                  );
+                }}
+              />
+              <Legend wrapperStyle={{fontSize:11,paddingTop:8}} formatter={v=><span style={{color:'var(--text-3)'}}>{v}</span>}/>
+              {bookmakersMaand.map(bk=>(
+                <Bar key={bk} dataKey={bk} stackId="a" fill={bookColorMaand(bk)} fillOpacity={0.85} maxBarSize={32} radius={bookmakersMaand.indexOf(bk)===bookmakersMaand.length-1?[3,3,0,0]:[0,0,0,0]}/>
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </div>
