@@ -5,7 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
 import { SPORTEN, sportEmoji, UITKOMSTEN, uitkomstConfig } from '../../lib/sports';
 import TagInput, { TagChip } from '../../components/TagInput';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 
@@ -241,6 +241,158 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
   );
 }
 
+function usePortalDropdown() {
+  const btnRef  = useRef(null);
+  const [open,    setOpen]    = useState(false);
+  const [rect,    setRect]    = useState(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const toggle = useCallback(() => {
+    if (!open && btnRef.current) setRect(btnRef.current.getBoundingClientRect());
+    setOpen(o => !o);
+  }, [open]);
+  const close = useCallback(() => setOpen(false), []);
+  useEffect(() => {
+    if (!open) return;
+    const h = () => setOpen(false);
+    window.addEventListener('scroll', h, true);
+    return () => window.removeEventListener('scroll', h, true);
+  }, [open]);
+  return { btnRef, open, rect, mounted, toggle, close };
+}
+
+function Chevron({ open }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink:0, transition:'transform 0.15s', transform: open ? 'rotate(180deg)' : 'none' }}>
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  );
+}
+
+function SportSelectDropdown({ value, onChange, options }) {
+  const { dark } = useTheme();
+  const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
+  const isFiltered = value !== 'alle';
+
+  const dropBg  = dark ? 'var(--bg-card)' : '#fff';
+  const dropBdr = dark ? 'var(--border)'  : '#e5e7eb';
+  const txtActive = dark ? 'var(--brand)' : '#3b5bdb';
+  const bgActive  = dark ? 'var(--bg-brand)' : '#eef2ff';
+  const txtDef    = dark ? 'var(--text-1)' : '#1a1f36';
+  const hoverBg   = dark ? 'var(--bg-subtle)' : '#f9fafb';
+  const divider   = dark ? 'var(--border-subtle)' : '#f3f4f6';
+
+  const label = isFiltered ? `${sportEmoji(value)} ${value}` : 'Sporten';
+
+  return (
+    <>
+      <button ref={btnRef} onClick={toggle} style={{
+        display:'flex', alignItems:'center', gap:6,
+        height:36, padding:'0 10px', border:`1px solid ${isFiltered?'var(--brand)':'var(--border)'}`,
+        borderRadius:8, backgroundColor:'var(--bg-card)',
+        color: isFiltered?'var(--brand)':'var(--text-2)',
+        fontSize:13, fontWeight:500, cursor:'pointer', whiteSpace:'nowrap',
+        width:'100%', boxSizing:'border-box', overflow:'hidden',
+      }}>
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor" style={{flexShrink:0}}>
+          <path d="M256.07-0.047C114.467-0.047-0.326,114.746-0.326,256.349S114.467,512.744,256.07,512.744s256.395-114.792,256.395-256.395S397.673-0.047,256.07-0.047z M466.667,224v0.064c-19.353,12.05-40.515,20.917-62.677,26.261c-4.595-68.333-27.183-134.234-65.472-191.019C406.956,88.198,455.48,150.56,466.667,224z M256,42.667c5.397,0,10.667,0.405,15.979,0.811c53.223,58.444,84.842,133.342,89.6,212.245c-29.153,0.997-58.199-4.013-85.333-14.72c-4.247-72.136-38.705-139.14-94.912-184.555C205.188,47.391,230.484,42.722,256,42.667z M138.389,78.187c20.041,13.069,37.744,29.41,52.373,48.341C126.816,169.409,77.017,230.285,47.659,301.461C28.668,215.422,64.766,126.591,138.389,78.187z M71.595,362.773c21.296-81.459,71.492-152.392,141.227-199.573c12.627,25.943,19.835,54.187,21.184,83.008c-58.22,44.242-94.81,111.213-100.587,184.107C108.191,412.512,87.102,389.474,71.595,362.773z M256,469.333c-27.6-0.008-54.934-5.399-80.469-15.872c-0.47-27.519,4.398-54.867,14.336-80.533c70.121,31.128,147.992,40.413,223.467,26.645C373.07,443.969,315.934,469.303,256,469.333z M209.067,334.72c13.523-20.959,30.63-39.373,50.539-54.4c30.156,12.194,62.363,18.515,94.891,18.624c39.574-0.004,78.615-9.129,114.091-26.667c-1.999,26.074-8.82,51.551-20.117,75.136C369.697,371.777,284.821,367.277,209.067,334.72z"/>
+        </svg>
+        <span style={{overflow:'hidden',textOverflow:'ellipsis',flex:1,textAlign:'left'}}>{label}</span>
+        {isFiltered && (
+          <span onClick={e=>{e.stopPropagation();onChange('alle');}} style={{width:14,height:14,borderRadius:'50%',backgroundColor:'var(--brand)',color:'#fff',fontSize:9,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>✕</span>
+        )}
+        <Chevron open={open}/>
+      </button>
+
+      {mounted && open && rect && createPortal(
+        <>
+          <div onClick={close} style={{position:'fixed',inset:0,zIndex:9998}}/>
+          <div style={{position:'fixed',top:rect.bottom+4,left:rect.left,zIndex:9999,backgroundColor:dropBg,border:`1px solid ${dropBdr}`,borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,0.18)',minWidth:180,maxHeight:280,overflowY:'auto'}}>
+            <button onClick={()=>{onChange('alle');close();}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',textAlign:'left',padding:'10px 16px',fontSize:14,fontWeight:value==='alle'?600:400,color:value==='alle'?txtActive:txtDef,backgroundColor:value==='alle'?bgActive:'transparent',border:'none',borderBottom:`1px solid ${divider}`,cursor:'pointer',transition:'background 0.1s'}}
+              onMouseEnter={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor=hoverBg;}}
+              onMouseLeave={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor='transparent';}}>
+              Alle sporten
+              {value==='alle'&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={txtActive} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+            </button>
+            {options.map(opt=>(
+              <button key={opt} onClick={()=>{onChange(opt);close();}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',textAlign:'left',padding:'10px 16px',fontSize:14,fontWeight:value===opt?600:400,color:value===opt?txtActive:txtDef,backgroundColor:value===opt?bgActive:'transparent',border:'none',cursor:'pointer',transition:'background 0.1s'}}
+                onMouseEnter={e=>{if(value!==opt)e.currentTarget.style.backgroundColor=hoverBg;}}
+                onMouseLeave={e=>{if(value!==opt)e.currentTarget.style.backgroundColor='transparent';}}>
+                <span>{sportEmoji(opt)} {opt}</span>
+                {value===opt&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={txtActive} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+              </button>
+            ))}
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
+}
+
+function UitkomstSelectDropdown({ value, onChange }) {
+  const { dark } = useTheme();
+  const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
+  const isFiltered = value !== 'alle';
+
+  const dropBg  = dark ? 'var(--bg-card)' : '#fff';
+  const dropBdr = dark ? 'var(--border)'  : '#e5e7eb';
+  const txtActive = dark ? 'var(--brand)' : '#3b5bdb';
+  const bgActive  = dark ? 'var(--bg-brand)' : '#eef2ff';
+  const txtDef    = dark ? 'var(--text-1)' : '#1a1f36';
+  const hoverBg   = dark ? 'var(--bg-subtle)' : '#f9fafb';
+  const divider   = dark ? 'var(--border-subtle)' : '#f3f4f6';
+
+  const selected = UITKOMSTEN.find(u => u.value === value);
+  const label = isFiltered && selected ? selected.label : 'Uitkomsten';
+
+  return (
+    <>
+      <button ref={btnRef} onClick={toggle} style={{
+        display:'flex', alignItems:'center', gap:6,
+        height:36, padding:'0 10px', border:`1px solid ${isFiltered?'var(--brand)':'var(--border)'}`,
+        borderRadius:8, backgroundColor:'var(--bg-card)',
+        color: isFiltered?'var(--brand)':'var(--text-2)',
+        fontSize:13, fontWeight:500, cursor:'pointer', whiteSpace:'nowrap',
+        width:'100%', boxSizing:'border-box', overflow:'hidden',
+      }}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span style={{overflow:'hidden',textOverflow:'ellipsis',flex:1,textAlign:'left'}}>{label}</span>
+        {isFiltered && (
+          <span onClick={e=>{e.stopPropagation();onChange('alle');}} style={{width:14,height:14,borderRadius:'50%',backgroundColor:'var(--brand)',color:'#fff',fontSize:9,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>✕</span>
+        )}
+        <Chevron open={open}/>
+      </button>
+
+      {mounted && open && rect && createPortal(
+        <>
+          <div onClick={close} style={{position:'fixed',inset:0,zIndex:9998}}/>
+          <div style={{position:'fixed',top:rect.bottom+4,left:rect.left,zIndex:9999,backgroundColor:dropBg,border:`1px solid ${dropBdr}`,borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,0.18)',minWidth:180,maxHeight:320,overflowY:'auto'}}>
+            <button onClick={()=>{onChange('alle');close();}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',textAlign:'left',padding:'10px 16px',fontSize:14,fontWeight:value==='alle'?600:400,color:value==='alle'?txtActive:txtDef,backgroundColor:value==='alle'?bgActive:'transparent',border:'none',borderBottom:`1px solid ${divider}`,cursor:'pointer',transition:'background 0.1s'}}
+              onMouseEnter={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor=hoverBg;}}
+              onMouseLeave={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor='transparent';}}>
+              Alle uitkomsten
+              {value==='alle'&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={txtActive} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+            </button>
+            {UITKOMSTEN.map(u=>(
+              <button key={u.value} onClick={()=>{onChange(u.value);close();}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',textAlign:'left',padding:'10px 16px',fontSize:14,fontWeight:value===u.value?600:400,color:value===u.value?txtActive:txtDef,backgroundColor:value===u.value?bgActive:'transparent',border:'none',cursor:'pointer',transition:'background 0.1s'}}
+                onMouseEnter={e=>{if(value!==u.value)e.currentTarget.style.backgroundColor=hoverBg;}}
+                onMouseLeave={e=>{if(value!==u.value)e.currentTarget.style.backgroundColor='transparent';}}>
+                {u.label}
+                {value===u.value&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={txtActive} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+              </button>
+            ))}
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
+}
+
 export default function BetsPage() {
   const { bets, deleteBet, updateBet, loaded } = useBets();
   const [filterU, setFilterU] = useState('alle');
@@ -307,22 +459,12 @@ export default function BetsPage() {
           <input type="text" placeholder={isMobile?'Zoeken...':'Zoeken op wedstrijd, selectie of bookmaker...'} value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',height:36,padding:'0 12px 0 32px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',boxSizing:'border-box'}}/>
         </div>
         {/* Sport */}
-        <div style={{position:'relative',flexShrink:0}}>
-          <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none',zIndex:1}} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20M12 2a14.5 14.5 0 010 20M2 12h20"/></svg>
-          <select value={filterS} onChange={e=>setFilterS(e.target.value)} style={{height:36,paddingLeft:30,paddingRight:28,paddingTop:0,paddingBottom:0,border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',appearance:'none',WebkitAppearance:'none',cursor:'pointer',boxSizing:'border-box',fontFamily:'inherit'}}>
-            <option value="alle">Alle sporten</option>
-            {sporten.filter(s=>s!=='alle').map(s=><option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
-          </select>
-          <svg style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <div style={{flexShrink:0}}>
+          <SportSelectDropdown value={filterS} onChange={setFilterS} options={sporten.filter(s=>s!=='alle')}/>
         </div>
         {/* Uitkomst */}
-        <div style={{position:'relative',flexShrink:0}}>
-          <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none',zIndex:1}} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <select value={filterU} onChange={e=>setFilterU(e.target.value)} style={{height:36,paddingLeft:30,paddingRight:28,paddingTop:0,paddingBottom:0,border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',appearance:'none',WebkitAppearance:'none',cursor:'pointer',boxSizing:'border-box',fontFamily:'inherit'}}>
-            <option value="alle">Alle uitkomsten</option>
-            {UITKOMSTEN.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-          <svg style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <div style={{flexShrink:0}}>
+          <UitkomstSelectDropdown value={filterU} onChange={setFilterU}/>
         </div>
         {allTags.length > 0 && (
           <div className="bet-filter-extra" style={{position:'relative',flexShrink:0}}>
@@ -335,7 +477,7 @@ export default function BetsPage() {
           </div>
         )}
         {(filterU!=='alle'||filterS!=='alle'||filterT!=='alle'||zoeken)&&(
-          <button className="bet-filter-extra" onClick={()=>{setFilterU('alle');setFilterS('alle');setFilterT('alle');setZoeken('');}} style={{height:36,padding:'0 12px',border:'1px solid var(--border)',borderRadius:8,fontSize:12.5,color:'var(--text-3)',backgroundColor:'var(--bg-card)',cursor:'pointer',flexShrink:0,boxSizing:'border-box'}}>Filters wissen</button>
+          <button className="bet-filter-extra" onClick={()=>{setFilterU('alle');setFilterS('alle');setFilterT('alle');setZoeken('');}} style={{height:36,padding:'0 12px',border:'1px solid var(--border)',borderRadius:8,fontSize:12.5,color:'var(--text-3)',backgroundColor:'var(--bg-card)',cursor:'pointer',flexShrink:0,boxSizing:'border-box',whiteSpace:'nowrap'}}>Filters wissen</button>
         )}
       </div>
 

@@ -337,47 +337,6 @@ export default function MaandoverzichtPage() {
         </div>
       </div>
 
-      {stackedMaandData.length>0&&bookmakersMaand.length>0&&(
-        <div className="cal-barchart" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'22px 24px',marginBottom:24,boxShadow:'var(--shadow-sm)'}}>
-          <h2 style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:4}}>Dagelijkse P&L per Bookmaker</h2>
-          <p style={{fontSize:12,color:'var(--text-4)',marginBottom:16}}>Gestapeld per bookmaker — {MAANDEN[maand]} {jaar}</p>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={stackedMaandData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} barCategoryGap="30%" barGap={2}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-              <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false}/>
-              <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:44} mirror={isMobile}/>
-              <Tooltip
-                wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}
-                cursor={{fill:'var(--border)',opacity:0.3}}
-                content={({active,payload,label})=>{
-                  if(!active||!payload?.length) return null;
-                  const total=payload.reduce((s,p)=>s+(p.value||0),0);
-                  return (
-                    <div style={{backgroundColor:'var(--tooltip-bg)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 14px',boxShadow:'var(--shadow-lg)',fontSize:12,pointerEvents:'none'}}>
-                      <p style={{fontWeight:700,color:'var(--text-1)',marginBottom:6}}>Dag {label}</p>
-                      {payload.map(p=>(
-                        <div key={p.name} style={{display:'flex',alignItems:'center',gap:8,marginBottom:3}}>
-                          <div style={{width:8,height:8,borderRadius:'50%',backgroundColor:p.fill,flexShrink:0}}/>
-                          <span style={{color:'var(--text-3)'}}>{p.name}</span>
-                          <span style={{fontWeight:700,color:p.value>=0?'var(--color-win)':'var(--color-loss)',marginLeft:'auto'}}>{p.value>=0?'+':''}{fmtPnl(p.value)}</span>
-                        </div>
-                      ))}
-                      <div style={{borderTop:'1px solid var(--border-subtle)',marginTop:6,paddingTop:6,display:'flex',justifyContent:'space-between'}}>
-                        <span style={{color:'var(--text-3)',fontWeight:600}}>Totaal</span>
-                        <span style={{fontWeight:700,color:total>=0?'var(--color-win)':'var(--color-loss)'}}>{total>=0?'+':''}{fmtPnl(total)}</span>
-                      </div>
-                    </div>
-                  );
-                }}
-              />
-              <Legend wrapperStyle={{fontSize:11,paddingTop:8}} formatter={v=><span style={{color:'var(--text-3)'}}>{v}</span>}/>
-              {bookmakersMaand.map(bk=>(
-                <Bar key={bk} dataKey={bk} stackId="a" fill={bookColorMaand(bk)} fillOpacity={0.85} maxBarSize={32} radius={bookmakersMaand.indexOf(bk)===bookmakersMaand.length-1?[3,3,0,0]:[0,0,0,0]}/>
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
 
       {/* Day detail modal */}
       {mounted && geselecteerd && dagData[geselecteerd]?.bets.length > 0 && (

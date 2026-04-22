@@ -13,7 +13,19 @@ const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Onlin
 const today = () => new Date().toISOString().split('T')[0];
 const LEEG = { datum:today(), sport:'Voetbal', wedstrijd:'', markt:'1X2', selectie:'', odds:'', inzet:'', uitkomst:'lopend', bookmaker:'bet365', notities:'', tags:[] };
 
-const iStyle = { width:'100%', padding:'8px 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s' };
+const iStyle = { width:'100%', height:'40px', padding:'0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s', boxSizing:'border-box' };
+const sStyle = { ...{width:'100%', height:'40px', padding:'0 36px 0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s', boxSizing:'border-box', appearance:'none', WebkitAppearance:'none', cursor:'pointer'} };
+
+function SelectWrap({ children, error }) {
+  return (
+    <div style={{ position:'relative' }}>
+      {children}
+      <svg style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', pointerEvents:'none', color:'var(--text-3)' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+  );
+}
 
 function FF({ label, required, hint, children }) {
   return (
@@ -171,18 +183,22 @@ function HandmatigForm({ onSaved }) {
               <input type="date" value={form.datum} onChange={e=>set('datum',e.target.value)} style={iStyle}/>
             </FF>
             <FF label="Sport" required>
-              <select value={form.sport} onChange={e=>set('sport',e.target.value)} style={iStyle}>
-                {SPORTEN.map(s=><option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
-              </select>
+              <SelectWrap>
+                <select value={form.sport} onChange={e=>set('sport',e.target.value)} style={sStyle}>
+                  {SPORTEN.map(s=><option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
+                </select>
+              </SelectWrap>
             </FF>
             <FF label="Wedstrijd" required>
               <input type="text" placeholder="bv. Ajax vs PSV" value={form.wedstrijd} onChange={e=>set('wedstrijd',e.target.value)} style={{...iStyle,borderColor:fouten.wedstrijd?'#FB7185':'var(--border)'}}/>
               {fouten.wedstrijd && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.wedstrijd}</p>}
             </FF>
             <FF label="Markt" required>
-              <select value={form.markt} onChange={e=>set('markt',e.target.value)} style={iStyle}>
-                {MARKTEN.map(m=><option key={m}>{m}</option>)}
-              </select>
+              <SelectWrap>
+                <select value={form.markt} onChange={e=>set('markt',e.target.value)} style={sStyle}>
+                  {MARKTEN.map(m=><option key={m}>{m}</option>)}
+                </select>
+              </SelectWrap>
             </FF>
           </div>
         </div>
@@ -197,15 +213,15 @@ function HandmatigForm({ onSaved }) {
               </FF>
             </div>
             <FF label="Odds" required>
-              <input type="number" step="0.001" min="1" placeholder="2.100" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)'}}/>
+              <input type="number" step="0.001" min="1" placeholder="2.100" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)',padding:'0 12px'}}/>
               {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
             </FF>
             <FF label="Inzet (€)" required>
-              <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)'}}/>
+              <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
               {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
             </FF>
             <FF label="Totale uitbetaling (€)" hint="Vul in → odds wordt auto-berekend">
-              <input type="number" step="0.01" min="0" placeholder="105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={iStyle}/>
+              <input type="number" step="0.01" min="0" placeholder="105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={{...iStyle,padding:'0 12px'}}/>
             </FF>
           </div>
           {pot && (
@@ -220,14 +236,18 @@ function HandmatigForm({ onSaved }) {
           <h2 style={sh}>Administratie</h2>
           <div className="grid gap-4 grid-2-to-1" style={{gridTemplateColumns:'1fr 1fr'}}>
             <FF label="Bookmaker" required>
-              <select value={form.bookmaker} onChange={e=>set('bookmaker',e.target.value)} style={iStyle}>
-                {BOOKMAKERS.map(b=><option key={b}>{b}</option>)}
-              </select>
+              <SelectWrap>
+                <select value={form.bookmaker} onChange={e=>set('bookmaker',e.target.value)} style={sStyle}>
+                  {BOOKMAKERS.map(b=><option key={b}>{b}</option>)}
+                </select>
+              </SelectWrap>
             </FF>
             <FF label="Uitkomst">
-              <select value={form.uitkomst} onChange={e=>set('uitkomst',e.target.value)} style={iStyle}>
-                {UITKOMSTEN.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-              </select>
+              <SelectWrap>
+                <select value={form.uitkomst} onChange={e=>set('uitkomst',e.target.value)} style={sStyle}>
+                  {UITKOMSTEN.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+                </select>
+              </SelectWrap>
             </FF>
             <div style={{gridColumn:'1/-1'}}>
               <FF label="Tags" hint="Gebruik tags om bets te categoriseren (bv. value bet, tipster, systeem)">
@@ -236,7 +256,7 @@ function HandmatigForm({ onSaved }) {
             </div>
             <div style={{gridColumn:'1/-1'}}>
               <FF label="Notities" hint="Optioneel — voeg extra context toe">
-                <textarea placeholder="Reden voor bet, vorm analyse, ..." value={form.notities} onChange={e=>set('notities',e.target.value)} rows={3} style={{...iStyle,resize:'vertical',lineHeight:1.5}}/>
+                <textarea placeholder="Reden voor bet, vorm analyse, ..." value={form.notities} onChange={e=>set('notities',e.target.value)} rows={3} style={{...iStyle,height:'auto',padding:'8px 12px',resize:'vertical',lineHeight:1.5}}/>
               </FF>
             </div>
           </div>

@@ -275,7 +275,7 @@ function PeriodDropdown({ filter, onSelect, customRange }) {
 }
 
 /* ─── Multi-select dropdown (portal) ─── */
-function MultiSelect({ label, icon, options, selected, onChange }) {
+function MultiSelect({ label, icon, options, selected, onChange, renderOption }) {
   const { dark } = useTheme();
   const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
   const allSelected = selected === null;
@@ -358,7 +358,7 @@ function MultiSelect({ label, icon, options, selected, onChange }) {
                   <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${checked ? txtActive : chkBdr}`, backgroundColor: checked ? txtActive : 'transparent', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
                     {checked && <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2 6 5 9 10 3"/></svg>}
                   </div>
-                  {opt}
+                  {renderOption ? renderOption(opt) : opt}
                 </button>
               );
             })}
@@ -707,6 +707,16 @@ export default function Dashboard() {
     return Object.values(map);
   }, [filtered, bookmakers]);
 
+  const dailyData = useMemo(() => {
+    const map = {};
+    [...filtered].filter(b=>b.uitkomst!=='lopend').sort((a,b)=>new Date(a.datum)-new Date(b.datum)).forEach(b => {
+      const lbl = new Date(b.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+      if (!map[lbl]) map[lbl] = {datum:lbl,pnl:0};
+      map[lbl].pnl = parseFloat((map[lbl].pnl+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet))).toFixed(2));
+    });
+    return Object.values(map);
+  }, [filtered]);
+
   const roiData = useMemo(() => {
     const map = {};
     filtered.filter(b=>b.uitkomst!=='lopend').forEach(b => {
@@ -762,6 +772,7 @@ export default function Dashboard() {
           label="Sport"
           icon={<svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M256.07-0.047C114.467-0.047-0.326,114.746-0.326,256.349S114.467,512.744,256.07,512.744s256.395-114.792,256.395-256.395S397.673-0.047,256.07-0.047z M466.667,224v0.064c-19.353,12.05-40.515,20.917-62.677,26.261c-4.595-68.333-27.183-134.234-65.472-191.019C406.956,88.198,455.48,150.56,466.667,224z M256,42.667c5.397,0,10.667,0.405,15.979,0.811c53.223,58.444,84.842,133.342,89.6,212.245c-29.153,0.997-58.199-4.013-85.333-14.72c-4.247-72.136-38.705-139.14-94.912-184.555C205.188,47.391,230.484,42.722,256,42.667z M138.389,78.187c20.041,13.069,37.744,29.41,52.373,48.341C126.816,169.409,77.017,230.285,47.659,301.461C28.668,215.422,64.766,126.591,138.389,78.187z M71.595,362.773c21.296-81.459,71.492-152.392,141.227-199.573c12.627,25.943,19.835,54.187,21.184,83.008c-58.22,44.242-94.81,111.213-100.587,184.107C108.191,412.512,87.102,389.474,71.595,362.773z M256,469.333c-27.6-0.008-54.934-5.399-80.469-15.872c-0.47-27.519,4.398-54.867,14.336-80.533c70.121,31.128,147.992,40.413,223.467,26.645C373.07,443.969,315.934,469.303,256,469.333z M209.067,334.72c13.523-20.959,30.63-39.373,50.539-54.4c30.156,12.194,62.363,18.515,94.891,18.624c39.574-0.004,78.615-9.129,114.091-26.667c-1.999,26.074-8.82,51.551-20.117,75.136C369.697,371.777,284.821,367.277,209.067,334.72z"/></svg>}
           options={allSporten} selected={sportFilter} onChange={setSportFilter}
+          renderOption={(s) => `${sportEmoji(s)} ${s}`}
         />
         <MultiSelect
           label="Bookmaker"
@@ -849,17 +860,18 @@ export default function Dashboard() {
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
         <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
-          <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Gestapeld per bookmaker</p></div>
-          {stackedData.length>0?(
+          <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Winst en verlies per dag</p></div>
+          {dailyData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stackedData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%" barGap={2}>
+              <BarChart data={dailyData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%">
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-                <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(stackedData.length, isMobile)}/>
+                <XAxis dataKey="datum" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(dailyData.length, isMobile)}/>
                 <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 48} mirror={isMobile}/>
                 <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                <Legend content={<BookieLegend/>}/>
-                {bookmakers.map((bk,i)=><Bar key={bk} dataKey={bk} fill={bookColor(bk,i)} fillOpacity={0.85} maxBarSize={20} radius={[3,3,0,0]}/>)}
+                <Bar dataKey="pnl" name="P&L" maxBarSize={20} radius={[3,3,0,0]}>
+                  {dailyData.map((entry,i)=><Cell key={i} fill={entry.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           ):empty()}
@@ -1033,22 +1045,44 @@ export default function Dashboard() {
           <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
         </div>
         <table className="bets-table-desktop" style={{width:'100%',borderCollapse:'collapse'}}>
-          <thead><tr>{['Datum','Wedstrijd','Selectie','Bookmaker','Odds','Inzet','Uitkomst','P&L'].map(h=><th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
+          <thead>
+            <tr style={{backgroundColor:'var(--bg-subtle)'}}>
+              {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker'].map(h=>(
+                <th key={h} style={{padding:'10px 14px',textAlign:'left',fontSize:10.5,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap',borderBottom:'1px solid var(--border)'}}>{h}</th>
+              ))}
+            </tr>
+          </thead>
           <tbody>
             {recent.map(bet=>{
               const w=berekenWinst(bet.uitkomst,Number(bet.odds),Number(bet.inzet));
-              return <tr key={bet.id} className="bet-row" style={{borderTop:'1px solid var(--border-subtle)',verticalAlign:'middle'}}>
-                <td style={{padding:'12px 16px',fontSize:13,color:'var(--text-3)',whiteSpace:'nowrap'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}</td>
-                <td style={{padding:'12px 16px',fontSize:13,color:'var(--text-1)',fontWeight:500,maxWidth:160,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.wedstrijd}</td>
-                <td style={{padding:'12px 16px',fontSize:13,color:'var(--text-2)'}}>{bet.selectie}</td>
-                <td style={{padding:'12px 16px',fontSize:13,color:'var(--text-2)'}}><div style={{display:'flex',alignItems:'center',gap:6}}><BookmakerIcon naam={bet.bookmaker} size={15}/>{bet.bookmaker}</div></td>
-                <td style={{padding:'12px 16px',fontSize:13,color:'var(--text-1)',fontWeight:600}}>{Number(bet.odds).toFixed(2)}</td>
-                <td style={{padding:'12px 16px',fontSize:13,color:'var(--text-2)'}}>€{Number(bet.inzet).toFixed(2)}</td>
-                <td style={{padding:'12px 16px'}}><UitkomstBadge u={bet.uitkomst}/></td>
-                <td style={{padding:'12px 16px',fontSize:13,fontWeight:600,color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)'}}>{bet.uitkomst==='lopend'?'—':fmtPnl(w)}</td>
-              </tr>;
+              return (
+                <tr key={bet.id} className="bet-row" style={{borderTop:'1px solid var(--border-subtle)',verticalAlign:'middle'}}>
+                  <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',whiteSpace:'nowrap',verticalAlign:'middle'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'2-digit'})}</td>
+                  <td style={{padding:'11px 14px',fontSize:12.5,verticalAlign:'middle',whiteSpace:'nowrap'}}>
+                    <span style={{padding:'2px 7px',borderRadius:4,fontSize:11,fontWeight:600,backgroundColor:'var(--badge-bg)',color:'var(--badge-color)',display:'inline-flex',alignItems:'center',gap:4}}>
+                      {sportEmoji(bet.sport)} {bet.sport}
+                    </span>
+                  </td>
+                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:500,maxWidth:150,verticalAlign:'middle'}}>
+                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.wedstrijd}</div>
+                  </td>
+                  <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',verticalAlign:'middle',maxWidth:100}}>
+                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.markt}</div>
+                  </td>
+                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',fontWeight:500,verticalAlign:'middle',maxWidth:140}}>
+                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.selectie}</div>
+                  </td>
+                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:700,verticalAlign:'middle'}}>{Number(bet.odds).toFixed(2)}</td>
+                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',verticalAlign:'middle'}}>€{Number(bet.inzet).toFixed(2)}</td>
+                  <td style={{padding:'11px 14px',verticalAlign:'middle'}}><UitkomstBadge u={bet.uitkomst}/></td>
+                  <td style={{padding:'11px 14px',fontSize:13,fontWeight:700,color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)',verticalAlign:'middle',whiteSpace:'nowrap'}}>{bet.uitkomst==='lopend'?'—':fmtPnl(w)}</td>
+                  <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',verticalAlign:'middle'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:6}}><BookmakerIcon naam={bet.bookmaker} size={15}/>{bet.bookmaker}</div>
+                  </td>
+                </tr>
+              );
             })}
-            {recent.length===0&&<tr><td colSpan={7} style={{padding:'32px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</td></tr>}
+            {recent.length===0&&<tr><td colSpan={10} style={{padding:'32px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</td></tr>}
           </tbody>
         </table>
         <div className="bets-cards-mobile" style={{padding:'0 12px 12px'}}>

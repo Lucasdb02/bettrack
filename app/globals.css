@@ -449,7 +449,10 @@ html.dark .glass-card {
    ══════════════════════════════════════════════ */
 @media (max-width: 640px) {
   .cal-page-wrap { padding: 20px 16px !important; max-width: 100% !important; }
-  .cal-stats-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; margin-bottom: 16px !important; }
+  .cal-stats-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; margin-bottom: 16px !important; width: 100% !important; box-sizing: border-box !important; }
+  .cal-stats-grid > div { padding: 10px 10px !important; min-width: 0 !important; overflow: hidden !important; box-sizing: border-box !important; }
+  .cal-stats-grid > div p:first-child { font-size: 9px !important; margin-bottom: 4px !important; }
+  .cal-stats-grid > div p:last-child { font-size: 18px !important; }
   .cal-wrapper { background: transparent !important; border: none !important; border-radius: 0 !important; margin-bottom: 12px !important; box-shadow: none !important; }
   .cal-header { border-bottom: none !important; margin-bottom: 4px !important; gap: 3px !important; }
   .cal-header > div { background: transparent !important; padding: 4px 0 8px !important; font-size: 10px !important; letter-spacing: 0.03em !important; }
@@ -507,8 +510,13 @@ html.dark .glass-card {
 /* ══════════════════════════════════════════════
    BOOKMAKERS — Transaction row equal height
    ══════════════════════════════════════════════ */
-.bm-tx-row .bm-tx-submit { height: 38px !important; }
-.bm-tx-row .bm-tx-type   { height: 38px !important; }
+.bm-tx-row .bm-tx-submit  { height: 38px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-type    { height: 38px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-bookie select { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-tx-row .bm-tx-amount input  { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-tx-row .bm-tx-date    { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-add-row select        { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-add-row .btn-primary-glass, .bm-add-row button[disabled] { height: 40px !important; box-sizing: border-box !important; }
 
 /* ══════════════════════════════════════════════
    BOOKMAKERS — Mobile card view
@@ -540,6 +548,7 @@ html.dark .glass-card {
   .bm-remove { position: absolute !important; top: 12px !important; right: 12px !important; margin-left: 0 !important; align-self: auto !important; color: var(--text-3) !important; padding: 4px !important; }
   .bm-name-section { padding-right: 32px !important; }
   .bm-tx-row { align-items: center !important; }
+  .bm-tx-date { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; line-height: 38px !important; }
 }
 
 /* ══════════════════════════════════════════════

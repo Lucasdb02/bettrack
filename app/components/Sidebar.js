@@ -375,7 +375,7 @@ export default function Sidebar() {
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }} />
         {/* Drawer panel */}
         <div
-          style={{ position: 'relative', width: 260, height: '100%', background: '#080D14', borderRight: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)', zIndex: 1 }}
+          style={{ position: 'relative', width: 260, height: '100%', background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)', zIndex: 1 }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Drawer header */}
@@ -430,7 +430,7 @@ export default function Sidebar() {
           </nav>
 
           {/* Drawer footer: dark toggle + logout */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px' }}>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px', background: '#060713' }}>
             <button
               onClick={toggle}
               style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, marginBottom: 4, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#7090b0', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}

@@ -9,10 +9,11 @@ export const SPORT_EMOJIS = {
   'Darts':             '🎯',
   'Snooker':           '🎱',
   'American Football': '🏈',
+  'Baseball':          '⚾',
   'Overig':            '🎰',
 };
 
-export const SPORTEN = ['Voetbal','Tennis','Basketbal','Hockey','Formule 1','Wielrennen','Darts','Snooker','American Football','Overig'];
+export const SPORTEN = ['Voetbal','Tennis','Basketbal','Hockey','Formule 1','Wielrennen','Darts','Snooker','American Football','Baseball','Overig'];
 
 export function sportEmoji(sport) {
   return SPORT_EMOJIS[sport] || '🎰';
