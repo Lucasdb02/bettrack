@@ -182,7 +182,7 @@ export default function Sidebar() {
 
   return (
     <>
-    <aside style={{ background: 'rgba(5,12,28,0.94)', backdropFilter: 'blur(24px) saturate(1.5)', WebkitBackdropFilter: 'blur(24px) saturate(1.5)', borderRight: '1px solid rgba(255,255,255,0.06)', width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
+    <aside style={{ background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
       {/* Logo */}
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '18px 16px' }} className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer: dark toggle + account */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px 14px' }}>
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px 14px', background: '#060713' }}>
         {/* Dark mode toggle */}
         <button
           onClick={toggle}
@@ -314,7 +314,7 @@ export default function Sidebar() {
             }
           }}
         >
-          <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>

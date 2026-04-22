@@ -135,7 +135,7 @@ function BookieYTick({ x, y, payload, colorMap }) {
 }
 
 /* ─── Stat card ─── */
-function StatCard({ label, value, sub, color, icon, iconClass }) {
+function StatCard({ label, value, sub, color, icon }) {
   return (
     <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)', transition:'box-shadow 0.15s' }}>
       <div className="flex items-start justify-between">
@@ -144,11 +144,7 @@ function StatCard({ label, value, sub, color, icon, iconClass }) {
           <p style={{ fontSize:26, fontWeight:800, color:color||'var(--text-1)', lineHeight:1, letterSpacing:'-0.02em' }}>{value}</p>
           {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:7, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
         </div>
-        {icon && (
-          <div className={`stat-card-icon ${iconClass||''}`} style={{ width:34, height:34, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, background: iconClass ? undefined : 'var(--bg-brand)' }}>
-            {icon}
-          </div>
-        )}
+        {icon && <div className="stat-card-icon" style={{ backgroundColor:'var(--bg-brand)', width:30, height:30, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
       </div>
     </div>
   );
@@ -784,18 +780,10 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid gap-4 mb-7 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
-        <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'}
-          iconClass={stats.totalWinst>=0?'stat-icon-emerald':'stat-icon-rose'}
-          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
-        <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`}
-          iconClass="stat-icon-indigo"
-          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
-        <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'}
-          iconClass={stats.roi>=0?'stat-icon-emerald':'stat-icon-rose'}
-          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
-        <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`}
-          iconClass="stat-icon-amber"
-          icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}/>
+        <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
+        <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
+        <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
+        <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>/>
       </div>
 
       {/* Chart 1: Cumulative P&L */}

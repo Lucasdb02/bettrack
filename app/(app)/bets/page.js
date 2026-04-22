@@ -1,6 +1,7 @@
 'use client';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useFmt } from '../../context/PreferencesContext';
+import { useTheme } from '../../context/ThemeContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
 import { SPORTEN, sportEmoji, UITKOMSTEN, uitkomstConfig } from '../../lib/sports';
 import TagInput, { TagChip } from '../../components/TagInput';
@@ -43,6 +44,7 @@ function FF({label,required,children,text2}) {
 }
 
 function EditBetModal({bet, onSave, onClose, saveError}) {
+  const { dark } = useTheme();
   const bg = 'var(--bg-card)';
   const border = 'var(--border)';
   const text1 = 'var(--text-1)';
