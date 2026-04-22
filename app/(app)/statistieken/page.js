@@ -61,6 +61,56 @@ const ODDS_BRACKETS = [
 ];
 const WEEKDAGEN = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
 
+function GradBar({ x, y, width, height, fill }) {
+  if (!width || !height || Math.abs(height) < 0.5) return null;
+  const r = Math.min(7, width / 2, Math.abs(height) / 2);
+  const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
+  const uid = `stgb${fKey}${Math.round(x * 10)}x${Math.round(Math.abs(y) * 10)}`;
+  return (
+    <g>
+      <defs>
+        <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={fill} stopOpacity={0.95}/>
+          <stop offset="100%" stopColor={fill} stopOpacity={0.75}/>
+        </linearGradient>
+        <linearGradient id={`s${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={0.28}/>
+          <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
+        </linearGradient>
+      </defs>
+      <rect x={x} y={y} width={width} height={Math.abs(height)} rx={r} ry={r} fill={`url(#f${uid})`}/>
+      <rect x={x + 0.75} y={y + 0.75} width={width - 1.5} height={Math.abs(height) - 1.5}
+        rx={Math.max(0, r - 0.75)} ry={Math.max(0, r - 0.75)}
+        fill="none" stroke={`url(#s${uid})`} strokeWidth={1.5}/>
+    </g>
+  );
+}
+
+function GradBarH({ x, y, width, height, fill }) {
+  if (!width || !height || Math.abs(width) < 0.5) return null;
+  const r = Math.min(7, Math.abs(width) / 2, height / 2);
+  const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
+  const uid = `stgbh${fKey}${Math.round(Math.abs(x) * 10)}y${Math.round(Math.abs(y) * 10)}`;
+  return (
+    <g>
+      <defs>
+        <linearGradient id={`fh${uid}`} x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0%" stopColor={fill} stopOpacity={0.95}/>
+          <stop offset="100%" stopColor={fill} stopOpacity={0.75}/>
+        </linearGradient>
+        <linearGradient id={`sh${uid}`} x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={0.28}/>
+          <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
+        </linearGradient>
+      </defs>
+      <rect x={x} y={y} width={Math.abs(width)} height={height} rx={r} ry={r} fill={`url(#fh${uid})`}/>
+      <rect x={x + 0.75} y={y + 0.75} width={Math.abs(width) - 1.5} height={height - 1.5}
+        rx={Math.max(0, r - 0.75)} ry={Math.max(0, r - 0.75)}
+        fill="none" stroke={`url(#sh${uid})`} strokeWidth={1.5}/>
+    </g>
+  );
+}
+
 function finalize(map) {
   return Object.values(map)
     .map(g => ({
@@ -408,8 +458,8 @@ export default function StatistiekenPage() {
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 52} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                <Bar dataKey="pnl" maxBarSize={44}>
-                  {maandData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
+                <Bar dataKey="pnl" maxBarSize={44} shape={GradBar}>
+                  {maandData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -427,8 +477,8 @@ export default function StatistiekenPage() {
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 46} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                <Bar dataKey="pnl" maxBarSize={30}>
-                  {dagData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
+                <Bar dataKey="pnl" maxBarSize={30} shape={GradBar}>
+                  {dagData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -479,8 +529,8 @@ export default function StatistiekenPage() {
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 50} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
-                <Bar dataKey="pnl" name="P&L" maxBarSize={44}>
-                  {oddsData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
+                <Bar dataKey="pnl" name="P&L" maxBarSize={44} shape={GradBar}>
+                  {oddsData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -523,8 +573,8 @@ export default function StatistiekenPage() {
               <YAxis type="category" dataKey="key" tick={{ fontSize: 12, fill: 'var(--text-2)' }} axisLine={false} tickLine={false} width={isMobile ? 28 : 90} tickFormatter={v => isMobile ? sportEmoji(v) : `${sportEmoji(v)} ${v}`} />
               <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine x={0} stroke="var(--border)" strokeWidth={1} />
-              <Bar dataKey="totalWinst" maxBarSize={22}>
-                {perSport.map((e, i) => <Cell key={i} fill={e.totalWinst >= 0 ? '#11B981' : '#F43F5E'} fillOpacity={0.85} />)}
+              <Bar dataKey="totalWinst" maxBarSize={22} shape={GradBarH}>
+                {perSport.map((e, i) => <Cell key={i} fill={e.totalWinst >= 0 ? '#11B981' : '#F43F5E'} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>

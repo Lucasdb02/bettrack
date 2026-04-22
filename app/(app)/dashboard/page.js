@@ -134,6 +134,43 @@ function BookieYTick({ x, y, payload, colorMap }) {
   );
 }
 
+function BookieXTick({ x, y, payload }) {
+  const naam = payload?.value || '';
+  return (
+    <foreignObject x={x - 20} y={y + 3} width={40} height={30}>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:1, height:30 }}>
+        <BookmakerIcon naam={naam} size={14}/>
+        <span style={{ fontSize:9, color:'#6b7280', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:38, textAlign:'center' }}>{naam.length > 7 ? naam.slice(0,6)+'…' : naam}</span>
+      </div>
+    </foreignObject>
+  );
+}
+
+function GradBar({ x, y, width, height, fill }) {
+  if (!width || !height || Math.abs(height) < 0.5) return null;
+  const r = Math.min(7, width / 2, Math.abs(height) / 2);
+  const fKey = (fill || 'aaa').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
+  const uid = `gb${fKey}${Math.round(x * 10)}x${Math.round(Math.abs(y) * 10)}`;
+  return (
+    <g>
+      <defs>
+        <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={fill} stopOpacity={0.95}/>
+          <stop offset="100%" stopColor={fill} stopOpacity={0.75}/>
+        </linearGradient>
+        <linearGradient id={`s${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={0.28}/>
+          <stop offset="55%" stopColor="#ffffff" stopOpacity={0}/>
+        </linearGradient>
+      </defs>
+      <rect x={x} y={y} width={width} height={Math.abs(height)} rx={r} ry={r} fill={`url(#f${uid})`}/>
+      <rect x={x + 0.75} y={y + 0.75} width={width - 1.5} height={Math.abs(height) - 1.5}
+        rx={Math.max(0, r - 0.75)} ry={Math.max(0, r - 0.75)}
+        fill="none" stroke={`url(#s${uid})`} strokeWidth={1.5}/>
+    </g>
+  );
+}
+
 /* ─── Stat card ─── */
 function StatCard({ label, value, sub, color, icon }) {
   return (
@@ -144,7 +181,7 @@ function StatCard({ label, value, sub, color, icon }) {
           <p style={{ fontSize:26, fontWeight:800, color:color||'var(--text-1)', lineHeight:1, letterSpacing:'-0.02em' }}>{value}</p>
           {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:7, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
         </div>
-        {icon && <div className="stat-card-icon" style={{ backgroundColor:'var(--bg-brand)', width:30, height:30, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
+        {icon && <div className="stat-card-icon" style={{ background:'rgba(84,105,212,0.2)', border:'1px solid rgba(123,158,240,0.25)', width:30, height:30, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
       </div>
     </div>
   );
@@ -305,7 +342,8 @@ function MultiSelect({ label, icon, options, selected, onChange, renderOption })
     <>
       <button ref={btnRef} onClick={toggle} style={{
         display:'flex', alignItems:'center', gap:7,
-        padding:'7px 11px', border:`1px solid ${count > 0 ? 'var(--brand)' : 'var(--border)'}`,
+        height:36, padding:'0 11px', boxSizing:'border-box',
+        border:`1px solid ${count > 0 ? 'var(--brand)' : 'var(--border)'}`,
         borderRadius:8, backgroundColor:'var(--bg-card)',
         color: count > 0 ? 'var(--brand)' : 'var(--text-2)',
         fontSize:13, fontWeight:500, cursor:'pointer', whiteSpace:'nowrap', width:'fit-content',
@@ -567,7 +605,7 @@ export default function Dashboard() {
   const { bets, loaded } = useBets();
   const { fmtPnl, fmtAmt } = useFmt();
 
-  const [periodFilter,  setPeriodFilter]  = useState('all');
+  const [periodFilter,  setPeriodFilter]  = useState('thisMonth');
   const [customRange,   setCustomRange]   = useState(null);
   const [showCalendar,  setShowCalendar]  = useState(false);
   const [sportFilter,   setSportFilter]   = useState(null);
@@ -710,12 +748,26 @@ export default function Dashboard() {
   const dailyData = useMemo(() => {
     const map = {};
     [...filtered].filter(b=>b.uitkomst!=='lopend').sort((a,b)=>new Date(a.datum)-new Date(b.datum)).forEach(b => {
+      const key = b.datum; // YYYY-MM-DD
       const lbl = new Date(b.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
-      if (!map[lbl]) map[lbl] = {datum:lbl,pnl:0};
-      map[lbl].pnl = parseFloat((map[lbl].pnl+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet))).toFixed(2));
+      if (!map[key]) map[key] = {datum:lbl, pnl:0};
+      map[key].pnl = parseFloat((map[key].pnl+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet))).toFixed(2));
     });
-    return Object.values(map);
-  }, [filtered]);
+    if (periodFilter === 'thisMonth') {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month+1, 0).getDate();
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        if (!map[key]) {
+          const lbl = new Date(year, month, d).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+          map[key] = {datum:lbl, pnl:0};
+        }
+      }
+    }
+    return Object.keys(map).sort().map(k => map[k]);
+  }, [filtered, periodFilter]);
 
   const roiData = useMemo(() => {
     const map = {};
@@ -743,7 +795,7 @@ export default function Dashboard() {
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{color:'var(--text-4)'}}>Laden...</div>;
 
-  const ic = 'var(--brand)';
+  const ic = '#7b9ef0';
   const empty = (h=220) => <div style={{height:h,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-4)',fontSize:14}}>Voeg bets toe om de grafiek te zien</div>;
 
   return (
@@ -869,8 +921,8 @@ export default function Dashboard() {
                 <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 48} mirror={isMobile}/>
                 <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                <Bar dataKey="pnl" name="P&L" maxBarSize={20} radius={[3,3,0,0]}>
-                  {dailyData.map((entry,i)=><Cell key={i} fill={entry.pnl>=0?'#11B981':'#F43F5E'} fillOpacity={0.85}/>)}
+                <Bar dataKey="pnl" name="P&L" maxBarSize={24} shape={GradBar}>
+                  {dailyData.map((entry,i)=><Cell key={i} fill={entry.pnl>=0?'#11B981':'#F43F5E'}/>)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -970,13 +1022,14 @@ export default function Dashboard() {
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
           {roiData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={roiData} layout="vertical" margin={isMobile?{top:0,right:8,left:0,bottom:0}:{top:0,right:20,left:10,bottom:0}} tabIndex={-1}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false}/>
-                <XAxis type="number" tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`${v}%`}/>
-                <YAxis type="category" dataKey="bk" tick={(props) => <BookieYTick {...props} colorMap={Object.fromEntries(bookmakers.map((bk,i)=>[bk,bookColor(bk,i)]))}/>} axisLine={false} tickLine={false} width={isMobile?72:96}/>
+              <BarChart data={roiData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%">
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+                <XAxis dataKey="bk" tick={(props) => <BookieXTick {...props}/>} axisLine={false} tickLine={false} height={36}/>
+                <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`${v}%`} width={isMobile?0:46} mirror={isMobile}/>
                 <Tooltip content={<ChartTip prefix="" suffix="%"/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
-                <Bar dataKey="roi" name="ROI" radius={[0,4,4,0]} maxBarSize={22}>
-                  {roiData.map((e,i)=><Cell key={i} fill={e.roi>=0?bookColor(e.bk,i):'#F43F5E'} fillOpacity={0.85}/>)}
+                <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
+                <Bar dataKey="roi" name="ROI" maxBarSize={24} shape={GradBar}>
+                  {roiData.map((e,i)=><Cell key={i} fill={e.roi>=0?bookColor(e.bk,i):'#F43F5E'}/>)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -1044,7 +1097,8 @@ export default function Dashboard() {
           <h2 style={{fontSize:15,fontWeight:600,color:'var(--text-1)'}}>Recente Bets</h2>
           <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
         </div>
-        <table className="bets-table-desktop" style={{width:'100%',borderCollapse:'collapse'}}>
+        <div style={{overflowX:'auto', WebkitOverflowScrolling:'touch'}}>
+        <table className="bets-table-desktop" style={{width:'100%',minWidth:820,borderCollapse:'collapse'}}>
           <thead>
             <tr style={{backgroundColor:'var(--bg-subtle)'}}>
               {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker'].map(h=>(
@@ -1085,6 +1139,7 @@ export default function Dashboard() {
             {recent.length===0&&<tr><td colSpan={10} style={{padding:'32px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</td></tr>}
           </tbody>
         </table>
+        </div>
         <div className="bets-cards-mobile" style={{padding:'0 12px 12px'}}>
           {recent.map(bet=>{
             const w=berekenWinst(bet.uitkomst,Number(bet.odds),Number(bet.inzet));
