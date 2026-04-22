@@ -114,7 +114,7 @@ function CumulTip({ active, payload, label }) {
       {label && <p style={{ color:'var(--text-3)', marginBottom:7, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
       {cum && (
         <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
-          <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:'#5469d4', flexShrink:0 }}/>
+          <div style={{ width:16, height:2, backgroundColor:'#5469d4', borderRadius:1, flexShrink:0 }}/>
           <span style={{ color:'var(--text-3)', fontSize:12 }}>Cumulatief:</span>
           <span style={{ fontWeight:700, color: cum.value >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(cum.value)}</span>
         </div>
@@ -932,7 +932,7 @@ export default function Dashboard() {
                   <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                   <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                   <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2.5} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                  <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 3" dot={false} activeDot={{r:4,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                  <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={2.5} strokeDasharray="4 3" dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                 </ComposedChart>
               </ResponsiveContainer>
             ) : empty()}
@@ -943,47 +943,48 @@ export default function Dashboard() {
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
         <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
-          <div className="dash-chart-hdr mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Dagelijkse P&L</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Statistieken per dag</p></div>
-          {dailyData.length > 0 ? (() => {
-            const totalDays   = dailyData.filter(d => d.pnl !== 0).length || dailyData.length;
-            const sumPnl      = dailyData.reduce((s, d) => s + d.pnl, 0);
-            const gemPnl      = sumPnl / totalDays;
-            const bestDag     = Math.max(...dailyData.map(d => d.pnl));
-            const slechtDag   = Math.min(...dailyData.map(d => d.pnl));
-            const winstDagen  = dailyData.filter(d => d.pnl > 0).length;
-            const verliesDagen= dailyData.filter(d => d.pnl < 0).length;
-            const gemColor    = gemPnl >= 0 ? '#11B981' : '#F43F5E';
+          <div className="dash-chart-hdr mb-5">
+            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Stake / Profit Ratio</h2>
+            <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verhouding inzet tot winst</p>
+          </div>
+          {(() => {
+            const totalInzet = stats.totalInzet || 0;
+            const totalWinst = stats.totalWinst || 0;
+            const ratio = totalWinst !== 0 ? Math.abs(totalInzet / totalWinst) : null;
+            const ratioColor = totalWinst >= 0 ? '#11B981' : '#F43F5E';
             return (
               <div style={{ display:'flex', flexDirection:'column', flex:1, gap:12 }}>
-                {/* Big center number */}
+                {/* Big center ratio */}
                 <div style={{ background:'var(--bg-page)', borderRadius:10, flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'24px 16px', minHeight:120 }}>
-                  <span style={{ fontSize:48, fontWeight:800, color:gemColor, lineHeight:1, letterSpacing:'-0.03em' }}>
-                    {fmtPnl(parseFloat(gemPnl.toFixed(2)))}
-                  </span>
-                  <span style={{ fontSize:12, color:'var(--text-4)', marginTop:6, fontWeight:500 }}>gemiddeld per dag</span>
+                  {ratio !== null ? (
+                    <>
+                      <span style={{ fontSize:52, fontWeight:800, color:ratioColor, lineHeight:1, letterSpacing:'-0.03em' }}>
+                        {ratio.toFixed(2)}
+                      </span>
+                      <span style={{ fontSize:12, color:'var(--text-4)', marginTop:6, fontWeight:500 }}>
+                        €1 winst per €{ratio.toFixed(2)} inzet
+                      </span>
+                    </>
+                  ) : (
+                    <span style={{ fontSize:32, fontWeight:800, color:'var(--text-4)', lineHeight:1 }}>—</span>
+                  )}
                 </div>
                 {/* Bottom stats */}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', border:'1px solid var(--border)', borderRadius:8, overflow:'hidden' }}>
-                  <div style={{ padding:'11px 15px' }}>
-                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Beste dag</p>
-                    <p style={{ fontSize:18, fontWeight:800, color:'#11B981', lineHeight:1 }}>{fmtPnl(bestDag)}</p>
+                  <div style={{ padding:'14px 16px' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Totale inzet</p>
+                    <p style={{ fontSize:20, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{totalInzet.toFixed(2)}</p>
                   </div>
-                  <div style={{ padding:'11px 15px', borderLeft:'1px solid var(--border)' }}>
-                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Slechtste dag</p>
-                    <p style={{ fontSize:18, fontWeight:800, color:'#F43F5E', lineHeight:1 }}>{fmtPnl(slechtDag)}</p>
-                  </div>
-                  <div style={{ padding:'11px 15px', borderTop:'1px solid var(--border)' }}>
-                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winstdagen</p>
-                    <p style={{ fontSize:18, fontWeight:800, color:'#11B981', lineHeight:1 }}>{winstDagen}</p>
-                  </div>
-                  <div style={{ padding:'11px 15px', borderTop:'1px solid var(--border)', borderLeft:'1px solid var(--border)' }}>
-                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:4, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Verlies&shy;dagen</p>
-                    <p style={{ fontSize:18, fontWeight:800, color:'#F43F5E', lineHeight:1 }}>{verliesDagen}</p>
+                  <div style={{ padding:'14px 16px', borderLeft:'1px solid var(--border)' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winst</p>
+                    <p style={{ fontSize:20, fontWeight:800, color: totalWinst >= 0 ? '#11B981' : '#F43F5E', lineHeight:1 }}>
+                      {totalWinst >= 0 ? '+' : ''}{fmtPnl(totalWinst)}
+                    </p>
                   </div>
                 </div>
               </div>
             );
-          })() : empty()}
+          })()}
         </div>
 
         {/* Balance per bookmaker donut */}
@@ -1149,78 +1150,113 @@ export default function Dashboard() {
       </div>
 
       {/* Recent bets */}
-      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:10, overflow:'hidden', width:'100%' }}>
-        <div className="flex items-center justify-between dash-recent-hdr" style={{padding:'18px 24px',borderBottom:'1px solid var(--border-subtle)'}}>
-          <h2 style={{fontSize:15,fontWeight:600,color:'var(--text-1)'}}>Recente Bets</h2>
-          <Link href="/bets" style={{fontSize:12.5,color:'var(--brand)',textDecoration:'none',fontWeight:500}}>Alle bets bekijken →</Link>
+      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', width:'100%' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 24px', borderBottom:'1px solid var(--border-subtle)' }}>
+          <div>
+            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Recente Bets</h2>
+            <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Laatste {recent.length} weddenschappen</p>
+          </div>
+          <Link href="/bets" style={{ fontSize:12.5, color:'var(--brand)', textDecoration:'none', fontWeight:500 }}>Alle bets bekijken →</Link>
         </div>
-        <div style={{overflowX:'auto', WebkitOverflowScrolling:'touch'}}>
-        <table className="bets-table-desktop" style={{width:'auto',minWidth:820,borderCollapse:'collapse'}}>
-          <thead>
-            <tr style={{backgroundColor:'var(--bg-subtle)'}}>
-              {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker'].map(h=>(
-                <th key={h} style={{padding:'10px 14px',textAlign:'left',fontSize:10.5,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap',borderBottom:'1px solid var(--border)'}}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {recent.map(bet=>{
-              const w=berekenWinst(bet.uitkomst,Number(bet.odds),Number(bet.inzet));
-              return (
-                <tr key={bet.id} className="bet-row" style={{borderTop:'1px solid var(--border-subtle)',verticalAlign:'middle'}}>
-                  <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',whiteSpace:'nowrap',verticalAlign:'middle'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'2-digit'})}</td>
-                  <td style={{padding:'11px 14px',fontSize:12.5,verticalAlign:'middle',whiteSpace:'nowrap'}}>
-                    <span style={{padding:'2px 7px',borderRadius:4,fontSize:11,fontWeight:600,backgroundColor:'var(--badge-bg)',color:'var(--badge-color)',display:'inline-flex',alignItems:'center',gap:4}}>
-                      {sportEmoji(bet.sport)} {bet.sport}
-                    </span>
-                  </td>
-                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:500,maxWidth:150,verticalAlign:'middle'}}>
-                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.wedstrijd}</div>
-                  </td>
-                  <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',verticalAlign:'middle',maxWidth:100}}>
-                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.markt}</div>
-                  </td>
-                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',fontWeight:500,verticalAlign:'middle',maxWidth:140}}>
-                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.selectie}</div>
-                  </td>
-                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:700,verticalAlign:'middle'}}>{Number(bet.odds).toFixed(2)}</td>
-                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',verticalAlign:'middle'}}>€{Number(bet.inzet).toFixed(2)}</td>
-                  <td style={{padding:'11px 14px',verticalAlign:'middle'}}><UitkomstBadge u={bet.uitkomst}/></td>
-                  <td style={{padding:'11px 14px',fontSize:13,fontWeight:700,color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)',verticalAlign:'middle',whiteSpace:'nowrap'}}>{bet.uitkomst==='lopend'?'—':fmtPnl(w)}</td>
-                  <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',verticalAlign:'middle'}}>
-                    <div style={{display:'flex',alignItems:'center',gap:6}}><BookmakerIcon naam={bet.bookmaker} size={15}/>{bet.bookmaker}</div>
-                  </td>
-                </tr>
-              );
-            })}
-            {recent.length===0&&<tr><td colSpan={10} style={{padding:'32px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</td></tr>}
-          </tbody>
-        </table>
+
+        {/* Desktop table */}
+        <div className="bets-table-desktop" style={{ overflowX:'auto' }}>
+          <table style={{ width:'100%', borderCollapse:'collapse', tableLayout:'fixed' }}>
+            <colgroup>
+              <col style={{ width:'9%' }}/>
+              <col style={{ width:'10%' }}/>
+              <col style={{ width:'12%' }}/>
+              <col style={{ width:'10%' }}/>
+              <col style={{ width:'19%' }}/>
+              <col style={{ width:'7%' }}/>
+              <col style={{ width:'8%' }}/>
+              <col style={{ width:'11%' }}/>
+              <col style={{ width:'7%' }}/>
+              <col style={{ width:'7%' }}/>
+            </colgroup>
+            <thead>
+              <tr style={{ backgroundColor:'var(--bg-subtle)' }}>
+                {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker'].map(h => (
+                  <th key={h} style={{ padding:'10px 14px', textAlign:'left', fontSize:10.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', borderBottom:'1px solid var(--border)', whiteSpace:'nowrap' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {recent.length === 0 && (
+                <tr><td colSpan={10} style={{ padding:'40px', textAlign:'center', color:'var(--text-4)', fontSize:14 }}>Geen bets in deze periode</td></tr>
+              )}
+              {recent.map(bet => {
+                const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+                return (
+                  <tr key={bet.id} style={{ borderTop:'1px solid var(--border-subtle)' }}>
+                    <td style={{ padding:'13px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap', verticalAlign:'middle' }}>
+                      {new Date(bet.datum).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'2-digit' })}
+                    </td>
+                    <td style={{ padding:'13px 14px', verticalAlign:'middle' }}>
+                      <span style={{ padding:'3px 8px', borderRadius:5, fontSize:11, fontWeight:600, backgroundColor:'var(--badge-bg)', color:'var(--badge-color)', display:'inline-flex', alignItems:'center', gap:4, whiteSpace:'nowrap' }}>
+                        {sportEmoji(bet.sport)} {bet.sport}
+                      </span>
+                    </td>
+                    <td style={{ padding:'13px 14px', fontSize:13, color:'var(--text-1)', fontWeight:600, verticalAlign:'middle', overflow:'hidden' }}>
+                      <div style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{bet.wedstrijd}</div>
+                    </td>
+                    <td style={{ padding:'13px 14px', fontSize:12.5, color:'var(--text-3)', verticalAlign:'middle', overflow:'hidden' }}>
+                      <div style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{bet.markt || '—'}</div>
+                    </td>
+                    <td style={{ padding:'13px 14px', fontSize:12.5, color:'var(--text-2)', verticalAlign:'middle', overflow:'hidden' }}>
+                      <div style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{bet.selectie || '—'}</div>
+                    </td>
+                    <td style={{ padding:'13px 14px', fontSize:13, color:'var(--text-1)', fontWeight:700, verticalAlign:'middle' }}>
+                      {Number(bet.odds).toFixed(2)}
+                    </td>
+                    <td style={{ padding:'13px 14px', fontSize:13, color:'var(--text-2)', verticalAlign:'middle', whiteSpace:'nowrap' }}>
+                      €{Number(bet.inzet).toFixed(2)}
+                    </td>
+                    <td style={{ padding:'13px 14px', verticalAlign:'middle' }}>
+                      <UitkomstBadge u={bet.uitkomst}/>
+                    </td>
+                    <td style={{ padding:'13px 14px', fontSize:13, fontWeight:700, color: bet.uitkomst==='lopend' ? 'var(--text-3)' : w >= 0 ? 'var(--color-win)' : 'var(--color-loss)', verticalAlign:'middle', whiteSpace:'nowrap' }}>
+                      {bet.uitkomst === 'lopend' ? '—' : fmtPnl(w)}
+                    </td>
+                    <td style={{ padding:'13px 14px', verticalAlign:'middle' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                        <BookmakerIcon naam={bet.bookmaker} size={15}/>
+                        <span style={{ fontSize:12.5, color:'var(--text-3)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{bet.bookmaker}</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-        <div className="bets-cards-mobile" style={{padding:'0 12px 12px'}}>
-          {recent.map(bet=>{
-            const w=berekenWinst(bet.uitkomst,Number(bet.odds),Number(bet.inzet));
+
+        {/* Mobile cards */}
+        <div className="bets-cards-mobile" style={{ padding:'0 12px 12px' }}>
+          {recent.length === 0 && <p style={{ padding:'24px', textAlign:'center', color:'var(--text-4)', fontSize:14 }}>Geen bets in deze periode</p>}
+          {recent.map(bet => {
+            const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
             return (
               <div key={bet.id} className="bet-card">
                 <div className="bet-card-top">
                   <div className="bet-card-meta">
-                    <span style={{fontSize:11,fontWeight:600,color:'var(--text-4)'}}>{new Date(bet.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}</span>
-                    <span style={{padding:'2px 7px',borderRadius:4,fontSize:10.5,fontWeight:600,backgroundColor:'var(--badge-bg)',color:'var(--badge-color)',display:'inline-flex',alignItems:'center',gap:3}}>
-                      {sportEmoji(bet.sport)}{' '}{bet.sport}
+                    <span style={{ fontSize:11, fontWeight:600, color:'var(--text-4)' }}>{new Date(bet.datum).toLocaleDateString('nl-NL', { day:'numeric', month:'short' })}</span>
+                    <span style={{ padding:'2px 7px', borderRadius:4, fontSize:10.5, fontWeight:600, backgroundColor:'var(--badge-bg)', color:'var(--badge-color)', display:'inline-flex', alignItems:'center', gap:3 }}>
+                      {sportEmoji(bet.sport)} {bet.sport}
                     </span>
                   </div>
                   <UitkomstBadge u={bet.uitkomst}/>
                 </div>
                 <div className="bet-card-match">{bet.wedstrijd}</div>
-                <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                  {bet.markt&&<span className="bet-card-market">{bet.markt}</span>}
-                  {bet.markt&&bet.selectie&&<span className="bet-card-market" style={{color:'var(--border)'}}>·</span>}
-                  {bet.selectie&&<span className="bet-card-selection">{bet.selectie}</span>}
+                <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+                  {bet.markt && <span className="bet-card-market">{bet.markt}</span>}
+                  {bet.markt && bet.selectie && <span className="bet-card-market" style={{ color:'var(--border)' }}>·</span>}
+                  {bet.selectie && <span className="bet-card-selection">{bet.selectie}</span>}
                 </div>
                 <div className="bet-card-numbers">
                   <div className="bet-card-num-cell"><span className="bet-card-num-label">Odds</span><span className="bet-card-num-value">{Number(bet.odds).toFixed(2)}</span></div>
                   <div className="bet-card-num-cell"><span className="bet-card-num-label">Inzet</span><span className="bet-card-num-value">€{Number(bet.inzet).toFixed(2)}</span></div>
-                  <div className="bet-card-num-cell"><span className="bet-card-num-label">P&L</span><span className="bet-card-num-value" style={{color:bet.uitkomst==='lopend'?'var(--text-3)':w>=0?'var(--color-win)':'var(--color-loss)'}}>{bet.uitkomst==='lopend'?'—':fmtPnl(w)}</span></div>
+                  <div className="bet-card-num-cell"><span className="bet-card-num-label">P&L</span><span className="bet-card-num-value" style={{ color: bet.uitkomst==='lopend' ? 'var(--text-3)' : w >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>{bet.uitkomst==='lopend' ? '—' : fmtPnl(w)}</span></div>
                 </div>
                 <div className="bet-card-bottom">
                   <div className="bet-card-bookmaker"><BookmakerIcon naam={bet.bookmaker} size={14}/>{bet.bookmaker}</div>
@@ -1228,7 +1264,6 @@ export default function Dashboard() {
               </div>
             );
           })}
-          {recent.length===0&&<p style={{padding:'24px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets in deze periode</p>}
         </div>
       </div>
     </div>
