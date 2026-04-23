@@ -116,14 +116,14 @@ function CumulTip({ active, payload, label }) {
         <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
           <div style={{ width:8, height:2, backgroundColor:'#5469d4', borderRadius:1, flexShrink:0 }}/>
           <span style={{ color:'var(--text-3)', fontSize:12 }}>Cumulatief:</span>
-          <span style={{ fontWeight:700, color: cum.value >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(cum.value)}</span>
+          <span style={{ fontWeight:700, color: cum.value >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(cum.value)}</span>
         </div>
       )}
       {day && (
         <div style={{ display:'flex', alignItems:'center', gap:7 }}>
           <div style={{ width:8, height:2, backgroundColor:'#f59e0b', borderRadius:1, flexShrink:0 }}/>
           <span style={{ color:'var(--text-3)', fontSize:12 }}>Dagelijks:</span>
-          <span style={{ fontWeight:700, color: day.value >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(day.value)}</span>
+          <span style={{ fontWeight:700, color: day.value >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(day.value)}</span>
         </div>
       )}
     </div>
@@ -688,8 +688,8 @@ export default function Dashboard() {
     const total = stats.wins + stats.losses + stats.pushes + ns;
     const pct   = v => total > 0 ? parseFloat((v/total*100).toFixed(1)) : 0;
     return [
-      { name:'Won',         value:stats.wins,    color:'#11B981',  pct:pct(stats.wins)    },
-      { name:'Lost',        value:stats.losses,  color:'#F43F5E', pct:pct(stats.losses)  },
+      { name:'Won',         value:stats.wins,    color:'#20a851',  pct:pct(stats.wins)    },
+      { name:'Lost',        value:stats.losses,  color:'#cd3b3a', pct:pct(stats.losses)  },
       { name:'Push',        value:stats.pushes,  color:'#f59e0b', pct:pct(stats.pushes)  },
       { name:'Not settled', value:ns,            color:'#6b7280', pct:pct(ns)            },
     ];
@@ -814,7 +814,7 @@ export default function Dashboard() {
   const empty = (h=220) => <div style={{height:h,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-4)',fontSize:14}}>Voeg bets toe om de grafiek te zien</div>;
 
   return (
-    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
+    <div style={{ padding:'40px 32px' }} className="app-page">
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6 page-header">
@@ -891,7 +891,7 @@ export default function Dashboard() {
                   <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
                     <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
                     <span style={{ fontSize:12, color:'var(--text-4)' }}>Dagelijks:</span>
-                    <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#11B981' : '#F43F5E' }}>{fmtPnl(dispDayPnl)}</span>
+                    <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(dispDayPnl)}</span>
                   </div>
                 )}
               </div>
@@ -951,7 +951,7 @@ export default function Dashboard() {
             const totalInzet = stats.totalInzet || 0;
             const totalWinst = stats.totalWinst || 0;
             const ratio = totalWinst !== 0 ? Math.abs(totalInzet / totalWinst) : null;
-            const ratioColor = totalWinst >= 0 ? '#11B981' : '#F43F5E';
+            const ratioColor = totalWinst >= 0 ? '#00c951' : '#fb2b37';
             return (
               <div style={{ display:'flex', flexDirection:'column', flex:1, gap:12 }}>
                 {/* Big center ratio */}
@@ -977,7 +977,7 @@ export default function Dashboard() {
                   </div>
                   <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
                     <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winst</p>
-                    <p style={{ fontSize:20, fontWeight:800, color: totalWinst >= 0 ? '#11B981' : '#F43F5E', lineHeight:1 }}>
+                    <p style={{ fontSize:20, fontWeight:800, color: totalWinst >= 0 ? '#00c951' : '#fb2b37', lineHeight:1 }}>
                       {fmtPnl(totalWinst)}
                     </p>
                   </div>
@@ -1087,7 +1087,7 @@ export default function Dashboard() {
                 <Tooltip content={<ChartTip prefix="" suffix="%"/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                 <Bar dataKey="roi" name="ROI" maxBarSize={24} shape={GradBar}>
-                  {roiData.map((e,i)=><Cell key={i} fill={e.roi>=0?bookColor(e.bk,i):'#F43F5E'}/>)}
+                  {roiData.map((e,i)=><Cell key={i} fill={e.roi>=0?bookColor(e.bk,i):'#cd3b3a'}/>)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

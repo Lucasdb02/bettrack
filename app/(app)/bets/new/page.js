@@ -1076,7 +1076,7 @@ export default function NieuweBetPage() {
   );
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }} className="app-page">
+    <div style={{ padding: '40px 32px' }} className="app-page">
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Toevoegen</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Voeg bets handmatig in of importeer automatisch via je Chrome Extension</p>

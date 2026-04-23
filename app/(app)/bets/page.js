@@ -443,7 +443,7 @@ export default function BetsPage() {
   const sel = {padding:'7px 11px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',cursor:'pointer'};
 
   return (
-    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
+    <div style={{ padding:'40px 32px' }} className="app-page">
       <div className="flex items-center justify-between mb-6 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Overzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>{bets.length} bets in totaal</p></div>
         <Link href="/bets/new" className="btn-primary-glass" style={{padding:'9px 18px',fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7}}>

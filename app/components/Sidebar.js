@@ -78,7 +78,7 @@ const calcNav = [
   },
 ];
 
-function NavItem({ item, active }) {
+function NavItem({ item, active, dark }) {
   return (
     <li>
       <Link
@@ -87,35 +87,36 @@ function NavItem({ item, active }) {
           display: 'flex', alignItems: 'center', gap: 9,
           padding: '7px 10px', borderRadius: 7,
           fontSize: 13, fontWeight: active ? 600 : 400,
-          color: active ? '#e8f0ff' : '#7090b0',
+          color: active
+            ? (dark ? '#e8f0ff' : '#4f46e5')
+            : (dark ? '#7090b0' : '#64748b'),
           background: active
-            ? 'rgba(123,158,240,0.15)'
+            ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff')
             : 'transparent',
-          backdropFilter: active ? 'blur(12px) saturate(1.5)' : 'none',
-          WebkitBackdropFilter: active ? 'blur(12px) saturate(1.5)' : 'none',
-          borderTop: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
-          borderBottom: active ? '1px solid rgba(123,158,240,0.3)' : '1px solid transparent',
-          borderLeft: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
-          borderRight: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
-          boxShadow: active ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
+          backdropFilter: active && dark ? 'blur(12px) saturate(1.5)' : 'none',
+          WebkitBackdropFilter: active && dark ? 'blur(12px) saturate(1.5)' : 'none',
+          border: active
+            ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}`
+            : '1px solid transparent',
+          boxShadow: active && dark ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
           textDecoration: 'none', transition: 'all 0.18s ease',
         }}
         onMouseEnter={(e) => {
           if (!active) {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-            e.currentTarget.style.color = '#b8d0e8';
+            e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
+            e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
+            e.currentTarget.style.color = dark ? '#b8d0e8' : '#0f172a';
           }
         }}
         onMouseLeave={(e) => {
           if (!active) {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = '#7090b0';
+            e.currentTarget.style.color = dark ? '#7090b0' : '#64748b';
           }
         }}
       >
-        <span style={{ color: active ? '#7b9ef0' : '#3d6080', flexShrink: 0 }}>{item.icon}</span>
+        <span style={{ color: active ? (dark ? '#7b9ef0' : '#6366f1') : (dark ? '#3d6080' : '#94a3b8'), flexShrink: 0 }}>{item.icon}</span>
         {item.label}
       </Link>
     </li>
@@ -232,18 +233,18 @@ export default function Sidebar() {
 
   return (
     <>
-    <aside style={{ background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
+    <aside style={{ background: dark ? '#070917' : '#f7f8fa', borderRight: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : '#e2e8f0'}`, width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
       {/* Logo */}
-      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '18px 16px' }} className="flex items-center gap-3">
+      <div style={{ borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'}`, padding: '18px 16px' }} className="flex items-center gap-3">
         <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
         </div>
         <div>
-          <p style={{ color: '#fff', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>TrackMijnBets</p>
-          <p style={{ color: '#4a6885', fontSize: 10.5 }}>Analyse Tool</p>
+          <p style={{ color: dark ? '#fff' : '#0f172a', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>TrackMijnBets</p>
+          <p style={{ color: dark ? '#4a6885' : '#94a3b8', fontSize: 10.5 }}>Analyse Tool</p>
         </div>
       </div>
 
@@ -251,39 +252,39 @@ export default function Sidebar() {
       <nav className="flex-1 px-3 py-4 sidebar-scroll overflow-y-auto" style={{ overflowY: 'auto' }}>
 
         {/* Main menu */}
-        <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5 }}>Menu</p>
+        <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5 }}>Menu</p>
         <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
-          {mainNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
+          {mainNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
 
         {/* Bookmakers */}
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginBottom: 5, marginTop: 20 }}>
-          <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Bookmakers</p>
+          <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Bookmakers</p>
           {dbBookmakers.length > 0 && (
-            <span style={{ fontSize: 10.5, fontWeight: 700, color: totalBalance >= 0 ? '#4a8fa8' : '#a05070' }}>
+            <span style={{ fontSize: 10.5, fontWeight: 700, color: totalBalance >= 0 ? (dark ? '#4a8fa8' : '#6366f1') : (dark ? '#a05070' : '#fb2b37') }}>
               €{totalBalance.toFixed(2)} balance
             </span>
           )}
         </div>
         <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
-          {bookmakerNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
+          {bookmakerNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
 
         {/* Odds */}
-        <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Odds</p>
+        <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Odds</p>
         <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
-          {oddsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
+          {oddsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
 
         {/* Calculators */}
-        <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5 }}>Calculators</p>
+        <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5 }}>Calculators</p>
         <ul className="space-y-0.5">
-          {calcNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
+          {calcNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
       </nav>
 
       {/* Footer: dark toggle + account */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px 14px', background: '#060713' }}>
+      <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'}`, padding: '12px 14px', background: dark ? '#060713' : '#edf0f4' }}>
         {/* Dark mode toggle */}
         <button
           onClick={toggle}
@@ -292,23 +293,21 @@ export default function Sidebar() {
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 6,
             background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
-            color: '#7090b0', fontSize: 13, fontWeight: 400,
+            color: dark ? '#7090b0' : '#64748b', fontSize: 13, fontWeight: 400,
             transition: 'all 0.18s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
-            e.currentTarget.style.color = '#c5d8ec';
-            e.currentTarget.style.backdropFilter = 'blur(12px)';
+            e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0';
+            e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : '#cbd5e1';
+            e.currentTarget.style.color = dark ? '#c5d8ec' : '#0f172a';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = '#7090b0';
-            e.currentTarget.style.backdropFilter = 'none';
+            e.currentTarget.style.color = dark ? '#7090b0' : '#64748b';
           }}
         >
-          <span style={{ color: '#3d6080', flexShrink: 0 }}>
+          <span style={{ color: dark ? '#3d6080' : '#94a3b8', flexShrink: 0 }}>
             {dark ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -332,21 +331,21 @@ export default function Sidebar() {
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 8,
             background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
-            color: '#7090b0', fontSize: 13, fontWeight: 400,
+            color: dark ? '#7090b0' : '#64748b', fontSize: 13, fontWeight: 400,
             transition: 'all 0.18s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255,80,80,0.1)';
-            e.currentTarget.style.borderColor = 'rgba(255,100,100,0.2)';
-            e.currentTarget.style.color = '#ff9090';
+            e.currentTarget.style.background = 'rgba(251,43,55,0.08)';
+            e.currentTarget.style.borderColor = 'rgba(251,43,55,0.2)';
+            e.currentTarget.style.color = '#fb2b37';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = '#7090b0';
+            e.currentTarget.style.color = dark ? '#7090b0' : '#64748b';
           }}
         >
-          <span style={{ color: '#3d6080', flexShrink: 0 }}>
+          <span style={{ color: dark ? '#3d6080' : '#94a3b8', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
@@ -360,14 +359,13 @@ export default function Sidebar() {
           style={{
             display: 'flex', alignItems: 'center', gap: 10, padding: '7px 8px', borderRadius: 8,
             textDecoration: 'none', transition: 'all 0.18s',
-            background: pathname === '/account' ? 'rgba(123,158,240,0.15)' : 'transparent',
-            border: pathname === '/account' ? '1px solid rgba(123,158,240,0.25)' : '1px solid transparent',
-            boxShadow: pathname === '/account' ? 'inset 0 1px 0 rgba(255,255,255,0.1)' : 'none',
+            background: pathname === '/account' ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
+            border: pathname === '/account' ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
           }}
           onMouseEnter={e => {
             if (pathname !== '/account') {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)';
+              e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
+              e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.09)' : '#e2e8f0';
             }
           }}
           onMouseLeave={e => {
@@ -383,8 +381,8 @@ export default function Sidebar() {
             </svg>
           </div>
           <div className="min-w-0">
-            <p style={{ color: '#c5d8ec', fontSize: 12.5, fontWeight: 500 }} className="truncate">Mijn Account</p>
-            <p style={{ color: '#3d6080', fontSize: 10.5 }}>Voorkeuren & export</p>
+            <p style={{ color: dark ? '#c5d8ec' : '#334155', fontSize: 12.5, fontWeight: 500 }} className="truncate">Mijn Account</p>
+            <p style={{ color: dark ? '#3d6080' : '#94a3b8', fontSize: 10.5 }}>Voorkeuren & export</p>
           </div>
         </Link>
       </div>

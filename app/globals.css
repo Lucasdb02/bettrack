@@ -1,13 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Inter+Display:opsz,wght@40..140,100..900&display=swap');
 @import "tailwindcss";
+
+/* ══════════════════════════════════════════════
+   TYPOGRAPHY TOKENS
+   ══════════════════════════════════════════════ */
+:root {
+  --font-inter-display: 'Inter Display', sans-serif;
+  --font-inter: Inter, sans-serif;
+  --font-sans-serif: sans-serif, serif;
+
+  --text-9: 9px; --text-10: 10px; --text-11: 11px; --text-12: 12px;
+  --text-13: 13px; --text-14: 14px; --text-16: 16px; --text-17: 17px;
+  --text-18: 18px; --text-21: 21px; --text-22: 22px; --text-24: 24px;
+  --text-28: 28px; --text-29: 29px; --text-30: 30px; --text-32: 32px;
+  --text-40: 40px; --text-63: 63px;
+
+  --tracking-neg-1-6: -1.6px; --tracking-neg-1-38: -1.38px;
+  --tracking-neg-0-58: -0.58px; --tracking-neg-0-56: -0.56px;
+  --tracking-neg-0-48: -0.48px; --tracking-neg-0-88: -0.88px;
+  --tracking-neg-0-68: -0.68px; --tracking-neg-0-52: -0.52px;
+  --tracking-neg-0-24: -0.24px; --tracking-neg-0-18: -0.18px;
+  --tracking-neg-0-2: -0.2px; --tracking-0-1: 0.1px; --tracking-0-98: 0.98px;
+}
 
 /* ══════════════════════════════════════════════
    DESIGN TOKENS — Light mode (default)
    ══════════════════════════════════════════════ */
 :root {
   /* Status */
-  --color-win:  #059669;
-  --color-loss: #e11d48;
+  --color-win:  #00c951;
+  --color-loss: #fb2b37;
 
   /* Surfaces */
   --bg-page:        #f8fafc;
@@ -41,36 +63,36 @@
   --tooltip-bg:  #ffffff;
   --row-hover:   #f8fafc;
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 10px 30px rgba(0,0,0,0.10), 0 4px 10px rgba(0,0,0,0.05);
-  --shadow-xl: 0 20px 60px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.06);
+  /* Shadows — subtle SaaS style */
+  --shadow-xs: rgba(0,0,0,0.04) 0px 0.5px 1.5px 0px;
+  --shadow-sm: rgba(0,0,0,0.05) 0px 0.72px 2px 0px, rgba(0,0,0,0) 0px 2px 53px 0px;
+  --shadow-md: rgba(0,0,0,0.07) 0px 1px 4px 0px, rgba(0,0,0,0.03) 0px 4px 16px 0px;
+  --shadow-lg: rgba(0,0,0,0.10) 0px 4px 24px 0px, rgba(0,0,0,0.05) 0px 1px 4px 0px;
+  --shadow-xl: rgba(0,0,0,0.12) 0px 8px 40px 0px, rgba(0,0,0,0.06) 0px 2px 8px 0px;
 
-  /* Sidebar */
-  --sidebar-bg:           #ffffff;
+  /* Sidebar — light gray SaaS */
+  --sidebar-bg:           #f7f8fa;
   --sidebar-border:       #e2e8f0;
   --nav-section:          #94a3b8;
   --nav-item-text:        #64748b;
   --nav-item-hover-text:  #0f172a;
-  --nav-item-hover-bg:    #f8fafc;
+  --nav-item-hover-bg:    #edf0f4;
   --nav-item-active-text: #4f46e5;
   --nav-item-active-bg:   #eef2ff;
-  --nav-item-active-border: #6366f1;
+  --nav-item-active-border: #c7d2fe;
   --nav-icon:             #94a3b8;
   --nav-icon-active:      #6366f1;
   --sidebar-logo-text:    #0f172a;
   --sidebar-logo-sub:     #64748b;
-  --sidebar-footer-bg:    #f8fafc;
+  --sidebar-footer-bg:    #edf0f4;
 }
 
 /* ══════════════════════════════════════════════
    DESIGN TOKENS — Dark mode
    ══════════════════════════════════════════════ */
 html.dark {
-  --color-win:  #34d399;
-  --color-loss: #fb7185;
+  --color-win:  #00c951;
+  --color-loss: #fb2b37;
 
   --bg-page:        #07091a;
   --bg-card:        rgba(12,16,36,0.82);
@@ -112,7 +134,7 @@ html.dark {
   --nav-item-hover-bg:    rgba(255,255,255,0.04);
   --nav-item-active-text: #e2e8f0;
   --nav-item-active-bg:   rgba(99,102,241,0.13);
-  --nav-item-active-border: #818cf8;
+  --nav-item-active-border: rgba(123,158,240,0.3);
   --nav-icon:             #2d3f60;
   --nav-icon-active:      #818cf8;
   --sidebar-logo-text:    #f1f5f9;
@@ -128,11 +150,20 @@ html.dark {
 body {
   background-color: var(--bg-page);
   color: var(--text-1);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'Inter', 'Inter Display', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
   font-feature-settings: 'cv11', 'ss01';
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Global border-radius: 12px for all UI elements */
+button, input, select, textarea {
+  border-radius: 12px;
 }
 
 /* ── Scrollbars ── */
@@ -183,37 +214,51 @@ html.dark .app-main {
    UTILITY BUTTON CLASSES
    ══════════════════════════════════════════════ */
 
-/* Primary — liquid glass */
+/* Primary — blue gradient in light mode */
 .btn-primary,
 .btn-primary-glass {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background-color: rgba(255,255,255,0.2) !important;
+  background: linear-gradient(135deg, #6b82f0 0%, #5469d4 100%) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255,255,255,0.2) !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   padding: 8px 16px !important;
   font-size: 13.5px !important;
   font-weight: 600 !important;
+  font-family: var(--font-inter) !important;
   letter-spacing: -0.01em !important;
   cursor: pointer;
-  backdrop-filter: blur(20px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2) !important;
+  box-shadow: 0 2px 12px rgba(84,105,212,0.35) !important;
   transition: all 0.15s ease !important;
   text-decoration: none;
 }
 .btn-primary:hover:not(:disabled),
 .btn-primary-glass:hover:not(:disabled) {
-  background-color: rgba(255,255,255,0.28) !important;
-  box-shadow: 0 12px 24px 0 rgba(0,0,0,0.28) !important;
+  opacity: 0.88 !important;
   transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(84,105,212,0.45) !important;
 }
 .btn-primary:active:not(:disabled),
 .btn-primary-glass:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+  box-shadow: 0 2px 8px rgba(84,105,212,0.3) !important;
+}
+
+/* Dark mode — glass look */
+html.dark .btn-primary,
+html.dark .btn-primary-glass {
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3) !important;
+  backdrop-filter: blur(20px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
+}
+html.dark .btn-primary:hover:not(:disabled),
+html.dark .btn-primary-glass:hover:not(:disabled) {
+  background: rgba(255,255,255,0.18) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4) !important;
 }
 
 /* Secondary — ghost */
@@ -224,7 +269,7 @@ html.dark .app-main {
   background: var(--bg-card) !important;
   color: var(--text-2) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   padding: 8px 16px !important;
   font-size: 13.5px !important;
   font-weight: 500 !important;
@@ -250,9 +295,9 @@ html.dark .btn-glass:hover:not(:disabled) {
 /* Danger */
 .btn-danger {
   background: transparent !important;
-  color: #e11d48 !important;
-  border: 1px solid rgba(225,29,72,0.25) !important;
-  border-radius: 8px !important;
+  color: var(--color-loss) !important;
+  border: 1px solid rgba(251,43,55,0.25) !important;
+  border-radius: 12px !important;
   padding: 8px 16px !important;
   font-size: 13.5px !important;
   font-weight: 500 !important;
@@ -260,8 +305,8 @@ html.dark .btn-glass:hover:not(:disabled) {
   transition: all 0.15s !important;
 }
 .btn-danger:hover:not(:disabled) {
-  background: rgba(225,29,72,0.08) !important;
-  border-color: rgba(225,29,72,0.5) !important;
+  background: rgba(251,43,55,0.08) !important;
+  border-color: rgba(251,43,55,0.5) !important;
 }
 
 /* ══════════════════════════════════════════════
@@ -497,7 +542,7 @@ html.dark .glass-card {
   .bet-card-match { font-size: 14px; font-weight: 700; color: var(--text-1); line-height: 1.3; }
   .bet-card-selection { font-size: 13px; color: var(--text-2); line-height: 1.3; }
   .bet-card-market { font-size: 11.5px; color: var(--text-4); }
-  .bet-card-numbers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; }
+  .bet-card-numbers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; }
   .bet-card-num-cell { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
   .bet-card-num-cell:not(:last-child) { border-right: 1px solid var(--border-subtle); }
   .bet-card-num-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-4); }

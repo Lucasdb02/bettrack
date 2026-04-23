@@ -47,6 +47,11 @@ export async function GET(request) {
       const date = searchParams.get('date') || new Date().toISOString().slice(0, 10);
       const url = `${BASE}/fixtures/date/${date}?api_token=${TOKEN}&include=league;participants;scores&per_page=100`;
       const res = await fetch(url, { next: { revalidate: 60 } });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Sportmonks fixtures error', res.status, text.slice(0, 300));
+        return NextResponse.json({ error: `Sportmonks API fout (${res.status})` }, { status: 502 });
+      }
       const raw = await res.json();
 
       const leagueMap = {};
@@ -92,10 +97,16 @@ export async function GET(request) {
       }
       const url = `${BASE}/odds/pre-match/fixtures/${fixtureId}?api_token=${TOKEN}&include=bookmaker&filters=marketIds:1&per_page=200`;
       const res = await fetch(url, { next: { revalidate: 30 } });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Sportmonks odds error', res.status, text.slice(0, 300));
+        return NextResponse.json({ error: `Sportmonks API fout (${res.status})` }, { status: 502 });
+      }
       const raw = await res.json();
 
       const bookieMap = {};
       for (const o of raw.data || []) {
+        if (o.market_id !== 1) continue; // only 1X2 Fulltime Result market
         const name = o.bookmaker?.name || '';
         if (!NL_BOOKMAKER_NAMES.has(name.toLowerCase())) continue;
 

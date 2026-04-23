@@ -4,8 +4,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext({ dark: false, toggle: () => {} });
 
 const DARK_VARS = {
-  '--color-win':      '#34D399',
-  '--color-loss':     '#FB7185',
+  '--color-win':      '#00c951',
+  '--color-loss':     '#fb2b37',
   '--bg-page':        '#0d1117',
   '--bg-card':        '#161c2a',
   '--bg-subtle':      '#1c2335',

@@ -137,6 +137,13 @@ function OddsBreakdown({ odds, loading, hasOdds }) {
       </div>
     );
   }
+  if (odds && typeof odds === 'object' && !Array.isArray(odds) && odds.error) {
+    return (
+      <div style={{ padding: '14px 20px', color: '#ef4444', fontSize: 13 }}>
+        Fout bij laden van odds: {odds.error}
+      </div>
+    );
+  }
   if (!hasOdds || !odds) {
     return (
       <div style={{ padding: '14px 20px', color: 'var(--text-4)', fontSize: 13 }}>
@@ -207,9 +214,10 @@ function FixtureRow({ fixture }) {
       try {
         const res  = await fetch(`/api/sportmonks?action=odds&fixtureId=${fixture.id}`);
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `Fout (${res.status})`);
         setOdds(Array.isArray(data) ? data : []);
-      } catch {
-        setOdds([]);
+      } catch (err) {
+        setOdds({ error: err.message });
       }
       setOddsLoading(false);
     }
@@ -433,7 +441,7 @@ export default function OddsPage() {
   );
 
   return (
-    <div className="app-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }}>
+    <div className="app-page" style={{ padding: '40px 32px' }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
       {/* ── Paginaheader ── */}

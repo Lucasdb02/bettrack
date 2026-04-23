@@ -245,7 +245,7 @@ export default function MaandoverzichtPage() {
   const todayKey = now.toISOString().split('T')[0];
 
   return (
-    <div className="cal-page-wrap" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+    <div className="cal-page-wrap" style={{padding:'40px 32px'}}>
       <div className="flex items-center justify-between mb-7 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Maandoverzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>Dagelijkse analyse van je bettingresultaten</p></div>
         <div className="flex items-center" style={{gap:isMobile?4:12}}>

@@ -2,8 +2,8 @@
 import { useTheme } from '../context/ThemeContext';
 
 const DARK = {
-  '--color-win':  '#34d399',
-  '--color-loss': '#fb7185',
+  '--color-win':  '#00c951',
+  '--color-loss': '#fb2b37',
   '--bg-page':        '#07091a',
   '--bg-card':        'rgba(12,16,36,0.82)',
   '--bg-subtle':      'rgba(16,22,48,0.65)',
@@ -45,8 +45,8 @@ const DARK = {
 };
 
 const LIGHT = {
-  '--color-win':  '#059669',
-  '--color-loss': '#e11d48',
+  '--color-win':  '#00c951',
+  '--color-loss': '#fb2b37',
   '--bg-page':        '#f8fafc',
   '--bg-card':        '#ffffff',
   '--bg-subtle':      '#f1f5f9',

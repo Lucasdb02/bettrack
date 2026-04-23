@@ -343,10 +343,10 @@ export default function StatistiekenPage() {
     </div>
   );
 
-  const curveColor = curve.length > 0 && curve[curve.length - 1].pnl >= 0 ? '#11B981' : '#F43F5E';
+  const curveColor = curve.length > 0 && curve[curve.length - 1].pnl >= 0 ? '#00c951' : '#fb2b37';
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 32px' }} className="app-page">
+    <div style={{ padding: '40px 32px' }} className="app-page">
 
       {/* Header */}
       <div className="mb-6 page-header">
@@ -423,7 +423,7 @@ export default function StatistiekenPage() {
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
                 <Bar dataKey="pnl" maxBarSize={44} shape={GradBar}>
-                  {maandData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} />)}
+                  {maandData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#20a851' : '#cd3b3a'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -442,7 +442,7 @@ export default function StatistiekenPage() {
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
                 <Bar dataKey="pnl" maxBarSize={30} shape={GradBar}>
-                  {dagData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} />)}
+                  {dagData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#20a851' : '#cd3b3a'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -494,7 +494,7 @@ export default function StatistiekenPage() {
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
                 <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1} />
                 <Bar dataKey="pnl" name="P&L" maxBarSize={44} shape={GradBar}>
-                  {oddsData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#11B981' : '#F43F5E'} />)}
+                  {oddsData.map((e, i) => <Cell key={i} fill={e.pnl >= 0 ? '#20a851' : '#cd3b3a'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -538,7 +538,7 @@ export default function StatistiekenPage() {
               <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
               <ReferenceLine x={0} stroke="var(--border)" strokeWidth={1} />
               <Bar dataKey="totalWinst" maxBarSize={22} shape={GradBarH}>
-                {perSport.map((e, i) => <Cell key={i} fill={e.totalWinst >= 0 ? '#11B981' : '#F43F5E'} />)}
+                {perSport.map((e, i) => <Cell key={i} fill={e.totalWinst >= 0 ? '#20a851' : '#cd3b3a'} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>

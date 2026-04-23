@@ -402,7 +402,7 @@ export default function BookmakersPage() {
   if (!loadedBm) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
 
   return (
-    <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 32px' }} className="app-page">
+    <div style={{ padding:'40px 32px' }} className="app-page">
       <div className="flex items-center justify-between mb-6 page-header">
         <div>
           <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Bookmakers</h1>
@@ -738,7 +738,7 @@ export default function BookmakersPage() {
                   {/* Balance progress bar */}
                   <div className="bm-field-progress" style={{ flex:1, minWidth:40 }}>
                     <div style={{ height:6, backgroundColor:'var(--border)', borderRadius:99, overflow:'hidden' }}>
-                      <div style={{ height:'100%', borderRadius:99, backgroundColor: stats.pnl >= 0 ? color : '#F43F5E', width:`${Math.min(cfg.startBalance > 0 ? Math.abs(stats.pnl/cfg.startBalance)*100 : 0, 100)}%`, transition:'width 0.4s ease' }}/>
+                      <div style={{ height:'100%', borderRadius:99, backgroundColor: stats.pnl >= 0 ? color : '#fb2b37', width:`${Math.min(cfg.startBalance > 0 ? Math.abs(stats.pnl/cfg.startBalance)*100 : 0, 100)}%`, transition:'width 0.4s ease' }}/>
                     </div>
                   </div>
 
