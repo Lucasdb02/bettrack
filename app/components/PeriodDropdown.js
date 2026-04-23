@@ -325,3 +325,156 @@ export default function PeriodDropdown({ filter, onSelect, customRange, onCustom
     </>
   );
 }
+
+/* ── Single-day date picker ── */
+export function SingleDatePicker({ value, onChange, style }) {
+  const { dark } = useTheme();
+  const [open, setOpen]       = useState(false);
+  const [rect, setRect]       = useState(null);
+  const [mounted, setMounted] = useState(false);
+  const btnRef = useRef(null);
+
+  useEffect(() => setMounted(true), []);
+
+  const today = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d; }, []);
+
+  const parsed = useMemo(() => {
+    if (!value) return null;
+    const [y, m, d] = value.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }, [value]);
+
+  const [navYear,  setNavYear]  = useState(() => parsed ? parsed.getFullYear()  : today.getFullYear());
+  const [navMonth, setNavMonth] = useState(() => parsed ? parsed.getMonth()     : today.getMonth());
+
+  const toggle = () => {
+    if (!open && btnRef.current) setRect(btnRef.current.getBoundingClientRect());
+    setOpen(o => !o);
+  };
+  const close = () => setOpen(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const h = () => setOpen(false);
+    window.addEventListener('scroll', h, true);
+    return () => window.removeEventListener('scroll', h, true);
+  }, [open]);
+
+  const prev = () => { if (navMonth === 0) { setNavMonth(11); setNavYear(y => y - 1); } else setNavMonth(m => m - 1); };
+  const next = () => { if (navMonth === 11) { setNavMonth(0); setNavYear(y => y + 1); } else setNavMonth(m => m + 1); };
+
+  const handleDayClick = (date) => {
+    const iso = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    onChange(iso);
+    close();
+  };
+
+  const label = parsed
+    ? `${parsed.getDate()} ${NL_MONTHS_SHORT[parsed.getMonth()]} ${parsed.getFullYear()}`
+    : 'Kies datum';
+
+  const dropBg  = dark ? 'var(--bg-card)' : '#fff';
+  const dropBdr = dark ? 'var(--border)'  : '#e5e7eb';
+  const navBg   = dark ? 'var(--bg-subtle)' : '#f9fafb';
+  const mutedTxt = dark ? 'var(--text-3)' : '#9ca3af';
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={toggle}
+        style={{
+          display:'flex', alignItems:'center', gap:7,
+          padding:'9px 10px', border:'1px solid var(--border)',
+          borderRadius:7, fontSize:13, color:'var(--text-1)',
+          backgroundColor:'var(--bg-input)', cursor:'pointer',
+          whiteSpace:'nowrap', width:'fit-content', fontFamily:'inherit',
+          ...style,
+        }}
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        {label}
+      </button>
+
+      {mounted && open && rect && createPortal(
+        <>
+          <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
+          <div style={{
+            position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
+            backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
+            borderRadius:12, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
+            padding:'16px', minWidth:260,
+          }}>
+            {/* Month navigation */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+              <button onClick={prev} style={{ width:28, height:28, borderRadius:6, border:`1px solid ${dropBdr}`, backgroundColor: navBg, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={mutedTxt} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <span style={{ fontSize:14, fontWeight:600, color: dark ? 'var(--text-1)' : '#1a1f36' }}>
+                {NL_MONTHS[navMonth]} {navYear}
+              </span>
+              <button onClick={next} style={{ width:28, height:28, borderRadius:6, border:`1px solid ${dropBdr}`, backgroundColor: navBg, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={mutedTxt} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <SingleCalendarMonth
+              year={navYear} month={navMonth}
+              selected={parsed}
+              onDayClick={handleDayClick}
+              dark={dark}
+            />
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
+}
+
+function SingleCalendarMonth({ year, month, selected, onDayClick, dark }) {
+  const today = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d; }, []);
+  const firstDow    = new Date(year, month, 1).getDay();
+  const offset      = firstDow === 0 ? 6 : firstDow - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < offset; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+
+  const dayHdrTxt = dark ? 'var(--text-3)' : '#9ca3af';
+  const dayTxt    = dark ? 'var(--text-1)' : '#1a1f36';
+  const todayRing = dark ? 'var(--brand)'  : '#1e3a8a';
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', marginBottom:4 }}>
+        {NL_DAYS.map(d => <div key={d} style={{ textAlign:'center', fontSize:10.5, fontWeight:700, color: dayHdrTxt, padding:'2px 0' }}>{d}</div>)}
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:1 }}>
+        {cells.map((date, i) => {
+          if (!date) return <div key={`e${i}`}/>;
+          const t = date.getTime();
+          const isToday    = t === today.getTime();
+          const isSelected = selected && t === selected.getTime();
+          return (
+            <div key={t}
+              onClick={() => onDayClick(date)}
+              style={{
+                textAlign:'center', lineHeight:'32px', height:32, fontSize:13, cursor:'pointer',
+                fontWeight: isToday ? 700 : 400,
+                borderRadius: 6,
+                backgroundColor: isSelected ? '#1e3a8a' : 'transparent',
+                color: isSelected ? '#fff' : dayTxt,
+                outline: isToday && !isSelected ? `2px solid ${todayRing}` : 'none',
+                outlineOffset: -2, transition:'background 0.1s',
+              }}
+              onMouseEnter={e => { if (!isSelected) e.currentTarget.style.backgroundColor = dark ? 'rgba(84,105,212,0.2)' : 'rgba(59,91,219,0.1)'; }}
+              onMouseLeave={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >{date.getDate()}</div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

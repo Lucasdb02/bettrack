@@ -8,6 +8,7 @@ import TagInput, { TagChip } from '../../components/TagInput';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { SingleDatePicker } from '../../components/PeriodDropdown';
 
 const MARKTEN = ['1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig'];
 const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Overig'];
@@ -23,7 +24,7 @@ function UitkomstBadge({ value }) {
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       padding: '2px 8px', borderRadius: 4, fontSize: 11.5, fontWeight: 600,
       background: bg, color: textColor, border: `1px solid ${border}`,
-      whiteSpace: 'nowrap', lineHeight: '18px',
+      whiteSpace: 'nowrap', lineHeight: '18px', minWidth: 72,
     }}>
       {cfg.label}
     </span>
@@ -144,7 +145,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
             <p style={{fontSize:11.5,fontWeight:700,color:text3,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:12}}>Wedstrijd Info</p>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
               <FF label="Datum" required text2={text2}>
-                <input type="date" value={form.datum} onChange={e=>set('datum',e.target.value)} style={iS}/>
+                <SingleDatePicker value={form.datum} onChange={v=>set('datum',v)} style={{width:'100%',height:38,boxSizing:'border-box'}}/>
               </FF>
               <FF label="Sport" required text2={text2}>
                 <select value={form.sport} onChange={e=>set('sport',e.target.value)} style={iS}>
@@ -443,10 +444,10 @@ export default function BetsPage() {
   const sel = {padding:'7px 11px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',cursor:'pointer'};
 
   return (
-    <div style={{ padding:'40px 32px' }} className="app-page">
-      <div className="flex items-center justify-between mb-6 page-header">
+    <div style={{ padding:'24px' }} className="app-page">
+      <div className="flex items-center justify-between mb-4 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Overzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>{bets.length} bets in totaal</p></div>
-        <Link href="/bets/new" className="btn-primary-glass" style={{padding:'9px 18px',fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7}}>
+        <Link href="/bets/new" className="btn-primary-glass" style={{padding:'9px 18px',fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7,borderRadius:9}}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Bet Invoeren
         </Link>
@@ -491,7 +492,7 @@ export default function BetsPage() {
       <div className="bets-table-desktop table-scroll" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
         <table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead>
-            <tr style={{backgroundColor:'var(--bg-subtle)'}}>
+            <tr className="bet-thead-row">
               {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker',''].map(h=>(
                 <th key={h} style={{padding:'10px 14px',textAlign:'left',fontSize:10.5,fontWeight:700,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap',borderBottom:'1px solid var(--border)'}}>
                   {h}
@@ -521,13 +522,13 @@ export default function BetsPage() {
                     </span>
                   </td>
                   <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:500,maxWidth:160,verticalAlign:'middle'}}>
-                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.wedstrijd}</div>
+                    <div style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.wedstrijd}</div>
                   </td>
                   <td style={{padding:'11px 14px',fontSize:12.5,color:'var(--text-3)',verticalAlign:'middle',maxWidth:120}}>
-                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.markt}</div>
+                    <div style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.markt}</div>
                   </td>
                   <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',fontWeight:500,verticalAlign:'middle',maxWidth:160}}>
-                    <div style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden',textOverflow:'ellipsis'}}>{bet.selectie}</div>
+                    <div style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.selectie}</div>
                   </td>
                   <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:700,verticalAlign:'middle'}}>{Number(bet.odds).toFixed(2)}</td>
                   <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',verticalAlign:'middle'}}>€{Number(bet.inzet).toFixed(2)}</td>

@@ -177,9 +177,12 @@ function GradBar({ x, y, width, height, fill }) {
   if (!width || !height || Math.abs(height) < 0.5) return null;
   const barY = height >= 0 ? y : y + height;
   const barH = Math.abs(height);
-  return (
-    <rect x={x} y={barY} width={width} height={barH} rx={0} ry={0} fill={fill}/>
-  );
+  const r = Math.min(3, barH / 2, width / 2);
+  if (height >= 0) {
+    return <path d={`M ${x},${barY+barH} H ${x+width} V ${barY+r} A ${r},${r} 0 0,0 ${x+width-r},${barY} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+r} Z`} fill={fill}/>;
+  } else {
+    return <path d={`M ${x},${barY} H ${x+width} V ${barY+barH-r} A ${r},${r} 0 0,0 ${x+width-r},${barY+barH} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+barH-r} Z`} fill={fill}/>;
+  }
 }
 
 /* ─── Stat card ─── */
@@ -210,7 +213,7 @@ function UitkomstBadge({ u }) {
   const bg        = dark ? cfg.darkBg        : cfg.bg;
   const border    = dark ? cfg.darkBorder    : cfg.border;
   const textColor = dark ? cfg.darkTextColor : cfg.textColor;
-  return <span style={{ display:'inline-flex', alignItems:'center', verticalAlign:'middle', background:bg, color:textColor, border:`1px solid ${border}`, padding:'2px 8px', borderRadius:4, fontSize:11.5, fontWeight:600, lineHeight:'18px', whiteSpace:'nowrap' }}>{cfg.label}</span>;
+  return <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', verticalAlign:'middle', background:bg, color:textColor, border:`1px solid ${border}`, padding:'2px 8px', borderRadius:4, fontSize:11.5, fontWeight:600, lineHeight:'18px', whiteSpace:'nowrap', minWidth:72 }}>{cfg.label}</span>;
 }
 
 /* ─── Chevron ─── */
@@ -814,17 +817,17 @@ export default function Dashboard() {
   const empty = (h=220) => <div style={{height:h,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-4)',fontSize:14}}>Voeg bets toe om de grafiek te zien</div>;
 
   return (
-    <div style={{ padding:'40px 32px' }} className="app-page">
+    <div style={{ padding:'24px' }} className="app-page">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 page-header">
+      <div className="flex items-center justify-between mb-4 page-header">
         <div>
           <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Dashboard</h1>
           <p style={{ fontSize:14, color:'var(--text-3)' }}>Overzicht van al je bets en resultaten</p>
         </div>
         {/* Bet Invoeren — alleen desktop */}
         <div className="hidden md:flex">
-          <Link href="/bets/new" className="btn-primary-glass" style={{ textDecoration:'none' }}>
+          <Link href="/bets/new" className="btn-primary-glass" style={{ textDecoration:'none', borderRadius:9 }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Bet Invoeren
           </Link>
@@ -832,7 +835,7 @@ export default function Dashboard() {
       </div>
 
       {/* Filter bar */}
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:28, flexWrap:'wrap' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, flexWrap:'wrap' }}>
         <PeriodDropdown filter={periodFilter} onSelect={handlePeriodSelect} customRange={customRange}/>
 
         <MultiSelect
@@ -859,7 +862,7 @@ export default function Dashboard() {
       )}
 
       {/* Stat cards */}
-      <div className="grid gap-4 mb-7 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
+      <div className="grid gap-4 mb-4 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
         <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
         <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
         <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
@@ -877,7 +880,7 @@ export default function Dashboard() {
         const dispP      = hp ? hp.p      : stats.pushes;
         const roiColor   = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
         return (
-          <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:24 }}>
+          <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:16 }}>
             {/* Header row */}
             <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               {/* Left: P&L + ROI + daily */}
@@ -905,7 +908,7 @@ export default function Dashboard() {
                     <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                    <div style={{ width:8, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
+                    <div style={{ width:16, height:3, backgroundColor:'#f59e0b', borderRadius:2 }}/>
                     <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
                   </div>
                 </div>
@@ -941,7 +944,7 @@ export default function Dashboard() {
       })()}
 
       {/* Charts: Dagelijkse P&L + Status Breakdown */}
-      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
+      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
         <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
           <div className="dash-chart-hdr mb-5">
             <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Stake / Profit Ratio</h2>
@@ -1058,7 +1061,7 @@ export default function Dashboard() {
       </div>
 
       {/* Cumulatieve P&L per Bookmaker */}
-      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:24 }}>
+      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:16 }}>
         <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Cumulatieve P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p></div>
         {bookLineData.length>1?(
           <ResponsiveContainer width="100%" height={220}>
@@ -1075,7 +1078,7 @@ export default function Dashboard() {
       </div>
 
       {/* ROI + Balance per Bookmaker */}
-      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
+      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
           {roiData.length>0?(
@@ -1140,7 +1143,7 @@ export default function Dashboard() {
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px', marginTop:4 }}>
             {statusData.map((d,i) => (
               <div key={i} style={{ display:'flex', alignItems:'center', gap:7 }}>
-                <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
+                <div className="pulse-dot" style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0, '--dot-color': d.color + '99' }}/>
                 <span style={{ fontSize:12, color:'var(--text-3)' }}>{d.name}</span>
                 <span style={{ fontSize:12, fontWeight:700, color:'var(--text-2)', marginLeft:'auto' }}>{d.pct}%</span>
               </div>
@@ -1175,7 +1178,7 @@ export default function Dashboard() {
               <col style={{ width:'12%' }}/>
             </colgroup>
             <thead>
-              <tr style={{ backgroundColor:'var(--bg-subtle)' }}>
+              <tr className="bet-thead-row">
                 {['Datum','Sport','Wedstrijd','Markt','Selectie','Odds','Inzet','Uitkomst','P&L','Bookmaker'].map(h => (
                   <th key={h} style={{ padding:'10px 14px', textAlign:'left', fontSize:10.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', borderBottom:'1px solid var(--border)', whiteSpace:'nowrap' }}>{h}</th>
                 ))}

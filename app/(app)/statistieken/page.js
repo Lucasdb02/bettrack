@@ -63,16 +63,25 @@ const WEEKDAGEN = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
 
 function GradBar({ x, y, width, height, fill }) {
   if (!width || !height || Math.abs(height) < 0.5) return null;
-  return (
-    <rect x={x} y={y} width={width} height={Math.abs(height)} rx={0} ry={0} fill={fill}/>
-  );
+  const barY = height >= 0 ? y : y + height;
+  const barH = Math.abs(height);
+  const r = Math.min(3, barH / 2, width / 2);
+  if (height >= 0) {
+    return <path d={`M ${x},${barY+barH} H ${x+width} V ${barY+r} A ${r},${r} 0 0,0 ${x+width-r},${barY} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+r} Z`} fill={fill}/>;
+  } else {
+    return <path d={`M ${x},${barY} H ${x+width} V ${barY+barH-r} A ${r},${r} 0 0,0 ${x+width-r},${barY+barH} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+barH-r} Z`} fill={fill}/>;
+  }
 }
 
-function GradBarH({ x, y, width, height, fill }) {
+function GradBarH({ x, y, width, height, fill, value }) {
   if (!width || !height || Math.abs(width) < 0.5) return null;
-  return (
-    <rect x={x} y={y} width={Math.abs(width)} height={height} rx={0} ry={0} fill={fill}/>
-  );
+  const barW = Math.abs(width);
+  const r = Math.min(3, barW / 2, height / 2);
+  if (!value || value >= 0) {
+    return <path d={`M ${x},${y} V ${y+height} H ${x+barW-r} A ${r},${r} 0 0,0 ${x+barW},${y+height-r} V ${y+r} A ${r},${r} 0 0,0 ${x+barW-r},${y} Z`} fill={fill}/>;
+  } else {
+    return <path d={`M ${x+r},${y} A ${r},${r} 0 0,0 ${x},${y+r} V ${y+height-r} A ${r},${r} 0 0,0 ${x+r},${y+height} H ${x+barW} V ${y} Z`} fill={fill}/>;
+  }
 }
 
 function finalize(map) {
@@ -346,7 +355,7 @@ export default function StatistiekenPage() {
   const curveColor = curve.length > 0 && curve[curve.length - 1].pnl >= 0 ? '#00c951' : '#fb2b37';
 
   return (
-    <div style={{ padding: '40px 32px' }} className="app-page">
+    <div style={{ padding: '24px' }} className="app-page">
 
       {/* Header */}
       <div className="mb-6 page-header">

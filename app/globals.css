@@ -441,7 +441,7 @@ html.dark .glass-card {
     cursor: pointer;
   }
 
-  .app-page { padding: 20px 16px !important; max-width: 100% !important; }
+  .app-page { padding: 16px !important; max-width: 100% !important; }
 
   .dash-chart-section { padding-left: 16px !important; padding-right: 16px !important; }
   .dash-chart-hdr { padding-left: 0 !important; padding-right: 0 !important; }
@@ -493,7 +493,7 @@ html.dark .glass-card {
    KALENDER — Mobile tile stijl
    ══════════════════════════════════════════════ */
 @media (max-width: 640px) {
-  .cal-page-wrap { padding: 20px 16px !important; max-width: 100% !important; }
+  .cal-page-wrap { padding: 16px !important; max-width: 100% !important; }
   .cal-stats-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; margin-bottom: 16px !important; width: 100% !important; box-sizing: border-box !important; }
   .cal-stats-grid > div { padding: 10px 10px !important; min-width: 0 !important; overflow: hidden !important; box-sizing: border-box !important; }
   .cal-stats-grid > div p:first-child { font-size: 9px !important; margin-bottom: 4px !important; }
@@ -557,11 +557,13 @@ html.dark .glass-card {
    ══════════════════════════════════════════════ */
 .bm-tx-row .bm-tx-submit  { height: 38px !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-type    { height: 38px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-type button { height: 100% !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-bookie select { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 .bm-tx-row .bm-tx-amount input  { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
-.bm-tx-row .bm-tx-date    { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-tx-row .bm-tx-date    { height: 38px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-date button { height: 100% !important; box-sizing: border-box !important; }
 .bm-add-row select        { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
-.bm-add-row .btn-primary-glass, .bm-add-row button[disabled] { height: 40px !important; box-sizing: border-box !important; }
+.bm-add-row button        { height: 40px !important; box-sizing: border-box !important; }
 
 /* ══════════════════════════════════════════════
    BOOKMAKERS — Mobile card view
@@ -617,6 +619,25 @@ html.dark .glass-card {
    ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .calc-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ══════════════════════════════════════════════
+   BET TABLE — thead background
+   Light mode: transparent; dark mode: subtle bg
+   ══════════════════════════════════════════════ */
+.bet-thead-row { background: transparent; }
+html.dark .bet-thead-row { background: var(--bg-subtle); }
+
+/* ══════════════════════════════════════════════
+   STATUS BREAKDOWN — Pulsing legend dots
+   ══════════════════════════════════════════════ */
+@keyframes dot-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--dot-color, rgba(99,102,241,0.6)); }
+  70%  { box-shadow: 0 0 0 5px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-dot {
+  animation: dot-pulse 2s ease-in-out infinite;
 }
 
 /* ══════════════════════════════════════════════

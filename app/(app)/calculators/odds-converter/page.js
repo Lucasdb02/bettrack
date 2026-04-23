@@ -91,7 +91,7 @@ export default function OddsConverterPage() {
   };
 
   return (
-    <div className="app-page" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+    <div className="app-page" style={{padding:'24px'}}>
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Odds Converter</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Converteer odds tussen alle gangbare formaten. Typ in één veld om de andere direct te berekenen.</p>

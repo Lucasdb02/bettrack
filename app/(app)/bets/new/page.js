@@ -7,6 +7,7 @@ import { SPORTEN, sportEmoji, UITKOMSTEN, uitkomstConfig } from '../../../lib/sp
 import TagInput from '../../../components/TagInput';
 import BookmakerIcon from '../../../components/BookmakerIcon';
 import { useTheme } from '../../../context/ThemeContext';
+import { SingleDatePicker } from '../../../components/PeriodDropdown';
 
 const MARKTEN = ['1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig'];
 const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Overig'];
@@ -180,7 +181,7 @@ function HandmatigForm({ onSaved }) {
           <h2 style={sh}>Wedstrijd Info</h2>
           <div className="grid gap-4 grid-2-to-1" style={{gridTemplateColumns:'1fr 1fr'}}>
             <FF label="Datum" required>
-              <input type="date" value={form.datum} onChange={e=>set('datum',e.target.value)} style={iStyle}/>
+              <SingleDatePicker value={form.datum} onChange={v=>set('datum',v)} style={{width:'100%',height:'40px',boxSizing:'border-box'}}/>
             </FF>
             <FF label="Sport" required>
               <SelectWrap>
@@ -1076,7 +1077,7 @@ export default function NieuweBetPage() {
   );
 
   return (
-    <div style={{ padding: '40px 32px' }} className="app-page">
+    <div style={{ padding: '24px' }} className="app-page">
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Toevoegen</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Voeg bets handmatig in of importeer automatisch via je Chrome Extension</p>

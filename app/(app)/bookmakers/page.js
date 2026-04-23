@@ -5,7 +5,7 @@ import { useFmt, ALL_BOOKMAKERS } from '../../context/PreferencesContext';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import BookmakerIcon, { BOOKIE_BRAND_COLORS } from '../../components/BookmakerIcon';
 import { getDateRange, fmtBucketLabel } from '../../lib/dateUtils';
-import PeriodDropdown from '../../components/PeriodDropdown';
+import PeriodDropdown, { SingleDatePicker } from '../../components/PeriodDropdown';
 import { createClient } from '@/lib/supabase';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -402,8 +402,8 @@ export default function BookmakersPage() {
   if (!loadedBm) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
 
   return (
-    <div style={{ padding:'40px 32px' }} className="app-page">
-      <div className="flex items-center justify-between mb-6 page-header">
+    <div style={{ padding:'24px' }} className="app-page">
+      <div className="flex items-center justify-between mb-4 page-header">
         <div>
           <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Bookmakers</h1>
           <p style={{ fontSize:14, color:'var(--text-3)' }}>Selecteer je bookmakers en houd je balances bij</p>
@@ -412,7 +412,7 @@ export default function BookmakersPage() {
 
       {/* ── Balance chart ── */}
       {activeBookies.length > 0 && (
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'22px 24px', marginBottom:24, boxShadow:'var(--shadow-sm)' }}>
+        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'22px 24px', marginBottom:16, boxShadow:'var(--shadow-sm)' }}>
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:20, flexWrap:'wrap', gap:12 }}>
             <div>
               <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:4 }}>Totale Balance</p>
@@ -477,7 +477,7 @@ export default function BookmakersPage() {
       )}
 
       {/* ── Add bookmaker + Deposits/Withdrawals ── */}
-      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', marginBottom:24, boxShadow:'var(--shadow-sm)' }}>
+      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', marginBottom:16, boxShadow:'var(--shadow-sm)' }}>
 
         {/* — Bookmaker toevoegen — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Bookmaker toevoegen</h2>
@@ -486,7 +486,7 @@ export default function BookmakersPage() {
             <select
               value={selectedToAdd}
               onChange={e => setSelectedToAdd(e.target.value)}
-              style={{ width:'100%', padding:'9px 36px 9px 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color: selectedToAdd ? 'var(--text-1)' : 'var(--text-4)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer' }}
+              style={{ width:'100%', padding:'9px 36px 9px 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer' }}
             >
               <option value="">Selecteer een bookmaker...</option>
               {inactiveBookies.map(naam => (
@@ -498,16 +498,18 @@ export default function BookmakersPage() {
           <button
             onClick={addBookmaker}
             disabled={!selectedToAdd}
-            className={selectedToAdd ? 'btn-primary-glass' : ''}
             style={{
               padding:'9px 20px', fontSize:13.5, fontWeight:600,
-              ...(!selectedToAdd ? { background:'var(--bg-subtle)', color:'var(--text-4)', border:'1px solid var(--border)', borderRadius:7 } : {}),
+              background: selectedToAdd ? 'var(--bg-input)' : 'var(--bg-subtle)',
+              color: selectedToAdd ? 'var(--text-1)' : 'var(--text-4)',
+              border:'1px solid var(--border)', borderRadius:7,
               cursor: selectedToAdd ? 'pointer' : 'default',
               display:'flex', alignItems:'center', gap:7,
+              height:40, boxSizing:'border-box',
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Toevoegen
+            + Toevoegen
           </button>
         </div>
         {inactiveBookies.length === 0 && (
@@ -526,7 +528,7 @@ export default function BookmakersPage() {
             <select
               value={txBookie}
               onChange={e => setTxBookie(e.target.value)}
-              style={{ width:'100%', padding:'9px 30px 9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color: txBookie ? 'var(--text-1)' : 'var(--text-4)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer' }}
+              style={{ width:'100%', padding:'9px 30px 9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer' }}
             >
               <option value="">Bookmaker...</option>
               {activeBookies.map(naam => <option key={naam} value={naam}>{naam}</option>)}
@@ -544,13 +546,15 @@ export default function BookmakersPage() {
                 key={opt.val}
                 onClick={() => setTxType(opt.val)}
                 style={{
-                  padding:'9px 14px', fontSize:13, fontWeight:600, border:'none', cursor:'pointer',
+                  padding:'0 14px', fontSize:13, fontWeight:600,
+                  border: 'none', borderRight: opt.val === 'deposit' ? '1px solid var(--border)' : 'none',
+                  cursor:'pointer', height:'100%', display:'flex', alignItems:'center',
                   background: txType === opt.val
                     ? (opt.val === 'deposit' ? 'rgba(52,211,153,0.15)' : 'rgba(251,113,133,0.15)')
                     : 'var(--bg-input)',
                   color: txType === opt.val
                     ? (opt.val === 'deposit' ? 'var(--color-win)' : 'var(--color-loss)')
-                    : 'var(--text-3)',
+                    : 'var(--text-1)',
                   transition:'all 0.12s',
                 }}
               >{opt.label}</button>
@@ -571,28 +575,26 @@ export default function BookmakersPage() {
           </div>
 
           {/* Date */}
-          <input
-            type="date"
-            value={txDate}
-            onChange={e => setTxDate(e.target.value)}
-            className="bm-tx-date"
-            style={{ padding:'9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)', flex:'0 0 150px' }}
-          />
+          <div className="bm-tx-date" style={{ flex:'0 0 150px' }}>
+            <SingleDatePicker value={txDate} onChange={setTxDate} style={{ width:'100%', height:'100%', boxSizing:'border-box' }}/>
+          </div>
 
           {/* Submit */}
           <button
-            className={`bm-tx-submit${(!txBookie || !txAmount) ? '' : ' btn-primary-glass'}`}
+            className="bm-tx-submit"
             onClick={addTransaction}
             disabled={txLoading || !txBookie || !txAmount}
             style={{
               padding:'9px 18px', fontSize:13.5, fontWeight:600,
-              ...((!txBookie || !txAmount) ? { background:'var(--bg-subtle)', color:'var(--text-4)', border:'1px solid var(--border)', borderRadius:7 } : {}),
+              background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : 'var(--bg-input)',
+              color: (!txBookie || !txAmount) ? 'var(--text-4)' : 'var(--text-1)',
+              border:'1px solid var(--border)', borderRadius:7,
               cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
               display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap',
             }}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Registreren
+            + Registreren
           </button>
         </div>
 

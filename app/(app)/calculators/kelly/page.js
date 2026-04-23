@@ -39,7 +39,7 @@ export default function KellyPage() {
   }, [odds, prob, bankroll]);
 
   return (
-    <div className="app-page" style={{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+    <div className="app-page" style={{padding:'24px'}}>
       <div className="mb-7">
         <h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Kelly Calculator</h1>
         <p style={{fontSize:14,color:'var(--text-3)'}}>Bepaal de optimale inzet op basis van je geschatte winkans en de beschikbare odds.</p>
