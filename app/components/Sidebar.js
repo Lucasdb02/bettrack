@@ -32,11 +32,6 @@ const mainNav = [
     href: '/statistieken',
     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>,
   },
-  {
-    label: 'Odds',
-    href: '/odds',
-    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>,
-  },
 ];
 
 const bookmakerNav = [
@@ -44,6 +39,14 @@ const bookmakerNav = [
     label: 'Bookmakers',
     href: '/bookmakers',
     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
+  },
+];
+
+const oddsNav = [
+  {
+    label: 'Odds Vergelijker',
+    href: '/odds',
+    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>,
   },
 ];
 
@@ -121,16 +124,6 @@ function NavItem({ item, active }) {
 
 const drawerNav = [
   {
-    section: 'Analyse',
-    items: [
-      {
-        label: 'Odds Vergelijker',
-        href: '/odds',
-        icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>,
-      },
-    ],
-  },
-  {
     section: 'Acties',
     items: [
       {
@@ -142,6 +135,16 @@ const drawerNav = [
         label: 'Account',
         href: '/account',
         icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+      },
+    ],
+  },
+  {
+    section: 'Odds',
+    items: [
+      {
+        label: 'Odds Vergelijker',
+        href: '/odds',
+        icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>,
       },
     ],
   },
@@ -264,6 +267,12 @@ export default function Sidebar() {
         </div>
         <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
           {bookmakerNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
+        </ul>
+
+        {/* Odds */}
+        <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Odds</p>
+        <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
+          {oddsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} />)}
         </ul>
 
         {/* Calculators */}
@@ -523,10 +532,10 @@ export default function Sidebar() {
 
     {/* Mobile bottom navigation */}
     <nav className="mobile-bottom-nav">
-      {[...mainNav.filter(item => item.href !== '/bets/new'), ...bookmakerNav].map((item) => (
+      {[...mainNav.filter(item => item.href !== '/bets/new'), ...bookmakerNav, ...oddsNav].map((item) => (
         <Link key={item.href} href={item.href} className={`mobile-nav-item${isActive(item.href) ? ' active' : ''}`}>
           {item.icon}
-          <span>{item.label.replace('Bets Overzicht', 'Overzicht').replace('Maandoverzicht', 'Kalender')}</span>
+          <span>{item.label.replace('Bets Overzicht', 'Overzicht').replace('Maandoverzicht', 'Kalender').replace('Odds Vergelijker', 'Odds')}</span>
         </Link>
       ))}
     </nav>

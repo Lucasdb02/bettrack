@@ -1,0 +1,123 @@
+import { NextResponse } from 'next/server';
+
+const BASE = 'https://api.sportmonks.com/v3/football';
+const TOKEN = process.env.SPORTMONKS_API_TOKEN;
+
+// Only return bookmakers active in the Dutch market
+const NL_BOOKMAKER_NAMES = new Set([
+  '711 casino', 'unibet', 'bet365', 'leovegas', 'tonybet', 'toto',
+  'circus casino', '888sport', '888 sport', 'vbet', 'betmgm', 'one casino',
+  'jacks.nl', 'betnation', 'zebet', 'betcity', 'bingoal',
+  'holland casino online',
+]);
+
+const STATE_MAP = {
+  1: 'NS',
+  2: 'LIVE',
+  3: 'HT',
+  4: 'ET',
+  5: 'FT',
+  6: 'AET',
+  7: 'PEN',
+  8: 'BREAK',
+  9: 'EXTRA_TIME',
+  10: 'SUSP',
+  11: 'INT',
+  12: 'POSTP',
+  13: 'CANC',
+};
+
+function getCurrentScore(scores, participantId) {
+  const s = scores?.find(
+    (sc) => sc.participant_id === participantId && sc.description === 'CURRENT'
+  );
+  return s?.score?.goals ?? null;
+}
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
+
+  if (!TOKEN) {
+    return NextResponse.json({ error: 'API token niet geconfigureerd' }, { status: 500 });
+  }
+
+  try {
+    if (action === 'fixtures') {
+      const date = searchParams.get('date') || new Date().toISOString().slice(0, 10);
+      const url = `${BASE}/fixtures/date/${date}?api_token=${TOKEN}&include=league;participants;scores&per_page=100`;
+      const res = await fetch(url, { next: { revalidate: 60 } });
+      const raw = await res.json();
+
+      const leagueMap = {};
+      for (const f of raw.data || []) {
+        const home = f.participants?.find((p) => p.meta?.location === 'home');
+        const away = f.participants?.find((p) => p.meta?.location === 'away');
+        const status = STATE_MAP[f.state_id] || 'NS';
+
+        const fixture = {
+          id: f.id,
+          startingAt: f.starting_at,
+          status,
+          homeTeam: home?.name || '',
+          homeLogo: home?.image_path || '',
+          homeShortCode: home?.short_code || '',
+          awayTeam: away?.name || '',
+          awayLogo: away?.image_path || '',
+          awayShortCode: away?.short_code || '',
+          homeScore: getCurrentScore(f.scores, home?.id),
+          awayScore: getCurrentScore(f.scores, away?.id),
+          hasOdds: f.has_odds ?? false,
+        };
+
+        const lid = f.league?.id;
+        if (!leagueMap[lid]) {
+          leagueMap[lid] = {
+            id: lid,
+            name: f.league?.name || '',
+            logo: f.league?.image_path || '',
+            fixtures: [],
+          };
+        }
+        leagueMap[lid].fixtures.push(fixture);
+      }
+
+      return NextResponse.json(Object.values(leagueMap));
+    }
+
+    if (action === 'odds') {
+      const fixtureId = searchParams.get('fixtureId');
+      if (!fixtureId) {
+        return NextResponse.json({ error: 'fixtureId vereist' }, { status: 400 });
+      }
+      const url = `${BASE}/odds/pre-match/fixtures/${fixtureId}?api_token=${TOKEN}&include=bookmaker&filters=marketIds:1&per_page=200`;
+      const res = await fetch(url, { next: { revalidate: 30 } });
+      const raw = await res.json();
+
+      const bookieMap = {};
+      for (const o of raw.data || []) {
+        const name = o.bookmaker?.name || '';
+        if (!NL_BOOKMAKER_NAMES.has(name.toLowerCase())) continue;
+
+        const bid = o.bookmaker_id;
+        if (!bookieMap[bid]) {
+          bookieMap[bid] = { id: bid, name };
+        }
+        const label = o.label?.toLowerCase();
+        if (label === 'home' || label === '1') bookieMap[bid].home = parseFloat(o.value);
+        else if (label === 'draw' || label === 'x') bookieMap[bid].draw = parseFloat(o.value);
+        else if (label === 'away' || label === '2') bookieMap[bid].away = parseFloat(o.value);
+      }
+
+      const result = Object.values(bookieMap)
+        .filter((b) => b.home && b.draw && b.away)
+        .sort((a, b) => b.home - a.home);
+
+      return NextResponse.json(result);
+    }
+
+    return NextResponse.json({ error: 'Ongeldig action parameter' }, { status: 400 });
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}
