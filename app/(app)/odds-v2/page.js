@@ -535,7 +535,7 @@ function LeagueCard({ league, defaultOpen }) {
 
 export default function OddsV2Page() {
   const [selectedDate, setSelectedDate] = useState(todayStr);
-  const [activeFilter, setActiveFilter] = useState('Alles');
+  const [activeFilter, setActiveFilter] = useState('Aankomend');
   const [search, setSearch]             = useState('');
   const [leagues, setLeagues]           = useState([]);
   const [loading, setLoading]           = useState(true);
@@ -543,7 +543,7 @@ export default function OddsV2Page() {
 
   useEffect(() => {
     let cancelled = false;
-    setActiveFilter('Alles');
+    setActiveFilter('Aankomend');
     setSearch('');
     async function load() {
       setLoading(true);
@@ -625,8 +625,8 @@ export default function OddsV2Page() {
         {/* Live / Aankomend segmented toggle — stijl van Storting/Opname */}
         <div style={{ display: 'flex', gap: 3, padding: 3, backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border)', borderRadius: 8, flexShrink: 0, height: 36 }}>
           {[
-            { val: 'Live',      label: 'Live' },
             { val: 'Aankomend', label: 'Aankomend' },
+            { val: 'Live',      label: 'Live' },
           ].map(opt => (
             <button
               key={opt.val}
