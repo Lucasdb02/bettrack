@@ -44,18 +44,29 @@ export async function GET(request) {
 
   try {
     if (action === 'fixtures') {
-      const date = searchParams.get('date') || new Date().toISOString().slice(0, 10);
-      const url = `${BASE}/fixtures/date/${date}?api_token=${TOKEN}&include=league;participants;scores&per_page=100`;
-      const res = await fetch(url, { next: { revalidate: 60 } });
-      if (!res.ok) {
-        const text = await res.text();
-        console.error('Sportmonks fixtures error', res.status, text.slice(0, 300));
-        return NextResponse.json({ error: `Sportmonks API fout (${res.status})` }, { status: 502 });
+      const today = new Date();
+      const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const date = searchParams.get('date') || localDate;
+
+      const allFixtures = [];
+      let page = 1;
+      while (true) {
+        const url = `${BASE}/fixtures/date/${date}?api_token=${TOKEN}&include=league;participants;scores&per_page=100&page=${page}`;
+        const res = await fetch(url, { next: { revalidate: 60 } });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Sportmonks fixtures error', res.status, text.slice(0, 300));
+          return NextResponse.json({ error: `Sportmonks API fout (${res.status})` }, { status: 502 });
+        }
+        const raw = await res.json();
+        const batch = raw.data || [];
+        allFixtures.push(...batch);
+        if (batch.length < 100) break;
+        page++;
       }
-      const raw = await res.json();
 
       const leagueMap = {};
-      for (const f of raw.data || []) {
+      for (const f of allFixtures) {
         const home = f.participants?.find((p) => p.meta?.location === 'home');
         const away = f.participants?.find((p) => p.meta?.location === 'away');
         const status = STATE_MAP[f.state_id] || 'NS';

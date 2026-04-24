@@ -32,9 +32,10 @@ function buildDateTabs() {
   return [-1, 0, 1, 2].map((offset) => {
     const d = new Date(today);
     d.setDate(d.getDate() + offset);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     return {
       label: `${NL_DAYS[d.getDay()]} ${d.getDate()} ${NL_MONTHS[d.getMonth()]}`,
-      date: d.toISOString().slice(0, 10),
+      date: dateStr,
     };
   });
 }
@@ -398,6 +399,7 @@ export default function OddsPage() {
 
   useEffect(() => {
     let cancelled = false;
+    setActiveFilter('Alles');
     async function load() {
       setLoading(true);
       setError(null);
