@@ -318,7 +318,7 @@ function FixtureDetail({ fixture, data, loading }) {
   const { keys, headers } = marketConfig(activeMarket);
 
   return (
-    <div style={{ padding: '0 20px 16px' }}>
+    <div style={{ padding: '14px 20px 16px' }}>
 
       {/* Prediction */}
       {prediction && (
@@ -353,7 +353,7 @@ function FixtureDetail({ fixture, data, loading }) {
           <div style={{ display: 'flex', gap: 4, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
             {visibleMarkets.map(m => (
               <button key={m} onClick={() => setMarketTab(m)} style={{
-                padding: '5px 12px', fontSize: 11, fontWeight: 600, borderRadius: 20,
+                padding: '5px 12px', fontSize: 11, fontWeight: 600, borderRadius: 8,
                 border: `1px solid ${activeMarket === m ? 'var(--brand)' : 'var(--border)'}`,
                 background: activeMarket === m ? 'var(--bg-brand)' : 'transparent',
                 color: activeMarket === m ? 'var(--brand)' : 'var(--text-3)',
@@ -362,7 +362,7 @@ function FixtureDetail({ fixture, data, loading }) {
             ))}
             {/* Alle markten knop */}
             <button onClick={() => setShowAllMarkets(true)} style={{
-              padding: '5px 11px', fontSize: 11, fontWeight: 600, borderRadius: 20,
+              padding: '5px 11px', fontSize: 11, fontWeight: 600, borderRadius: 8,
               border: '1px solid var(--border)',
               background: !PRIORITY_MARKETS.includes(activeMarket) ? 'var(--bg-brand)' : 'transparent',
               color: !PRIORITY_MARKETS.includes(activeMarket) ? 'var(--brand)' : 'var(--text-4)',
