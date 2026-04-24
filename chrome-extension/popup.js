@@ -42,43 +42,87 @@ async function init() {
     return;
   }
 
-  // 3. Not logged in
+  // 3. Not logged in — show debug info in footer hint
+  const dbg = await storageGet('debugKeys');
+  if (dbg) $('footer-hint').textContent = 'LS keys: ' + dbg;
   showScreen('auth');
 }
 
-// Read Supabase session directly from cookies.
-// @supabase/ssr's createBrowserClient stores the session in regular (non-httpOnly)
-// cookies named sb-<ref>-auth-token (possibly chunked as .0, .1, …).
+// Try every possible way to find the Supabase session:
+// 1. chrome.cookies (works if @supabase/ssr stores in cookies)
+// 2. executeScript → localStorage (works if stored there)
+// 3. executeScript → document.cookie (fallback)
 async function readSessionFromTab() {
-  return new Promise(resolve => {
-    const prefix = 'sb-ldyistwkhplfrtbnagxd-auth-token';
+  const prefix = 'sb-ldyistwkhplfrtbnagxd-auth-token';
 
-    // Try production domain first, then localhost
-    chrome.cookies.getAll({ domain: 'trackmijnbets.nl' }, prodCookies => {
-      chrome.cookies.getAll({ domain: 'localhost' }, devCookies => {
-        const all = [...prodCookies, ...devCookies];
+  // ── 1. chrome.cookies ────────────────────────────────────────────────────
+  const cookieSession = await new Promise(resolve => {
+    chrome.cookies.getAll({ domain: 'trackmijnbets.nl' }, prodC => {
+      chrome.cookies.getAll({ domain: 'localhost' }, devC => {
+        const all = [...(prodC || []), ...(devC || [])];
         const chunks = all
           .filter(c => c.name === prefix || c.name.startsWith(prefix + '.'))
           .sort((a, b) => {
-            const n = name => parseInt(name.replace(prefix, '').replace('.', '') || '0');
+            const n = s => parseInt(s.replace(prefix, '').replace('.', '') || '0');
             return n(a.name) - n(b.name);
           });
-
         if (!chunks.length) { resolve(null); return; }
-
-        const raw = chunks.map(c => c.value).join('');
         try {
-          const parsed = JSON.parse(raw);
-          resolve({
-            access_token:  parsed.access_token,
-            refresh_token: parsed.refresh_token,
-            expires_at:    parsed.expires_at,
-            email:         parsed.user?.email || '',
-          });
+          const parsed = JSON.parse(chunks.map(c => c.value).join(''));
+          resolve({ access_token: parsed.access_token, refresh_token: parsed.refresh_token, expires_at: parsed.expires_at, email: parsed.user?.email || '' });
         } catch { resolve(null); }
       });
     });
   });
+  if (cookieSession?.access_token) return cookieSession;
+
+  // ── 2. executeScript → localStorage + document.cookie ───────────────────
+  const tabs = await new Promise(r => chrome.tabs.query({ url: ['*://trackmijnbets.nl/*', '*://localhost:3000/*'] }, r));
+  if (!tabs.length) return null;
+
+  try {
+    const results = await chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      func: (key) => {
+        // Try localStorage (synchronous)
+        try {
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const p = JSON.parse(raw);
+            if (p?.access_token) return { src: 'ls', access_token: p.access_token, refresh_token: p.refresh_token, expires_at: p.expires_at, email: p.user?.email || '' };
+            // supabase v2 nests under .session
+            if (p?.session?.access_token) return { src: 'ls.session', access_token: p.session.access_token, refresh_token: p.session.refresh_token, expires_at: p.session.expires_at, email: p.session.user?.email || '' };
+          }
+        } catch {}
+
+        // Try document.cookie (synchronous)
+        try {
+          const parts = document.cookie.split('; ').filter(c => c.startsWith(key));
+          if (parts.length) {
+            const val = decodeURIComponent(parts.sort().map(c => c.slice(c.indexOf('=') + 1)).join(''));
+            const p = JSON.parse(val);
+            if (p?.access_token) return { src: 'cookie', access_token: p.access_token, refresh_token: p.refresh_token, expires_at: p.expires_at, email: p.user?.email || '' };
+          }
+        } catch {}
+
+        // Return all localStorage keys for debugging
+        return { src: 'none', keys: Object.keys(localStorage).join(',') };
+      },
+      args: [prefix],
+    });
+
+    const r = results?.[0]?.result;
+    if (r?.access_token) return r;
+
+    // Debug: show what keys were found
+    if (r?.keys !== undefined) {
+      await storageSet('debugKeys', r.keys || '(empty)');
+    }
+  } catch (e) {
+    await storageSet('debugKeys', 'executeScript error: ' + e.message);
+  }
+
+  return null;
 }
 
 function isExpired(s) {
