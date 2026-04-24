@@ -43,7 +43,9 @@ async function init() {
   showScreen('auth');
 }
 
-// Reads the Supabase session from any open trackmijnbets.nl (or localhost) tab
+// Injects a same-origin fetch into an open trackmijnbets.nl tab.
+// Because it runs inside the site's context, cookies are sent automatically
+// and /api/extension/session can read the server-side Supabase session.
 async function readSessionFromTab() {
   return new Promise(resolve => {
     chrome.tabs.query(
@@ -53,12 +55,13 @@ async function readSessionFromTab() {
         try {
           const results = await chrome.scripting.executeScript({
             target: { tabId: tabs[0].id },
-            func: key => {
-              const raw = localStorage.getItem(key);
-              if (!raw) return null;
-              try { return JSON.parse(raw); } catch { return null; }
+            func: async () => {
+              try {
+                const res = await fetch('/api/extension/session');
+                if (!res.ok) return null;
+                return await res.json();
+              } catch { return null; }
             },
-            args: ['sb-ldyistwkhplfrtbnagxd-auth-token'],
           });
           resolve(results?.[0]?.result || null);
         } catch { resolve(null); }
