@@ -612,24 +612,53 @@ export default function OddsV2Page() {
         </div>
       )}
 
-      {/* Filter bar: datum + live switch + zoek */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* Filter bar: datum + segmented toggle + zoek */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20, alignItems: 'center', flexWrap: 'nowrap', minWidth: 0 }}>
         {/* Datum navigator */}
-        <DayNavPicker date={selectedDate} onChange={setSelectedDate} />
+        <div style={{ flexShrink: 0 }}>
+          <DayNavPicker date={selectedDate} onChange={setSelectedDate} />
+        </div>
 
         {/* Scheidslijn */}
-        <div style={{ width: 1, height: 28, background: 'var(--border)', margin: '0 2px' }} />
+        <div style={{ width: 1, height: 28, background: 'var(--border)', flexShrink: 0 }} />
 
-        {/* Live toggle */}
-        <FilterBtn label="Live" active={activeFilter === 'Live'} onClick={() => setActiveFilter(f => f === 'Live' ? 'Alles' : 'Live')} />
+        {/* Live / Aankomend segmented toggle — stijl van Storting/Opname */}
+        <div style={{ display: 'flex', gap: 3, padding: 3, backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border)', borderRadius: 8, flexShrink: 0, height: 36 }}>
+          {[
+            { val: 'Live',      label: 'Live' },
+            { val: 'Aankomend', label: 'Aankomend' },
+          ].map(opt => (
+            <button
+              key={opt.val}
+              onClick={() => setActiveFilter(f => f === opt.val ? 'Alles' : opt.val)}
+              style={{
+                padding: '0 11px', fontSize: 13, fontWeight: 600,
+                border: 'none', borderRadius: 6, cursor: 'pointer',
+                height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                backgroundColor: activeFilter === opt.val ? 'var(--bg-card)' : 'transparent',
+                color: activeFilter === opt.val
+                  ? (opt.val === 'Live' ? '#11b981' : 'var(--brand)')
+                  : 'var(--text-3)',
+                boxShadow: activeFilter === opt.val ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
+                transition: 'all 0.12s',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {opt.val === 'Live' && activeFilter === 'Live' && (
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#11b981', marginRight: 5, animation: 'pulse 1.5s infinite', flexShrink: 0 }} />
+              )}
+              {opt.label}
+            </button>
+          ))}
+        </div>
 
-        {/* Zoek */}
-        <div style={{ position: 'relative' }}>
+        {/* Zoek — krimpt op kleine schermen */}
+        <div style={{ position: 'relative', flex: '1 1 120px', minWidth: 80, maxWidth: 200 }}>
           <svg style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-4)' }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Zoek team..."
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px 7px 30px', fontSize: 13, color: 'var(--text-1)', outline: 'none', width: 180, fontFamily: 'inherit' }}
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 10px 7px 30px', fontSize: 13, color: 'var(--text-1)', outline: 'none', width: '100%', fontFamily: 'inherit', boxSizing: 'border-box' }}
           />
         </div>
       </div>
