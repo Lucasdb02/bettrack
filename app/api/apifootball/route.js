@@ -2,6 +2,32 @@ import { NextResponse } from 'next/server';
 
 const BASE = 'https://v3.football.api-sports.io';
 
+// Alleen bookmakers actief in de Nederlandse markt (API-Football IDs)
+const NL_BOOKMAKER_IDS = new Set([8, 16, 21, 28]); // Bet365, Unibet, 888Sport, ComeOn
+
+// Landen met relevante voetbalcompetities
+const ALLOWED_COUNTRIES = new Set([
+  'England','Spain','Germany','France','Italy','Netherlands','Portugal','Belgium',
+  'Turkey','Russia','Scotland','Greece','Switzerland','Austria','Poland',
+  'Czech-Republic','Croatia','Serbia','Romania','Ukraine','Denmark','Sweden',
+  'Norway','Finland','Hungary','Slovakia','Slovenia','Bosnia','Bulgaria',
+  'Ireland','Northern-Ireland','Wales','Iceland',
+  'Brazil','Argentina','Mexico','USA','Colombia','Chile','Peru','Ecuador',
+  'Uruguay','Paraguay','Bolivia','Venezuela','Costa-Rica','Jamaica','Canada',
+  'Japan','South-Korea','China','Saudi-Arabia','UAE','Qatar','Iran','Israel',
+  'Morocco','Egypt','Nigeria','Algeria','Tunisia','Senegal','South-Africa',
+  'Australia','World',
+]);
+
+// Patroon-filter: sluit jeugd, vrouwen, reserve en lagere klassen uit
+function isLeagueAllowed(name) {
+  const n = name.toLowerCase();
+  if (/\bu\d{2}\b/.test(n)) return false;           // U17, U18, U19, U20, U21, U22, U23
+  if (/women|femenin|frauen|dames|feminino|feminin/.test(n)) return false;
+  if (/reserve|amateur|youth|junioren/.test(n)) return false;
+  return true;
+}
+
 function apiFetch(path, key) {
   return fetch(`${BASE}${path}`, {
     headers: { 'x-apisports-key': key },
@@ -43,6 +69,10 @@ export async function GET(request) {
         const goals = f.goals;
         const status = fix.status?.short || 'NS';
         const elapsed = fix.status?.elapsed;
+
+        // Filteren: sla jeugd, vrouwen, reserve en obscure landen over
+        if (!isLeagueAllowed(league.name)) continue;
+        if (!ALLOWED_COUNTRIES.has(league.country)) continue;
 
         const fixture = {
           id: fix.id,
@@ -111,12 +141,13 @@ export async function GET(request) {
         apiFetch(`/predictions?fixture=${fixtureId}`, KEY),
       ]);
 
-      // Odds verwerken
+      // Odds verwerken — alleen Nederlandse bookmakers
       let markets = {};
       if (oddsRes.ok) {
         const oddsRaw = await oddsRes.json();
         for (const entry of oddsRaw.response || []) {
           for (const bookie of entry.bookmakers || []) {
+            if (!NL_BOOKMAKER_IDS.has(bookie.id)) continue;
             for (const bet of bookie.bets || []) {
               const marketName = bet.name;
               if (!markets[marketName]) markets[marketName] = [];
