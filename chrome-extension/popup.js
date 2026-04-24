@@ -19,14 +19,52 @@ let userEmail      = '';
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
+  // 1. Stored session still valid → go straight to idle
   const stored = await storageGet('session');
   if (stored && !isExpired(stored)) {
-    session = stored;
+    session   = stored;
     userEmail = (await storageGet('userEmail')) || '';
     await showIdle();
-  } else {
-    showScreen('auth');
+    return;
   }
+
+  // 2. No stored session — check if user is already logged in on an open tab
+  const tabSession = await readSessionFromTab();
+  if (tabSession?.access_token) {
+    session   = { access_token: tabSession.access_token, refresh_token: tabSession.refresh_token, expires_at: tabSession.expires_at };
+    userEmail = tabSession.user?.email || '';
+    await storageSet('session', session);
+    await storageSet('userEmail', userEmail);
+    await showIdle();
+    return;
+  }
+
+  // 3. Not logged in anywhere → show auth screen
+  showScreen('auth');
+}
+
+// Reads the Supabase session from any open trackmijnbets.nl (or localhost) tab
+async function readSessionFromTab() {
+  return new Promise(resolve => {
+    chrome.tabs.query(
+      { url: ['*://trackmijnbets.nl/*', '*://localhost:3000/*'] },
+      async tabs => {
+        if (!tabs.length) { resolve(null); return; }
+        try {
+          const results = await chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            func: key => {
+              const raw = localStorage.getItem(key);
+              if (!raw) return null;
+              try { return JSON.parse(raw); } catch { return null; }
+            },
+            args: ['sb-ldyistwkhplfrtbnagxd-auth-token'],
+          });
+          resolve(results?.[0]?.result || null);
+        } catch { resolve(null); }
+      }
+    );
+  });
 }
 
 function isExpired(s) {
@@ -76,46 +114,9 @@ async function loadStats() {
 
 // ── Google OAuth ──────────────────────────────────────────────────────────────
 $('btn-google').addEventListener('click', async () => {
-  const btn   = $('btn-google');
-  const errEl = $('auth-error');
-  errEl.style.display = 'none';
-
-  // Open the real TrackMijnBets login page in a new tab — Google OAuth
-  // works correctly there. background.js captures the session after login.
-  btn.disabled = true;
-  $('google-text').style.display   = 'none';
-  $('google-spinner').style.display = '';
-  $('google-spinner').className = 'spinner spinner-dark';
-
-  try {
-    await new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'OPEN_LOGIN_TAB', base: BASE_URL }, (resp) => {
-        if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
-        else resolve(resp);
-      });
-    });
-
-    // Show waiting state — background.js will send SESSION_READY when done
-    $('google-text').style.display   = '';
-    $('google-spinner').style.display = 'none';
-    $('google-text').textContent = 'Log in op het geopende tabblad…';
-    btn.disabled = false;
-
-    // Listen for session from background
-    chrome.runtime.onMessage.addListener(function handler(msg) {
-      if (msg.type !== 'SESSION_READY') return;
-      chrome.runtime.onMessage.removeListener(handler);
-      session   = msg.session;
-      userEmail = msg.email || '';
-      storageSet('userEmail', userEmail).then(() => showIdle());
-    });
-  } catch (e) {
-    showError(errEl, e.message || 'Kon login tabblad niet openen.');
-    btn.disabled = false;
-    $('google-text').style.display   = '';
-    $('google-spinner').style.display = 'none';
-    $('google-text').textContent = 'Doorgaan met Google';
-  }
+  // Open the site — user logs in normally, then clicks the extension again
+  chrome.tabs.create({ url: BASE_URL + '/login' });
+  window.close();
 });
 
 // ── Email login ───────────────────────────────────────────────────────────────
