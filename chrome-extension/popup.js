@@ -76,60 +76,45 @@ async function loadStats() {
 
 // ── Google OAuth ──────────────────────────────────────────────────────────────
 $('btn-google').addEventListener('click', async () => {
-  const btn     = $('btn-google');
-  const errEl   = $('auth-error');
+  const btn   = $('btn-google');
+  const errEl = $('auth-error');
   errEl.style.display = 'none';
-  btn.disabled  = true;
-  $('google-text').style.display  = 'none';
+
+  // Open the real TrackMijnBets login page in a new tab — Google OAuth
+  // works correctly there. background.js captures the session after login.
+  btn.disabled = true;
+  $('google-text').style.display   = 'none';
   $('google-spinner').style.display = '';
   $('google-spinner').className = 'spinner spinner-dark';
 
   try {
-    if (!chrome.identity?.getRedirectURL) {
-      throw new Error('Herlaad de extensie via chrome://extensions (schuifje → opnieuw laden) en probeer opnieuw.');
-    }
-
-    const redirectUrl = chrome.identity.getRedirectURL();
-
-    // Build Supabase Google OAuth URL
-    const authUrl = `${SB_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}&response_type=token`;
-
-    const responseUrl = await new Promise((resolve, reject) => {
-      chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, url => {
+    await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: 'OPEN_LOGIN_TAB', base: BASE_URL }, (resp) => {
         if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
-        else resolve(url);
+        else resolve(resp);
       });
     });
 
-    // Parse tokens from the redirect URL hash/query
-    const parsed = new URL(responseUrl);
-    const params = new URLSearchParams(parsed.hash.slice(1) || parsed.search.slice(1));
-    const access_token  = params.get('access_token');
-    const refresh_token = params.get('refresh_token');
-    const expires_in    = parseInt(params.get('expires_in') || '3600');
-
-    if (!access_token) throw new Error('Geen token ontvangen van Google. Probeer opnieuw.');
-
-    session = { access_token, refresh_token, expires_at: Math.floor(Date.now() / 1000) + expires_in };
-
-    // Fetch user info
-    const userRes = await fetch(`${SB_URL}/auth/v1/user`, {
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${access_token}` },
-    });
-    if (userRes.ok) {
-      const u = await userRes.json();
-      userEmail = u.email || '';
-      await storageSet('userEmail', userEmail);
-    }
-
-    await storageSet('session', session);
-    await showIdle();
-  } catch (e) {
-    showError(errEl, e.message || 'Google inloggen mislukt. Probeer opnieuw.');
-  } finally {
-    btn.disabled = false;
-    $('google-text').style.display  = '';
+    // Show waiting state — background.js will send SESSION_READY when done
+    $('google-text').style.display   = '';
     $('google-spinner').style.display = 'none';
+    $('google-text').textContent = 'Log in op het geopende tabblad…';
+    btn.disabled = false;
+
+    // Listen for session from background
+    chrome.runtime.onMessage.addListener(function handler(msg) {
+      if (msg.type !== 'SESSION_READY') return;
+      chrome.runtime.onMessage.removeListener(handler);
+      session   = msg.session;
+      userEmail = msg.email || '';
+      storageSet('userEmail', userEmail).then(() => showIdle());
+    });
+  } catch (e) {
+    showError(errEl, e.message || 'Kon login tabblad niet openen.');
+    btn.disabled = false;
+    $('google-text').style.display   = '';
+    $('google-spinner').style.display = 'none';
+    $('google-text').textContent = 'Doorgaan met Google';
   }
 });
 
@@ -176,6 +161,7 @@ $('btn-logout').addEventListener('click', async () => {
   await storageRemove('userEmail');
   session   = null;
   userEmail = '';
+  $('google-text').textContent = 'Doorgaan met Google';
   showScreen('auth');
 });
 

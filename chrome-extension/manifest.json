@@ -25,7 +25,7 @@
     "activeTab",
     "storage",
     "tabs",
-    "identity"
+    "scripting"
   ],
   "host_permissions": [
     "https://trackmijnbets.nl/*",
