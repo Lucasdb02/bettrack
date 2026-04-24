@@ -7,60 +7,38 @@
 </head>
 <body>
 
-  <!-- ── Login screen ── -->
+  <!-- ── Not logged in ── -->
   <div id="screen-auth" class="screen">
-    <div class="auth-wrap">
-      <div class="auth-logo-row">
-        <img src="icons/icon.svg" width="36" height="36" alt="logo" class="auth-logo-img">
-        <div>
-          <div class="auth-title">TrackMijnBets</div>
-          <div class="auth-sub">Betslip Scanner</div>
-        </div>
+    <div class="header">
+      <div class="logo-row">
+        <img src="icons/icon.svg" width="38" height="38" alt="" class="logo-img">
+        <span class="app-name">TrackMijnBets</span>
       </div>
-      <p class="auth-desc">Al ingelogd op trackmijnbets.nl? Klik het extensie-icoon opnieuw — je wordt automatisch herkend.</p>
+    </div>
 
-      <!-- Open site button -->
-      <button id="btn-google" class="btn-google">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-        <span id="google-text">Open TrackMijnBets</span>
-        <span id="google-spinner" class="spinner spinner-dark" style="display:none"></span>
-      </button>
-
-      <div class="divider"><span>of log in met e-mail</span></div>
-
-      <!-- Email login -->
-      <div class="form-group">
-        <label class="form-label">E-mailadres</label>
-        <input id="input-email" type="email" class="form-input" placeholder="jij@example.com" autocomplete="email">
+    <div class="auth-body">
+      <p class="tagline">Sla je betslip op in één klik.</p>
+      <div class="status-row">
+        <span class="dot dot-red"></span>
+        <span class="status-label">Niet ingelogd</span>
       </div>
-      <div class="form-group">
-        <label class="form-label">Wachtwoord</label>
-        <input id="input-password" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <div id="auth-error" class="error-msg" style="display:none"></div>
-      <button id="btn-login" class="btn-primary">
-        <span id="login-text">Inloggen</span>
-        <span id="login-spinner" class="spinner" style="display:none"></span>
-      </button>
+      <button id="btn-open-login" class="btn-login">Inloggen bij TrackMijnBets</button>
+    </div>
+
+    <div class="footer">
+      <span class="footer-hint">Ingelogd op de site? Klik opnieuw op het icoon.</span>
     </div>
   </div>
 
-  <!-- ── Idle screen ── -->
+  <!-- ── Logged in / capture ── -->
   <div id="screen-idle" class="screen" style="display:none">
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <img src="icons/icon.svg" width="26" height="26" alt="logo" style="border-radius:7px">
-        <div>
-          <div class="top-bar-name">TrackMijnBets</div>
-          <div class="top-bar-sub" id="user-email-label"></div>
-        </div>
+    <div class="header">
+      <div class="logo-row">
+        <img src="icons/icon.svg" width="38" height="38" alt="" class="logo-img">
+        <span class="app-name">TrackMijnBets</span>
       </div>
       <button id="btn-logout" class="icon-btn" title="Uitloggen">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
           <polyline points="16 17 21 12 16 7"/>
           <line x1="21" y1="12" x2="9" y2="12"/>
@@ -68,96 +46,76 @@
       </button>
     </div>
 
-    <div class="capture-zone">
-      <div class="capture-icon-wrap">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <div class="idle-body">
+      <p class="tagline">Sla je betslip op in één klik.</p>
+      <div class="status-row">
+        <span class="dot dot-green"></span>
+        <span class="status-label" id="user-email-label">Ingelogd</span>
+      </div>
+      <button id="btn-capture" class="btn-capture">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
-      </div>
-      <div class="capture-text-wrap">
-        <div class="capture-title">Screenshot maken</div>
-        <div class="capture-desc">Navigeer naar je betslip en klik op de knop hieronder</div>
-      </div>
-      <button id="btn-capture" class="btn-primary" style="width:100%">
-        <svg id="capture-cam-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-          <circle cx="12" cy="13" r="4"/>
-        </svg>
-        <span id="capture-text">Maak Screenshot</span>
+        <span id="capture-text">Screenshot maken</span>
         <span id="capture-spinner" class="spinner" style="display:none"></span>
       </button>
     </div>
 
-    <div class="idle-stats-row">
-      <div class="idle-stat">
-        <div class="idle-stat-val" id="stat-total">—</div>
-        <div class="idle-stat-label">Bets opgeslagen</div>
-      </div>
-      <div class="idle-stat-divider"></div>
-      <div class="idle-stat">
-        <div class="idle-stat-val" id="stat-today">—</div>
-        <div class="idle-stat-label">Vandaag toegevoegd</div>
-      </div>
-      <div class="idle-stat-divider"></div>
-      <div class="idle-stat">
-        <div class="idle-stat-val" style="color:var(--brand)">AI</div>
-        <div class="idle-stat-label">Powered by Claude</div>
-      </div>
-    </div>
+    <div id="capture-status" class="status-msg" style="display:none"></div>
 
-    <div id="capture-status" class="status-msg" style="display:none;margin:0 16px 12px"></div>
+    <div class="footer">
+      <span class="footer-hint" id="stat-label">Klaar om een betslip te scannen</span>
+    </div>
   </div>
 
-  <!-- ── Review screen ── -->
+  <!-- ── Review ── -->
   <div id="screen-review" class="screen" style="display:none">
-    <div class="top-bar">
+    <div class="header">
       <button id="btn-back" class="icon-btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <div>
-        <div class="top-bar-name" id="review-title">Bets controleren</div>
-        <div class="top-bar-sub" id="review-sub">Controleer voor het opslaan</div>
-      </div>
+      <span class="app-name" id="review-title">Bets controleren</span>
       <div style="width:28px"></div>
     </div>
 
-    <div class="screenshot-preview-wrap">
-      <img id="screenshot-thumb" class="screenshot-thumb" alt="Screenshot">
-      <div class="screenshot-badge">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        AI Herkend
-      </div>
+    <div class="screenshot-wrap">
+      <img id="screenshot-thumb" class="screenshot-thumb" alt="">
+      <span class="ai-badge">✦ AI herkend</span>
     </div>
 
     <div id="bets-list" class="bets-list"></div>
 
     <div class="review-footer">
-      <button id="btn-save" class="btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="save-icon"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13"/><polyline points="7 3 7 8 15 8"/></svg>
+      <button id="btn-save" class="btn-capture">
+        <svg id="save-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13"/><polyline points="7 3 7 8 15 8"/></svg>
         <span id="save-text">Opslaan</span>
         <span id="save-spinner" class="spinner" style="display:none"></span>
       </button>
-      <div id="save-error" class="error-msg" style="display:none;margin-top:8px"></div>
+      <div id="save-error" class="error-msg" style="display:none"></div>
     </div>
   </div>
 
-  <!-- ── Success screen ── -->
+  <!-- ── Success ── -->
   <div id="screen-success" class="screen" style="display:none">
-    <div class="success-wrap">
+    <div class="header">
+      <div class="logo-row">
+        <img src="icons/icon.svg" width="38" height="38" alt="" class="logo-img">
+        <span class="app-name">TrackMijnBets</span>
+      </div>
+    </div>
+    <div class="success-body">
       <div class="success-check">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00c951" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00c951" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div id="success-title" class="success-title">Bets opgeslagen!</div>
-      <div id="success-sub" class="success-sub">Je bets zijn toegevoegd aan je account.</div>
-      <a id="link-open-app" href="https://trackmijnbets.nl/bets" target="_blank" class="btn-primary" style="text-decoration:none;margin-top:6px">
+      <div class="success-sub">Je bets staan nu in je account.</div>
+      <a id="link-open-app" href="https://trackmijnbets.nl/bets" target="_blank" class="btn-capture" style="text-decoration:none;margin-top:4px">
         Bekijk in TrackMijnBets
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>
-      <button id="btn-new-screenshot" class="btn-ghost" style="margin-top:8px">Nieuwe screenshot</button>
+      <button id="btn-new-screenshot" class="btn-secondary">Nieuwe screenshot</button>
     </div>
+    <div class="footer"></div>
   </div>
 
   <script src="popup.js"></script>
