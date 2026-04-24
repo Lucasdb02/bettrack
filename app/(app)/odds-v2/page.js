@@ -457,7 +457,7 @@ function FixtureRow({ fixture }) {
           <span style={{ fontSize: 10, color: 'var(--text-4)', fontFamily: 'ui-monospace,"SF Mono",monospace' }}>#{fixture.id}</span>
         </td>
         <td style={{ padding: '10px 16px 10px 4px', width: 24 }}>
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-4)', fontSize: 10, transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▼</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: expanded ? 'rotate(180deg)' : 'none' }}><polyline points="6 9 12 15 18 9"/></svg>
         </td>
       </tr>
       {expanded && (
@@ -509,7 +509,7 @@ function LeagueCard({ league, defaultOpen }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           {liveCount > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: '#11b981', background: 'rgba(17,185,129,0.1)', border: '1px solid rgba(17,185,129,0.25)', borderRadius: 4, padding: '2px 8px' }}>{liveCount} LIVE</span>}
           <span style={{ fontSize: 12, color: 'var(--text-4)' }}>{league.fixtures.length} wedstrijden</span>
-          <span style={{ color: 'var(--text-4)', fontSize: 10, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-block' }}>▼</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'none' }}><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </button>
       {open && (
