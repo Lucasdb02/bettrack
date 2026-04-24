@@ -27,7 +27,7 @@ async function init() {
   if (stored && !isExpired(stored)) {
     session   = stored;
     userEmail = (await storageGet('userEmail')) || '';
-    showIdle();
+    await checkPendingCapture();
     return;
   }
 
@@ -38,12 +38,44 @@ async function init() {
     userEmail = tabSession.email || '';
     await storageSet('session', session);
     await storageSet('userEmail', userEmail);
-    showIdle();
+    await checkPendingCapture();
     return;
   }
 
   // 3. Not logged in
   showScreen('auth');
+}
+
+async function checkPendingCapture() {
+  const pending = await storageGet('pendingCapture');
+  if (pending) {
+    await storageRemove('pendingCapture');
+    chrome.action.setBadgeText({ text: '' });
+    capturedDataUrl = pending;
+    showIdle();
+    const statusEl = $('capture-status');
+    $('btn-capture').disabled = true;
+    $('capture-text').style.display   = 'none';
+    $('capture-spinner').style.display = '';
+    showStatus(statusEl, 'info', 'AI analyseert je betslip…');
+    try {
+      const bets = await parseScreenshot(capturedDataUrl);
+      if (!bets?.length) {
+        showStatus(statusEl, 'error', 'Geen bets gevonden. Probeer een duidelijkere selectie.');
+      } else {
+        parsedBets = bets;
+        showReviewScreen();
+      }
+    } catch (e) {
+      showStatus(statusEl, 'error', e.message || 'Fout bij verwerking.');
+    } finally {
+      $('btn-capture').disabled = false;
+      $('capture-text').style.display   = '';
+      $('capture-spinner').style.display = 'none';
+    }
+    return;
+  }
+  showIdle();
 }
 
 async function readSessionFromTab() {
@@ -94,27 +126,19 @@ $('btn-capture').addEventListener('click', async () => {
   const statusEl = $('capture-status');
   statusEl.style.display = 'none';
   $('btn-capture').disabled = true;
-  $('capture-text').style.display  = 'none';
+  $('capture-text').style.display   = 'none';
   $('capture-spinner').style.display = '';
 
   try {
-    const resp = await new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'CAPTURE_TAB' }, r => {
+    await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: 'START_SELECTION' }, r => {
         if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
         else resolve(r);
       });
     });
-    if (resp.error) throw new Error(resp.error);
-    capturedDataUrl = resp.dataUrl;
-
-    showStatus(statusEl, 'info', 'AI analyseert je betslip…');
-    const bets = await parseScreenshot(capturedDataUrl);
-    if (!bets?.length) { showStatus(statusEl, 'error', 'Geen bets gevonden. Probeer een duidelijkere screenshot.'); return; }
-    parsedBets = bets;
-    showReviewScreen();
+    window.close(); // Let user draw selection on the page
   } catch (e) {
-    showStatus(statusEl, 'error', e.message || 'Fout bij screenshot.');
-  } finally {
+    showStatus(statusEl, 'error', e.message || 'Kan selectie niet starten.');
     $('btn-capture').disabled = false;
     $('capture-text').style.display   = '';
     $('capture-spinner').style.display = 'none';
