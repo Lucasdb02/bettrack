@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>TrackMijnBets</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- ── Login screen ── -->
+  <div id="screen-auth" class="screen">
+    <div class="auth-wrap">
+      <div class="auth-logo-row">
+        <img src="icons/icon.svg" width="36" height="36" alt="logo" class="auth-logo-img">
+        <div>
+          <div class="auth-title">TrackMijnBets</div>
+          <div class="auth-sub">Betslip Scanner</div>
+        </div>
+      </div>
+      <p class="auth-desc">Log in om betslips automatisch op te slaan vanuit elke bookmaker.</p>
+
+      <!-- Google login -->
+      <button id="btn-google" class="btn-google">
+        <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
+          <path d="M17.64 9.2C17.64 8.57 17.58 7.95 17.48 7.36H9v3.48h4.84c-.21 1.13-.85 2.08-1.8 2.72v2.26h2.91C16.66 14.25 17.64 11.95 17.64 9.2z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" fill="#34A853"/>
+          <path d="M3.96 10.71C3.78 10.17 3.68 9.59 3.68 9s.1-1.17.28-1.71V4.96H.96C.35 6.17 0 7.55 0 9s.35 2.83.96 4.04l3-2.33z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.32 0 2.51.45 3.44 1.34l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33C4.67 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        <span id="google-text">Doorgaan met Google</span>
+        <span id="google-spinner" class="spinner" style="display:none"></span>
+      </button>
+
+      <div class="divider"><span>of</span></div>
+
+      <!-- Email login -->
+      <div class="form-group">
+        <label class="form-label">E-mailadres</label>
+        <input id="input-email" type="email" class="form-input" placeholder="jij@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Wachtwoord</label>
+        <input id="input-password" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div id="auth-error" class="error-msg" style="display:none"></div>
+      <button id="btn-login" class="btn-primary">
+        <span id="login-text">Inloggen</span>
+        <span id="login-spinner" class="spinner" style="display:none"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Idle screen ── -->
+  <div id="screen-idle" class="screen" style="display:none">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <img src="icons/icon.svg" width="26" height="26" alt="logo" style="border-radius:7px">
+        <div>
+          <div class="top-bar-name">TrackMijnBets</div>
+          <div class="top-bar-sub" id="user-email-label"></div>
+        </div>
+      </div>
+      <button id="btn-logout" class="icon-btn" title="Uitloggen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="capture-zone">
+      <div class="capture-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+      <div class="capture-text-wrap">
+        <div class="capture-title">Screenshot maken</div>
+        <div class="capture-desc">Navigeer naar je betslip en klik op de knop hieronder</div>
+      </div>
+      <button id="btn-capture" class="btn-primary" style="width:100%">
+        <svg id="capture-cam-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span id="capture-text">Maak Screenshot</span>
+        <span id="capture-spinner" class="spinner" style="display:none"></span>
+      </button>
+    </div>
+
+    <div class="idle-stats-row">
+      <div class="idle-stat">
+        <div class="idle-stat-val" id="stat-total">—</div>
+        <div class="idle-stat-label">Bets opgeslagen</div>
+      </div>
+      <div class="idle-stat-divider"></div>
+      <div class="idle-stat">
+        <div class="idle-stat-val" id="stat-today">—</div>
+        <div class="idle-stat-label">Vandaag toegevoegd</div>
+      </div>
+      <div class="idle-stat-divider"></div>
+      <div class="idle-stat">
+        <div class="idle-stat-val" style="color:var(--brand)">AI</div>
+        <div class="idle-stat-label">Powered by Claude</div>
+      </div>
+    </div>
+
+    <div id="capture-status" class="status-msg" style="display:none;margin:0 16px 12px"></div>
+  </div>
+
+  <!-- ── Review screen ── -->
+  <div id="screen-review" class="screen" style="display:none">
+    <div class="top-bar">
+      <button id="btn-back" class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div>
+        <div class="top-bar-name" id="review-title">Bets controleren</div>
+        <div class="top-bar-sub" id="review-sub">Controleer voor het opslaan</div>
+      </div>
+      <div style="width:28px"></div>
+    </div>
+
+    <div class="screenshot-preview-wrap">
+      <img id="screenshot-thumb" class="screenshot-thumb" alt="Screenshot">
+      <div class="screenshot-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        AI Herkend
+      </div>
+    </div>
+
+    <div id="bets-list" class="bets-list"></div>
+
+    <div class="review-footer">
+      <button id="btn-save" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="save-icon"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span id="save-text">Opslaan</span>
+        <span id="save-spinner" class="spinner" style="display:none"></span>
+      </button>
+      <div id="save-error" class="error-msg" style="display:none;margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- ── Success screen ── -->
+  <div id="screen-success" class="screen" style="display:none">
+    <div class="success-wrap">
+      <div class="success-check">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00c951" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div id="success-title" class="success-title">Bets opgeslagen!</div>
+      <div id="success-sub" class="success-sub">Je bets zijn toegevoegd aan je account.</div>
+      <a id="link-open-app" href="https://trackmijnbets.nl/bets" target="_blank" class="btn-primary" style="text-decoration:none;margin-top:6px">
+        Bekijk in TrackMijnBets
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+      <button id="btn-new-screenshot" class="btn-ghost" style="margin-top:8px">Nieuwe screenshot</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -2,13 +2,23 @@ import Anthropic from '@anthropic-ai/sdk';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS });
+}
+
 export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get('image');
 
     if (!file) {
-      return Response.json({ error: 'Geen afbeelding ontvangen' }, { status: 400 });
+      return Response.json({ error: 'Geen afbeelding ontvangen' }, { status: 400, headers: CORS });
     }
 
     const bytes = await file.arrayBuffer();
@@ -69,11 +79,11 @@ Als er geen bets zichtbaar zijn, geef een lege array terug: []`,
     try {
       bets = JSON.parse(jsonText);
     } catch {
-      return Response.json({ error: 'AI kon de bets niet correct verwerken. Probeer een duidelijkere screenshot.' }, { status: 422 });
+      return Response.json({ error: 'AI kon de bets niet correct verwerken. Probeer een duidelijkere screenshot.' }, { status: 422, headers: CORS });
     }
 
     if (!Array.isArray(bets)) {
-      return Response.json({ error: 'Onverwacht formaat ontvangen van AI.' }, { status: 422 });
+      return Response.json({ error: 'Onverwacht formaat ontvangen van AI.' }, { status: 422, headers: CORS });
     }
 
     // Sanitise each bet
@@ -96,12 +106,12 @@ Als er geen bets zichtbaar zijn, geef een lege array terug: []`,
       _source:   'screenshot-import',
     }));
 
-    return Response.json({ bets: sanitised });
+    return Response.json({ bets: sanitised }, { headers: CORS });
   } catch (err) {
     console.error('parse-screenshot error:', err);
     return Response.json(
       { error: err.message || 'Er is een onverwachte fout opgetreden.' },
-      { status: 500 }
+      { status: 500, headers: CORS }
     );
   }
 }

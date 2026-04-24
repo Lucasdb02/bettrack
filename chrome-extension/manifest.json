@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "TrackMijnBets – Betslip Scanner",
+  "short_name": "TrackMijnBets",
+  "version": "1.0.0",
+  "description": "Screenshot een betslip op je bookmaker en sla hem automatisch op in TrackMijnBets.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "TrackMijnBets – Betslip Scanner"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://trackmijnbets.nl/*",
+    "https://ldyistwkhplfrtbnagxd.supabase.co/*",
+    "http://localhost:3000/*"
+  ],
+  "oauth2": {
+    "client_id": "REPLACE_WITH_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  }
+}
