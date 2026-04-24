@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 const BASE = 'https://api.sportmonks.com/v3/football';
-const TOKEN = process.env.SPORTMONKS_API_TOKEN;
 
 // Only return bookmakers active in the Dutch market
 const NL_BOOKMAKER_NAMES = new Set([
@@ -35,11 +34,12 @@ function getCurrentScore(scores, participantId) {
 }
 
 export async function GET(request) {
+  const TOKEN = process.env.SPORTMONKS_API_TOKEN;
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
 
   if (!TOKEN) {
-    return NextResponse.json({ error: 'API token niet geconfigureerd' }, { status: 500 });
+    return NextResponse.json({ error: 'Sportmonks API token niet geconfigureerd. Herstart de dev server na het toevoegen van SPORTMONKS_API_TOKEN aan .env.local.' }, { status: 500 });
   }
 
   try {

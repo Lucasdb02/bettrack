@@ -259,7 +259,7 @@ export default function MaandoverzichtPage() {
         </div>
       </div>
 
-      <div className="cal-stats-grid grid gap-4 mb-7" style={{gridTemplateColumns:'repeat(6,1fr)'}}>
+      <div className="cal-stats-grid grid gap-4 mb-4" style={{gridTemplateColumns:'repeat(6,1fr)'}}>
         {[
           {l:'Maand P&L',v:isMobile?fmtAmt(maandStats.totalPnl):fmtPnl(maandStats.totalPnl),c:maandStats.totalPnl>=0?'var(--color-win)':'var(--color-loss)'},
           {l:'Bets',v:maandStats.all.length,c:'var(--text-1)'},

@@ -405,7 +405,10 @@ export default function OddsPage() {
       try {
         const date = dateTabs[activeDate].date;
         const res  = await fetch(`/api/sportmonks?action=fixtures&date=${date}`);
-        if (!res.ok) throw new Error(`API fout (${res.status})`);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => null);
+          throw new Error(errData?.error || `API fout (${res.status})`);
+        }
         const data = await res.json();
         if (!cancelled) setLeagues(Array.isArray(data) ? data : []);
       } catch (e) {

@@ -234,7 +234,17 @@ function GroepTabel({ data, title, type, isMobile }) {
       <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
         <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-1)' }}>{title}</h2>
       </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+        <colgroup>
+          <col />{/* Categorie: remaining space */}
+          <col style={{ width: 58 }} />
+          <col style={{ width: 46 }} />
+          <col style={{ width: 46 }} />
+          <col style={{ width: 192 }} />
+          <col style={{ width: 106 }} />
+          <col style={{ width: 106 }} />
+          <col style={{ width: 82 }} />
+        </colgroup>
         <thead>
           <tr>
             {['Categorie', 'Bets', 'W', 'V', 'Win Rate', 'Inzet', 'P&L', 'ROI'].map(h => (
@@ -317,7 +327,6 @@ export default function StatistiekenPage() {
   }, [bets, periodFilter, customRange, sportFilter, bookFilter]);
 
   const settled = useMemo(() => filtered.filter(b => b.uitkomst !== 'lopend'), [filtered]);
-  const hasFilters = periodFilter !== 'all' || (sportFilter?.length > 0) || (bookFilter?.length > 0);
 
   // computed data
   const perSport     = useMemo(() => groepeerOp(settled, 'sport'),     [settled]);
@@ -385,14 +394,6 @@ export default function StatistiekenPage() {
           selected={bookFilter}
           onChange={setBookFilter}
         />
-        {hasFilters && (
-          <button
-            onClick={() => { setPeriodFilter('all'); setCustomRange(null); setSportFilter(null); setBookFilter(null); }}
-            style={{ padding: '7px 11px', borderRadius: 8, border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-3)', fontSize: 12.5, cursor: 'pointer' }}
-          >
-            Wis filters
-          </button>
-        )}
       </div>
 
       {/* Stat cards */}
