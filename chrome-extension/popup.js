@@ -85,6 +85,10 @@ $('btn-google').addEventListener('click', async () => {
   $('google-spinner').className = 'spinner spinner-dark';
 
   try {
+    if (!chrome.identity?.getRedirectURL) {
+      throw new Error('Herlaad de extensie via chrome://extensions (schuifje → opnieuw laden) en probeer opnieuw.');
+    }
+
     const redirectUrl = chrome.identity.getRedirectURL();
 
     // Build Supabase Google OAuth URL

@@ -31,9 +31,5 @@
     "https://trackmijnbets.nl/*",
     "https://ldyistwkhplfrtbnagxd.supabase.co/*",
     "http://localhost:3000/*"
-  ],
-  "oauth2": {
-    "client_id": "REPLACE_WITH_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-    "scopes": ["openid", "email", "profile"]
-  }
+  ]
 }
