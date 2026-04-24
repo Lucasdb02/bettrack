@@ -224,7 +224,7 @@ export default function BookmakersPage() {
   const [editBalance, setEditBalance]     = useState({});
   const [editDate,    setEditDate]        = useState({});
   const [selectedToAdd, setSelectedToAdd] = useState('');
-  const [period, setPeriod]               = useState('last28');
+  const [period, setPeriod]               = useState('thisMonth');
   const [customRange, setCustomRange]     = useState(null);
   const [filterBookies, setFilterBookies] = useState([]);
 
@@ -521,7 +521,7 @@ export default function BookmakersPage() {
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            + Toevoegen
+            Toevoegen
           </button>
         </div>
         {inactiveBookies.length === 0 && (
@@ -546,30 +546,6 @@ export default function BookmakersPage() {
               {activeBookies.map(naam => <option key={naam} value={naam}>{naam}</option>)}
             </select>
             <svg style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', pointerEvents:'none', color:'var(--text-3)' }} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-
-          {/* Type toggle */}
-          <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
-            {[
-              { val:'deposit',    label:'Storting' },
-              { val:'withdrawal', label:'Opname'   },
-            ].map(opt => (
-              <button
-                key={opt.val}
-                onClick={() => setTxType(opt.val)}
-                style={{
-                  padding:'0 14px', fontSize:13, fontWeight:600,
-                  border: 'none', borderRadius:6,
-                  cursor:'pointer', height:'100%', display:'flex', alignItems:'center',
-                  backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
-                  color: txType === opt.val
-                    ? (opt.val === 'deposit' ? 'var(--color-win)' : 'var(--color-loss)')
-                    : 'var(--text-3)',
-                  boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
-                  transition:'all 0.12s',
-                }}
-              >{opt.label}</button>
-            ))}
           </div>
 
           {/* Amount */}
@@ -605,8 +581,32 @@ export default function BookmakersPage() {
             }}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            + Registreren
+            Registreren
           </button>
+
+          {/* Type toggle */}
+          <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
+            {[
+              { val:'deposit',    label:'Storting' },
+              { val:'withdrawal', label:'Opname'   },
+            ].map(opt => (
+              <button
+                key={opt.val}
+                onClick={() => setTxType(opt.val)}
+                style={{
+                  minWidth:72, padding:'0 10px', fontSize:13, fontWeight:600,
+                  border: 'none', borderRadius:6,
+                  cursor:'pointer', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
+                  backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
+                  color: txType === opt.val
+                    ? (opt.val === 'deposit' ? 'var(--color-win)' : 'var(--color-loss)')
+                    : 'var(--text-3)',
+                  boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  transition:'all 0.12s',
+                }}
+              >{opt.label}</button>
+            ))}
+          </div>
         </div>
 
         {/* Transaction history */}

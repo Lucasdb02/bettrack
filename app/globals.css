@@ -254,15 +254,16 @@ html.dark .app-main {
 /* Dark mode — glass look */
 html.dark .btn-primary,
 html.dark .btn-primary-glass {
-  background: rgba(255,255,255,0.12) padding-box, linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%) border-box !important;
-  border: 1px solid transparent !important;
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 9px !important;
   box-shadow: 0 2px 12px rgba(0,0,0,0.3) !important;
   backdrop-filter: blur(20px) saturate(120%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
 }
 html.dark .btn-primary:hover:not(:disabled),
 html.dark .btn-primary-glass:hover:not(:disabled) {
-  background: rgba(255,255,255,0.18) padding-box, linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%) border-box !important;
+  background: rgba(255,255,255,0.18) !important;
   box-shadow: 0 4px 18px rgba(0,0,0,0.4) !important;
 }
 
@@ -583,10 +584,10 @@ html.dark .glass-card {
   .bm-add-row > button { width: 100% !important; justify-content: center !important; }
   .bm-tx-row { display: grid !important; grid-template-columns: 1fr 1fr !important; align-items: end !important; }
   .bm-tx-bookie { grid-column: 1 / -1 !important; }
-  .bm-tx-type { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
-  .bm-tx-amount { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; }
-  .bm-tx-date { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; min-width: 0 !important; }
-  .bm-tx-submit { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; justify-content: center; }
+  .bm-tx-amount { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
+  .bm-tx-date { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; min-width: 0 !important; }
+  .bm-tx-submit { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; justify-content: center; }
+  .bm-tx-type { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; }
   .bm-tx-row input, .bm-tx-row select { padding: 7px 10px !important; font-size: 13px !important; }
   .bm-tx-amount input { padding-left: 24px !important; }
   .bm-tx-type button { padding: 7px 10px !important; font-size: 12px !important; flex: 1 !important; }
@@ -656,4 +657,5 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
   .bet-filter-bar { flex-wrap: nowrap !important; gap: 6px !important; }
   .bet-filter-bar > div { flex: 1 1 0 !important; min-width: 0 !important; }
   .bet-filter-extra { display: none !important; }
+  .bets-search-wrap { display: none !important; }
 }

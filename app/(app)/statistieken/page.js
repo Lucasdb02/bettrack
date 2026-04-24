@@ -69,7 +69,7 @@ function GradBar({ x, y, width, height, fill }) {
   if (height >= 0) {
     return <path d={`M ${x},${barY+barH} H ${x+width} V ${barY+r} A ${r},${r} 0 0,0 ${x+width-r},${barY} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+r} Z`} fill={fill}/>;
   } else {
-    return <path d={`M ${x},${barY} H ${x+width} V ${barY+barH-r} A ${r},${r} 0 0,0 ${x+width-r},${barY+barH} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+barH-r} Z`} fill={fill}/>;
+    return <path d={`M ${x},${barY} H ${x+width} V ${barY+barH-r} A ${r},${r} 0 0,1 ${x+width-r},${barY+barH} H ${x+r} A ${r},${r} 0 0,1 ${x},${barY+barH-r} Z`} fill={fill}/>;
   }
 }
 
@@ -301,7 +301,7 @@ export default function StatistiekenPage() {
   }, []);
 
   // filters
-  const [periodFilter, setPeriodFilter] = useState('all');
+  const [periodFilter, setPeriodFilter] = useState('thisMonth');
   const [customRange,  setCustomRange]  = useState(null);
   const [sportFilter,  setSportFilter]  = useState(null);
   const [bookFilter,   setBookFilter]   = useState(null);

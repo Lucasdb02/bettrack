@@ -181,7 +181,7 @@ function GradBar({ x, y, width, height, fill }) {
   if (height >= 0) {
     return <path d={`M ${x},${barY+barH} H ${x+width} V ${barY+r} A ${r},${r} 0 0,0 ${x+width-r},${barY} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+r} Z`} fill={fill}/>;
   } else {
-    return <path d={`M ${x},${barY} H ${x+width} V ${barY+barH-r} A ${r},${r} 0 0,0 ${x+width-r},${barY+barH} H ${x+r} A ${r},${r} 0 0,0 ${x},${barY+barH-r} Z`} fill={fill}/>;
+    return <path d={`M ${x},${barY} H ${x+width} V ${barY+barH-r} A ${r},${r} 0 0,1 ${x+width-r},${barY+barH} H ${x+r} A ${r},${r} 0 0,1 ${x},${barY+barH-r} Z`} fill={fill}/>;
   }
 }
 
@@ -213,7 +213,7 @@ function UitkomstBadge({ u }) {
   const bg        = dark ? cfg.darkBg        : cfg.bg;
   const border    = dark ? cfg.darkBorder    : cfg.border;
   const textColor = dark ? cfg.darkTextColor : cfg.textColor;
-  return <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', verticalAlign:'middle', background:bg, color:textColor, border:`1px solid ${border}`, padding:'2px 8px', borderRadius:4, fontSize:11.5, fontWeight:600, lineHeight:'18px', whiteSpace:'nowrap', minWidth:72 }}>{cfg.label}</span>;
+  return <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', verticalAlign:'middle', background:bg, color:textColor, border:`1px solid ${border}`, padding:'2px 8px', borderRadius:4, fontSize:11.5, fontWeight:600, lineHeight:'18px', whiteSpace:'nowrap', width:80, boxSizing:'border-box' }}>{cfg.label}</span>;
 }
 
 /* ─── Chevron ─── */
