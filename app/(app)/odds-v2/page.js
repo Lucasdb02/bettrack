@@ -532,7 +532,6 @@ function LeagueCard({ league, defaultOpen }) {
 }
 
 // ── Hoofd pagina ──────────────────────────────────────────────────────────────
-const FILTERS = ['Alles', 'Aankomend', 'Live', 'Afgelopen'];
 
 export default function OddsV2Page() {
   const [selectedDate, setSelectedDate] = useState(todayStr);
@@ -616,7 +615,7 @@ export default function OddsV2Page() {
         </div>
       )}
 
-      {/* Filter bar: datum + status filters + zoek */}
+      {/* Filter bar: datum + live switch + zoek */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
         {/* Datum navigator */}
         <DayNavPicker date={selectedDate} onChange={setSelectedDate} />
@@ -624,13 +623,11 @@ export default function OddsV2Page() {
         {/* Scheidslijn */}
         <div style={{ width: 1, height: 28, background: 'var(--border)', margin: '0 2px' }} />
 
-        {/* Status filters — zelfde stijl als dashboard dropdowns */}
-        {FILTERS.map(f => (
-          <FilterBtn key={f} label={f} active={activeFilter === f} onClick={() => setActiveFilter(f)} />
-        ))}
+        {/* Live toggle */}
+        <FilterBtn label="Live" active={activeFilter === 'Live'} onClick={() => setActiveFilter(f => f === 'Live' ? 'Alles' : 'Live')} />
 
         {/* Zoek */}
-        <div style={{ marginLeft: 'auto', position: 'relative' }}>
+        <div style={{ position: 'relative' }}>
           <svg style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-4)' }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
