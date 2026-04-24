@@ -589,10 +589,7 @@ export default function OddsV2Page() {
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)' }}>Odds Vergelijker v2</h1>
-          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'var(--bg-brand)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 6, padding: '3px 8px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>API-Football</span>
-        </div>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)', marginBottom: 4 }}>Odds Vergelijker</h1>
         <p style={{ fontSize: 14, color: 'var(--text-3)' }}>Odds, voorspellingen & statistieken — alle beschikbare markten per wedstrijd</p>
       </div>
 
