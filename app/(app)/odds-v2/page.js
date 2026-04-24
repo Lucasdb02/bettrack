@@ -471,6 +471,26 @@ function FixtureRow({ fixture }) {
   );
 }
 
+// ── League logo met witte achtergrond (darkmode) ──────────────────────────────
+function LeagueLogo({ src, name }) {
+  const { dark } = useTheme();
+  const [err, setErr] = useState(false);
+  return (
+    <div style={{
+      width: 28, height: 28, borderRadius: 6, flexShrink: 0,
+      background: dark ? '#ffffff' : 'transparent',
+      border: dark ? 'none' : '1px solid var(--border-subtle)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden',
+    }}>
+      {src && !err
+        ? <img src={src} alt={name} onError={() => setErr(true)} style={{ width: 20, height: 20, objectFit: 'contain' }} />
+        : <div style={{ width: 20, height: 20, borderRadius: 3, background: 'var(--bg-brand)' }} />
+      }
+    </div>
+  );
+}
+
 // ── League card ───────────────────────────────────────────────────────────────
 function LeagueCard({ league, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen ?? false);
@@ -481,10 +501,7 @@ function LeagueCard({ league, defaultOpen }) {
         onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-subtle)'}
         onMouseLeave={e => e.currentTarget.style.background = 'none'}
       >
-        {league.logo
-          ? <img src={league.logo} alt={league.name} style={{ width: 24, height: 24, objectFit: 'contain', flexShrink: 0 }} onError={e => e.target.style.display='none'} />
-          : <div style={{ width: 24, height: 24, borderRadius: 5, background: 'var(--bg-brand)', border: '1px solid var(--brand-soft)', flexShrink: 0 }} />
-        }
+        <LeagueLogo src={league.logo} name={league.name} />
         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', display: 'block' }}>{league.name}</span>
           <span style={{ fontSize: 11, color: 'var(--text-4)' }}>{league.country} · {league.round}</span>
