@@ -46,23 +46,37 @@ async function init() {
   showScreen('auth');
 }
 
-// Inject a same-origin fetch into an open site tab — cookies sent automatically
+// Read Supabase session directly from cookies.
+// @supabase/ssr's createBrowserClient stores the session in regular (non-httpOnly)
+// cookies named sb-<ref>-auth-token (possibly chunked as .0, .1, …).
 async function readSessionFromTab() {
   return new Promise(resolve => {
-    chrome.tabs.query({ url: ['*://trackmijnbets.nl/*', '*://localhost:3000/*'] }, async tabs => {
-      if (!tabs.length) { resolve(null); return; }
-      try {
-        const results = await chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          func: async () => {
-            try {
-              const res = await fetch('/api/extension/session');
-              return res.ok ? await res.json() : null;
-            } catch { return null; }
-          },
-        });
-        resolve(results?.[0]?.result || null);
-      } catch { resolve(null); }
+    const prefix = 'sb-ldyistwkhplfrtbnagxd-auth-token';
+
+    // Try production domain first, then localhost
+    chrome.cookies.getAll({ domain: 'trackmijnbets.nl' }, prodCookies => {
+      chrome.cookies.getAll({ domain: 'localhost' }, devCookies => {
+        const all = [...prodCookies, ...devCookies];
+        const chunks = all
+          .filter(c => c.name === prefix || c.name.startsWith(prefix + '.'))
+          .sort((a, b) => {
+            const n = name => parseInt(name.replace(prefix, '').replace('.', '') || '0');
+            return n(a.name) - n(b.name);
+          });
+
+        if (!chunks.length) { resolve(null); return; }
+
+        const raw = chunks.map(c => c.value).join('');
+        try {
+          const parsed = JSON.parse(raw);
+          resolve({
+            access_token:  parsed.access_token,
+            refresh_token: parsed.refresh_token,
+            expires_at:    parsed.expires_at,
+            email:         parsed.user?.email || '',
+          });
+        } catch { resolve(null); }
+      });
     });
   });
 }
