@@ -174,7 +174,7 @@ function BookmakerFilterDropdown({ bookmakers, selected, onChange }) {
       {mounted && open && rect && createPortal(
         <>
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
-          <div style={{
+          <div className="dropdown-panel" style={{
             position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
             backgroundColor:'var(--bg-card)', border:'1px solid var(--border)',
             borderRadius:10, boxShadow:'var(--shadow-lg)',
@@ -298,6 +298,18 @@ export default function BookmakersPage() {
     () => buildChartData(bets, visibleBookies, bookmakersConfig, period, customRange, transactions, dbBookmakers),
     [bets, visibleBookies, bookmakersConfig, period, customRange, transactions, dbBookmakers]
   );
+
+  const filteredTransactions = useMemo(() => {
+    if (period === 'all') return transactions;
+    if (period === 'custom') {
+      if (!customRange?.from || !customRange?.to) return transactions;
+      const end = new Date(customRange.to); end.setDate(end.getDate() + 1);
+      return transactions.filter(tx => { const d = new Date(tx.datum); return d >= customRange.from && d < end; });
+    }
+    const range = getDateRange(period);
+    if (!range) return transactions;
+    return transactions.filter(tx => { const d = new Date(tx.datum); return d >= range.from && d < range.to; });
+  }, [transactions, period, customRange]);
 
   const netTxPerBookie = useMemo(() => {
     const map = {};
@@ -537,7 +549,7 @@ export default function BookmakersPage() {
           </div>
 
           {/* Type toggle */}
-          <div className="bm-tx-type" style={{ display:'flex', border:'1px solid var(--border)', borderRadius:7, overflow:'hidden', flexShrink:0 }}>
+          <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
             {[
               { val:'deposit',    label:'Storting' },
               { val:'withdrawal', label:'Opname'   },
@@ -547,14 +559,13 @@ export default function BookmakersPage() {
                 onClick={() => setTxType(opt.val)}
                 style={{
                   padding:'0 14px', fontSize:13, fontWeight:600,
-                  border: 'none', borderRight: opt.val === 'deposit' ? '1px solid var(--border)' : 'none',
+                  border: 'none', borderRadius:6,
                   cursor:'pointer', height:'100%', display:'flex', alignItems:'center',
-                  background: txType === opt.val
-                    ? (opt.val === 'deposit' ? 'rgba(52,211,153,0.15)' : 'rgba(251,113,133,0.15)')
-                    : 'var(--bg-input)',
+                  backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
                   color: txType === opt.val
                     ? (opt.val === 'deposit' ? 'var(--color-win)' : 'var(--color-loss)')
-                    : 'var(--text-1)',
+                    : 'var(--text-3)',
+                  boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                   transition:'all 0.12s',
                 }}
               >{opt.label}</button>
@@ -601,8 +612,12 @@ export default function BookmakersPage() {
         {/* Transaction history */}
         {transactions.length > 0 && (
           <div style={{ marginTop:16, display:'flex', flexDirection:'column', gap:2 }}>
-            <p style={{ fontSize:11, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:6 }}>Recente transacties</p>
-            {[...transactions].reverse().slice(0, 8).map(tx => {
+            <p style={{ fontSize:11, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:6 }}>
+              Transacties{period !== 'all' ? ' (gefilterd)' : ''}
+            </p>
+            {filteredTransactions.length === 0 ? (
+              <p style={{ fontSize:12.5, color:'var(--text-4)', padding:'8px 0' }}>Geen transacties in deze periode.</p>
+            ) : [...filteredTransactions].reverse().map(tx => {
               const bmNaam = dbBookmakers.find(b => b.id === tx.bookmaker_id)?.naam || '—';
               const isDeposit = tx.type === 'deposit';
               return (

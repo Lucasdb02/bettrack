@@ -8,7 +8,8 @@ import TagInput, { TagChip } from '../../components/TagInput';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { SingleDatePicker } from '../../components/PeriodDropdown';
+import PeriodDropdown, { SingleDatePicker } from '../../components/PeriodDropdown';
+import { getDateRange } from '../../lib/dateUtils';
 
 const MARKTEN = ['1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig'];
 const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Overig'];
@@ -24,7 +25,7 @@ function UitkomstBadge({ value }) {
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       padding: '2px 8px', borderRadius: 4, fontSize: 11.5, fontWeight: 600,
       background: bg, color: textColor, border: `1px solid ${border}`,
-      whiteSpace: 'nowrap', lineHeight: '18px', minWidth: 72,
+      whiteSpace: 'nowrap', lineHeight: '18px', width: 80, boxSizing: 'border-box',
     }}>
       {cfg.label}
     </span>
@@ -309,7 +310,7 @@ function SportSelectDropdown({ value, onChange, options }) {
       {mounted && open && rect && createPortal(
         <>
           <div onClick={close} style={{position:'fixed',inset:0,zIndex:9998}}/>
-          <div style={{position:'fixed',top:rect.bottom+4,left:rect.left,zIndex:9999,backgroundColor:dropBg,border:`1px solid ${dropBdr}`,borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,0.18)',minWidth:180,maxHeight:280,overflowY:'auto'}}>
+          <div className="dropdown-panel" style={{position:'fixed',top:rect.bottom+4,left:rect.left,zIndex:9999,backgroundColor:dropBg,border:`1px solid ${dropBdr}`,borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,0.18)',minWidth:180,maxHeight:280,overflowY:'auto'}}>
             <button onClick={()=>{onChange('alle');close();}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',textAlign:'left',padding:'10px 16px',fontSize:14,fontWeight:value==='alle'?600:400,color:value==='alle'?txtActive:txtDef,backgroundColor:value==='alle'?bgActive:'transparent',border:'none',borderBottom:`1px solid ${divider}`,cursor:'pointer',transition:'background 0.1s'}}
               onMouseEnter={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor=hoverBg;}}
               onMouseLeave={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor='transparent';}}>
@@ -371,7 +372,7 @@ function UitkomstSelectDropdown({ value, onChange }) {
       {mounted && open && rect && createPortal(
         <>
           <div onClick={close} style={{position:'fixed',inset:0,zIndex:9998}}/>
-          <div style={{position:'fixed',top:rect.bottom+4,left:rect.left,zIndex:9999,backgroundColor:dropBg,border:`1px solid ${dropBdr}`,borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,0.18)',minWidth:180,maxHeight:320,overflowY:'auto'}}>
+          <div className="dropdown-panel" style={{position:'fixed',top:rect.bottom+4,left:rect.left,zIndex:9999,backgroundColor:dropBg,border:`1px solid ${dropBdr}`,borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,0.18)',minWidth:180,maxHeight:320,overflowY:'auto'}}>
             <button onClick={()=>{onChange('alle');close();}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',textAlign:'left',padding:'10px 16px',fontSize:14,fontWeight:value==='alle'?600:400,color:value==='alle'?txtActive:txtDef,backgroundColor:value==='alle'?bgActive:'transparent',border:'none',borderBottom:`1px solid ${divider}`,cursor:'pointer',transition:'background 0.1s'}}
               onMouseEnter={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor=hoverBg;}}
               onMouseLeave={e=>{if(value!=='alle')e.currentTarget.style.backgroundColor='transparent';}}>
@@ -394,11 +395,26 @@ function UitkomstSelectDropdown({ value, onChange }) {
   );
 }
 
+function filterBetsByPeriod(bets, filter, customRange) {
+  if (filter === 'all') return bets;
+  if (filter === 'custom') {
+    if (!customRange) return bets;
+    const { from, to } = customRange;
+    const end = new Date(to); end.setDate(end.getDate() + 1);
+    return bets.filter(b => { const d = new Date(b.datum); return d >= from && d < end; });
+  }
+  const range = getDateRange(filter);
+  if (!range) return bets;
+  return bets.filter(b => { const d = new Date(b.datum); return d >= range.from && d < range.to; });
+}
+
 export default function BetsPage() {
   const { bets, deleteBet, updateBet, loaded } = useBets();
   const [filterU, setFilterU] = useState('alle');
   const [filterS, setFilterS] = useState('alle');
   const [filterT, setFilterT] = useState('alle');
+  const [filterPeriod, setFilterPeriod] = useState('all');
+  const [customPeriodRange, setCustomPeriodRange] = useState(null);
   const [zoeken, setZoeken] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [editBet, setEditBet] = useState(null);
@@ -408,13 +424,13 @@ export default function BetsPage() {
 
   const sporten = useMemo(()=>['alle',...Array.from(new Set(bets.map(b=>b.sport))).sort()],[bets]);
   const allTags = useMemo(()=>Array.from(new Set(bets.flatMap(b=>b.tags||[]))).sort(),[bets]);
-  const filtered = useMemo(()=>[...bets]
+  const filtered = useMemo(()=>filterBetsByPeriod([...bets], filterPeriod, customPeriodRange)
     .filter(b=>filterU==='alle'||b.uitkomst===filterU)
     .filter(b=>filterS==='alle'||b.sport===filterS)
     .filter(b=>filterT==='alle'||(b.tags||[]).includes(filterT))
     .filter(b=>!zoeken||[b.wedstrijd,b.selectie,b.bookmaker,...(b.tags||[])].join(' ').toLowerCase().includes(zoeken.toLowerCase()))
     .sort((a,b)=>new Date(b.datum)-new Date(a.datum))
-  ,[bets,filterU,filterS,filterT,zoeken]);
+  ,[bets,filterU,filterS,filterT,filterPeriod,customPeriodRange,zoeken]);
   const totaal = useMemo(()=>filtered.filter(b=>b.uitkomst!=='lopend').reduce((s,b)=>s+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet)),0),[filtered]);
 
   const { fmtPnl } = useFmt();
@@ -455,9 +471,13 @@ export default function BetsPage() {
 
       <div className="bet-filter-bar" style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',marginBottom:20}}>
         {/* Search */}
-        <div style={{position:'relative',flex:1,minWidth:isMobile?0:200}}>
+        <div style={{position:'relative',flex:1,minWidth:isMobile?0:150,maxWidth:isMobile?undefined:280}}>
           <svg style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'var(--text-4)',pointerEvents:'none'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder={isMobile?'Zoeken...':'Zoeken op wedstrijd, selectie of bookmaker...'} value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',height:36,padding:'0 12px 0 32px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',boxSizing:'border-box'}}/>
+          <input type="text" placeholder={isMobile?'Zoeken...':'Zoeken...'} value={zoeken} onChange={e=>setZoeken(e.target.value)} style={{width:'100%',height:36,padding:'0 12px 0 32px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',boxSizing:'border-box'}}/>
+        </div>
+        {/* Periode */}
+        <div style={{flexShrink:0}}>
+          <PeriodDropdown filter={filterPeriod} onSelect={setFilterPeriod} customRange={customPeriodRange} onCustomRange={setCustomPeriodRange}/>
         </div>
         {/* Sport */}
         <div style={{flexShrink:0}}>

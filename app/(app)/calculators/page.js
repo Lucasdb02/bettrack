@@ -72,7 +72,7 @@ export default function CalculatorsPage() {
         <p style={{ fontSize: 14, color: 'var(--text-3)' }}>Handige tools voor slimmer betten</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, maxWidth: 640 }}>
+      <div className="calc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
         {calculators.map((calc) => (
           <CalcCard key={calc.href} calc={calc} dark={dark} />
         ))}

@@ -230,7 +230,7 @@ function Tip({ active, payload, label }) {
 function GroepTabel({ data, title, type, isMobile }) {
   const { fmtPnl } = useFmt();
   return (
-    <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
+    <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden', marginBottom: 16, boxShadow: 'var(--shadow-sm)' }}>
       <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
         <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-1)' }}>{title}</h2>
       </div>
@@ -396,7 +396,7 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="stats-grid-6 grid gap-4 mb-6">
+      <div className="stats-grid-6 grid gap-4 mb-4">
         {[
           { label: 'Gem. odds',     v: gemOdds,         sub: `${settled.length} bets` },
           { label: 'Gem. inzet',    v: `€${gemInzet}`,  sub: 'Per bet' },
@@ -419,7 +419,7 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Maandelijkse P&L + Dag van de Week */}
-      <div className="chart-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="chart-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Maandelijkse P&L</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Winst/verlies per maand</p>
@@ -460,7 +460,7 @@ export default function StatistiekenPage() {
       </div>
 
       {/* Equity Curve */}
-      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px', marginBottom: 20 }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '24px', marginBottom: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
           <div>
             <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Equity Curve</h2>
@@ -491,7 +491,7 @@ export default function StatistiekenPage() {
 
       {/* Odds Range Analyse */}
       {oddsData.length > 0 && (
-        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', marginBottom: 16, boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Odds Range Analyse</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>In welke odds bracket presteer je het best?</p>
           <div className="odds-range-inner">
@@ -536,7 +536,7 @@ export default function StatistiekenPage() {
 
       {/* P&L per Sport chart */}
       {perSport.length > 0 && (
-        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '24px', marginBottom: 16, boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>P&L per Sport</h2>
           <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 18 }}>Waar verdien je het meest?</p>
           <ResponsiveContainer width="100%" height={Math.max(160, perSport.length * 36)}>

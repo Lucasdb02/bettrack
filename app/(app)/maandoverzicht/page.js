@@ -276,7 +276,7 @@ export default function MaandoverzichtPage() {
       </div>
 
       {/* Calendar */}
-      <div className="cal-wrapper" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',marginBottom:24,boxShadow:'var(--shadow-sm)'}}>
+      <div className="cal-wrapper" style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden',marginBottom:16,boxShadow:'var(--shadow-sm)'}}>
         <div className="cal-header" style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',borderBottom:'1px solid var(--border-subtle)'}}>
           {DAGEN.map(d=><div key={d} style={{padding:'12px 0',textAlign:'center',fontSize:11.5,fontWeight:700,color:'var(--text-4)',textTransform:'uppercase',letterSpacing:'0.05em',backgroundColor:'var(--bg-subtle)'}}>{d}</div>)}
         </div>
