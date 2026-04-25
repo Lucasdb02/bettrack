@@ -22,9 +22,6 @@ let userEmail      = '';
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
-  // Always discard transient fullCapture (abandoned selections)
-  await storageRemove('fullCapture');
-
   // 1. Valid stored session → straight to capture screen
   const stored = await storageGet('session');
   if (stored && !isExpired(stored)) {
@@ -310,16 +307,27 @@ $('btn-back').addEventListener('click', () => { showScreen('idle'); $('capture-s
 
 // ── Save ──────────────────────────────────────────────────────────────────────
 $('btn-save').addEventListener('click', async () => {
-  if (!parsedBets.length) return;
   const errEl = $('save-error');
   errEl.style.display = 'none';
+
+  if (!session?.access_token) {
+    errEl.textContent = 'Niet ingelogd. Herlaad de extensie.';
+    errEl.style.display = '';
+    return;
+  }
+  if (!parsedBets.length) {
+    errEl.textContent = 'Geen bets om op te slaan.';
+    errEl.style.display = '';
+    return;
+  }
+
   $('btn-save').disabled = true;
   $('save-text').style.display   = 'none';
   $('save-icon').style.display   = 'none';
   $('save-spinner').style.display = '';
 
   try {
-    if (!session || isExpired(session)) {
+    if (isExpired(session)) {
       const ok = await refreshSession();
       if (!ok) { showScreen('auth'); return; }
     }
@@ -328,8 +336,8 @@ $('btn-save').addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ bets: parsedBets }),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || `Fout (${res.status})`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Server fout (${res.status})`);
     const n = data.saved ?? parsedBets.length;
     $('success-title').textContent = `${n} bet${n !== 1 ? 's' : ''} opgeslagen!`;
     parsedBets = []; capturedDataUrl = null;
@@ -337,6 +345,7 @@ $('btn-save').addEventListener('click', async () => {
   } catch (e) {
     errEl.textContent = e.message || 'Opslaan mislukt.';
     errEl.style.display = '';
+    errEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } finally {
     $('btn-save').disabled = false;
     $('save-text').style.display   = '';
