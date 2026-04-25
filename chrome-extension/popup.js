@@ -48,33 +48,43 @@ async function init() {
 
 async function checkPendingCapture() {
   const pending = await storageGet('pendingCapture');
-  if (pending) {
-    await storageRemove('pendingCapture');
-    capturedDataUrl = pending;
+
+  // Validate: must be a proper data URL string
+  if (!pending || typeof pending !== 'string' || !pending.startsWith('data:')) {
+    if (pending) await storageRemove('pendingCapture'); // clean up bad value
     showIdle();
-    const statusEl = $('capture-status');
-    $('btn-capture').disabled = true;
-    $('capture-text').style.display   = 'none';
-    $('capture-spinner').style.display = '';
-    showStatus(statusEl, 'info', 'AI analyseert je betslip…');
-    try {
-      const bets = await parseScreenshot(capturedDataUrl);
-      if (!bets?.length) {
-        showStatus(statusEl, 'error', 'Geen bets gevonden. Probeer een duidelijkere selectie.');
-      } else {
-        parsedBets = bets;
-        showReviewScreen();
-      }
-    } catch (e) {
-      showStatus(statusEl, 'error', e.message || 'Fout bij verwerking.');
-    } finally {
-      $('btn-capture').disabled = false;
-      $('capture-text').style.display   = '';
-      $('capture-spinner').style.display = 'none';
-    }
     return;
   }
+
+  await storageRemove('pendingCapture');
+  capturedDataUrl = pending;
   showIdle();
+
+  const statusEl  = $('capture-status');
+  const btnCapture = $('btn-capture');
+  const captureText    = $('capture-text');
+  const captureSpinner = $('capture-spinner');
+
+  if (btnCapture) btnCapture.disabled = true;
+  if (captureText)    captureText.style.display    = 'none';
+  if (captureSpinner) captureSpinner.style.display = '';
+  showStatus(statusEl, 'info', 'AI analyseert je betslip…');
+
+  try {
+    const bets = await parseScreenshot(capturedDataUrl);
+    if (!bets?.length) {
+      showStatus(statusEl, 'error', 'Geen bets gevonden. Probeer een duidelijkere selectie.');
+    } else {
+      parsedBets = bets;
+      showReviewScreen();
+    }
+  } catch (e) {
+    showStatus(statusEl, 'error', e.message || 'Fout bij verwerking.');
+  } finally {
+    if (btnCapture) btnCapture.disabled = false;
+    if (captureText)    captureText.style.display    = '';
+    if (captureSpinner) captureSpinner.style.display = 'none';
+  }
 }
 
 async function readSessionFromTab() {
