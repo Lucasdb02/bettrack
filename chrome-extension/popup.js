@@ -50,7 +50,6 @@ async function checkPendingCapture() {
   const pending = await storageGet('pendingCapture');
   if (pending) {
     await storageRemove('pendingCapture');
-    chrome.action.setBadgeText({ text: '' });
     capturedDataUrl = pending;
     showIdle();
     const statusEl = $('capture-status');
@@ -130,15 +129,30 @@ $('btn-capture').addEventListener('click', async () => {
   $('capture-spinner').style.display = '';
 
   try {
+    // 1. Capture the full tab NOW — activeTab permission is valid while popup is open
+    const resp = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: 'CAPTURE_TAB' }, r => {
+        if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
+        else resolve(r);
+      });
+    });
+    if (resp?.error) throw new Error(resp.error);
+
+    // 2. Stash the full screenshot so background can crop it after selection
+    await new Promise(resolve => chrome.storage.local.set({ fullCapture: resp.dataUrl }, resolve));
+
+    // 3. Inject the region-selection overlay
     await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: 'START_SELECTION' }, r => {
         if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
         else resolve(r);
       });
     });
-    window.close(); // Let user draw selection on the page
+
+    // 4. Close popup — user draws selection, background does the crop
+    window.close();
   } catch (e) {
-    showStatus(statusEl, 'error', e.message || 'Kan selectie niet starten.');
+    showStatus(statusEl, 'error', e.message || 'Fout bij screenshot.');
     $('btn-capture').disabled = false;
     $('capture-text').style.display   = '';
     $('capture-spinner').style.display = 'none';
