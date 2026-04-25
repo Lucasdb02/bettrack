@@ -22,6 +22,9 @@ let userEmail      = '';
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
+  // Always discard transient fullCapture (abandoned selections)
+  await storageRemove('fullCapture');
+
   // 1. Valid stored session → straight to capture screen
   const stored = await storageGet('session');
   if (stored && !isExpired(stored)) {
