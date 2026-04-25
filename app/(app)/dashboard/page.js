@@ -191,9 +191,9 @@ function StatCard({ label, value, sub, color, icon }) {
     <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)', transition:'box-shadow 0.15s' }}>
       <div className="flex items-start justify-between">
         <div style={{ minWidth:0 }}>
-          <p style={{ fontSize:11, color:'var(--text-3)', fontWeight:700, marginBottom:10, textTransform:'uppercase', letterSpacing:'0.08em' }}>{label}</p>
-          <p style={{ fontSize:26, fontWeight:800, color:color||'var(--text-1)', lineHeight:1, letterSpacing:'-0.02em' }}>{value}</p>
-          {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:7, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
+          <p style={{ fontSize:11, color:'var(--text-3)', fontWeight:600, marginBottom:10, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>
+          <p style={{ fontSize:22, fontWeight:800, color:color||'var(--text-1)', lineHeight:1 }}>{value}</p>
+          {sub && <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:7, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
         </div>
         {icon && <div className="stat-card-icon" style={{ background:'rgba(84,105,212,0.2)', border:'1px solid rgba(123,158,240,0.25)', width:30, height:30, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{icon}</div>}
       </div>
@@ -885,9 +885,9 @@ export default function Dashboard() {
             <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               {/* Left: P&L + ROI + daily */}
               <div>
-                <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>Cumulatieve P&L</p>
+                <p style={{ fontSize:11, fontWeight:600, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:6 }}>Cumulatieve P&L</p>
                 <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
-                  <span style={{ fontSize:28, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
+                  <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
                   <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
                 </div>
                 {dispDayPnl !== null && (
@@ -900,8 +900,8 @@ export default function Dashboard() {
               </div>
               {/* Right: Record + legend */}
               <div style={{ textAlign:'right' }}>
-                <p style={{ fontSize:11.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>Record</p>
-                <span style={{ fontSize:28, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
+                <p style={{ fontSize:11, fontWeight:600, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:6 }}>Record</p>
+                <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
                 <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                     <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
