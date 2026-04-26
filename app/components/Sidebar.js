@@ -87,7 +87,7 @@ function NavItem({ item, active, dark }) {
           if (!active) {
             e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
             e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
-            e.currentTarget.style.color = dark ? '#b8d0e8' : '#0f172a';
+            e.currentTarget.style.color = dark ? '#b8d0e8' : '#334155';
           }
         }}
         onMouseLeave={(e) => {
@@ -205,7 +205,7 @@ export default function Sidebar() {
           </svg>
         </div>
         <div>
-          <p style={{ color: dark ? '#fff' : '#0f172a', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>TrackMijnBets</p>
+          <p style={{ color: dark ? '#fff' : '#334155', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>TrackMijnBets</p>
           <p style={{ color: dark ? '#4a6885' : '#94a3b8', fontSize: 10.5 }}>Analyse Tool</p>
         </div>
       </div>
@@ -255,7 +255,7 @@ export default function Sidebar() {
           onMouseEnter={(e) => {
             e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0';
             e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : '#cbd5e1';
-            e.currentTarget.style.color = dark ? '#c5d8ec' : '#0f172a';
+            e.currentTarget.style.color = dark ? '#c5d8ec' : '#334155';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
