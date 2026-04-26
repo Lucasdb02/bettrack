@@ -71,7 +71,7 @@ function NavItem({ item, active, dark }) {
           fontSize: 13, fontWeight: active ? 600 : 400,
           color: active
             ? (dark ? '#e8f0ff' : '#4f46e5')
-            : (dark ? '#7090b0' : '#64748b'),
+            : 'var(--text-2)',
           background: active
             ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff')
             : 'transparent',
@@ -94,11 +94,11 @@ function NavItem({ item, active, dark }) {
           if (!active) {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = dark ? '#7090b0' : '#64748b';
+            e.currentTarget.style.color = dark ? '#7090b0' : '#334155';
           }
         }}
       >
-        <span style={{ color: active ? (dark ? '#7b9ef0' : '#6366f1') : (dark ? '#3d6080' : '#94a3b8'), flexShrink: 0 }}>{item.icon}</span>
+        <span style={{ color: active ? (dark ? '#7b9ef0' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>{item.icon}</span>
         {item.label}
       </Link>
     </li>
@@ -214,14 +214,14 @@ export default function Sidebar() {
       <nav className="flex-1 px-3 py-4 sidebar-scroll overflow-y-auto" style={{ overflowY: 'auto' }}>
 
         {/* Main menu */}
-        <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5 }}>Menu</p>
+        <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600, paddingLeft: 10, marginBottom: 5 }}>Menu</p>
         <ul className="space-y-0.5" style={{ marginBottom: 20 }}>
           {mainNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
 
         {/* Bookmakers */}
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginBottom: 5, marginTop: 20 }}>
-          <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Bookmakers</p>
+          <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600 }}>Bookmakers</p>
           {dbBookmakers.length > 0 && (
             <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: totalBalance >= 0 ? (dark ? '#4a8fa8' : '#6366f1') : (dark ? '#a05070' : '#fb2b37') }}>
               €{totalBalance.toFixed(2)}
@@ -233,7 +233,7 @@ export default function Sidebar() {
         </ul>
 
         {/* Tools */}
-        <p style={{ color: dark ? '#2d5070' : '#94a3b8', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Tools</p>
+        <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600, paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Tools</p>
         <ul className="space-y-0.5">
           {toolsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
@@ -249,7 +249,7 @@ export default function Sidebar() {
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 6,
             background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
-            color: dark ? '#7090b0' : '#64748b', fontSize: 13, fontWeight: 400,
+            color: 'var(--text-2)', fontSize: 13, fontWeight: 400,
             transition: 'all 0.18s',
           }}
           onMouseEnter={(e) => {
@@ -260,10 +260,10 @@ export default function Sidebar() {
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = dark ? '#7090b0' : '#64748b';
+            e.currentTarget.style.color = dark ? '#7090b0' : '#334155';
           }}
         >
-          <span style={{ color: dark ? '#3d6080' : '#94a3b8', flexShrink: 0 }}>
+          <span style={{ color: 'var(--text-2)', flexShrink: 0 }}>
             {dark ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -287,7 +287,7 @@ export default function Sidebar() {
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 8,
             background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
-            color: dark ? '#7090b0' : '#64748b', fontSize: 13, fontWeight: 400,
+            color: 'var(--text-2)', fontSize: 13, fontWeight: 400,
             transition: 'all 0.18s',
           }}
           onMouseEnter={(e) => {
@@ -298,10 +298,10 @@ export default function Sidebar() {
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = dark ? '#7090b0' : '#64748b';
+            e.currentTarget.style.color = dark ? '#7090b0' : '#334155';
           }}
         >
-          <span style={{ color: dark ? '#3d6080' : '#94a3b8', flexShrink: 0 }}>
+          <span style={{ color: 'var(--text-2)', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
