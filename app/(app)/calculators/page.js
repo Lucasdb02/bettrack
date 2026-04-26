@@ -139,24 +139,6 @@ function CalcCard({ calc, dark }) {
 
       {/* Description */}
       <p style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>{calc.desc}</p>
-
-      {/* Bullets */}
-      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 5 }}>
-        {calc.bullets.map((b, i) => (
-          <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: 'var(--text-4)' }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: calc.iconColor.stroke, flexShrink: 0 }}/>
-            {b}
-          </li>
-        ))}
-      </ul>
-
-      {/* CTA */}
-      <div style={{ marginTop: 'auto', paddingTop: 4, display: 'flex', alignItems: 'center', gap: 5, fontSize: 12.5, fontWeight: 600, color: calc.iconColor.stroke }}>
-        Openen
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>
     </Link>
   );
 }
