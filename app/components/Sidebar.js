@@ -251,6 +251,39 @@ export default function Sidebar() {
 
       {/* Footer: dark toggle + account */}
       <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#ebebeb'}`, padding: '12px 14px', background: dark ? '#060713' : '#f5f5f5' }}>
+        {/* Support */}
+        <Link
+          href="/support"
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 9,
+            padding: '7px 10px', borderRadius: 7, marginBottom: 2,
+            background: pathname === '/support' ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
+            border: pathname === '/support' ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
+            color: pathname === '/support' ? (dark ? '#e8f0ff' : '#4f46e5') : 'var(--text-2)',
+            fontSize: 13, fontWeight: pathname === '/support' ? 600 : 400,
+            textDecoration: 'none', transition: 'all 0.18s',
+          }}
+          onMouseEnter={(e) => {
+            if (pathname !== '/support') {
+              e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
+              e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (pathname !== '/support') {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }
+          }}
+        >
+          <span style={{ color: pathname === '/support' ? (dark ? '#7b9ef0' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          Support
+        </Link>
+
         {/* Dark mode toggle */}
         <button
           onClick={toggle}
