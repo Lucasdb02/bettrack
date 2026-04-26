@@ -205,10 +205,10 @@ export default function Sidebar() {
 
   return (
     <>
-    <aside style={{ background: dark ? '#070917' : '#f0f2f6', borderRight: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : '#e2e8f0'}`, width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
+    <aside style={{ background: dark ? '#070917' : '#f5f5f5', borderRight: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'transparent'}`, width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
       {/* Logo */}
-      <div style={{ borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'}`, padding: '18px 16px' }} className="flex items-center gap-3">
+      <div style={{ borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#ebebeb'}`, padding: '18px 16px' }} className="flex items-center gap-3">
         <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -250,7 +250,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer: dark toggle + account */}
-      <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'}`, padding: '12px 14px', background: dark ? '#060713' : '#edf0f4' }}>
+      <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#ebebeb'}`, padding: '12px 14px', background: dark ? '#060713' : '#f5f5f5' }}>
         {/* Dark mode toggle */}
         <button
           onClick={toggle}

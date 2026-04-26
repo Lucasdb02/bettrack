@@ -47,7 +47,7 @@ const DARK = {
 const LIGHT = {
   '--color-win':  '#00c951',
   '--color-loss': '#fb2b37',
-  '--bg-page':        '#f8fafc',
+  '--bg-page':        '#f5f5f5',
   '--bg-card':        '#ffffff',
   '--bg-subtle':      '#f1f5f9',
   '--bg-input':       '#ffffff',
