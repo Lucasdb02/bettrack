@@ -80,16 +80,28 @@ function FaqItem({ vraag, antwoord, dark }) {
 export default function SupportPage() {
   const { dark } = useTheme();
   const [formData, setFormData] = useState({ naam: '', email: '', bericht: '' });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [errorMsg, setErrorMsg] = useState('');
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    // Open mailto with prefilled data
-    const subject = encodeURIComponent('TrackMijnBets Support');
-    const body = encodeURIComponent(`Naam: ${formData.naam}\n\n${formData.bericht}`);
-    window.open(`mailto:support@trackmijnbets.nl?subject=${subject}&body=${body}`);
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    setStatus('sending');
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Verzenden mislukt.');
+      setStatus('sent');
+      setFormData({ naam: '', email: '', bericht: '' });
+      setTimeout(() => setStatus('idle'), 6000);
+    } catch (err) {
+      setErrorMsg(err.message);
+      setStatus('error');
+    }
   }
 
   const iStyle = {
@@ -160,10 +172,10 @@ export default function SupportPage() {
             <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-2)', marginBottom: 4 }}>Stuur een bericht</h2>
             <p style={{ fontSize: 13, color: 'var(--text-4)', marginBottom: 20 }}>Kom je er niet uit? We reageren binnen 24 uur.</p>
 
-            {sent ? (
+            {status === 'sent' ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 9, background: dark ? 'rgba(0,201,81,0.12)' : 'rgba(0,201,81,0.08)', border: '1px solid rgba(0,201,81,0.25)' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00c951" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                <span style={{ fontSize: 13.5, fontWeight: 600, color: '#00c951' }}>Bericht geopend in je e-mailclient.</span>
+                <span style={{ fontSize: 13.5, fontWeight: 600, color: '#00c951' }}>Bericht verzonden! We reageren binnen 24 uur.</span>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -194,19 +206,33 @@ export default function SupportPage() {
                     style={{ ...iStyle, resize: 'vertical', lineHeight: 1.6 }}
                   />
                 </div>
+                {status === 'error' && (
+                  <p style={{ fontSize: 13, color: '#fb2b37', background: 'rgba(251,43,55,0.07)', border: '1px solid rgba(251,43,55,0.2)', borderRadius: 7, padding: '10px 13px' }}>
+                    {errorMsg}
+                  </p>
+                )}
                 <button
                   type="submit"
+                  disabled={status === 'sending'}
                   style={{
-                    padding: '11px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
+                    padding: '11px 0', borderRadius: 8, border: 'none',
+                    cursor: status === 'sending' ? 'wait' : 'pointer',
                     background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
                     color: '#fff', fontSize: 14, fontWeight: 600,
                     boxShadow: '0 2px 8px rgba(84,105,212,0.35)',
+                    opacity: status === 'sending' ? 0.7 : 1,
                     transition: 'opacity 0.15s',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
-                  onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                  onMouseEnter={e => { if (status !== 'sending') e.currentTarget.style.opacity = '0.88'; }}
+                  onMouseLeave={e => { if (status !== 'sending') e.currentTarget.style.opacity = '1'; }}
                 >
-                  Verstuur bericht
+                  {status === 'sending' ? (
+                    <>
+                      <svg style={{ animation: 'spin 1s linear infinite' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+                      Verzenden...
+                    </>
+                  ) : 'Verstuur bericht'}
                 </button>
               </form>
             )}
