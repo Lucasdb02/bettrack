@@ -191,7 +191,7 @@ function StatCard({ label, value, sub, color, icon }) {
     <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)', transition:'box-shadow 0.15s' }}>
       <div className="flex items-start justify-between">
         <div style={{ minWidth:0 }}>
-          <p style={{ fontSize:15, fontWeight:600, color:'var(--text-1)', marginBottom:10 }}>{label}</p>
+          <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:10 }}>{label}</p>
           <p style={{ fontSize:22, fontWeight:800, color:color||'var(--text-1)', lineHeight:1 }}>{value}</p>
           {sub && <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{sub}</p>}
         </div>
@@ -885,7 +885,7 @@ export default function Dashboard() {
             <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               {/* Left: P&L + ROI + daily */}
               <div>
-                <p style={{ fontSize:15, fontWeight:600, color:'var(--text-1)', marginBottom:6 }}>Cumulatieve P&L</p>
+                <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Cumulatieve P&L</p>
                 <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
                   <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
                   <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
@@ -900,7 +900,7 @@ export default function Dashboard() {
               </div>
               {/* Right: Record + legend */}
               <div style={{ textAlign:'right' }}>
-                <p style={{ fontSize:15, fontWeight:600, color:'var(--text-1)', marginBottom:6 }}>Record</p>
+                <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
                 <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
                 <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:5 }}>
@@ -947,7 +947,7 @@ export default function Dashboard() {
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
         <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
           <div className="dash-chart-hdr mb-5">
-            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Stake / Profit Ratio</h2>
+            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Stake / Profit Ratio</h2>
             <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verhouding inzet tot winst</p>
           </div>
           {(() => {
@@ -998,7 +998,7 @@ export default function Dashboard() {
               <>
                 <div className="mb-5" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
                   <div>
-                    <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Balance per Bookmaker</h2>
+                    <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2>
                     <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Huidige verdeling van je totale balance</p>
                   </div>
                   <div style={{ textAlign:'right' }}>
@@ -1053,7 +1053,7 @@ export default function Dashboard() {
             );
           })() : (
             <>
-              <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Balance per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Huidige verdeling van je totale balance</p></div>
+              <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Huidige verdeling van je totale balance</p></div>
               {empty()}
             </>
           )}
@@ -1062,7 +1062,7 @@ export default function Dashboard() {
 
       {/* Cumulatieve P&L per Bookmaker */}
       <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:16 }}>
-        <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Cumulatieve P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p></div>
+        <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Cumulatieve P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p></div>
         {bookLineData.length>1?(
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={bookLineData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
@@ -1080,7 +1080,7 @@ export default function Dashboard() {
       {/* ROI + Balance per Bookmaker */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
-          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
+          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>ROI per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Vergelijk prestaties per platform</p></div>
           {roiData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={roiData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%">
@@ -1099,7 +1099,7 @@ export default function Dashboard() {
 
         {/* Status Breakdown donut */}
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
-          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling van alle bet statussen</p></div>
+          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling van alle bet statussen</p></div>
           {(() => {
             const total = statusData.reduce((s,d)=>s+d.value,0);
             const center = total > 0 ? [...statusData].sort((a,b)=>b.value-a.value)[0] : null;
@@ -1156,7 +1156,7 @@ export default function Dashboard() {
       <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', width:'100%' }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 24px', borderBottom:'1px solid var(--border-subtle)' }}>
           <div>
-            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-1)' }}>Recente Bets</h2>
+            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Recente Bets</h2>
             <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Laatste {recent.length} weddenschappen</p>
           </div>
           <Link href="/bets" style={{ fontSize:12.5, color:'var(--brand)', textDecoration:'none', fontWeight:500 }}>Alle bets bekijken →</Link>
