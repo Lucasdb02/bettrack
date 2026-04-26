@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePreferences, useFmt } from '../../context/PreferencesContext';
 import { useBets, berekenWinst } from '../../context/BetsContext';
+import { createClient } from '@/lib/supabase';
 
 const TABS = [
   { id: 'overzicht', label: 'Overzicht' },
@@ -170,6 +172,14 @@ export default function AccountPage() {
   const { prefs, setPrefs, updatePref, loaded } = usePreferences();
   const { bets } = useBets();
   const [tab, setTab] = useState('overzicht');
+  const router = useRouter();
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  }
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
 
@@ -182,6 +192,21 @@ export default function AccountPage() {
           </h1>
           <p style={{ fontSize:14, color:'var(--text-3)' }}>Beheer je voorkeuren en accountinstellingen</p>
         </div>
+        <button
+          onClick={handleLogout}
+          style={{
+            display:'flex', alignItems:'center', gap:7, padding:'8px 16px', borderRadius:8,
+            border:'1px solid rgba(251,43,55,0.25)', background:'rgba(251,43,55,0.06)',
+            color:'#fb2b37', fontSize:13, fontWeight:600, cursor:'pointer', transition:'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(251,43,55,0.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(251,43,55,0.06)'; }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Uitloggen
+        </button>
       </div>
       <div style={{ borderBottom:'1px solid var(--border)', marginBottom:28, display:'flex', gap:4 }}>
         {TABS.map(t => <TabBtn key={t.id} active={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</TabBtn>)}

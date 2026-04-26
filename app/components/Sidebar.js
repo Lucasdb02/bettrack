@@ -323,34 +323,38 @@ export default function Sidebar() {
           {dark ? 'Lichte modus' : 'Donkere modus'}
         </button>
 
-        {/* Uitloggen */}
-        <button
-          onClick={handleLogout}
+        {/* Abonnement */}
+        <Link
+          href="/pricing"
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 8,
-            background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
-            color: 'var(--text-2)', fontSize: 13, fontWeight: 400,
-            transition: 'all 0.18s',
+            background: pathname === '/pricing' ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
+            border: pathname === '/pricing' ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
+            color: pathname === '/pricing' ? (dark ? '#e8f0ff' : '#4f46e5') : 'var(--text-2)',
+            fontSize: 13, fontWeight: pathname === '/pricing' ? 600 : 400,
+            textDecoration: 'none', transition: 'all 0.18s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(251,43,55,0.08)';
-            e.currentTarget.style.borderColor = 'rgba(251,43,55,0.2)';
-            e.currentTarget.style.color = '#fb2b37';
+            if (pathname !== '/pricing') {
+              e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
+              e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
+            }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = dark ? '#7090b0' : '#334155';
+            if (pathname !== '/pricing') {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }
           }}
         >
-          <span style={{ color: 'var(--text-2)', flexShrink: 0 }}>
+          <span style={{ color: pathname === '/pricing' ? (dark ? '#7b9ef0' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
             </svg>
           </span>
-          Uitloggen
-        </button>
+          Abonnement
+        </Link>
 
         {/* Account */}
         <Link
