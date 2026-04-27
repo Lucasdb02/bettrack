@@ -1,11 +1,10 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req) {
   try {
     const { naam, email, bericht } = await req.json();
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     if (!naam || !email || !bericht) {
       return NextResponse.json({ error: 'Alle velden zijn verplicht.' }, { status: 400 });
