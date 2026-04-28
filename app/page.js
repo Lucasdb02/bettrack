@@ -970,13 +970,14 @@ function Prijzen() {
           </div>
         </div>
 
-        {/* Plans */}
+        {/* Plans — outer wrapper adds paddingTop:13 on all cards so badge space is consistent */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28, alignItems: 'start' }}>
           {LP_PLANS.map((plan) => {
             const prijs = jaarlijks ? plan.jaar : plan.maand;
             const isPopulair = plan.populair;
             return (
-              <div key={plan.id} style={{ borderRadius: 14, padding: isPopulair ? '28px 26px' : '24px 22px', border: isPopulair ? '2px solid #6366f1' : `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, background: isPopulair ? (dark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.03)') : (dark ? '#0d1a2e' : '#ffffff'), position: 'relative', boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(99,102,241,0.15)') : 'none', display: 'flex', flexDirection: 'column' }}>
+              <div key={plan.id} style={{ paddingTop: 13 }}>
+              <div style={{ borderRadius: 14, padding: '24px 22px', border: isPopulair ? '2px solid #6366f1' : `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, background: isPopulair ? (dark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.03)') : (dark ? '#0d1a2e' : '#ffffff'), position: 'relative', boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(99,102,241,0.15)') : 'none', display: 'flex', flexDirection: 'column' }}>
 
                 {/* Popular badge */}
                 {isPopulair && (
@@ -992,7 +993,7 @@ function Prijzen() {
                 </div>
 
                 {/* Price — fixed height so button aligns */}
-                <div style={{ minHeight: 72, marginBottom: 20 }}>
+                <div style={{ minHeight: 88, marginBottom: 20 }}>
                   {prijs === 0 ? (
                     <p style={{ fontSize: 32, fontWeight: 800, color: text1, lineHeight: 1 }}>Gratis</p>
                   ) : (
@@ -1029,6 +1030,7 @@ function Prijzen() {
                     ))}
                   </div>
                 </div>
+              </div>
               </div>
             );
           })}
