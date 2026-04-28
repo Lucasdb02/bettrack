@@ -762,7 +762,7 @@ function HoeHetWerkt() {
                   background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
                   color: '#fff', fontWeight: 800, fontSize: 17,
                   width: 44, height: 44, borderRadius: 8,
-                  boxShadow: '0 4px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  boxShadow: '0 4px 16px rgba(84,105,212,0.45)',
                   border: '1px solid rgba(255,255,255,0.2)',
                   margin: '0 auto 24px', position: 'relative', zIndex: 1,
                 }}>
