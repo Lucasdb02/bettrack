@@ -96,7 +96,7 @@ function Header() {
         height: scrolled ? 54 : 64,
         /* Background: transparent at top, frosted glass when scrolled */
         background: scrolled
-          ? (dark ? 'rgba(6,10,22,0.88)' : '#ffffff')
+          ? (dark ? 'rgba(6,10,22,0.88)' : 'rgba(255,255,255,0.78)')
           : 'transparent',
         backdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
@@ -381,7 +381,7 @@ function Hero() {
 /* ── App Showcase (bento grid) ── */
 function AppShowcase() {
   const { dark } = useLp();
-  const bg1 = dark ? '#04111f' : '#f8fafc';
+  const bg1 = dark ? '#04111f' : '#ffffff';
   const cardBg = dark ? 'linear-gradient(160deg, #0d1a2e 0%, #0a1628 100%)' : '#ffffff';
   const cardBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
   const text1 = dark ? '#fff' : '#0f172a';
