@@ -206,7 +206,6 @@ function Hero() {
         : '#ffffff',
       paddingBottom: 0, paddingTop: 0,
       position: 'relative', overflow: 'hidden',
-      minHeight: 600,
       transition: 'background 0.3s ease',
     }}>
 
@@ -272,19 +271,22 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right — screenshot in browser chrome, extends past right edge */}
-        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 48, paddingLeft: 8, minWidth: 0 }}>
-          {/* Browser chrome — light theme */}
+        {/* Right — screenshot in browser chrome, top/bottom aligned to left column content */}
+        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 128, paddingBottom: 80, paddingLeft: 8, minWidth: 0, alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
+          {/* Browser chrome — light theme, fills exact height */}
           <div style={{
+            flex: 1,
             background: '#ffffff',
             borderRadius: 14,
             border: '1px solid #d1d9e0',
-            boxShadow: '0 4px 32px rgba(0,0,0,0.13)',
+            boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12)',
             overflow: 'hidden',
             width: '115%',
+            display: 'flex',
+            flexDirection: 'column',
           }}>
             {/* Title bar: stoplight + URL bar */}
-            <div style={{ background: '#f0f2f5', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid #d1d9e0' }}>
+            <div style={{ background: '#f0f2f5', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid #d1d9e0', flexShrink: 0 }}>
               {['#ff5f57','#febc2e','#28c840'].map((c, i) => (
                 <div key={i} style={{ width: 11, height: 11, borderRadius: '50%', background: c, flexShrink: 0, border: '0.5px solid rgba(0,0,0,0.12)' }} />
               ))}
@@ -294,13 +296,15 @@ function Hero() {
               </div>
             </div>
 
-            {/* Dashboard screenshot */}
-            <img
-              src="https://www.image2url.com/r2/default/images/1777398082118-4b59d759-6343-40e8-8e5a-c29b34c2d48f.png"
-              alt="TrackMijnBets dashboard"
-              style={{ width: '100%', display: 'block' }}
-              draggable={false}
-            />
+            {/* Dashboard screenshot — fills browser, top-anchored */}
+            <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+              <img
+                src="https://www.image2url.com/r2/default/images/1777398082118-4b59d759-6343-40e8-8e5a-c29b34c2d48f.png"
+                alt="TrackMijnBets dashboard"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left', display: 'block' }}
+                draggable={false}
+              />
+            </div>
           </div>
         </div>
       </div>
