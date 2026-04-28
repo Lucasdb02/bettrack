@@ -96,7 +96,7 @@ function Header() {
         height: scrolled ? 54 : 64,
         /* Background: transparent at top, frosted glass when scrolled */
         background: scrolled
-          ? (dark ? 'rgba(6,10,22,0.88)' : 'rgba(255,255,255,0.78)')
+          ? (dark ? 'rgba(6,10,22,0.88)' : '#ffffff')
           : 'transparent',
         backdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
@@ -176,7 +176,7 @@ function Header() {
           ) : (
             <>
               <Link href="/login"
-                style={{ color: loginColor, fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 7, transition: 'all 0.15s' }}
+                style={{ color: loginColor, fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '8px 14px', borderRadius: 7, transition: 'all 0.15s', display: 'inline-flex', alignItems: 'center' }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = loginHoverColor; e.currentTarget.style.background = loginHoverBg; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = loginColor; e.currentTarget.style.background = 'transparent'; }}
               >Inloggen</Link>
@@ -386,6 +386,8 @@ function AppShowcase() {
   const cardBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
   const text1 = dark ? '#fff' : '#0f172a';
   const text2 = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+  const mockupBg = dark ? 'rgba(0,0,0,0.3)' : '#0e1420';
+  const mockupBorderTop = dark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(15,23,42,0.15)';
 
   return (
     <section id="functies" className="lp-section-pad" style={{ backgroundColor: bg1, padding: '96px 40px', transition: 'background-color 0.3s ease' }}>
@@ -415,7 +417,7 @@ function AppShowcase() {
                 Volg je cumulatieve winst live. Zie je ROI, win rate en yield per geselecteerde periode in één overzicht.
               </p>
             </div>
-            <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
+            <div style={{ margin: '0 16px 0', background: mockupBg, borderRadius: '12px 12px 0 0', border: mockupBorderTop, borderBottom: 'none', padding: '14px 16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: 12 }}>
                 {[
                   { l: 'Totale P&L', v: '+€847', c: '#34D399' },
@@ -468,7 +470,7 @@ function AppShowcase() {
                 Vul sport, markt, odds en inzet in. Zie direct je potentiële winst.
               </p>
             </div>
-            <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
+            <div style={{ margin: '0 16px 0', background: mockupBg, borderRadius: '12px 12px 0 0', border: mockupBorderTop, borderBottom: 'none', padding: '14px 16px' }}>
               {[
                 { label: 'Sport', value: 'Voetbal' },
                 { label: 'Wedstrijd', value: 'Ajax vs PSV' },
@@ -517,7 +519,7 @@ function AppShowcase() {
                 Filter op sport, bookmaker, markt of periode.
               </p>
             </div>
-            <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '12px 14px' }}>
+            <div style={{ margin: '0 16px 0', background: mockupBg, borderRadius: '12px 12px 0 0', border: mockupBorderTop, borderBottom: 'none', padding: '12px 14px' }}>
               <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 7, padding: '7px 10px', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6e7681" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <span style={{ fontSize: 10, color: '#4a6885' }}>Zoek in bets...</span>
@@ -563,7 +565,7 @@ function AppShowcase() {
                 ROI per sport, markt en bookmaker. Ontdek waar je geld verdient.
               </p>
             </div>
-            <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
+            <div style={{ margin: '0 16px 0', background: mockupBg, borderRadius: '12px 12px 0 0', border: mockupBorderTop, borderBottom: 'none', padding: '14px 16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div>
                   <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>ROI per sport</p>
@@ -624,7 +626,7 @@ function AppShowcase() {
                 Groen = winst, rood = verlies. Klik op een dag voor je betdetails.
               </p>
             </div>
-            <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', overflow: 'hidden' }}>
+            <div style={{ margin: '0 16px 0', background: mockupBg, borderRadius: '12px 12px 0 0', border: mockupBorderTop, borderBottom: 'none', overflow: 'hidden' }}>
               <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: '#c9d1d9' }}>April 2026</span>
                 <span style={{ fontSize: 10, fontWeight: 800, color: '#34D399' }}>+€363</span>
@@ -670,7 +672,7 @@ function AppShowcase() {
                 Arbitrage, Kelly, EV, Vig en Odds Converter — altijd bij de hand.
               </p>
             </div>
-            <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
+            <div style={{ margin: '0 16px 0', background: mockupBg, borderRadius: '12px 12px 0 0', border: mockupBorderTop, borderBottom: 'none', padding: '14px 16px' }}>
               <p style={{ fontSize: 8, color: '#7b9ef0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Arbitrage Calculator</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
                 {[
