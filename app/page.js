@@ -196,34 +196,50 @@ function Header() {
 /* ── Hero ── */
 function Hero() {
   const { dark } = useLp();
+  const cBg   = 'rgba(255,255,255,0.04)';
+  const cBrd  = 'rgba(255,255,255,0.07)';
+
   return (
     <section className="lp-hero-section" style={{
       background: dark
         ? 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)'
         : '#ffffff',
-      paddingTop: 120, paddingBottom: 80,
+      paddingBottom: 0, paddingTop: 0,
       position: 'relative', overflow: 'hidden',
+      minHeight: 700,
       transition: 'background 0.3s ease',
     }}>
-      <div style={{ position: 'absolute', top: -80, left: '35%', transform: 'translateX(-50%)', width: 700, height: 600, background: 'radial-gradient(ellipse, rgba(84,105,212,0.14) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div className="lp-hero-inner" style={{ maxWidth: 1400, margin: '0 auto', padding: '0 32px', display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: 56, alignItems: 'center', position: 'relative' }}>
+      {/* Dotted grid — fades outward from where the dashboard lives */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+        backgroundImage: `radial-gradient(circle, ${dark ? 'rgba(107,130,240,0.22)' : 'rgba(84,105,212,0.2)'} 1px, transparent 1px)`,
+        backgroundSize: '22px 22px',
+        WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 75% 50%, black 0%, transparent 65%)',
+        maskImage:        'radial-gradient(ellipse 90% 90% at 75% 50%, black 0%, transparent 65%)',
+      }} />
 
-        {/* Left — text */}
-        <div>
+      {/* Subtle glow behind mockup */}
+      <div style={{ position: 'absolute', top: '10%', left: '42%', width: 700, height: 600, background: 'radial-gradient(ellipse, rgba(84,105,212,0.1) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+
+      {/* Full-width flex — left text | right mockup */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
+
+        {/* Left text — aligned to 1400px grid */}
+        <div style={{ flexShrink: 0, width: '44%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: dark ? 'rgba(84,105,212,0.15)' : 'rgba(84,105,212,0.1)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
           </div>
 
-          <h1 className="lp-hero-title" style={{ fontSize: 54, fontWeight: 800, color: dark ? '#fff' : '#0f172a', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
+          <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 800, color: dark ? '#fff' : '#0f172a', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
             Stop met gokken,{' '}
             <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               begin met analyseren
             </span>
           </h1>
 
-          <p className="lp-hero-sub" style={{ fontSize: 18, color: dark ? 'rgba(255,255,255,0.58)' : '#475569', lineHeight: 1.65, marginBottom: 40, maxWidth: 460 }}>
+          <p className="lp-hero-sub" style={{ fontSize: 17, color: dark ? 'rgba(255,255,255,0.58)' : '#475569', lineHeight: 1.65, marginBottom: 40, maxWidth: 440 }}>
             Houd al je sportbets bij, analyseer je prestaties en ontdek precies waar je winst maakt — of verliest.
           </p>
 
@@ -256,122 +272,183 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right — app mockup (always dark — shows the actual app UI) */}
-        <div className="lp-mockup-wrap" style={{ position: 'relative' }}>
-          <div style={{ backgroundColor: '#0d1a2e', borderRadius: 14, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)', overflow: 'hidden' }}>
-            {/* Window bar */}
-            <div style={{ backgroundColor: '#1a2e45', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              {['#ff5f57','#febc2e','#28c840'].map((c, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: c }} />)}
-              <div style={{ flex: 1, marginLeft: 8, height: 18, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>trackmijnbets.nl/dashboard</span>
+        {/* Right — faithful dashboard mockup, extends past right edge (clipped by section overflow:hidden) */}
+        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 56, paddingLeft: 8, minWidth: 0 }}>
+          {/* Browser chrome frame */}
+          <div style={{
+            background: '#0d1825',
+            borderRadius: '14px 14px 0 0',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderBottom: 'none',
+            boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04), -20px 0 60px rgba(0,0,0,0.3)',
+            overflow: 'hidden',
+            width: '115%',
+          }}>
+            {/* Traffic lights + URL bar */}
+            <div style={{ background: '#111d2e', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+              {['#ff5f57','#febc2e','#28c840'].map((c, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: c, flexShrink: 0 }} />)}
+              <div style={{ flex: 1, marginLeft: 10, height: 20, background: 'rgba(255,255,255,0.05)', borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.01em' }}>trackmijnbets.nl/dashboard</span>
               </div>
             </div>
 
-            {/* App content */}
-            <div style={{ display: 'flex', minHeight: 400 }}>
-              {/* Sidebar */}
-              <div className="lp-mockup-sidebar" style={{ width: 168, backgroundColor: '#0a1e32', padding: '14px 8px', borderRight: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16, paddingLeft: 8 }}>
-                  <div style={{ width: 20, height: 20, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 5, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  </div>
-                  <span style={{ color: '#fff', fontSize: 10, fontWeight: 700 }}>TrackMijnBets</span>
-                </div>
-                <p style={{ color: '#2d5070', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', paddingLeft: 8, marginBottom: 4 }}>Menu</p>
-                {[
-                  { label: 'Dashboard', active: true },
-                  { label: 'Bets Overzicht', active: false },
-                  { label: 'Bet Invoeren', active: false },
-                  { label: 'Maandoverzicht', active: false },
-                  { label: 'Statistieken', active: false },
-                ].map((item, i) => (
-                  <div key={i} style={{ padding: '4px 8px', borderRadius: 5, marginBottom: 1, backgroundColor: item.active ? 'rgba(30,73,118,0.8)' : 'transparent', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 11, height: 11, borderRadius: 3, backgroundColor: item.active ? '#5469d4' : 'rgba(255,255,255,0.06)', flexShrink: 0 }} />
-                    <span style={{ color: item.active ? '#fff' : 'rgba(255,255,255,0.3)', fontSize: 9.5 }}>{item.label}</span>
-                  </div>
-                ))}
-                <p style={{ color: '#2d5070', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', paddingLeft: 8, marginBottom: 4, marginTop: 10 }}>Tools</p>
-                {['Arbitrage', 'Kelly', 'Asian Lines', 'Odds Converter'].map((item, i) => (
-                  <div key={i} style={{ padding: '3px 8px', borderRadius: 5, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 9, height: 9, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
-                    <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: 9 }}>{item}</span>
-                  </div>
-                ))}
-              </div>
+            {/* App shell: sidebar + main */}
+            <div style={{ display: 'flex', height: 560 }}>
 
-              {/* Dashboard content */}
-              <div style={{ flex: 1, padding: '14px 16px', backgroundColor: '#0d1117' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, color: '#e6edf3' }}>Dashboard</p>
-                  <div style={{ display: 'flex', gap: 5 }}>
-                    {['Week', 'Maand', 'Jaar'].map((p, i) => (
-                      <span key={p} style={{ fontSize: 8.5, padding: '2px 7px', borderRadius: 4, backgroundColor: i === 1 ? '#5469d4' : 'rgba(255,255,255,0.06)', color: i === 1 ? '#fff' : 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{p}</span>
-                    ))}
+              {/* ─ Sidebar (exact copy of real sidebar, scaled down) ─ */}
+              <div style={{ width: 185, background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+                {/* Logo */}
+                <div style={{ padding: '14px 14px 13px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 24, height: 24, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 6, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <div>
+                    <p style={{ color: '#fff', fontWeight: 700, fontSize: 11, lineHeight: 1.2 }}>TrackMijnBets</p>
+                    <p style={{ color: '#4a6885', fontSize: 9 }}>Analyse Tool</p>
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 7, marginBottom: 10 }}>
+
+                {/* Nav */}
+                <div style={{ flex: 1, padding: '10px 10px', overflowY: 'hidden' }}>
+                  <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 700, letterSpacing: '0.09em', paddingLeft: 8, marginBottom: 4, textTransform: 'uppercase' }}>Menu</p>
                   {[
-                    { label: 'Totale P&L', value: '+€847', color: '#34D399', sub: '+12.3%' },
-                    { label: 'Win Rate', value: '61.3%', color: '#e6edf3', sub: '147 bets' },
-                    { label: 'ROI', value: '+8.7%', color: '#34D399', sub: 'rendement' },
-                    { label: 'Actief', value: '3', color: '#7b9ef0', sub: 'open bets' },
-                  ].map((c, i) => (
-                    <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '8px 9px' }}>
-                      <p style={{ fontSize: 7, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>{c.label}</p>
-                      <p style={{ fontSize: 14, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', marginBottom: 1 }}>{c.value}</p>
-                      <p style={{ fontSize: 7, color: '#4a6885' }}>{c.sub}</p>
+                    { label: 'Dashboard', active: true },
+                    { label: 'Bets Overzicht', active: false },
+                    { label: 'Bet Invoeren', active: false },
+                    { label: 'Maandoverzicht', active: false },
+                    { label: 'Statistieken', active: false },
+                  ].map((item, i) => (
+                    <div key={i} style={{ padding: '5px 8px', borderRadius: 6, marginBottom: 1, background: item.active ? 'rgba(123,158,240,0.15)' : 'transparent', border: `1px solid ${item.active ? 'rgba(123,158,240,0.25)' : 'transparent'}`, display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <div style={{ width: 13, height: 13, borderRadius: 3, background: item.active ? 'rgba(123,158,240,0.25)' : 'rgba(255,255,255,0.05)', flexShrink: 0 }} />
+                      <span style={{ color: item.active ? '#e8f0ff' : 'rgba(255,255,255,0.28)', fontSize: 9.5, fontWeight: item.active ? 600 : 400 }}>{item.label}</span>
+                    </div>
+                  ))}
+
+                  <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 700, letterSpacing: '0.09em', paddingLeft: 8, marginBottom: 4, marginTop: 12, textTransform: 'uppercase' }}>Bookmakers</p>
+                  <div style={{ padding: '5px 8px', borderRadius: 6, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 7 }}>
+                    <div style={{ width: 13, height: 13, borderRadius: 3, background: 'rgba(255,255,255,0.05)', flexShrink: 0 }} />
+                    <span style={{ color: 'rgba(255,255,255,0.28)', fontSize: 9.5 }}>Bookmakers</span>
+                  </div>
+
+                  <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 700, letterSpacing: '0.09em', paddingLeft: 8, marginBottom: 4, textTransform: 'uppercase' }}>Tools</p>
+                  {['Odds Vergelijker','Calculators','Chrome Extension','Asian Lines'].map((item, i) => (
+                    <div key={i} style={{ padding: '4px 8px', borderRadius: 6, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <div style={{ width: 13, height: 13, borderRadius: 3, background: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
+                      <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 9.5 }}>{item}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '8px 10px', marginBottom: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
-                    <p style={{ fontSize: 8.5, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
-                    <span style={{ fontSize: 8, color: '#34D399', fontWeight: 600 }}>+€847 dit jaar</span>
+
+                {/* Footer */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '10px 10px', background: '#060713' }}>
+                  {['Support','Lichte modus','Abonnement'].map((item, i) => (
+                    <div key={i} style={{ padding: '4px 8px', borderRadius: 6, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <div style={{ width: 12, height: 12, borderRadius: 3, background: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
+                      <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: 9.5 }}>{item}</span>
+                    </div>
+                  ))}
+                  <div style={{ padding: '6px 8px', borderRadius: 7, marginTop: 5, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div>
+                      <p style={{ color: '#c5d8ec', fontSize: 10, fontWeight: 500 }}>Mijn Account</p>
+                      <p style={{ color: '#3d6080', fontSize: 8.5 }}>Voorkeuren & export</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ─ Dashboard main content ─ */}
+              <div style={{ flex: 1, background: '#080f1e', padding: '16px 18px', overflowY: 'hidden', minWidth: 0 }}>
+                {/* Page header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#e6edf3', marginBottom: 2 }}>Dashboard</p>
+                    <p style={{ fontSize: 9, color: '#4a6885' }}>Overzicht van al je bets en prestaties</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    {['Alle tijd','Dit jaar','Afgelopen 28 d.','Afgelopen 7 d.'].map((p, i) => (
+                      <span key={p} style={{ fontSize: 8, padding: '3px 7px', borderRadius: 5, background: i === 1 ? '#5469d4' : 'rgba(255,255,255,0.05)', color: i === 1 ? '#fff' : 'rgba(255,255,255,0.35)', fontWeight: i === 1 ? 600 : 400 }}>{p}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Stat cards row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12 }}>
+                  {[
+                    { label: 'Totale P&L', value: '+€847', color: '#00c951', sub: '↑ +12.3% ROI' },
+                    { label: 'Win Rate',   value: '61.3%',  color: '#e6edf3', sub: '147 afger. bets' },
+                    { label: 'Gem. odds',  value: '2.18',   color: '#e6edf3', sub: 'per bet gem.' },
+                    { label: 'Lopend',     value: '3',      color: '#7b9ef0', sub: '€120 in spel' },
+                  ].map((c, i) => (
+                    <div key={i} style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '10px 11px' }}>
+                      <p style={{ fontSize: 7.5, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 5 }}>{c.label}</p>
+                      <p style={{ fontSize: 18, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', lineHeight: 1, marginBottom: 3 }}>{c.value}</p>
+                      <p style={{ fontSize: 7.5, color: '#4a6885' }}>{c.sub}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* P&L Chart */}
+                <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '10px 12px', marginBottom: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <p style={{ fontSize: 9, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
+                    <span style={{ fontSize: 8.5, color: '#00c951', fontWeight: 600, background: 'rgba(0,201,81,0.1)', padding: '2px 7px', borderRadius: 4 }}>+€847 dit jaar</span>
                   </div>
                   {(() => {
-                    const pts = [[0,55],[44,50],[88,44],[132,48],[176,34],[220,26],[264,30],[308,18],[352,10],[396,5],[440,2]];
+                    const pts = [[0,58],[44,52],[88,44],[132,47],[176,32],[220,22],[264,26],[308,13],[352,7],[396,4],[440,1]];
                     const line = mkSmoothPath(pts);
-                    const area = line + ' L440,58 L0,58 Z';
+                    const area = line + ' L440,60 L0,60 Z';
                     return (
-                      <svg viewBox="0 0 440 58" preserveAspectRatio="none" style={{ width: '100%', height: 42 }}>
+                      <svg viewBox="0 0 440 60" preserveAspectRatio="none" style={{ width:'100%', height:56 }}>
                         <defs>
-                          <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#5469d4" stopOpacity="0.18" />
-                            <stop offset="95%" stopColor="#5469d4" stopOpacity="0" />
+                          <linearGradient id="hg3" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#00c951" stopOpacity="0.22"/>
+                            <stop offset="100%" stopColor="#00c951" stopOpacity="0"/>
                           </linearGradient>
                         </defs>
-                        <path d={area} fill="url(#heroGrad)" stroke="none" />
-                        <path d={line} fill="none" stroke="#5469d4" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+                        <path d={area} fill="url(#hg3)"/>
+                        <path d={line} fill="none" stroke="#00c951" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     );
                   })()}
+                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:3 }}>
+                    {['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov'].map(m => (
+                      <span key={m} style={{ fontSize:7, color:'#2d4560' }}>{m}</span>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, overflow: 'hidden' }}>
-                  <div style={{ padding: '5px 9px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 7.5, fontWeight: 600, color: '#6e7681', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recente bets</span>
-                    <span style={{ fontSize: 7, color: '#5469d4', fontWeight: 600 }}>Alles zien →</span>
+
+                {/* Recent bets */}
+                <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, overflow: 'hidden' }}>
+                  <div style={{ padding:'6px 12px', borderBottom:`1px solid ${cBrd}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <span style={{ fontSize:8.5, fontWeight:600, color:'#6e7681', textTransform:'uppercase', letterSpacing:'0.05em' }}>Recente bets</span>
+                    <span style={{ fontSize:8, color:'#5469d4', fontWeight:600 }}>Alles zien →</span>
+                  </div>
+                  <div style={{ display:'grid', gridTemplateColumns:'1.6fr 0.8fr 0.6fr 0.6fr 0.65fr', padding:'5px 12px', borderBottom:`1px solid rgba(255,255,255,0.04)` }}>
+                    {['Wedstrijd','Bookmaker','Odds','Inzet','P&L'].map(h => (
+                      <span key={h} style={{ fontSize:7.5, color:'#3d5570', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.04em' }}>{h}</span>
+                    ))}
                   </div>
                   {[
-                    { match: 'Ajax vs PSV', market: '1X2 · Unibet', odds: '2.10', result: '+€55', win: true },
-                    { match: 'Liverpool vs Chelsea', market: 'BTTS · Bet365', odds: '1.85', result: '-€25', win: false },
-                    { match: 'Sinner vs Alcaraz', market: 'Winnaar · TOTO', odds: '3.20', result: '+€38', win: true },
+                    { match:'Ajax vs PSV',          book:'Unibet', odds:'2.10', stake:'€25', pnl:'+€27,50', win:true  },
+                    { match:'Liverpool vs Chelsea',  book:'Bet365', odds:'1.85', stake:'€25', pnl:'-€25',   win:false },
+                    { match:'Sinner vs Alcaraz',     book:'TOTO',   odds:'3.20', stake:'€15', pnl:'+€33',   win:true  },
+                    { match:'Real Madrid vs Bayern', book:'Unibet', odds:'1.65', stake:'€30', pnl:'+€19,50',win:true  },
                   ].map((r, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 9px', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                      <div>
-                        <span style={{ fontSize: 8.5, color: '#c9d1d9', fontWeight: 500, display: 'block' }}>{r.match}</span>
-                        <span style={{ fontSize: 7.5, color: '#6e7681' }}>{r.market}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontSize: 8, color: '#4a6885' }}>{r.odds}</span>
-                        <span style={{ fontSize: 9, fontWeight: 700, color: r.win ? '#34D399' : '#FB7185' }}>{r.result}</span>
-                      </div>
+                    <div key={i} style={{ display:'grid', gridTemplateColumns:'1.6fr 0.8fr 0.6fr 0.6fr 0.65fr', padding:'6px 12px', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.03)' : 'none', alignItems:'center' }}>
+                      <span style={{ fontSize:9, color:'#c9d1d9', fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.match}</span>
+                      <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.book}</span>
+                      <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.odds}</span>
+                      <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.stake}</span>
+                      <span style={{ fontSize:9, fontWeight:700, color: r.win ? '#00c951' : '#fb2b37' }}>{r.pnl}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-          <div style={{ position: 'absolute', bottom: -40, left: '50%', transform: 'translateX(-50%)', width: '70%', height: 40, background: 'radial-gradient(ellipse, rgba(84,105,212,0.3) 0%, transparent 70%)', filter: 'blur(16px)', pointerEvents: 'none' }} />
         </div>
       </div>
     </section>
