@@ -716,41 +716,64 @@ function AppShowcase() {
 /* ── How it works ── */
 function HoeHetWerkt() {
   const { dark } = useLp();
-  const bg = dark ? '#060e1a' : '#ffffff';
-  const border = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
-  const text1 = dark ? '#fff' : '#0f172a';
-  const text2 = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
-  const stepLine = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+  const bg       = dark ? '#060e1a' : '#ffffff';
+  const sectionBorder = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const text1    = dark ? '#fff' : '#0f172a';
+  const text2    = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+  const cardBg   = dark
+    ? 'linear-gradient(135deg, rgba(107,130,240,0.07) 0%, rgba(84,105,212,0.04) 100%)'
+    : 'linear-gradient(135deg, #eef2ff 0%, #e8eeff 55%, #f3f0ff 100%)';
+  const cardBorder = dark ? 'rgba(107,130,240,0.14)' : 'rgba(99,102,241,0.18)';
+  const pillBg   = dark ? 'rgba(255,255,255,0.07)' : '#ffffff';
+  const pillBorder = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)';
+  const stepLine = dark ? 'rgba(255,255,255,0.1)' : 'rgba(99,102,241,0.22)';
 
   const steps = [
-    { num: '01', title: 'Voer je bet in', desc: 'Vul sport, wedstrijd, markt, selectie, odds en inzet in. Zie direct je potentiële winst voordat je de bet opslaat.' },
-    { num: '02', title: 'Bijhouden & updaten', desc: 'Zodra de uitkomst bekend is, update je de bet met één klik. TrackMijnBets berekent automatisch je winst of verlies.' },
-    { num: '03', title: 'Analyseer je data', desc: 'Bekijk per sport, markt en bookmaker waar je goed en slecht presteert. Verbeter je strategie op basis van echte data.' },
+    { num: '1', title: 'Voer je bet in',      desc: 'Vul sport, wedstrijd, markt, selectie, odds en inzet in. Zie direct je potentiële winst voordat je de bet opslaat.' },
+    { num: '2', title: 'Bijhouden & updaten', desc: 'Zodra de uitkomst bekend is, update je de bet met één klik. TrackMijnBets berekent automatisch je winst of verlies.' },
+    { num: '3', title: 'Analyseer je data',   desc: 'Bekijk per sport, markt en bookmaker waar je goed en slecht presteert. Verbeter je strategie op basis van echte data.' },
   ];
 
   return (
-    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
+    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${sectionBorder}`, transition: 'background-color 0.3s ease' }}>
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 64 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Hoe het werkt</span>
-          <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.02em' }}>
-            In drie stappen naar inzicht
-          </h2>
-        </div>
+        <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 24, padding: '64px 56px' }}>
 
-        <div className="lp-steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
-          {steps.map((step, i) => (
-            <div key={i} style={{ textAlign: 'center', position: 'relative' }}>
-              {i < 2 && (
-                <div className="lp-step-line" style={{ position: 'absolute', top: 28, left: 'calc(50% + 36px)', right: 'calc(-50% + 36px)', height: 1, backgroundColor: stepLine, zIndex: 0 }} />
-              )}
-              <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: '#5469d4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', position: 'relative', zIndex: 1, boxShadow: '0 0 24px rgba(84,105,212,0.4)' }}>
-                <span style={{ color: '#fff', fontWeight: 800, fontSize: 16 }}>{step.num}</span>
-              </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: text1, marginBottom: 12 }}>{step.title}</h3>
-              <p style={{ fontSize: 15, color: text2, lineHeight: 1.7 }}>{step.desc}</p>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: 60 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', background: pillBg, border: `1px solid ${pillBorder}`, borderRadius: 99, padding: '5px 18px', marginBottom: 20 }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: text1 }}>Hoe het werkt</span>
             </div>
-          ))}
+            <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+              In drie stappen naar inzicht
+            </h2>
+          </div>
+
+          {/* Steps */}
+          <div className="lp-steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+            {steps.map((step, i) => (
+              <div key={i} style={{ textAlign: 'center', position: 'relative', padding: '0 40px' }}>
+                {i < 2 && (
+                  <div className="lp-step-line" style={{ position: 'absolute', top: 22, left: 'calc(50% + 32px)', right: 'calc(-50% + 32px)', height: 1, backgroundColor: stepLine, zIndex: 0 }} />
+                )}
+                {/* Badge — same style as Dashboard button in header */}
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
+                  color: '#fff', fontWeight: 800, fontSize: 17,
+                  width: 44, height: 44, borderRadius: 8,
+                  boxShadow: '0 4px 16px rgba(84,105,212,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  margin: '0 auto 24px', position: 'relative', zIndex: 1,
+                }}>
+                  {step.num}
+                </div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: text1, marginBottom: 10 }}>{step.title}</h3>
+                <p style={{ fontSize: 15, color: text2, lineHeight: 1.7, maxWidth: 280, margin: '0 auto' }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
     </section>
