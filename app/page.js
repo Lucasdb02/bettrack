@@ -272,193 +272,35 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right — faithful dashboard mockup, extends past right edge (clipped by section overflow:hidden) */}
+        {/* Right — screenshot in browser chrome, extends past right edge */}
         <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 48, paddingLeft: 8, minWidth: 0 }}>
-          {/* Browser chrome frame */}
+          {/* Browser chrome — light theme */}
           <div style={{
-            background: '#0d1825',
+            background: '#ffffff',
             borderRadius: 14,
-            border: '1px solid rgba(255,255,255,0.1)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+            border: '1px solid #d1d9e0',
+            boxShadow: '0 4px 32px rgba(0,0,0,0.13)',
             overflow: 'hidden',
             width: '115%',
           }}>
-            {/* Traffic lights + URL bar */}
-            <div style={{ background: '#111d2e', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-              {['#ff5f57','#febc2e','#28c840'].map((c, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: c, flexShrink: 0 }} />)}
-              <div style={{ flex: 1, marginLeft: 10, height: 20, background: 'rgba(255,255,255,0.05)', borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.01em' }}>trackmijnbets.nl/dashboard</span>
+            {/* Title bar: stoplight + URL bar */}
+            <div style={{ background: '#f0f2f5', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid #d1d9e0' }}>
+              {['#ff5f57','#febc2e','#28c840'].map((c, i) => (
+                <div key={i} style={{ width: 11, height: 11, borderRadius: '50%', background: c, flexShrink: 0, border: '0.5px solid rgba(0,0,0,0.12)' }} />
+              ))}
+              <div style={{ flex: 1, marginLeft: 10, height: 22, background: '#e2e6ec', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                <span style={{ fontSize: 10.5, color: '#9ca3af', letterSpacing: '0.01em', fontWeight: 500 }}>trackmijnbets.nl/dashboard</span>
               </div>
             </div>
 
-            {/* App shell: sidebar + main */}
-            <div style={{ display: 'flex', height: 460 }}>
-
-              {/* ─ Sidebar (exact copy of real sidebar, scaled down) ─ */}
-              <div style={{ width: 185, background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-                {/* Logo */}
-                <div style={{ padding: '14px 14px 13px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 24, height: 24, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 6, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  </div>
-                  <div>
-                    <p style={{ color: '#fff', fontWeight: 700, fontSize: 11, lineHeight: 1.2 }}>TrackMijnBets</p>
-                    <p style={{ color: '#4a6885', fontSize: 9 }}>Analyse Tool</p>
-                  </div>
-                </div>
-
-                {/* Nav */}
-                <div style={{ flex: 1, padding: '10px 10px', overflowY: 'hidden' }}>
-                  <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 700, letterSpacing: '0.09em', paddingLeft: 8, marginBottom: 4, textTransform: 'uppercase' }}>Menu</p>
-                  {[
-                    { label: 'Dashboard', active: true },
-                    { label: 'Bets Overzicht', active: false },
-                    { label: 'Bet Invoeren', active: false },
-                    { label: 'Maandoverzicht', active: false },
-                    { label: 'Statistieken', active: false },
-                  ].map((item, i) => (
-                    <div key={i} style={{ padding: '5px 8px', borderRadius: 6, marginBottom: 1, background: item.active ? 'rgba(123,158,240,0.15)' : 'transparent', border: `1px solid ${item.active ? 'rgba(123,158,240,0.25)' : 'transparent'}`, display: 'flex', alignItems: 'center', gap: 7 }}>
-                      <div style={{ width: 13, height: 13, borderRadius: 3, background: item.active ? 'rgba(123,158,240,0.25)' : 'rgba(255,255,255,0.05)', flexShrink: 0 }} />
-                      <span style={{ color: item.active ? '#e8f0ff' : 'rgba(255,255,255,0.28)', fontSize: 9.5, fontWeight: item.active ? 600 : 400 }}>{item.label}</span>
-                    </div>
-                  ))}
-
-                  <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 700, letterSpacing: '0.09em', paddingLeft: 8, marginBottom: 4, marginTop: 12, textTransform: 'uppercase' }}>Bookmakers</p>
-                  <div style={{ padding: '5px 8px', borderRadius: 6, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <div style={{ width: 13, height: 13, borderRadius: 3, background: 'rgba(255,255,255,0.05)', flexShrink: 0 }} />
-                    <span style={{ color: 'rgba(255,255,255,0.28)', fontSize: 9.5 }}>Bookmakers</span>
-                  </div>
-
-                  <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 700, letterSpacing: '0.09em', paddingLeft: 8, marginBottom: 4, textTransform: 'uppercase' }}>Tools</p>
-                  {['Odds Vergelijker','Calculators','Chrome Extension','Asian Lines'].map((item, i) => (
-                    <div key={i} style={{ padding: '4px 8px', borderRadius: 6, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 7 }}>
-                      <div style={{ width: 13, height: 13, borderRadius: 3, background: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
-                      <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 9.5 }}>{item}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Footer */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '10px 10px', background: '#060713' }}>
-                  {['Support','Lichte modus','Abonnement'].map((item, i) => (
-                    <div key={i} style={{ padding: '4px 8px', borderRadius: 6, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 7 }}>
-                      <div style={{ width: 12, height: 12, borderRadius: 3, background: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
-                      <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: 9.5 }}>{item}</span>
-                    </div>
-                  ))}
-                  <div style={{ padding: '6px 8px', borderRadius: 7, marginTop: 5, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div>
-                      <p style={{ color: '#c5d8ec', fontSize: 10, fontWeight: 500 }}>Mijn Account</p>
-                      <p style={{ color: '#3d6080', fontSize: 8.5 }}>Voorkeuren & export</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* ─ Dashboard main content ─ */}
-              <div style={{ flex: 1, background: '#080f1e', padding: '16px 18px', overflowY: 'hidden', minWidth: 0 }}>
-                {/* Page header — matches real dashboard: title + period dropdown */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#e6edf3', marginBottom: 2 }}>Dashboard</p>
-                    <p style={{ fontSize: 9, color: '#4a6885' }}>Overzicht van al je bets en prestaties</p>
-                  </div>
-                  {/* Period dropdown button — matches real PeriodDropdown */}
-                  <div style={{ display:'flex', alignItems:'center', gap:5, padding:'5px 9px', border:'1px solid rgba(255,255,255,0.1)', borderRadius:7, background:'rgba(255,255,255,0.04)', color:'rgba(255,255,255,0.5)', fontSize:8.5, fontWeight:500, gap:5 }}>
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    Alle tijd
-                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                  </div>
-                </div>
-
-                {/* Stat cards — match real dashboard: Totale P&L, Win Rate, ROI, Record */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 7, marginBottom: 10 }}>
-                  {[
-                    { label: 'Totale P&L', value: '+€847', color: '#00c951', sub: '147 afger. bets',
-                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg> },
-                    { label: 'Win Rate',   value: '61.3%',  color: '#e6edf3', sub: '90W — 57L — 0P',
-                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
-                    { label: 'ROI',        value: '+8.7%',  color: '#00c951', sub: 'Totale inzet: €9.728',
-                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg> },
-                    { label: 'Record',     value: '90-57-0',color: '#e6edf3', sub: 'W — L — P  •  147 bets',
-                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> },
-                  ].map((c, i) => (
-                    <div key={i} style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '9px 10px' }}>
-                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
-                        <p style={{ fontSize: 7.5, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.label}</p>
-                        <div style={{ width:22, height:22, borderRadius:6, background:'rgba(84,105,212,0.18)', border:'1px solid rgba(123,158,240,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{c.icon}</div>
-                      </div>
-                      <p style={{ fontSize: 15, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', lineHeight: 1, marginBottom: 2 }}>{c.value}</p>
-                      <p style={{ fontSize: 7.5, color: '#4a6885' }}>{c.sub}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Cumulative P&L Chart — blue line, matches real dashboard */}
-                <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '9px 11px', marginBottom: 9 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                      <p style={{ fontSize: 9, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
-                      <span style={{ fontSize:8, color:'#00c951', fontWeight:600 }}>+8.7% ROI</span>
-                    </div>
-                    <span style={{ fontSize: 8.5, color: '#00c951', fontWeight: 600, background: 'rgba(0,201,81,0.1)', padding: '2px 7px', borderRadius: 4 }}>+€847</span>
-                  </div>
-                  {(() => {
-                    const pts = [[0,58],[44,52],[88,44],[132,47],[176,32],[220,22],[264,26],[308,13],[352,7],[396,4],[440,1]];
-                    const line = mkSmoothPath(pts);
-                    const area = line + ' L440,60 L0,60 Z';
-                    return (
-                      <svg viewBox="0 0 440 60" preserveAspectRatio="none" style={{ width:'100%', height:44 }}>
-                        <defs>
-                          <linearGradient id="hg3" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor="#5469d4" stopOpacity="0.18"/>
-                            <stop offset="95%" stopColor="#5469d4" stopOpacity="0"/>
-                          </linearGradient>
-                        </defs>
-                        <path d={area} fill="url(#hg3)"/>
-                        <path d={line} fill="none" stroke="#5469d4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    );
-                  })()}
-                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:2 }}>
-                    {['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov'].map(m => (
-                      <span key={m} style={{ fontSize:6.5, color:'#2d4560' }}>{m}</span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Recent bets — matches real dashboard columns: Datum, Wedstrijd, Odds, Inzet, Uitkomst, P&L */}
-                <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, overflow: 'hidden' }}>
-                  <div style={{ padding:'5px 11px', borderBottom:`1px solid ${cBrd}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span style={{ fontSize:8.5, fontWeight:600, color:'#6e7681', textTransform:'uppercase', letterSpacing:'0.05em' }}>Recente bets</span>
-                    <span style={{ fontSize:8, color:'#5469d4', fontWeight:600 }}>Alles zien →</span>
-                  </div>
-                  <div style={{ display:'grid', gridTemplateColumns:'0.7fr 1.4fr 0.5fr 0.5fr 0.8fr 0.55fr', padding:'4px 11px', borderBottom:`1px solid rgba(255,255,255,0.04)` }}>
-                    {['Datum','Wedstrijd','Odds','Inzet','Uitkomst','P&L'].map(h => (
-                      <span key={h} style={{ fontSize:7, color:'#3d5570', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.04em' }}>{h}</span>
-                    ))}
-                  </div>
-                  {[
-                    { date:'28 apr', match:'Ajax vs PSV',          odds:'2.10', stake:'€25', uitkomst:'gewonnen', pnl:'+€27,50', win:true  },
-                    { date:'27 apr', match:'Liverpool vs Chelsea',  odds:'1.85', stake:'€25', uitkomst:'verloren', pnl:'-€25',    win:false },
-                    { date:'26 apr', match:'Sinner vs Alcaraz',     odds:'3.20', stake:'€15', uitkomst:'gewonnen', pnl:'+€33',    win:true  },
-                    { date:'25 apr', match:'Real Madrid vs Bayern', odds:'1.65', stake:'€30', uitkomst:'lopend',   pnl:'—',       win:null  },
-                  ].map((r, i) => (
-                    <div key={i} style={{ display:'grid', gridTemplateColumns:'0.7fr 1.4fr 0.5fr 0.5fr 0.8fr 0.55fr', padding:'5px 11px', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.03)' : 'none', alignItems:'center' }}>
-                      <span style={{ fontSize:8, color:'#4a6885' }}>{r.date}</span>
-                      <span style={{ fontSize:8.5, color:'#c9d1d9', fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.match}</span>
-                      <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.odds}</span>
-                      <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.stake}</span>
-                      <span style={{ fontSize:7.5, fontWeight:600, color: r.win === true ? '#00c951' : r.win === false ? '#fb2b37' : '#7b9ef0', background: r.win === true ? 'rgba(0,201,81,0.1)' : r.win === false ? 'rgba(251,43,55,0.1)' : 'rgba(123,158,240,0.1)', padding:'1px 5px', borderRadius:3, display:'inline-block' }}>{r.uitkomst}</span>
-                      <span style={{ fontSize:8.5, fontWeight:700, color: r.win === true ? '#00c951' : r.win === false ? '#fb2b37' : '#6e7681' }}>{r.pnl}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Dashboard screenshot */}
+            <img
+              src="https://www.image2url.com/r2/default/images/1777398082118-4b59d759-6343-40e8-8e5a-c29b34c2d48f.png"
+              alt="TrackMijnBets dashboard"
+              style={{ width: '100%', display: 'block' }}
+              draggable={false}
+            />
           </div>
         </div>
       </div>
