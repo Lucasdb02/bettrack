@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { createClient } from '@/lib/supabase';
 
 /* ── Smooth scroll helper ── */
 function scrollTo(id) {
@@ -28,32 +29,79 @@ function mkSmoothPath(pts) {
 /* ── Sticky header ── */
 function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState(null);
+  const [dark, setDark] = useState(true);
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', fn);
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+    if (saved) setDark(saved !== 'light');
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !dark;
+    setDark(next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+  };
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+  }
+
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      backgroundColor: scrolled ? 'rgba(10,37,64,0.97)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none',
-      transition: 'all 0.25s ease',
-      padding: '0 40px',
+      display: 'flex', justifyContent: 'center',
+      padding: '14px 20px',
+      pointerEvents: 'none',
     }}>
-      <div className="lp-header-pad" style={{ maxWidth: 1200, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div className="flex items-center gap-2.5" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div style={{
+        pointerEvents: 'auto',
+        display: 'flex', alignItems: 'center',
+        background: scrolled ? 'rgba(6,10,22,0.88)' : 'rgba(8,14,28,0.72)',
+        backdropFilter: 'blur(24px) saturate(1.8)',
+        WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 50,
+        padding: '7px 7px 7px 20px',
+        width: '100%',
+        maxWidth: 920,
+        boxShadow: scrolled
+          ? '0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
+          : '0 4px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04)',
+        transition: 'all 0.25s ease',
+      }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flexShrink: 0 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(123,158,240,0.2)', flexShrink: 0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em' }}>TrackMijnBets</span>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 15, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>TrackMijnBets</span>
         </div>
 
-        <nav className="lp-nav-links flex items-center gap-1">
+        {/* Nav — centered */}
+        <nav className="lp-nav-links" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
           {[
             { label: 'Functies', id: 'functies' },
             { label: 'Hoe het werkt', id: 'hoe-het-werkt' },
@@ -61,24 +109,61 @@ function Header() {
             { label: 'Prijzen', id: 'prijzen' },
           ].map((item) => (
             <button key={item.id} onClick={() => scrollTo(item.id)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: 500, padding: '7px 14px', borderRadius: 6, transition: 'color 0.15s' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 99, transition: 'all 0.15s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.background = 'none'; }}
             >{item.label}</button>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Link href="/login" className="lp-header-login"
-            style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 6, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.75)'}
-          >Inloggen</Link>
-          <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13.5, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 7, boxShadow: '0 2px 16px rgba(84,105,212,0.45)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s' }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-          >Aanmelden<span className="hidden sm:inline"> — Gratis</span></Link>
+        {/* Right actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          {/* Theme toggle */}
+          <button onClick={toggleTheme} title={dark ? 'Lichte modus' : 'Donkere modus'}
+            style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.65)', transition: 'all 0.15s' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.65)'; }}
+          >
+            {dark
+              ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            }
+          </button>
+
+          {user ? (
+            <>
+              <Link href="/dashboard"
+                style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '7px 18px', borderRadius: 99, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+              </Link>
+              <button onClick={handleLogout} title="Uitloggen"
+                style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(251,43,55,0.2)', background: 'rgba(251,43,55,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(251,80,90,0.8)', transition: 'all 0.15s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251,43,55,0.14)'; e.currentTarget.style.color = '#fb2b37'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(251,43,55,0.07)'; e.currentTarget.style.color = 'rgba(251,80,90,0.8)'; }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login"
+                style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 99, transition: 'all 0.15s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; e.currentTarget.style.background = 'transparent'; }}
+              >Inloggen</Link>
+              <Link href="/signup"
+                style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 99, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              >Aanmelden</Link>
+            </>
+          )}
         </div>
       </div>
     </header>
@@ -90,187 +175,185 @@ function Hero() {
   return (
     <section className="lp-hero-section" style={{
       background: 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)',
-      paddingTop: 140, paddingBottom: 100,
+      paddingTop: 120, paddingBottom: 80,
       position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: 700, height: 500, background: 'radial-gradient(ellipse, rgba(84,105,212,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -80, left: '35%', transform: 'translateX(-50%)', width: 700, height: 600, background: 'radial-gradient(ellipse, rgba(84,105,212,0.14) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div className="lp-hero-inner" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 40px', textAlign: 'center', position: 'relative' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(84,105,212,0.2)', border: '1px solid rgba(84,105,212,0.35)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
-          <span style={{ fontSize: 13, color: '#a5b8f5', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
-        </div>
+      <div className="lp-hero-inner" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 40px', display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: 56, alignItems: 'center', position: 'relative' }}>
 
-        <h1 className="lp-hero-title" style={{ fontSize: 58, fontWeight: 800, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 20, maxWidth: 800, margin: '0 auto 20px' }}>
-          Stop met gokken,{' '}
-          <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            begin met analyseren
-          </span>
-        </h1>
-
-        <p className="lp-hero-sub" style={{ fontSize: 19, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 580, margin: '0 auto 40px' }}>
-          Houd al je sportbets bij, analyseer je prestaties en ontdek precies waar je winst maakt — of verliest.
-        </p>
-
-        <div className="lp-cta-row flex items-center justify-center gap-4" style={{ marginBottom: 64 }}>
-          <Link href="/signup"
-            style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55)', border: '1px solid rgba(255,255,255,0.2)' }}
-          >
-            Gratis beginnen
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-          </Link>
-          <button onClick={() => scrollTo('functies')}
-            style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px) saturate(1.6)', WebkitBackdropFilter: 'blur(12px) saturate(1.6)', border: '1px solid rgba(255,255,255,0.22)', color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
-          >Bekijk functies</button>
-        </div>
-
-        <div className="lp-stats-row flex items-center justify-center gap-8">
-          {[
-            { value: '2.400+', label: 'Actieve gebruikers' },
-            { value: '€3.2M+', label: 'Bets gevolgd' },
-            { value: '94%', label: 'Tevreden bettors' },
-          ].map((s, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>{s.value}</p>
-              <p style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* App preview mockup */}
-      <div className="lp-mockup-wrap" style={{ maxWidth: 1000, margin: '64px auto 0', padding: '0 40px', position: 'relative' }}>
-        <div style={{ backgroundColor: '#0d1a2e', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-          {/* Window bar */}
-          <div style={{ backgroundColor: '#1a2e45', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            {['#ff5f57','#febc2e','#28c840'].map((c, i) => <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: c }} />)}
-            <div style={{ flex: 1, marginLeft: 12, height: 20, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>trackmijnbets.nl/dashboard</span>
-            </div>
+        {/* Left — text */}
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(84,105,212,0.15)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
+            <span style={{ fontSize: 13, color: '#a5b8f5', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
           </div>
 
-          {/* App mockup content */}
-          <div style={{ display: 'flex', minHeight: 420 }}>
-            {/* Sidebar — reflects real menu structure */}
-            <div className="lp-mockup-sidebar" style={{ width: 190, backgroundColor: '#0a1e32', padding: '16px 10px', borderRight: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-              <div className="flex items-center gap-2" style={{ marginBottom: 20, paddingLeft: 8 }}>
-                <div style={{ width: 22, height: 22, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 5, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <h1 className="lp-hero-title" style={{ fontSize: 54, fontWeight: 800, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
+            Stop met gokken,{' '}
+            <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              begin met analyseren
+            </span>
+          </h1>
+
+          <p className="lp-hero-sub" style={{ fontSize: 18, color: 'rgba(255,255,255,0.58)', lineHeight: 1.65, marginBottom: 40, maxWidth: 460 }}>
+            Houd al je sportbets bij, analyseer je prestaties en ontdek precies waar je winst maakt — of verliest.
+          </p>
+
+          <div className="lp-cta-row" style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 52 }}>
+            <Link href="/signup"
+              style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55)', border: '1px solid rgba(255,255,255,0.2)' }}
+            >
+              Gratis beginnen
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </Link>
+            <button onClick={() => scrollTo('functies')}
+              style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px) saturate(1.6)', WebkitBackdropFilter: 'blur(12px) saturate(1.6)', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
+            >Bekijk functies</button>
+          </div>
+
+          <div className="lp-stats-row" style={{ display: 'flex', alignItems: 'center' }}>
+            {[
+              { value: '2.400+', label: 'Actieve gebruikers' },
+              { value: '€3.2M+', label: 'Bets gevolgd' },
+              { value: '94%', label: 'Tevreden bettors' },
+            ].map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                {i > 0 && <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.1)', margin: '0 24px' }} />}
+                <div>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>{s.value}</p>
+                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{s.label}</p>
                 </div>
-                <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>TrackMijnBets</span>
               </div>
+            ))}
+          </div>
+        </div>
 
-              {/* Menu section */}
-              <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 8, marginBottom: 4 }}>Menu</p>
-              {[
-                { label: 'Dashboard', active: true },
-                { label: 'Bets Overzicht', active: false },
-                { label: 'Bet Invoeren', active: false },
-                { label: 'Maandoverzicht', active: false },
-                { label: 'Statistieken', active: false },
-              ].map((item, i) => (
-                <div key={i} style={{ padding: '5px 8px', borderRadius: 5, marginBottom: 1, backgroundColor: item.active ? 'rgba(30,73,118,0.8)' : 'transparent', display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <div style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: item.active ? '#5469d4' : 'rgba(255,255,255,0.06)', flexShrink: 0 }} />
-                  <span style={{ color: item.active ? '#fff' : 'rgba(255,255,255,0.3)', fontSize: 10 }}>{item.label}</span>
-                </div>
-              ))}
-
-              {/* Bookmakers section */}
-              <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 8, marginBottom: 4, marginTop: 12 }}>Bookmakers</p>
-              <div style={{ padding: '5px 8px', borderRadius: 5, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 7 }}>
-                <div style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.06)', flexShrink: 0 }} />
-                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10 }}>Bookmakers</span>
+        {/* Right — app mockup */}
+        <div className="lp-mockup-wrap" style={{ position: 'relative' }}>
+          <div style={{ backgroundColor: '#0d1a2e', borderRadius: 14, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+            {/* Window bar */}
+            <div style={{ backgroundColor: '#1a2e45', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 7, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              {['#ff5f57','#febc2e','#28c840'].map((c, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: c }} />)}
+              <div style={{ flex: 1, marginLeft: 8, height: 18, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>trackmijnbets.nl/dashboard</span>
               </div>
-
-              {/* Calculators section */}
-              <p style={{ color: '#2d5070', fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 8, marginBottom: 4, marginTop: 12 }}>Calculators</p>
-              {['Arbitrage', 'Kelly', 'Vig Calculator', 'Expected Value', 'Odds Converter'].map((item, i) => (
-                <div key={i} style={{ padding: '4px 8px', borderRadius: 5, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
-                  <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: 9.5 }}>{item}</span>
-                </div>
-              ))}
             </div>
 
-            {/* Dashboard content */}
-            <div style={{ flex: 1, padding: '18px 20px', backgroundColor: '#0d1117' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: '#e6edf3' }}>Dashboard</p>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  {['Week', 'Maand', 'Jaar'].map((p, i) => (
-                    <span key={p} style={{ fontSize: 9, padding: '3px 8px', borderRadius: 4, backgroundColor: i === 1 ? '#5469d4' : 'rgba(255,255,255,0.06)', color: i === 1 ? '#fff' : 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{p}</span>
+            {/* App content */}
+            <div style={{ display: 'flex', minHeight: 400 }}>
+              {/* Sidebar */}
+              <div className="lp-mockup-sidebar" style={{ width: 168, backgroundColor: '#0a1e32', padding: '14px 8px', borderRight: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16, paddingLeft: 8 }}>
+                  <div style={{ width: 20, height: 20, background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', borderRadius: 5, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <span style={{ color: '#fff', fontSize: 10, fontWeight: 700 }}>TrackMijnBets</span>
+                </div>
+
+                <p style={{ color: '#2d5070', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', paddingLeft: 8, marginBottom: 4 }}>Menu</p>
+                {[
+                  { label: 'Dashboard', active: true },
+                  { label: 'Bets Overzicht', active: false },
+                  { label: 'Bet Invoeren', active: false },
+                  { label: 'Maandoverzicht', active: false },
+                  { label: 'Statistieken', active: false },
+                ].map((item, i) => (
+                  <div key={i} style={{ padding: '4px 8px', borderRadius: 5, marginBottom: 1, backgroundColor: item.active ? 'rgba(30,73,118,0.8)' : 'transparent', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ width: 11, height: 11, borderRadius: 3, backgroundColor: item.active ? '#5469d4' : 'rgba(255,255,255,0.06)', flexShrink: 0 }} />
+                    <span style={{ color: item.active ? '#fff' : 'rgba(255,255,255,0.3)', fontSize: 9.5 }}>{item.label}</span>
+                  </div>
+                ))}
+
+                <p style={{ color: '#2d5070', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', paddingLeft: 8, marginBottom: 4, marginTop: 10 }}>Tools</p>
+                {['Arbitrage', 'Kelly', 'Asian Lines', 'Odds Converter'].map((item, i) => (
+                  <div key={i} style={{ padding: '3px 8px', borderRadius: 5, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ width: 9, height: 9, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.04)', flexShrink: 0 }} />
+                    <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: 9 }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Dashboard content */}
+              <div style={{ flex: 1, padding: '14px 16px', backgroundColor: '#0d1117' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: '#e6edf3' }}>Dashboard</p>
+                  <div style={{ display: 'flex', gap: 5 }}>
+                    {['Week', 'Maand', 'Jaar'].map((p, i) => (
+                      <span key={p} style={{ fontSize: 8.5, padding: '2px 7px', borderRadius: 4, backgroundColor: i === 1 ? '#5469d4' : 'rgba(255,255,255,0.06)', color: i === 1 ? '#fff' : 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{p}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Stat cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 7, marginBottom: 10 }}>
+                  {[
+                    { label: 'Totale P&L', value: '+€847', color: '#34D399', sub: '+12.3%' },
+                    { label: 'Win Rate', value: '61.3%', color: '#e6edf3', sub: '147 bets' },
+                    { label: 'ROI', value: '+8.7%', color: '#34D399', sub: 'rendement' },
+                    { label: 'Actief', value: '3', color: '#7b9ef0', sub: 'open bets' },
+                  ].map((c, i) => (
+                    <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '8px 9px' }}>
+                      <p style={{ fontSize: 7, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>{c.label}</p>
+                      <p style={{ fontSize: 14, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', marginBottom: 1 }}>{c.value}</p>
+                      <p style={{ fontSize: 7, color: '#4a6885' }}>{c.sub}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Chart */}
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '8px 10px', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+                    <p style={{ fontSize: 8.5, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
+                    <span style={{ fontSize: 8, color: '#34D399', fontWeight: 600 }}>+€847 dit jaar</span>
+                  </div>
+                  {(() => {
+                    const pts = [[0,55],[44,50],[88,44],[132,48],[176,34],[220,26],[264,30],[308,18],[352,10],[396,5],[440,2]];
+                    const line = mkSmoothPath(pts);
+                    const area = line + ' L440,58 L0,58 Z';
+                    return (
+                      <svg viewBox="0 0 440 58" preserveAspectRatio="none" style={{ width: '100%', height: 42 }}>
+                        <defs>
+                          <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#5469d4" stopOpacity="0.18" />
+                            <stop offset="95%" stopColor="#5469d4" stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path d={area} fill="url(#heroGrad)" stroke="none" />
+                        <path d={line} fill="none" stroke="#5469d4" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+                      </svg>
+                    );
+                  })()}
+                </div>
+
+                {/* Recent bets */}
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, overflow: 'hidden' }}>
+                  <div style={{ padding: '5px 9px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 7.5, fontWeight: 600, color: '#6e7681', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recente bets</span>
+                    <span style={{ fontSize: 7, color: '#5469d4', fontWeight: 600 }}>Alles zien →</span>
+                  </div>
+                  {[
+                    { match: 'Ajax vs PSV', market: '1X2 · Unibet', odds: '2.10', result: '+€55', win: true },
+                    { match: 'Liverpool vs Chelsea', market: 'BTTS · Bet365', odds: '1.85', result: '-€25', win: false },
+                    { match: 'Sinner vs Alcaraz', market: 'Winnaar · TOTO', odds: '3.20', result: '+€38', win: true },
+                  ].map((r, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 9px', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                      <div>
+                        <span style={{ fontSize: 8.5, color: '#c9d1d9', fontWeight: 500, display: 'block' }}>{r.match}</span>
+                        <span style={{ fontSize: 7.5, color: '#6e7681' }}>{r.market}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 8, color: '#4a6885' }}>{r.odds}</span>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: r.win ? '#34D399' : '#FB7185' }}>{r.result}</span>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
-
-              {/* Stat cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12 }}>
-                {[
-                  { label: 'Totale P&L', value: '+€847', color: '#34D399', sub: '+12.3%' },
-                  { label: 'Win Rate', value: '61.3%', color: '#e6edf3', sub: 'van 147 bets' },
-                  { label: 'ROI', value: '+8.7%', color: '#34D399', sub: 'rendement' },
-                  { label: 'Actief', value: '3', color: '#7b9ef0', sub: 'open bets' },
-                ].map((c, i) => (
-                  <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '10px 11px' }}>
-                    <p style={{ fontSize: 7.5, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 5 }}>{c.label}</p>
-                    <p style={{ fontSize: 15, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', marginBottom: 2 }}>{c.value}</p>
-                    <p style={{ fontSize: 7.5, color: '#4a6885' }}>{c.sub}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Chart */}
-              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <p style={{ fontSize: 9, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
-                  <span style={{ fontSize: 8.5, color: '#34D399', fontWeight: 600 }}>+€847 dit jaar</span>
-                </div>
-                {(() => {
-                  const pts = [[0,60],[44,56],[88,50],[132,54],[176,38],[220,30],[264,34],[308,20],[352,12],[396,6],[440,3]];
-                  const line = mkSmoothPath(pts);
-                  const area = line + ' L440,64 L0,64 Z';
-                  return (
-                    <svg viewBox="0 0 440 64" preserveAspectRatio="none" style={{ width: '100%', height: 48 }}>
-                      <defs>
-                        <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#5469d4" stopOpacity="0.18" />
-                          <stop offset="95%" stopColor="#5469d4" stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <path d={area} fill="url(#heroGrad)" stroke="none" />
-                      <path d={line} fill="none" stroke="#5469d4" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-                    </svg>
-                  );
-                })()}
-              </div>
-
-              {/* Recent bets */}
-              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, overflow: 'hidden' }}>
-                <div style={{ padding: '6px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 8, fontWeight: 600, color: '#6e7681', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recente bets</span>
-                  <span style={{ fontSize: 7.5, color: '#5469d4', fontWeight: 600 }}>Alles zien →</span>
-                </div>
-                {[
-                  { match: 'Ajax vs PSV', market: '1X2 · Unibet', odds: '2.10', result: '+€55', win: true },
-                  { match: 'Liverpool vs Chelsea', market: 'BTTS · Bet365', odds: '1.85', result: '-€25', win: false },
-                  { match: 'Sinner vs Alcaraz', market: 'Winnaar · TOTO', odds: '3.20', result: '+€38', win: true },
-                ].map((r, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                    <div>
-                      <span style={{ fontSize: 9, color: '#c9d1d9', fontWeight: 500, display: 'block' }}>{r.match}</span>
-                      <span style={{ fontSize: 8, color: '#6e7681' }}>{r.market}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ fontSize: 8.5, color: '#4a6885' }}>{r.odds}</span>
-                      <span style={{ fontSize: 9.5, fontWeight: 700, color: r.win ? '#34D399' : '#FB7185' }}>{r.result}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
+          <div style={{ position: 'absolute', bottom: -40, left: '50%', transform: 'translateX(-50%)', width: '70%', height: 40, background: 'radial-gradient(ellipse, rgba(84,105,212,0.3) 0%, transparent 70%)', filter: 'blur(16px)', pointerEvents: 'none' }} />
         </div>
-        <div style={{ position: 'absolute', bottom: -60, left: '50%', transform: 'translateX(-50%)', width: '80%', height: 60, background: 'radial-gradient(ellipse, rgba(84,105,212,0.3) 0%, transparent 70%)', filter: 'blur(20px)', pointerEvents: 'none' }} />
       </div>
     </section>
   );
