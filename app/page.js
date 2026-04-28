@@ -207,7 +207,7 @@ function Hero() {
     }}>
       <div style={{ position: 'absolute', top: -80, left: '35%', transform: 'translateX(-50%)', width: 700, height: 600, background: 'radial-gradient(ellipse, rgba(84,105,212,0.14) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div className="lp-hero-inner" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 40px', display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: 56, alignItems: 'center', position: 'relative' }}>
+      <div className="lp-hero-inner" style={{ maxWidth: 1400, margin: '0 auto', padding: '0 32px', display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: 56, alignItems: 'center', position: 'relative' }}>
 
         {/* Left — text */}
         <div>
@@ -390,8 +390,8 @@ function AppShowcase() {
   const mockupBorderTop = dark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(15,23,42,0.15)';
 
   return (
-    <section id="functies" className="lp-section-pad" style={{ backgroundColor: bg1, padding: '96px 40px', transition: 'background-color 0.3s ease' }}>
-      <div style={{ maxWidth: 1160, margin: '0 auto' }}>
+    <section id="functies" className="lp-section-pad" style={{ backgroundColor: bg1, padding: '96px 32px', transition: 'background-color 0.3s ease' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>De tool</span>
           <h2 style={{ fontSize: 42, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
@@ -729,8 +729,8 @@ function HoeHetWerkt() {
   ];
 
   return (
-    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 40px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Hoe het werkt</span>
           <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.02em' }}>
@@ -776,8 +776,8 @@ function AnalysePreview() {
   ];
 
   return (
-    <section id="analyse" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 40px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
-      <div className="lp-analyse-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+    <section id="analyse" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
+      <div className="lp-analyse-grid" style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
         <div>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Maandoverzicht</span>
           <h2 style={{ fontSize: 38, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 18 }}>
@@ -857,7 +857,7 @@ function Prijzen() {
   const featureText = dark ? 'rgba(255,255,255,0.6)' : '#475569';
 
   return (
-    <section id="prijzen" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 40px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
+    <section id="prijzen" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
       <div style={{ maxWidth: 880, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Prijzen</span>
@@ -918,7 +918,7 @@ function Prijzen() {
 /* ── Final CTA ── */
 function FinalCTA() {
   return (
-    <section className="lp-final-cta-section" style={{ background: 'linear-gradient(135deg, #0a2540 0%, #0d1f38 100%)', padding: '100px 40px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section className="lp-final-cta-section" style={{ background: 'linear-gradient(135deg, #0a2540 0%, #0d1f38 100%)', padding: '100px 32px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ maxWidth: 620, margin: '0 auto' }}>
         <h2 className="lp-final-cta-title" style={{ fontSize: 42, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 18 }}>
           Klaar om slimmer te wedden?
@@ -944,8 +944,8 @@ function FinalCTA() {
 function Footer() {
   const { dark } = useLp();
   return (
-    <footer className="lp-footer-section" style={{ backgroundColor: dark ? '#04111f' : '#0f172a', padding: '40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-      <div className="lp-footer-inner" style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+    <footer className="lp-footer-section" style={{ backgroundColor: dark ? '#04111f' : '#0f172a', padding: '40px 32px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="lp-footer-inner" style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div className="flex items-center gap-2">
           <div style={{ backgroundColor: '#5469d4', width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
