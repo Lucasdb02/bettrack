@@ -80,8 +80,9 @@ function Header() {
         backdropFilter: 'blur(24px) saturate(1.8)',
         WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
         border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 50,
-        padding: '7px 7px 7px 20px',
+        borderRadius: 14,
+        height: 54,
+        padding: '0 8px 0 20px',
         width: '100%',
         maxWidth: 920,
         boxShadow: scrolled
