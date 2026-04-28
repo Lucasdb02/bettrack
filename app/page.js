@@ -65,29 +65,52 @@ function Header() {
     setUser(null);
   }
 
+  // Colours that depend on dark mode + scroll state
+  const textPrimary    = dark ? '#fff' : '#0f172a';
+  const textNav        = dark ? 'rgba(255,255,255,0.62)' : 'rgba(15,23,42,0.58)';
+  const navHoverColor  = dark ? '#fff' : '#0f172a';
+  const navHoverBg     = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+  const iconBg         = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const iconBgHover    = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)';
+  const iconBorder     = dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)';
+  const iconColor      = dark ? 'rgba(255,255,255,0.65)' : 'rgba(15,23,42,0.6)';
+  const iconColorHover = dark ? '#fff' : '#0f172a';
+  const loginColor     = dark ? 'rgba(255,255,255,0.72)' : 'rgba(15,23,42,0.65)';
+  const loginHoverColor= dark ? '#fff' : '#0f172a';
+  const loginHoverBg   = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      display: 'flex', justifyContent: 'center',
-      padding: '14px 20px',
+      display: 'flex', justifyContent: 'center', alignItems: 'center',
+      /* Top padding only appears when scrolled so the pill floats */
+      padding: scrolled ? '12px 20px' : '0 32px',
       pointerEvents: 'none',
+      transition: 'padding 0.3s ease',
     }}>
       <div style={{
         pointerEvents: 'auto',
         display: 'flex', alignItems: 'center',
-        background: scrolled ? 'rgba(6,10,22,0.88)' : 'rgba(8,14,28,0.72)',
-        backdropFilter: 'blur(24px) saturate(1.8)',
-        WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 14,
-        height: 54,
-        padding: '0 8px 0 20px',
         width: '100%',
-        maxWidth: 920,
+        maxWidth: scrolled ? 920 : 1400,
+        height: scrolled ? 54 : 64,
+        /* Background: transparent at top, frosted glass when scrolled */
+        background: scrolled
+          ? (dark ? 'rgba(6,10,22,0.88)' : 'rgba(255,255,255,0.78)')
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
+        border: scrolled
+          ? (dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.08)')
+          : 'none',
+        borderRadius: scrolled ? 14 : 0,
+        padding: scrolled ? '0 8px 0 20px' : '0',
         boxShadow: scrolled
-          ? '0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
-          : '0 4px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04)',
-        transition: 'all 0.25s ease',
+          ? (dark
+            ? '0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
+            : '0 4px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)')
+          : 'none',
+        transition: 'all 0.3s ease',
       }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flexShrink: 0 }}
@@ -97,7 +120,7 @@ function Header() {
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: 15, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>TrackMijnBets</span>
+          <span style={{ color: textPrimary, fontWeight: 700, fontSize: 15, letterSpacing: '-0.02em', whiteSpace: 'nowrap', transition: 'color 0.3s' }}>TrackMijnBets</span>
         </div>
 
         {/* Nav — centered */}
@@ -109,9 +132,9 @@ function Header() {
             { label: 'Prijzen', id: 'prijzen' },
           ].map((item) => (
             <button key={item.id} onClick={() => scrollTo(item.id)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 7, transition: 'all 0.15s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.background = 'none'; }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: textNav, fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 7, transition: 'all 0.15s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = navHoverColor; e.currentTarget.style.background = navHoverBg; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = textNav; e.currentTarget.style.background = 'none'; }}
             >{item.label}</button>
           ))}
         </nav>
@@ -120,9 +143,9 @@ function Header() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
           {/* Theme toggle */}
           <button onClick={toggleTheme} title={dark ? 'Lichte modus' : 'Donkere modus'}
-            style={{ width: 34, height: 34, borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.65)', transition: 'all 0.15s' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#fff'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.65)'; }}
+            style={{ width: 34, height: 34, borderRadius: 8, border: iconBorder, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: iconColor, transition: 'all 0.15s' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = iconBgHover; e.currentTarget.style.color = iconColorHover; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = iconBg; e.currentTarget.style.color = iconColor; }}
           >
             {dark
               ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -153,9 +176,9 @@ function Header() {
           ) : (
             <>
               <Link href="/login"
-                style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 7, transition: 'all 0.15s' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; e.currentTarget.style.background = 'transparent'; }}
+                style={{ color: loginColor, fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 7, transition: 'all 0.15s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = loginHoverColor; e.currentTarget.style.background = loginHoverBg; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = loginColor; e.currentTarget.style.background = 'transparent'; }}
               >Inloggen</Link>
               <Link href="/signup"
                 style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 8, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
@@ -177,7 +200,7 @@ function Hero() {
     <section className="lp-hero-section" style={{
       background: dark
         ? 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)'
-        : 'linear-gradient(160deg, #f0f4ff 0%, #eef2ff 45%, #f5f3ff 100%)',
+        : '#ffffff',
       paddingTop: 120, paddingBottom: 80,
       position: 'relative', overflow: 'hidden',
       transition: 'background 0.3s ease',
