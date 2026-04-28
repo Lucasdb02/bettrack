@@ -915,7 +915,7 @@ export default function Dashboard() {
               </div>
             </div>
             {cumulData.length > 1 ? (
-              <ResponsiveContainer width="100%" height={220}>
+              <ResponsiveContainer width="100%" height={300}>
                 <ComposedChart
                   data={cumulData}
                   margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}}
@@ -931,14 +931,14 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                   <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
-                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile}/>
+                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
                   <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                   <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                   <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2.5} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
                   <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={2.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                 </ComposedChart>
               </ResponsiveContainer>
-            ) : empty()}
+            ) : empty(300)}
           </div>
         );
       })()}
