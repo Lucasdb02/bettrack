@@ -206,7 +206,7 @@ function Hero() {
         : '#ffffff',
       paddingBottom: 0, paddingTop: 0,
       position: 'relative', overflow: 'hidden',
-      minHeight: 700,
+      minHeight: 600,
       transition: 'background 0.3s ease',
     }}>
 
@@ -273,14 +273,13 @@ function Hero() {
         </div>
 
         {/* Right — faithful dashboard mockup, extends past right edge (clipped by section overflow:hidden) */}
-        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 56, paddingLeft: 8, minWidth: 0 }}>
+        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 48, paddingLeft: 8, minWidth: 0 }}>
           {/* Browser chrome frame */}
           <div style={{
             background: '#0d1825',
-            borderRadius: '14px 14px 0 0',
+            borderRadius: 14,
             border: '1px solid rgba(255,255,255,0.1)',
-            borderBottom: 'none',
-            boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04), -20px 0 60px rgba(0,0,0,0.3)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
             overflow: 'hidden',
             width: '115%',
           }}>
@@ -293,7 +292,7 @@ function Hero() {
             </div>
 
             {/* App shell: sidebar + main */}
-            <div style={{ display: 'flex', height: 560 }}>
+            <div style={{ display: 'flex', height: 460 }}>
 
               {/* ─ Sidebar (exact copy of real sidebar, scaled down) ─ */}
               <div style={{ width: 185, background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
@@ -361,88 +360,100 @@ function Hero() {
 
               {/* ─ Dashboard main content ─ */}
               <div style={{ flex: 1, background: '#080f1e', padding: '16px 18px', overflowY: 'hidden', minWidth: 0 }}>
-                {/* Page header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+                {/* Page header — matches real dashboard: title + period dropdown */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                   <div>
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#e6edf3', marginBottom: 2 }}>Dashboard</p>
                     <p style={{ fontSize: 9, color: '#4a6885' }}>Overzicht van al je bets en prestaties</p>
                   </div>
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    {['Alle tijd','Dit jaar','Afgelopen 28 d.','Afgelopen 7 d.'].map((p, i) => (
-                      <span key={p} style={{ fontSize: 8, padding: '3px 7px', borderRadius: 5, background: i === 1 ? '#5469d4' : 'rgba(255,255,255,0.05)', color: i === 1 ? '#fff' : 'rgba(255,255,255,0.35)', fontWeight: i === 1 ? 600 : 400 }}>{p}</span>
-                    ))}
+                  {/* Period dropdown button — matches real PeriodDropdown */}
+                  <div style={{ display:'flex', alignItems:'center', gap:5, padding:'5px 9px', border:'1px solid rgba(255,255,255,0.1)', borderRadius:7, background:'rgba(255,255,255,0.04)', color:'rgba(255,255,255,0.5)', fontSize:8.5, fontWeight:500, gap:5 }}>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Alle tijd
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
                 </div>
 
-                {/* Stat cards row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12 }}>
+                {/* Stat cards — match real dashboard: Totale P&L, Win Rate, ROI, Record */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 7, marginBottom: 10 }}>
                   {[
-                    { label: 'Totale P&L', value: '+€847', color: '#00c951', sub: '↑ +12.3% ROI' },
-                    { label: 'Win Rate',   value: '61.3%',  color: '#e6edf3', sub: '147 afger. bets' },
-                    { label: 'Gem. odds',  value: '2.18',   color: '#e6edf3', sub: 'per bet gem.' },
-                    { label: 'Lopend',     value: '3',      color: '#7b9ef0', sub: '€120 in spel' },
+                    { label: 'Totale P&L', value: '+€847', color: '#00c951', sub: '147 afger. bets',
+                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg> },
+                    { label: 'Win Rate',   value: '61.3%',  color: '#e6edf3', sub: '90W — 57L — 0P',
+                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
+                    { label: 'ROI',        value: '+8.7%',  color: '#00c951', sub: 'Totale inzet: €9.728',
+                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg> },
+                    { label: 'Record',     value: '90-57-0',color: '#e6edf3', sub: 'W — L — P  •  147 bets',
+                      icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(123,158,240,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> },
                   ].map((c, i) => (
-                    <div key={i} style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '10px 11px' }}>
-                      <p style={{ fontSize: 7.5, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 5 }}>{c.label}</p>
-                      <p style={{ fontSize: 18, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', lineHeight: 1, marginBottom: 3 }}>{c.value}</p>
+                    <div key={i} style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '9px 10px' }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
+                        <p style={{ fontSize: 7.5, color: '#6e7681', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.label}</p>
+                        <div style={{ width:22, height:22, borderRadius:6, background:'rgba(84,105,212,0.18)', border:'1px solid rgba(123,158,240,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{c.icon}</div>
+                      </div>
+                      <p style={{ fontSize: 15, fontWeight: 800, color: c.color, letterSpacing: '-0.02em', lineHeight: 1, marginBottom: 2 }}>{c.value}</p>
                       <p style={{ fontSize: 7.5, color: '#4a6885' }}>{c.sub}</p>
                     </div>
                   ))}
                 </div>
 
-                {/* P&L Chart */}
-                <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '10px 12px', marginBottom: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <p style={{ fontSize: 9, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
-                    <span style={{ fontSize: 8.5, color: '#00c951', fontWeight: 600, background: 'rgba(0,201,81,0.1)', padding: '2px 7px', borderRadius: 4 }}>+€847 dit jaar</span>
+                {/* Cumulative P&L Chart — blue line, matches real dashboard */}
+                <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, padding: '9px 11px', marginBottom: 9 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                      <p style={{ fontSize: 9, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
+                      <span style={{ fontSize:8, color:'#00c951', fontWeight:600 }}>+8.7% ROI</span>
+                    </div>
+                    <span style={{ fontSize: 8.5, color: '#00c951', fontWeight: 600, background: 'rgba(0,201,81,0.1)', padding: '2px 7px', borderRadius: 4 }}>+€847</span>
                   </div>
                   {(() => {
                     const pts = [[0,58],[44,52],[88,44],[132,47],[176,32],[220,22],[264,26],[308,13],[352,7],[396,4],[440,1]];
                     const line = mkSmoothPath(pts);
                     const area = line + ' L440,60 L0,60 Z';
                     return (
-                      <svg viewBox="0 0 440 60" preserveAspectRatio="none" style={{ width:'100%', height:56 }}>
+                      <svg viewBox="0 0 440 60" preserveAspectRatio="none" style={{ width:'100%', height:44 }}>
                         <defs>
                           <linearGradient id="hg3" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#00c951" stopOpacity="0.22"/>
-                            <stop offset="100%" stopColor="#00c951" stopOpacity="0"/>
+                            <stop offset="5%"  stopColor="#5469d4" stopOpacity="0.18"/>
+                            <stop offset="95%" stopColor="#5469d4" stopOpacity="0"/>
                           </linearGradient>
                         </defs>
                         <path d={area} fill="url(#hg3)"/>
-                        <path d={line} fill="none" stroke="#00c951" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d={line} fill="none" stroke="#5469d4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     );
                   })()}
-                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:3 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:2 }}>
                     {['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov'].map(m => (
-                      <span key={m} style={{ fontSize:7, color:'#2d4560' }}>{m}</span>
+                      <span key={m} style={{ fontSize:6.5, color:'#2d4560' }}>{m}</span>
                     ))}
                   </div>
                 </div>
 
-                {/* Recent bets */}
+                {/* Recent bets — matches real dashboard columns: Datum, Wedstrijd, Odds, Inzet, Uitkomst, P&L */}
                 <div style={{ background: cBg, border: `1px solid ${cBrd}`, borderRadius: 9, overflow: 'hidden' }}>
-                  <div style={{ padding:'6px 12px', borderBottom:`1px solid ${cBrd}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <div style={{ padding:'5px 11px', borderBottom:`1px solid ${cBrd}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                     <span style={{ fontSize:8.5, fontWeight:600, color:'#6e7681', textTransform:'uppercase', letterSpacing:'0.05em' }}>Recente bets</span>
                     <span style={{ fontSize:8, color:'#5469d4', fontWeight:600 }}>Alles zien →</span>
                   </div>
-                  <div style={{ display:'grid', gridTemplateColumns:'1.6fr 0.8fr 0.6fr 0.6fr 0.65fr', padding:'5px 12px', borderBottom:`1px solid rgba(255,255,255,0.04)` }}>
-                    {['Wedstrijd','Bookmaker','Odds','Inzet','P&L'].map(h => (
-                      <span key={h} style={{ fontSize:7.5, color:'#3d5570', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.04em' }}>{h}</span>
+                  <div style={{ display:'grid', gridTemplateColumns:'0.7fr 1.4fr 0.5fr 0.5fr 0.8fr 0.55fr', padding:'4px 11px', borderBottom:`1px solid rgba(255,255,255,0.04)` }}>
+                    {['Datum','Wedstrijd','Odds','Inzet','Uitkomst','P&L'].map(h => (
+                      <span key={h} style={{ fontSize:7, color:'#3d5570', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.04em' }}>{h}</span>
                     ))}
                   </div>
                   {[
-                    { match:'Ajax vs PSV',          book:'Unibet', odds:'2.10', stake:'€25', pnl:'+€27,50', win:true  },
-                    { match:'Liverpool vs Chelsea',  book:'Bet365', odds:'1.85', stake:'€25', pnl:'-€25',   win:false },
-                    { match:'Sinner vs Alcaraz',     book:'TOTO',   odds:'3.20', stake:'€15', pnl:'+€33',   win:true  },
-                    { match:'Real Madrid vs Bayern', book:'Unibet', odds:'1.65', stake:'€30', pnl:'+€19,50',win:true  },
+                    { date:'28 apr', match:'Ajax vs PSV',          odds:'2.10', stake:'€25', uitkomst:'gewonnen', pnl:'+€27,50', win:true  },
+                    { date:'27 apr', match:'Liverpool vs Chelsea',  odds:'1.85', stake:'€25', uitkomst:'verloren', pnl:'-€25',    win:false },
+                    { date:'26 apr', match:'Sinner vs Alcaraz',     odds:'3.20', stake:'€15', uitkomst:'gewonnen', pnl:'+€33',    win:true  },
+                    { date:'25 apr', match:'Real Madrid vs Bayern', odds:'1.65', stake:'€30', uitkomst:'lopend',   pnl:'—',       win:null  },
                   ].map((r, i) => (
-                    <div key={i} style={{ display:'grid', gridTemplateColumns:'1.6fr 0.8fr 0.6fr 0.6fr 0.65fr', padding:'6px 12px', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.03)' : 'none', alignItems:'center' }}>
-                      <span style={{ fontSize:9, color:'#c9d1d9', fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.match}</span>
-                      <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.book}</span>
+                    <div key={i} style={{ display:'grid', gridTemplateColumns:'0.7fr 1.4fr 0.5fr 0.5fr 0.8fr 0.55fr', padding:'5px 11px', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.03)' : 'none', alignItems:'center' }}>
+                      <span style={{ fontSize:8, color:'#4a6885' }}>{r.date}</span>
+                      <span style={{ fontSize:8.5, color:'#c9d1d9', fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.match}</span>
                       <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.odds}</span>
                       <span style={{ fontSize:8.5, color:'#6e7681' }}>{r.stake}</span>
-                      <span style={{ fontSize:9, fontWeight:700, color: r.win ? '#00c951' : '#fb2b37' }}>{r.pnl}</span>
+                      <span style={{ fontSize:7.5, fontWeight:600, color: r.win === true ? '#00c951' : r.win === false ? '#fb2b37' : '#7b9ef0', background: r.win === true ? 'rgba(0,201,81,0.1)' : r.win === false ? 'rgba(251,43,55,0.1)' : 'rgba(123,158,240,0.1)', padding:'1px 5px', borderRadius:3, display:'inline-block' }}>{r.uitkomst}</span>
+                      <span style={{ fontSize:8.5, fontWeight:700, color: r.win === true ? '#00c951' : r.win === false ? '#fb2b37' : '#6e7681' }}>{r.pnl}</span>
                     </div>
                   ))}
                 </div>
