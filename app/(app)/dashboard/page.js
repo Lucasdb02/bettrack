@@ -879,6 +879,17 @@ export default function Dashboard() {
         const dispL      = hp ? hp.l      : stats.losses;
         const dispP      = hp ? hp.p      : stats.pushes;
         const roiColor   = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
+
+        // Linear regression trend line
+        const n = cumulData.length;
+        const sumX  = (n * (n - 1)) / 2;
+        const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6;
+        const sumY  = cumulData.reduce((s, d) => s + d.pnl, 0);
+        const sumXY = cumulData.reduce((s, d, i) => s + i * d.pnl, 0);
+        const slope     = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
+        const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
+        const chartData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
+
         return (
           <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:16 }}>
             {/* Header row */}
@@ -911,13 +922,17 @@ export default function Dashboard() {
                     <div style={{ width:16, height:3, backgroundColor:'#f59e0b', borderRadius:2 }}/>
                     <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
                   </div>
+                  <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                    <svg width="16" height="3" viewBox="0 0 16 3"><line x1="0" y1="1.5" x2="16" y2="1.5" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5 2.5"/></svg>
+                    <span style={{ fontSize:11, color:'var(--text-4)' }}>Trend</span>
+                  </div>
                 </div>
               </div>
             </div>
             {cumulData.length > 1 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <ComposedChart
-                  data={cumulData}
+                  data={chartData}
                   margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}}
                   tabIndex={-1}
                   onMouseMove={(e) => { if (e?.activeTooltipIndex !== undefined) setHoverIdx(e.activeTooltipIndex); }}
@@ -936,6 +951,7 @@ export default function Dashboard() {
                   <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                   <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2.5} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
                   <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={2.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                  <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                 </ComposedChart>
               </ResponsiveContainer>
             ) : empty(300)}
