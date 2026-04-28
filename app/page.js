@@ -1,7 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase';
+
+/* ── Landing page theme context ── */
+const LpTheme = createContext({ dark: true, setDark: () => {} });
+const useLp = () => useContext(LpTheme);
 
 /* ── Smooth scroll helper ── */
 function scrollTo(id) {
@@ -28,19 +32,14 @@ function mkSmoothPath(pts) {
 
 /* ── Sticky header ── */
 function Header() {
+  const { dark, setDark } = useLp();
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
-  const [dark, setDark] = useState(true);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', fn);
     return () => window.removeEventListener('scroll', fn);
-  }, []);
-
-  useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
-    if (saved) setDark(saved !== 'light');
   }, []);
 
   useEffect(() => {
@@ -110,7 +109,7 @@ function Header() {
             { label: 'Prijzen', id: 'prijzen' },
           ].map((item) => (
             <button key={item.id} onClick={() => scrollTo(item.id)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 99, transition: 'all 0.15s' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 7, transition: 'all 0.15s' }}
               onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.background = 'none'; }}
             >{item.label}</button>
@@ -121,20 +120,20 @@ function Header() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
           {/* Theme toggle */}
           <button onClick={toggleTheme} title={dark ? 'Lichte modus' : 'Donkere modus'}
-            style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.65)', transition: 'all 0.15s' }}
+            style={{ width: 34, height: 34, borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.65)', transition: 'all 0.15s' }}
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#fff'; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.65)'; }}
           >
             {dark
-              ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             }
           </button>
 
           {user ? (
             <>
               <Link href="/dashboard"
-                style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '7px 18px', borderRadius: 99, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}
+                style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '7px 16px', borderRadius: 8, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}
                 onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
                 onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
               >
@@ -142,11 +141,11 @@ function Header() {
                 Dashboard
               </Link>
               <button onClick={handleLogout} title="Uitloggen"
-                style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(251,43,55,0.2)', background: 'rgba(251,43,55,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(251,80,90,0.8)', transition: 'all 0.15s' }}
+                style={{ width: 34, height: 34, borderRadius: 8, border: '1px solid rgba(251,43,55,0.2)', background: 'rgba(251,43,55,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(251,80,90,0.8)', transition: 'all 0.15s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251,43,55,0.14)'; e.currentTarget.style.color = '#fb2b37'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(251,43,55,0.07)'; e.currentTarget.style.color = 'rgba(251,80,90,0.8)'; }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
                 </svg>
               </button>
@@ -154,12 +153,12 @@ function Header() {
           ) : (
             <>
               <Link href="/login"
-                style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 99, transition: 'all 0.15s' }}
+                style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '7px 14px', borderRadius: 7, transition: 'all 0.15s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; e.currentTarget.style.background = 'transparent'; }}
               >Inloggen</Link>
               <Link href="/signup"
-                style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 99, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
+                style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 8, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
                 onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
                 onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
               >Aanmelden</Link>
@@ -173,11 +172,15 @@ function Header() {
 
 /* ── Hero ── */
 function Hero() {
+  const { dark } = useLp();
   return (
     <section className="lp-hero-section" style={{
-      background: 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)',
+      background: dark
+        ? 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)'
+        : 'linear-gradient(160deg, #f0f4ff 0%, #eef2ff 45%, #f5f3ff 100%)',
       paddingTop: 120, paddingBottom: 80,
       position: 'relative', overflow: 'hidden',
+      transition: 'background 0.3s ease',
     }}>
       <div style={{ position: 'absolute', top: -80, left: '35%', transform: 'translateX(-50%)', width: 700, height: 600, background: 'radial-gradient(ellipse, rgba(84,105,212,0.14) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
@@ -185,19 +188,19 @@ function Hero() {
 
         {/* Left — text */}
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(84,105,212,0.15)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: dark ? 'rgba(84,105,212,0.15)' : 'rgba(84,105,212,0.1)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
-            <span style={{ fontSize: 13, color: '#a5b8f5', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
+            <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
           </div>
 
-          <h1 className="lp-hero-title" style={{ fontSize: 54, fontWeight: 800, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
+          <h1 className="lp-hero-title" style={{ fontSize: 54, fontWeight: 800, color: dark ? '#fff' : '#0f172a', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
             Stop met gokken,{' '}
             <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               begin met analyseren
             </span>
           </h1>
 
-          <p className="lp-hero-sub" style={{ fontSize: 18, color: 'rgba(255,255,255,0.58)', lineHeight: 1.65, marginBottom: 40, maxWidth: 460 }}>
+          <p className="lp-hero-sub" style={{ fontSize: 18, color: dark ? 'rgba(255,255,255,0.58)' : '#475569', lineHeight: 1.65, marginBottom: 40, maxWidth: 460 }}>
             Houd al je sportbets bij, analyseer je prestaties en ontdek precies waar je winst maakt — of verliest.
           </p>
 
@@ -209,7 +212,7 @@ function Hero() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </Link>
             <button onClick={() => scrollTo('functies')}
-              style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px) saturate(1.6)', WebkitBackdropFilter: 'blur(12px) saturate(1.6)', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
+              style={{ background: dark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.08)', backdropFilter: 'blur(12px) saturate(1.6)', WebkitBackdropFilter: 'blur(12px) saturate(1.6)', border: dark ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(99,102,241,0.25)', color: dark ? 'rgba(255,255,255,0.9)' : '#4f46e5', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
             >Bekijk functies</button>
           </div>
 
@@ -220,17 +223,17 @@ function Hero() {
               { value: '94%', label: 'Tevreden bettors' },
             ].map((s, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-                {i > 0 && <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.1)', margin: '0 24px' }} />}
+                {i > 0 && <div style={{ width: 1, height: 36, background: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)', margin: '0 24px' }} />}
                 <div>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>{s.value}</p>
-                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{s.label}</p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: dark ? '#fff' : '#0f172a', lineHeight: 1 }}>{s.value}</p>
+                  <p style={{ fontSize: 12, color: dark ? 'rgba(255,255,255,0.4)' : '#94a3b8', marginTop: 4 }}>{s.label}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right — app mockup */}
+        {/* Right — app mockup (always dark — shows the actual app UI) */}
         <div className="lp-mockup-wrap" style={{ position: 'relative' }}>
           <div style={{ backgroundColor: '#0d1a2e', borderRadius: 14, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)', overflow: 'hidden' }}>
             {/* Window bar */}
@@ -251,7 +254,6 @@ function Hero() {
                   </div>
                   <span style={{ color: '#fff', fontSize: 10, fontWeight: 700 }}>TrackMijnBets</span>
                 </div>
-
                 <p style={{ color: '#2d5070', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', paddingLeft: 8, marginBottom: 4 }}>Menu</p>
                 {[
                   { label: 'Dashboard', active: true },
@@ -265,7 +267,6 @@ function Hero() {
                     <span style={{ color: item.active ? '#fff' : 'rgba(255,255,255,0.3)', fontSize: 9.5 }}>{item.label}</span>
                   </div>
                 ))}
-
                 <p style={{ color: '#2d5070', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', paddingLeft: 8, marginBottom: 4, marginTop: 10 }}>Tools</p>
                 {['Arbitrage', 'Kelly', 'Asian Lines', 'Odds Converter'].map((item, i) => (
                   <div key={i} style={{ padding: '3px 8px', borderRadius: 5, marginBottom: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -285,8 +286,6 @@ function Hero() {
                     ))}
                   </div>
                 </div>
-
-                {/* Stat cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 7, marginBottom: 10 }}>
                   {[
                     { label: 'Totale P&L', value: '+€847', color: '#34D399', sub: '+12.3%' },
@@ -301,8 +300,6 @@ function Hero() {
                     </div>
                   ))}
                 </div>
-
-                {/* Chart */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '8px 10px', marginBottom: 8 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
                     <p style={{ fontSize: 8.5, fontWeight: 600, color: '#8b949e' }}>Cumulatieve P&L</p>
@@ -326,8 +323,6 @@ function Hero() {
                     );
                   })()}
                 </div>
-
-                {/* Recent bets */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, overflow: 'hidden' }}>
                   <div style={{ padding: '5px 9px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: 7.5, fontWeight: 600, color: '#6e7681', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recente bets</span>
@@ -362,23 +357,29 @@ function Hero() {
 
 /* ── App Showcase (bento grid) ── */
 function AppShowcase() {
+  const { dark } = useLp();
+  const bg1 = dark ? '#04111f' : '#f8fafc';
+  const cardBg = dark ? 'linear-gradient(160deg, #0d1a2e 0%, #0a1628 100%)' : '#ffffff';
+  const cardBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const text1 = dark ? '#fff' : '#0f172a';
+  const text2 = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+
   return (
-    <section id="functies" className="lp-section-pad" style={{ backgroundColor: '#04111f', padding: '96px 40px' }}>
+    <section id="functies" className="lp-section-pad" style={{ backgroundColor: bg1, padding: '96px 40px', transition: 'background-color 0.3s ease' }}>
       <div style={{ maxWidth: 1160, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>De tool</span>
-          <h2 style={{ fontSize: 42, fontWeight: 800, color: '#fff', marginTop: 12, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
+          <h2 style={{ fontSize: 42, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
             Alles in één platform
           </h2>
-          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.5)', marginTop: 16, maxWidth: 520, margin: '16px auto 0' }}>
+          <p style={{ fontSize: 17, color: text2, marginTop: 16, maxWidth: 520, margin: '16px auto 0', lineHeight: 1.6 }}>
             Van bet invoeren tot diepgaande analyse — TrackMijnBets heeft elk onderdeel van je betting workflow gedekt.
           </p>
         </div>
 
-        {/* Row 1: Dashboard (large) + Bet Invoeren (small) */}
+        {/* Row 1 */}
         <div className="lp-bento-row" style={{ display: 'grid', gridTemplateColumns: '1.65fr 1fr', gap: 16, marginBottom: 16 }}>
-          {/* Dashboard block */}
-          <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0a1628 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
               <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(84,105,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -386,12 +387,11 @@ function AppShowcase() {
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#7b9ef0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Dashboard</span>
               </div>
-              <h3 style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 6 }}>Realtime P&L Dashboard</h3>
-              <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 20, maxWidth: 380 }}>
+              <h3 style={{ fontSize: 22, fontWeight: 800, color: text1, letterSpacing: '-0.02em', marginBottom: 6 }}>Realtime P&L Dashboard</h3>
+              <p style={{ fontSize: 13.5, color: text2, lineHeight: 1.6, marginBottom: 20, maxWidth: 380 }}>
                 Volg je cumulatieve winst live. Zie je ROI, win rate en yield per geselecteerde periode in één overzicht.
               </p>
             </div>
-            {/* Dashboard mockup */}
             <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: 12 }}>
                 {[
@@ -432,8 +432,7 @@ function AppShowcase() {
             </div>
           </div>
 
-          {/* Bet Invoeren block */}
-          <div style={{ background: 'linear-gradient(160deg, #0f1d2e 0%, #0a1628 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
               <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(84,105,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -441,23 +440,21 @@ function AppShowcase() {
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#7b9ef0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Bet Invoeren</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 6 }}>Snel bets loggen</h3>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: text1, letterSpacing: '-0.02em', marginBottom: 6 }}>Snel bets loggen</h3>
+              <p style={{ fontSize: 13, color: text2, lineHeight: 1.6, marginBottom: 20 }}>
                 Vul sport, markt, odds en inzet in. Zie direct je potentiële winst.
               </p>
             </div>
-            {/* Form mockup */}
             <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
               {[
-                { label: 'Sport', value: 'Voetbal', icon: '⚽' },
+                { label: 'Sport', value: 'Voetbal' },
                 { label: 'Wedstrijd', value: 'Ajax vs PSV' },
                 { label: 'Markt', value: '1X2' },
               ].map((f, i) => (
                 <div key={i} style={{ marginBottom: 8 }}>
                   <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{f.label}</p>
-                  <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, padding: '7px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, padding: '7px 10px' }}>
                     <span style={{ fontSize: 10.5, color: '#c9d1d9', fontWeight: 500 }}>{f.value}</span>
-                    {i === 0 && <span style={{ fontSize: 11 }}>⚽</span>}
                   </div>
                 </div>
               ))}
@@ -465,7 +462,7 @@ function AppShowcase() {
                 {[{ label: 'Odds', value: '2.10' }, { label: 'Inzet', value: '€50' }].map((f, i) => (
                   <div key={i}>
                     <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{f.label}</p>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(84,105,212,0.4)', borderRadius: 6, padding: '7px 10px', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(84,105,212,0.4)', borderRadius: 6, padding: '7px 10px' }}>
                       <span style={{ fontSize: 10.5, color: '#7b9ef0', fontWeight: 600 }}>{f.value}</span>
                     </div>
                   </div>
@@ -482,10 +479,9 @@ function AppShowcase() {
           </div>
         </div>
 
-        {/* Row 2: Bets Overzicht + Statistieken */}
+        {/* Row 2 */}
         <div className="lp-bento-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 16, marginBottom: 16 }}>
-          {/* Bets Overzicht block */}
-          <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0b1524 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
               <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(84,105,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -493,24 +489,21 @@ function AppShowcase() {
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#7b9ef0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Bets Overzicht</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 6 }}>Filter & doorzoek alles</h3>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 18 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: text1, letterSpacing: '-0.02em', marginBottom: 6 }}>Filter & doorzoek alles</h3>
+              <p style={{ fontSize: 13, color: text2, lineHeight: 1.6, marginBottom: 18 }}>
                 Filter op sport, bookmaker, markt of periode.
               </p>
             </div>
             <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '12px 14px' }}>
-              {/* Search */}
               <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 7, padding: '7px 10px', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6e7681" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <span style={{ fontSize: 10, color: '#4a6885' }}>Zoek in bets...</span>
               </div>
-              {/* Filter pills */}
               <div style={{ display: 'flex', gap: 5, marginBottom: 10, flexWrap: 'wrap' }}>
                 {['Voetbal', 'Unibet', 'Gewonnen'].map((f, i) => (
                   <span key={f} style={{ fontSize: 9, padding: '3px 8px', borderRadius: 99, backgroundColor: i === 0 ? 'rgba(84,105,212,0.3)' : 'rgba(255,255,255,0.06)', border: `1px solid ${i === 0 ? 'rgba(84,105,212,0.5)' : 'rgba(255,255,255,0.08)'}`, color: i === 0 ? '#a5b8f5' : 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{f}</span>
                 ))}
               </div>
-              {/* Bet rows */}
               {[
                 { match: 'Ajax vs PSV', market: '1X2 · Unibet', result: '+€55', win: true, odds: '2.10' },
                 { match: 'Man City vs Arsenal', market: 'Asian Handicap · Bet365', result: '+€44', win: true, odds: '1.95' },
@@ -534,8 +527,7 @@ function AppShowcase() {
             </div>
           </div>
 
-          {/* Statistieken block */}
-          <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0a1628 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
               <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(84,105,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -543,14 +535,13 @@ function AppShowcase() {
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#7b9ef0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Statistieken</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 6 }}>Diepgaande analyse</h3>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 18 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: text1, letterSpacing: '-0.02em', marginBottom: 6 }}>Diepgaande analyse</h3>
+              <p style={{ fontSize: 13, color: text2, lineHeight: 1.6, marginBottom: 18 }}>
                 ROI per sport, markt en bookmaker. Ontdek waar je geld verdient.
               </p>
             </div>
             <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                {/* ROI per sport bar chart */}
                 <div>
                   <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>ROI per sport</p>
                   {[
@@ -570,7 +561,6 @@ function AppShowcase() {
                     </div>
                   ))}
                 </div>
-                {/* Bookmaker breakdown */}
                 <div>
                   <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Per bookmaker</p>
                   {[
@@ -596,10 +586,9 @@ function AppShowcase() {
           </div>
         </div>
 
-        {/* Row 3: Maandoverzicht + Calculators */}
+        {/* Row 3 */}
         <div className="lp-bento-row" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 16 }}>
-          {/* Maandoverzicht block */}
-          <div style={{ background: 'linear-gradient(160deg, #0d1a2e 0%, #0b1524 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
               <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(84,105,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -607,12 +596,11 @@ function AppShowcase() {
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#7b9ef0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Maandoverzicht</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 6 }}>Elke dag in één oogopslag</h3>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 18 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: text1, letterSpacing: '-0.02em', marginBottom: 6 }}>Elke dag in één oogopslag</h3>
+              <p style={{ fontSize: 13, color: text2, lineHeight: 1.6, marginBottom: 18 }}>
                 Groen = winst, rood = verlies. Klik op een dag voor je betdetails.
               </p>
             </div>
-            {/* Calendar mockup — dark */}
             <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', overflow: 'hidden' }}>
               <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: '#c9d1d9' }}>April 2026</span>
@@ -646,8 +634,7 @@ function AppShowcase() {
             </div>
           </div>
 
-          {/* Calculators block */}
-          <div style={{ background: 'linear-gradient(160deg, #0f1d2e 0%, #0a1628 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 18, overflow: 'hidden' }}>
             <div style={{ padding: '22px 24px 0' }}>
               <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, backgroundColor: 'rgba(84,105,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -655,13 +642,12 @@ function AppShowcase() {
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#7b9ef0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Calculators</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 6 }}>Professionele tools</h3>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 18 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: text1, letterSpacing: '-0.02em', marginBottom: 6 }}>Professionele tools</h3>
+              <p style={{ fontSize: 13, color: text2, lineHeight: 1.6, marginBottom: 18 }}>
                 Arbitrage, Kelly, EV, Vig en Odds Converter — altijd bij de hand.
               </p>
             </div>
             <div style={{ margin: '0 16px 0', background: 'rgba(0,0,0,0.3)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255,255,255,0.07)', borderBottom: 'none', padding: '14px 16px' }}>
-              {/* Arbitrage calculator mockup */}
               <p style={{ fontSize: 8, color: '#7b9ef0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Arbitrage Calculator</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
                 {[
@@ -670,7 +656,7 @@ function AppShowcase() {
                 ].map((f, i) => (
                   <div key={i}>
                     <p style={{ fontSize: 8, color: '#6e7681', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{f.label}</p>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, padding: '7px 10px', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, padding: '7px 10px' }}>
                       <span style={{ fontSize: 11, color: '#c9d1d9', fontWeight: 600 }}>{f.value}</span>
                     </div>
                   </div>
@@ -686,7 +672,6 @@ function AppShowcase() {
                   <span style={{ fontSize: 8, color: '#4a8875' }}>Inzet B: €47.50</span>
                 </div>
               </div>
-              {/* Calculator links */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                 {['Kelly Criterion', 'Expected Value (EV)', 'Vig Calculator', 'Odds Converter'].map((c, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 7 }}>
@@ -705,6 +690,13 @@ function AppShowcase() {
 
 /* ── How it works ── */
 function HoeHetWerkt() {
+  const { dark } = useLp();
+  const bg = dark ? '#060e1a' : '#ffffff';
+  const border = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const text1 = dark ? '#fff' : '#0f172a';
+  const text2 = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+  const stepLine = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+
   const steps = [
     { num: '01', title: 'Voer je bet in', desc: 'Vul sport, wedstrijd, markt, selectie, odds en inzet in. Zie direct je potentiële winst voordat je de bet opslaat.' },
     { num: '02', title: 'Bijhouden & updaten', desc: 'Zodra de uitkomst bekend is, update je de bet met één klik. TrackMijnBets berekent automatisch je winst of verlies.' },
@@ -712,11 +704,11 @@ function HoeHetWerkt() {
   ];
 
   return (
-    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: '#060e1a', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 40px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Hoe het werkt</span>
-          <h2 style={{ fontSize: 40, fontWeight: 800, color: '#fff', marginTop: 12, letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.02em' }}>
             In drie stappen naar inzicht
           </h2>
         </div>
@@ -725,13 +717,13 @@ function HoeHetWerkt() {
           {steps.map((step, i) => (
             <div key={i} style={{ textAlign: 'center', position: 'relative' }}>
               {i < 2 && (
-                <div className="lp-step-line" style={{ position: 'absolute', top: 28, left: 'calc(50% + 36px)', right: 'calc(-50% + 36px)', height: 1, backgroundColor: 'rgba(255,255,255,0.08)', zIndex: 0 }} />
+                <div className="lp-step-line" style={{ position: 'absolute', top: 28, left: 'calc(50% + 36px)', right: 'calc(-50% + 36px)', height: 1, backgroundColor: stepLine, zIndex: 0 }} />
               )}
               <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: '#5469d4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', position: 'relative', zIndex: 1, boxShadow: '0 0 24px rgba(84,105,212,0.4)' }}>
                 <span style={{ color: '#fff', fontWeight: 800, fontSize: 16 }}>{step.num}</span>
               </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 12 }}>{step.title}</h3>
-              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>{step.desc}</p>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: text1, marginBottom: 12 }}>{step.title}</h3>
+              <p style={{ fontSize: 15, color: text2, lineHeight: 1.7 }}>{step.desc}</p>
             </div>
           ))}
         </div>
@@ -742,6 +734,13 @@ function HoeHetWerkt() {
 
 /* ── Calendar preview ── */
 function AnalysePreview() {
+  const { dark } = useLp();
+  const bg = dark ? '#04111f' : '#f8fafc';
+  const border = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const text1 = dark ? '#fff' : '#0f172a';
+  const text2 = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
+  const bulletText = dark ? 'rgba(255,255,255,0.7)' : '#334155';
+
   const days = [
     { d: null }, { d: null },
     { d: 1, pnl: null }, { d: 2, pnl: 45.5 }, { d: 3, pnl: -22 }, { d: 4, pnl: 78 }, { d: 5, pnl: -15 },
@@ -752,14 +751,14 @@ function AnalysePreview() {
   ];
 
   return (
-    <section id="analyse" className="lp-section-pad" style={{ backgroundColor: '#04111f', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section id="analyse" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 40px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
       <div className="lp-analyse-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
         <div>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Maandoverzicht</span>
-          <h2 style={{ fontSize: 38, fontWeight: 800, color: '#fff', marginTop: 12, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 18 }}>
+          <h2 style={{ fontSize: 38, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 18 }}>
             Elke dag in één oogopslag
           </h2>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 24 }}>
+          <p style={{ fontSize: 16, color: text2, lineHeight: 1.7, marginBottom: 24 }}>
             Het Pikkit-stijl kalenderoverzicht toont elke dag van de maand als een gekleurd vakje.
             Groen betekent winst, rood verlies. Klik op een dag om precies te zien welke bets je die dag had geplaatst.
           </p>
@@ -776,19 +775,17 @@ function AnalysePreview() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)' }}>{item}</span>
+                <span style={{ fontSize: 15, color: bulletText }}>{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Calendar mock — dark */}
+        {/* Calendar mock — always dark (shows app UI) */}
         <div style={{ backgroundColor: '#0d1a2e', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 14, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
           <div className="flex items-center justify-between" style={{ padding: '14px 18px', backgroundColor: '#0a1628', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <span style={{ fontSize: 14, fontWeight: 700, color: '#e6edf3' }}>April 2026</span>
-            <div className="flex items-center gap-2">
-              <span style={{ fontSize: 16, fontWeight: 800, color: '#34D399' }}>+€363</span>
-            </div>
+            <span style={{ fontSize: 16, fontWeight: 800, color: '#34D399' }}>+€363</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', backgroundColor: '#0a1628', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
             {['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'].map((d) => (
@@ -799,9 +796,9 @@ function AnalysePreview() {
             {days.map((cell, i) => {
               if (!cell.d) return <div key={i} style={{ minHeight: 52, backgroundColor: 'rgba(0,0,0,0.15)', borderRight: i % 7 !== 6 ? '1px solid rgba(255,255,255,0.04)' : 'none', borderBottom: '1px solid rgba(255,255,255,0.04)' }} />;
               const hasPnl = cell.pnl !== null && cell.pnl !== 0;
-              const bg = cell.pnl === null ? 'transparent' : cell.pnl > 0 ? `rgba(52,211,153,${0.06 + Math.abs(cell.pnl)/90*0.16})` : cell.pnl < 0 ? `rgba(251,113,133,${0.06 + Math.abs(cell.pnl)/90*0.14})` : 'transparent';
+              const bg2 = cell.pnl === null ? 'transparent' : cell.pnl > 0 ? `rgba(52,211,153,${0.06 + Math.abs(cell.pnl)/90*0.16})` : cell.pnl < 0 ? `rgba(251,113,133,${0.06 + Math.abs(cell.pnl)/90*0.14})` : 'transparent';
               return (
-                <div key={i} style={{ minHeight: 52, padding: '6px 7px', backgroundColor: bg, borderRight: i % 7 !== 6 ? '1px solid rgba(255,255,255,0.04)' : 'none', borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: hasPnl ? 'pointer' : 'default' }}>
+                <div key={i} style={{ minHeight: 52, padding: '6px 7px', backgroundColor: bg2, borderRight: i % 7 !== 6 ? '1px solid rgba(255,255,255,0.04)' : 'none', borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: hasPnl ? 'pointer' : 'default' }}>
                   <p style={{ fontSize: 10.5, fontWeight: hasPnl ? 600 : 400, color: hasPnl ? '#8b949e' : '#3d5570' }}>{cell.d}</p>
                   {hasPnl && (
                     <p style={{ fontSize: 9.5, fontWeight: 700, color: cell.pnl > 0 ? '#34D399' : '#FB7185', marginTop: 2 }}>
@@ -820,29 +817,43 @@ function AnalysePreview() {
 
 /* ── Pricing ── */
 function Prijzen() {
+  const { dark } = useLp();
+  const bg = dark ? '#060e1a' : '#ffffff';
+  const border = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const text1 = dark ? '#fff' : '#0f172a';
+  const text2 = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+  const cardFree = dark ? '#0d1a2e' : '#f8fafc';
+  const cardFreeBorder = dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)';
+  const cardFreePriceText = dark ? '#fff' : '#0f172a';
+  const cardFreeSubText = dark ? '#4a6885' : '#94a3b8';
+  const cardFreeCtaBg = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
+  const cardFreeCtaBorder = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)';
+  const cardFreeCtaColor = dark ? 'rgba(255,255,255,0.8)' : '#334155';
+  const featureText = dark ? 'rgba(255,255,255,0.6)' : '#475569';
+
   return (
-    <section id="prijzen" className="lp-section-pad" style={{ backgroundColor: '#060e1a', padding: '96px 40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section id="prijzen" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 40px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
       <div style={{ maxWidth: 880, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Prijzen</span>
-          <h2 style={{ fontSize: 40, fontWeight: 800, color: '#fff', marginTop: 12, letterSpacing: '-0.02em' }}>Eenvoudige, transparante prijzen</h2>
-          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', marginTop: 14 }}>Begin gratis. Upgrade wanneer jij er klaar voor bent.</p>
+          <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.02em' }}>Eenvoudige, transparante prijzen</h2>
+          <p style={{ fontSize: 17, color: text2, marginTop: 14 }}>Begin gratis. Upgrade wanneer jij er klaar voor bent.</p>
         </div>
 
         <div className="lp-pricing-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
           {/* Free */}
-          <div style={{ backgroundColor: '#0d1a2e', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 16, padding: '36px 36px' }}>
-            <p style={{ fontSize: 13.5, fontWeight: 700, color: 'rgba(255,255,255,0.4)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Gratis</p>
+          <div style={{ backgroundColor: cardFree, border: `1px solid ${cardFreeBorder}`, borderRadius: 16, padding: '36px 36px' }}>
+            <p style={{ fontSize: 13.5, fontWeight: 700, color: text2, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Gratis</p>
             <div className="flex items-end gap-2" style={{ marginBottom: 24 }}>
-              <span style={{ fontSize: 44, fontWeight: 800, color: '#fff', lineHeight: 1 }}>€0</span>
-              <span style={{ fontSize: 15, color: '#4a6885', marginBottom: 6 }}>/maand</span>
+              <span style={{ fontSize: 44, fontWeight: 800, color: cardFreePriceText, lineHeight: 1 }}>€0</span>
+              <span style={{ fontSize: 15, color: cardFreeSubText, marginBottom: 6 }}>/maand</span>
             </div>
-            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.8)', textDecoration: 'none', marginBottom: 28, backgroundColor: 'rgba(255,255,255,0.05)' }}>
+            <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', border: `1px solid ${cardFreeCtaBorder}`, borderRadius: 8, fontSize: 14, fontWeight: 600, color: cardFreeCtaColor, textDecoration: 'none', marginBottom: 28, backgroundColor: cardFreeCtaBg }}>
               Gratis beginnen
             </Link>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {['Tot 100 bets per maand', 'Dashboard & statistieken', 'Maandoverzicht kalender', 'Alle sporten & markten'].map((f, i) => (
-                <li key={i} className="flex items-center gap-3" style={{ marginBottom: 12, fontSize: 14.5, color: 'rgba(255,255,255,0.6)' }}>
+                <li key={i} className="flex items-center gap-3" style={{ marginBottom: 12, fontSize: 14.5, color: featureText }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34D399" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   {f}
                 </li>
@@ -851,22 +862,22 @@ function Prijzen() {
           </div>
 
           {/* Pro */}
-          <div style={{ backgroundColor: '#0a2540', border: '1px solid #1e4976', borderRadius: 16, padding: '36px 36px', position: 'relative', overflow: 'hidden', boxShadow: '0 0 40px rgba(84,105,212,0.15)' }}>
+          <div style={{ backgroundColor: dark ? '#0a2540' : 'rgba(99,102,241,0.04)', border: dark ? '1px solid #1e4976' : '1px solid rgba(99,102,241,0.2)', borderRadius: 16, padding: '36px 36px', position: 'relative', overflow: 'hidden', boxShadow: dark ? '0 0 40px rgba(84,105,212,0.15)' : '0 0 32px rgba(84,105,212,0.1)' }}>
             <div style={{ position: 'absolute', top: -60, right: -60, width: 160, height: 160, background: 'radial-gradient(ellipse, rgba(84,105,212,0.2) 0%, transparent 70%)', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', top: 16, right: 16, backgroundColor: '#5469d4', color: '#fff', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 99, letterSpacing: '0.04em' }}>
               POPULAIRSTE
             </div>
             <p style={{ fontSize: 13.5, fontWeight: 700, color: '#7b9ef0', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Pro</p>
             <div className="flex items-end gap-2" style={{ marginBottom: 24 }}>
-              <span style={{ fontSize: 44, fontWeight: 800, color: '#fff', lineHeight: 1 }}>€9</span>
-              <span style={{ fontSize: 15, color: '#4a6885', marginBottom: 6 }}>/maand</span>
+              <span style={{ fontSize: 44, fontWeight: 800, color: dark ? '#fff' : '#0f172a', lineHeight: 1 }}>€9</span>
+              <span style={{ fontSize: 15, color: dark ? '#4a6885' : '#94a3b8', marginBottom: 6 }}>/maand</span>
             </div>
             <Link href="/signup" style={{ display: 'block', textAlign: 'center', padding: '11px', background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', marginBottom: 28, boxShadow: '0 4px 20px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)' }}>
               Pro starten
             </Link>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {['Onbeperkte bets', 'Alles uit Gratis', 'CSV export', 'Geavanceerde filters', 'Prioriteitsondersteuning', 'Vroeg toegang tot nieuwe functies'].map((f, i) => (
-                <li key={i} className="flex items-center gap-3" style={{ marginBottom: 12, fontSize: 14.5, color: '#c5d8ec' }}>
+                <li key={i} className="flex items-center gap-3" style={{ marginBottom: 12, fontSize: 14.5, color: dark ? '#c5d8ec' : '#334155' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   {f}
                 </li>
@@ -906,8 +917,9 @@ function FinalCTA() {
 
 /* ── Footer ── */
 function Footer() {
+  const { dark } = useLp();
   return (
-    <footer className="lp-footer-section" style={{ backgroundColor: '#04111f', padding: '40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <footer className="lp-footer-section" style={{ backgroundColor: dark ? '#04111f' : '#0f172a', padding: '40px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div className="lp-footer-inner" style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div className="flex items-center gap-2">
           <div style={{ backgroundColor: '#5469d4', width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -933,16 +945,25 @@ function Footer() {
 
 /* ── Main export ── */
 export default function LandingPage() {
+  const [dark, setDark] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) setDark(saved !== 'light');
+  }, []);
+
   return (
-    <div style={{ backgroundColor: '#04111f' }}>
-      <Header />
-      <Hero />
-      <AppShowcase />
-      <HoeHetWerkt />
-      <AnalysePreview />
-      <Prijzen />
-      <FinalCTA />
-      <Footer />
-    </div>
+    <LpTheme.Provider value={{ dark, setDark }}>
+      <div style={{ backgroundColor: dark ? '#04111f' : '#ffffff', transition: 'background-color 0.3s ease' }}>
+        <Header />
+        <Hero />
+        <AppShowcase />
+        <HoeHetWerkt />
+        <AnalysePreview />
+        <Prijzen />
+        <FinalCTA />
+        <Footer />
+      </div>
+    </LpTheme.Provider>
   );
 }
