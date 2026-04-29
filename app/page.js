@@ -786,12 +786,13 @@ function TmbCard({ r, dark }) {
   const t2  = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
   const initials = r.name.split(' ').map(w => w[0]).slice(0,2).join('');
   return (
-    <div style={{ backgroundColor: bg, border: `1px solid ${bdr}`, borderRadius: 16, padding: '20px 22px', marginBottom: 14, boxShadow: dark ? 'none' : '0 1px 4px rgba(0,0,0,0.05)' }}>
-      <svg width="24" height="18" viewBox="0 0 24 18" fill={r.color} style={{ marginBottom: 12, opacity: 0.9 }}>
+    // Fixed height ensures every card in every column is identical height → columns stay in sync
+    <div style={{ backgroundColor: bg, border: `1px solid ${bdr}`, borderRadius: 16, padding: '20px 22px', marginBottom: 14, boxShadow: dark ? 'none' : '0 1px 4px rgba(0,0,0,0.05)', height: 190, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <svg width="24" height="18" viewBox="0 0 24 18" fill={r.color} style={{ marginBottom: 10, flexShrink: 0, opacity: 0.9 }}>
         <path d="M0 18V10.8C0 4.932 3.468 1.332 10.404 0L11.52 2.016C8.748 2.772 6.948 4.068 5.88 6.192 5.4 7.164 5.184 8.148 5.244 9H9.6V18H0zm14.4 0V10.8C14.4 4.932 17.868 1.332 24.804 0L25.92 2.016C23.148 2.772 21.348 4.068 20.28 6.192 19.8 7.164 19.584 8.148 19.644 9H24V18H14.4z" transform="scale(0.9)"/>
       </svg>
-      <p style={{ fontSize: 15, color: t1, lineHeight: 1.65, marginBottom: 18, fontWeight: 450 }}>{r.text}</p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <p style={{ fontSize: 15, color: t1, lineHeight: 1.6, fontWeight: 450, flex: 1, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>{r.text}</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14, flexShrink: 0 }}>
         <div style={{ width: 34, height: 34, borderRadius: '50%', backgroundColor: r.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{initials}</span>
         </div>
