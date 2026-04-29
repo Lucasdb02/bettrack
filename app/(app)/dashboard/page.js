@@ -951,8 +951,8 @@ export default function Dashboard() {
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                    <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                    <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                    <Area type="natural" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Line type="natural" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                     <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                   </ComposedChart>
                 </ResponsiveContainer>
@@ -969,51 +969,54 @@ export default function Dashboard() {
               <>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
                   <div>
-                    <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2>
+                    <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Balance per Bookmaker</p>
+                    <p style={{ fontSize:12.5, color:'var(--text-4)' }}>Verdeling over je bookmakers</p>
                   </div>
                   <div style={{ textAlign:'right' }}>
-                    <p style={{ fontSize:11, color:'var(--text-4)', marginBottom:4 }}>Totaal</p>
+                    <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Totaal</p>
                     <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{total.toFixed(2)}</span>
                   </div>
                 </div>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart style={{outline:'none'}} tabIndex={-1}>
-                    <defs>
-                      {bookieBalanceData.map((entry,i) => (
-                        <linearGradient key={i} id={`bk-grad-${i}`} x1="0" y1="0" x2="0.6" y2="1">
-                          <stop offset="0%" stopColor={lightenColor(entry.color)}/>
-                          <stop offset="100%" stopColor={entry.color}/>
-                        </linearGradient>
-                      ))}
-                    </defs>
-                    <Pie data={bookieBalanceData} cx="50%" cy="50%" innerRadius={52} outerRadius={85}
-                      dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
-                      paddingAngle={3} cornerRadius={6}>
-                      {bookieBalanceData.map((entry,i) => <Cell key={i} fill={`url(#bk-grad-${i})`}/>)}
-                    </Pie>
-                    <Tooltip wrapperStyle={{zIndex:9999}} content={({active,payload})=>{
-                      if(!active||!payload?.length) return null;
-                      const d = payload[0].payload;
-                      const pct = total > 0 ? (d.value/total*100).toFixed(1) : 0;
-                      return (
-                        <div style={{backgroundColor:'var(--tooltip-bg)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 14px',boxShadow:'0 8px 24px rgba(0,0,0,0.2)',fontSize:13,pointerEvents:'none'}}>
-                          <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:4}}>
-                            <div style={{width:10,height:10,borderRadius:'50%',backgroundColor:d.color}}/>
-                            <BookmakerIcon naam={d.name} size={14}/>
-                            <span style={{fontWeight:700,color:'var(--text-1)'}}>{d.name}</span>
+                <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <PieChart style={{outline:'none'}} tabIndex={-1}>
+                      <defs>
+                        {bookieBalanceData.map((entry,i) => (
+                          <linearGradient key={i} id={`bk-grad-${i}`} x1="0" y1="0" x2="0.6" y2="1">
+                            <stop offset="0%" stopColor={lightenColor(entry.color)}/>
+                            <stop offset="100%" stopColor={entry.color}/>
+                          </linearGradient>
+                        ))}
+                      </defs>
+                      <Pie data={bookieBalanceData} cx="50%" cy="50%" innerRadius={60} outerRadius={100}
+                        dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
+                        paddingAngle={3} cornerRadius={6}>
+                        {bookieBalanceData.map((entry,i) => <Cell key={i} fill={`url(#bk-grad-${i})`}/>)}
+                      </Pie>
+                      <Tooltip wrapperStyle={{zIndex:9999}} content={({active,payload})=>{
+                        if(!active||!payload?.length) return null;
+                        const d = payload[0].payload;
+                        const pct = total > 0 ? (d.value/total*100).toFixed(1) : 0;
+                        return (
+                          <div style={{backgroundColor:'var(--tooltip-bg)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 14px',boxShadow:'0 8px 24px rgba(0,0,0,0.2)',fontSize:13,pointerEvents:'none'}}>
+                            <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:4}}>
+                              <div style={{width:10,height:10,borderRadius:'50%',backgroundColor:d.color}}/>
+                              <BookmakerIcon naam={d.name} size={14}/>
+                              <span style={{fontWeight:700,color:'var(--text-1)'}}>{d.name}</span>
+                            </div>
+                            <p style={{color:'var(--text-3)',fontSize:12}}>€{d.value.toFixed(2)} · <b style={{color:d.color}}>{pct}%</b></p>
                           </div>
-                          <p style={{color:'var(--text-3)',fontSize:12}}>€{d.value.toFixed(2)} · <b style={{color:d.color}}>{pct}%</b></p>
-                        </div>
-                      );
-                    }}/>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div style={{ display:'flex', flexDirection:'column', gap:5, marginTop:8 }}>
+                        );
+                      }}/>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:5, marginTop:12 }}>
                   {bookieBalanceData.map((d,i) => (
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:6 }}>
                       <div style={{ width:7, height:7, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
                       <span style={{ fontSize:11.5, color:'var(--text-3)', flex:1 }}>{d.name}</span>
-                      <span style={{ fontSize:11.5, fontWeight:700, color:'var(--text-2)' }}>€{d.value.toFixed(0)}</span>
+                      <span style={{ fontSize:11.5, fontWeight:700, color:'var(--text-2)' }}>€{d.value.toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -1021,7 +1024,7 @@ export default function Dashboard() {
             );
           })() : (
             <>
-              <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Huidige verdeling van je totale balance</p></div>
+              <div className="mb-5"><p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Balance per Bookmaker</p><p style={{ fontSize:12.5, color:'var(--text-4)' }}>Verdeling over je bookmakers</p></div>
               {empty()}
             </>
           )}
