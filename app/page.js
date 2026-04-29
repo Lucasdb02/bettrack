@@ -256,34 +256,35 @@ function Hero() {
 
           {/* Bookmaker logo scroll */}
           {(() => {
+            const col = dark ? 'rgba(255,255,255,0.3)' : '#94a3b8';
+            // Each entry: name + optional icon SVG path (d) + viewBox
             const BOOKIES = [
-              { name: 'Unibet',   src: 'https://logo.clearbit.com/unibet.nl' },
-              { name: 'Bet365',   src: 'https://logo.clearbit.com/bet365.com' },
-              { name: 'TOTO',     src: 'https://logo.clearbit.com/toto.nl' },
-              { name: 'BetCity',  src: 'https://logo.clearbit.com/betcity.nl' },
-              { name: 'Betway',   src: 'https://logo.clearbit.com/betway.com' },
-              { name: "Jack's",   src: 'https://logo.clearbit.com/jacks.nl' },
-              { name: 'Bingoal',  src: 'https://logo.clearbit.com/bingoal.nl' },
-              { name: 'Circus',   src: 'https://logo.clearbit.com/circus.nl' },
-              { name: 'LeoVegas', src: 'https://logo.clearbit.com/leovegas.com' },
+              { label: 'Unibet',   icon: <svg width="16" height="16" viewBox="0 0 32 32" fill={col}><path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 2c6.627 0 12 5.373 12 12S22.627 28 16 28 4 22.627 4 16 9.373 4 16 4zm-1 5v10.586l-3.293-3.293-1.414 1.414L16 23.414l5.707-5.707-1.414-1.414L17 19.586V9h-2z"/></svg> },
+              { label: 'bet365',   icon: null },
+              { label: 'TOTO',     icon: <svg width="14" height="14" viewBox="0 0 24 24" fill={col}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> },
+              { label: 'BetCity',  icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> },
+              { label: 'Betway',   icon: null },
+              { label: "Jack's",   icon: <svg width="13" height="13" viewBox="0 0 24 24" fill={col}><path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c5.523 0 10 2.239 10 5v1H2v-1c0-2.761 4.477-5 10-5z"/></svg> },
+              { label: 'Bingoal',  icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg> },
+              { label: 'Circus',   icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg> },
+              { label: 'LeoVegas', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> },
+              { label: '888sport', icon: null },
             ];
-            const imgFilter = dark
-              ? 'brightness(0) invert(1) opacity(0.35)'
-              : 'grayscale(1) opacity(0.4)';
             return (
               <div style={{ marginBottom: 40 }}>
-                <p style={{ fontSize: 11, color: dark ? 'rgba(255,255,255,0.28)' : '#b0bac7', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 14 }}>
+                <p style={{ fontSize: 11, color: dark ? 'rgba(255,255,255,0.25)' : '#c0cad6', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 14 }}>
                   Ondersteunde bookmakers
                 </p>
                 <div style={{
                   overflow: 'hidden',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
-                  maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 44, width: 'max-content', animation: 'bookie-scroll 24s linear infinite' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 36, width: 'max-content', animation: 'bookie-scroll 22s linear infinite' }}>
                     {[...BOOKIES, ...BOOKIES].map((b, i) => (
-                      <div key={i} style={{ height: 22, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                        <img src={b.src} alt={b.name} height={22} style={{ height: 22, width: 'auto', objectFit: 'contain', filter: imgFilter, display: 'block' }} draggable={false} />
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, height: 22 }}>
+                        {b.icon && <span style={{ display: 'flex', alignItems: 'center', opacity: 0.7 }}>{b.icon}</span>}
+                        <span style={{ fontSize: 15, fontWeight: 700, color: col, letterSpacing: '-0.02em', lineHeight: 1, whiteSpace: 'nowrap' }}>{b.label}</span>
                       </div>
                     ))}
                   </div>
