@@ -1031,6 +1031,7 @@ export default function Dashboard() {
                   {bookieBalanceData.map((d,i) => (
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:6 }}>
                       <div style={{ width:7, height:7, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
+                      <BookmakerIcon naam={d.name} size={14}/>
                       <span style={{ fontSize:11.5, color:'var(--text-3)', flex:1 }}>{d.name}</span>
                       <span style={{ fontSize:11.5, fontWeight:700, color:'var(--text-2)' }}>€{d.value.toFixed(2)}</span>
                     </div>
