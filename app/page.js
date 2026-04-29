@@ -254,6 +254,44 @@ function Hero() {
             >Bekijk functies</button>
           </div>
 
+          {/* Bookmaker logo scroll */}
+          {(() => {
+            const BOOKIES = [
+              { name: 'Unibet',   src: 'https://logo.clearbit.com/unibet.nl' },
+              { name: 'Bet365',   src: 'https://logo.clearbit.com/bet365.com' },
+              { name: 'TOTO',     src: 'https://logo.clearbit.com/toto.nl' },
+              { name: 'BetCity',  src: 'https://logo.clearbit.com/betcity.nl' },
+              { name: 'Betway',   src: 'https://logo.clearbit.com/betway.com' },
+              { name: "Jack's",   src: 'https://logo.clearbit.com/jacks.nl' },
+              { name: 'Bingoal',  src: 'https://logo.clearbit.com/bingoal.nl' },
+              { name: 'Circus',   src: 'https://logo.clearbit.com/circus.nl' },
+              { name: 'LeoVegas', src: 'https://logo.clearbit.com/leovegas.com' },
+            ];
+            const imgFilter = dark
+              ? 'brightness(0) invert(1) opacity(0.35)'
+              : 'grayscale(1) opacity(0.4)';
+            return (
+              <div style={{ marginBottom: 40 }}>
+                <p style={{ fontSize: 11, color: dark ? 'rgba(255,255,255,0.28)' : '#b0bac7', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 14 }}>
+                  Ondersteunde bookmakers
+                </p>
+                <div style={{
+                  overflow: 'hidden',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 44, width: 'max-content', animation: 'bookie-scroll 24s linear infinite' }}>
+                    {[...BOOKIES, ...BOOKIES].map((b, i) => (
+                      <div key={i} style={{ height: 22, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                        <img src={b.src} alt={b.name} height={22} style={{ height: 22, width: 'auto', objectFit: 'contain', filter: imgFilter, display: 'block' }} draggable={false} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="lp-stats-row" style={{ display: 'flex', alignItems: 'center' }}>
             {[
               { value: '2.400+', label: 'Actieve gebruikers' },
