@@ -132,7 +132,6 @@ function CumulTip({ active, payload, label }) {
           <span style={{ fontWeight:700, color: cumVal >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(cumVal)}</span>
         </div>
       )}
-      {/* DAGELIJKS TOOLTIP — re-enable when adding daily line back
       {day && (
         <div style={{ display:'flex', alignItems:'center', gap:7 }}>
           <div style={{ width:8, height:2, backgroundColor:'#f59e0b', borderRadius:1, flexShrink:0 }}/>
@@ -140,7 +139,6 @@ function CumulTip({ active, payload, label }) {
           <span style={{ fontWeight:700, color: day.value >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(day.value)}</span>
         </div>
       )}
-      */}
     </div>
   );
 }
@@ -905,8 +903,8 @@ export default function Dashboard() {
           const slope     = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
           const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
           const chartData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
-          // Y-axis domain based on actual pnl + trend, 15% padding
-          const visVals = chartData.flatMap(d => [d.pnl, d.trend].filter(v => v != null));
+          // Y-axis domain based on all visible series, 15% padding
+          const visVals = chartData.flatMap(d => [d.pnl, d.dayPnl, d.trend].filter(v => v != null));
           const yMin = Math.min(...visVals); const yMax = Math.max(...visVals);
           const yPad = (yMax - yMin) * 0.15;
           const yDomain = [Math.floor(yMin - yPad), Math.ceil(yMax + yPad)];
@@ -919,7 +917,6 @@ export default function Dashboard() {
                     <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
                     <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
                   </div>
-                  {/* DAGELIJKS HOVER INDICATOR — re-enable when adding daily line back
                   {dispDayPnl !== null && (
                     <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
                       <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
@@ -927,7 +924,6 @@ export default function Dashboard() {
                       <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(dispDayPnl)}</span>
                     </div>
                   )}
-                  */}
                 </div>
                 <div style={{ textAlign:'right' }}>
                   <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
@@ -937,12 +933,10 @@ export default function Dashboard() {
                       <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
                       <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
                     </div>
-                    {/* DAGELIJKS LEGEND — re-enable when adding daily line back
                     <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                       <div style={{ width:16, height:3, backgroundColor:'#f59e0b', borderRadius:2 }}/>
                       <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
                     </div>
-                    */}
                     <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                       <svg width="16" height="3" viewBox="0 0 16 3"><line x1="0" y1="1.5" x2="16" y2="1.5" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5 2.5"/></svg>
                       <span style={{ fontSize:11, color:'var(--text-4)' }}>Trend</span>
@@ -967,9 +961,7 @@ export default function Dashboard() {
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                     <Area type={cardinalCurve} dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                    {/* DAGELIJKS LINE — re-enable when needed:
                     <Line type={cardinalCurve} dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
-                    */}
                     <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                   </ComposedChart>
                 </ResponsiveContainer>
