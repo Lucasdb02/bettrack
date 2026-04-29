@@ -1141,51 +1141,58 @@ export default function Dashboard() {
           {(() => {
             const settled = stats.wins + stats.losses + stats.pushes;
             const winRate = settled > 0 ? parseFloat((stats.wins / settled * 100).toFixed(1)) : 0;
-            const gaugeData = [
-              { value: winRate > 0 ? winRate : 0 },
-              { value: Math.max(0, 100 - winRate) || (settled === 0 ? 100 : 0) },
-            ];
-            const hasData = settled > 0;
+
+            // SVG half-donut gauge (custom arc — Recharts semicircle is unreliable)
+            const W = 260, sw = 28;
+            // cy is the circle centre; place it at bottom of SVG so the flat edge sits there
+            const R = 104;           // midline radius of the arc stroke
+            const cy = R + sw / 2 + 2; // enough room for the top of the stroke + 2px pad
+            const H = cy + sw / 2 + 4; // SVG height: just enough for the arc + bottom stroke
+
+            // Angle helpers (0°=right, 90°=up, 180°=left — standard maths, flipped for SVG y-down)
+            const cx = W / 2;
+            const pt = (deg) => {
+              const rad = deg * Math.PI / 180;
+              return [+(cx + R * Math.cos(rad)).toFixed(2), +(cy - R * Math.sin(rad)).toFixed(2)];
+            };
+
+            const [lx, ly] = pt(180);  // left  (cx − R, cy)
+            const [rx, ry] = pt(0);    // right (cx + R, cy)
+            const fillDeg  = 180 - winRate / 100 * 180;
+            const [fx, fy] = pt(fillDeg);
+
+            // sweep=1 = clockwise on screen; from left going clockwise → UP through top → right ✓
+            const bgPath   = `M${lx},${ly} A${R},${R} 0 0,1 ${rx},${ry}`;
+            const fillPath = winRate > 0
+              ? `M${lx},${ly} A${R},${R} 0 0,1 ${fx},${fy}`
+              : null;
+
             return (
               <>
-                <ResponsiveContainer width="100%" height={180}>
-                  <PieChart style={{outline:'none'}} tabIndex={-1} margin={{top:0,right:0,bottom:0,left:0}}>
+                <div style={{ position:'relative', display:'flex', justifyContent:'center', marginBottom:8 }}>
+                  <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible' }}>
                     <defs>
-                      <linearGradient id="gauge-fill" x1="1" y1="0" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#5469d4"/>
-                        <stop offset="100%" stopColor="#7c8ff5"/>
+                      <linearGradient id="gfill" x1={lx} y1="0" x2={rx} y2="0" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#7c8ff5"/>
+                        <stop offset="100%" stopColor="#5469d4"/>
                       </linearGradient>
                     </defs>
-                    <Pie
-                      data={gaugeData}
-                      cx="50%" cy="90%"
-                      startAngle={180} endAngle={0}
-                      innerRadius={62} outerRadius={92}
-                      dataKey="value"
-                      strokeWidth={0}
-                      cornerRadius={8}
-                      paddingAngle={hasData && winRate > 0 && winRate < 100 ? 3 : 0}
-                    >
-                      <Cell fill={hasData && winRate > 0 ? 'url(#gauge-fill)' : 'var(--border)'}/>
-                      <Cell fill="var(--border)"/>
-                      <Label content={({ viewBox }) => {
-                        const { cx, cy } = viewBox || {};
-                        if (!cx || !cy) return null;
-                        return (
-                          <g>
-                            <text x={cx} y={cy - 18} textAnchor="middle" fontSize={30} fontWeight={800} fill="var(--text-1)">{winRate}%</text>
-                            <text x={cx} y={cy + 6} textAnchor="middle" fontSize={12.5}>
-                              <tspan fontWeight={700} fill="var(--text-2)">{stats.wins}/{settled}</tspan>
-                              <tspan fill="var(--text-3)"> Gewonnen bets</tspan>
-                            </text>
-                          </g>
-                        );
-                      }} position="center"/>
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+                    {/* Track */}
+                    <path d={bgPath} fill="none" stroke="var(--border)" strokeWidth={sw} strokeLinecap="round"/>
+                    {/* Fill */}
+                    {fillPath && <path d={fillPath} fill="none" stroke="url(#gfill)" strokeWidth={sw} strokeLinecap="round"/>}
+                  </svg>
 
-                <div style={{ borderTop:'1px solid var(--border-subtle)', paddingTop:14, marginTop:4, display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
+                  {/* Centre label — sits in the arc opening */}
+                  <div style={{ position:'absolute', bottom:0, left:'50%', transform:'translateX(-50%)', textAlign:'center', whiteSpace:'nowrap' }}>
+                    <div style={{ fontSize:36, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{winRate}%</div>
+                    <div style={{ fontSize:12.5, color:'var(--text-3)', marginTop:5 }}>
+                      <span style={{ fontWeight:700, color:'var(--text-2)' }}>{stats.wins}/{settled}</span>{' Gewonnen bets'}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ borderTop:'1px solid var(--border-subtle)', paddingTop:14, marginTop:8, display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
                   {statusData.map((d,i) => (
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:7 }}>
                       <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
