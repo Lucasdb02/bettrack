@@ -116,8 +116,10 @@ function ChartTip({ active, payload, label, suffix }) {
 function CumulTip({ active, payload, label }) {
   const { fmtPnl } = useFmt();
   if (!active || !payload?.length) return null;
-  const cum = payload.find(p => p.dataKey === 'pnl');
+  // pnlSmooth is used for the visual; read actual pnl from payload.payload for accurate tooltip
+  const cum = payload.find(p => p.dataKey === 'pnlSmooth');
   const day = payload.find(p => p.dataKey === 'dayPnl');
+  const cumVal = cum?.payload?.pnl ?? cum?.value;
   return (
     <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:10, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:13, pointerEvents:'none' }}>
       {label && <p style={{ color:'var(--text-3)', marginBottom:7, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
@@ -125,7 +127,7 @@ function CumulTip({ active, payload, label }) {
         <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
           <div style={{ width:8, height:2, backgroundColor:'#5469d4', borderRadius:1, flexShrink:0 }}/>
           <span style={{ color:'var(--text-3)', fontSize:12 }}>Cumulatief:</span>
-          <span style={{ fontWeight:700, color: cum.value >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(cum.value)}</span>
+          <span style={{ fontWeight:700, color: cumVal >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(cumVal)}</span>
         </div>
       )}
       {day && (
@@ -898,7 +900,13 @@ export default function Dashboard() {
           const sumXY = cumulData.reduce((s, d, i) => s + i * d.pnl, 0);
           const slope     = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
           const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
-          const chartData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
+          const baseData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
+          // 7-point centered rolling average for smooth display (actual values kept for tooltip via payload.pnl)
+          const chartData = baseData.map((d, i) => {
+            const s = Math.max(0, i - 3); const e = Math.min(baseData.length, i + 4);
+            const sl = baseData.slice(s, e);
+            return { ...d, pnlSmooth: parseFloat((sl.reduce((a, x) => a + x.pnl, 0) / sl.length).toFixed(2)) };
+          });
           return (
             <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
               <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
@@ -951,8 +959,8 @@ export default function Dashboard() {
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                    <Area type="natural" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                    <Line type="natural" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                    <Area type="monotone" dataKey="pnlSmooth" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                     <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                   </ComposedChart>
                 </ResponsiveContainer>
