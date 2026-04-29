@@ -13,6 +13,9 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   Cell, Legend, ReferenceLine,
 } from 'recharts';
+import { curveCardinal } from 'd3-shape';
+// Subtle rounded corners at data points: tension 0.6 (0=full curve, 1=linear)
+const cardinalCurve = curveCardinal.tension(0.6);
 import { createClient } from '@/lib/supabase';
 
 const FALLBACK_BOOK_COLORS = ['#5469d4','#0e9f6e','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
@@ -964,8 +967,8 @@ export default function Dashboard() {
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={yDomain}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                    <Area type="linear" dataKey="pnlSmooth" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}} strokeLinejoin="round" strokeLinecap="round"/>
-                    <Line type="linear" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}} strokeLinejoin="round" strokeLinecap="round"/>
+                    <Area type={cardinalCurve} dataKey="pnlSmooth" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Line type={cardinalCurve} dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                     <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                   </ComposedChart>
                 </ResponsiveContainer>
