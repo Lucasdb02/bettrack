@@ -1135,64 +1135,97 @@ export default function Dashboard() {
           ):empty()}
         </div>
 
-        {/* Status Breakdown gauge */}
+        {/* Status Breakdown — half-donut, all statuses with gradients */}
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
-          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Win rate op afgeronde bets</p></div>
+          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling van alle bet statussen</p></div>
           {(() => {
-            const settled = stats.wins + stats.losses + stats.pushes;
-            const winRate = settled > 0 ? parseFloat((stats.wins / settled * 100).toFixed(1)) : 0;
+            const total = statusData.reduce((s,d) => s + d.value, 0);
+            const active = statusData.filter(d => d.value > 0);
 
-            // SVG half-donut gauge (custom arc — Recharts semicircle is unreliable)
-            const W = 260, sw = 28;
-            // cy is the circle centre; place it at bottom of SVG so the flat edge sits there
-            const R = 104;           // midline radius of the arc stroke
-            const cy = R + sw / 2 + 2; // enough room for the top of the stroke + 2px pad
-            const H = cy + sw / 2 + 4; // SVG height: just enough for the arc + bottom stroke
+            // SVG geometry — same midline radius / stroke approach as before
+            const W = 260, sw = 26, R = 100;
+            const cxG = W / 2;
+            // circle centre at bottom of SVG so only the top half shows
+            const cyG = R + sw / 2 + 4;
+            const H   = cyG + sw / 2 + 6;
 
-            // Angle helpers (0°=right, 90°=up, 180°=left — standard maths, flipped for SVG y-down)
-            const cx = W / 2;
+            // Point on the midline arc at angle deg (180=left, 90=top, 0=right; y-axis flipped for SVG)
             const pt = (deg) => {
               const rad = deg * Math.PI / 180;
-              return [+(cx + R * Math.cos(rad)).toFixed(2), +(cy - R * Math.sin(rad)).toFixed(2)];
+              return [+(cxG + R * Math.cos(rad)).toFixed(2), +(cyG - R * Math.sin(rad)).toFixed(2)];
             };
 
-            const [lx, ly] = pt(180);  // left  (cx − R, cy)
-            const [rx, ry] = pt(0);    // right (cx + R, cy)
-            const fillDeg  = 180 - winRate / 100 * 180;
-            const [fx, fy] = pt(fillDeg);
+            // Distribute 180° among segments — same gap & corner style as Balance donut
+            const GAP = active.length > 1 ? 3 : 0; // degrees between segments
+            const usable = 180 - GAP * Math.max(0, active.length - 1);
 
-            // sweep=1 = clockwise on screen; from left going clockwise → UP through top → right ✓
-            const bgPath   = `M${lx},${ly} A${R},${R} 0 0,1 ${rx},${ry}`;
-            const fillPath = winRate > 0
-              ? `M${lx},${ly} A${R},${R} 0 0,1 ${fx},${fy}`
-              : null;
+            let cursor = 180;
+            const segs = total > 0
+              ? active.map((d) => {
+                  const span = d.value / total * usable;
+                  const s = cursor;
+                  const e = +(cursor - span).toFixed(3);
+                  cursor = e - GAP;
+                  return { ...d, s, e, span };
+                })
+              : [];
+
+            // Background full-semicircle track
+            const [lx, ly] = pt(180);
+            const [rx, ry] = pt(0);
+            const bgPath = `M${lx},${ly} A${R},${R} 0 0,1 ${rx},${ry}`;
+
+            // Dominant segment for center label
+            const top = total > 0 ? [...statusData].sort((a,b) => b.value - a.value)[0] : null;
 
             return (
               <>
-                <div style={{ position:'relative', display:'flex', justifyContent:'center', marginBottom:8 }}>
-                  <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible' }}>
+                <div style={{ position:'relative', display:'flex', justifyContent:'center', paddingBottom: 48 }}>
+                  <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible', display:'block' }}>
                     <defs>
-                      <linearGradient id="gfill" x1={lx} y1="0" x2={rx} y2="0" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stopColor="#7c8ff5"/>
-                        <stop offset="100%" stopColor="#5469d4"/>
-                      </linearGradient>
+                      {/* Per-segment gradient: light → full color, diagonal like Balance chart */}
+                      {statusData.map((d,i) => (
+                        <linearGradient key={i} id={`ss-grad-${i}`}
+                          x1={cxG - R} y1={cyG - R} x2={cxG + R} y2={cyG}
+                          gradientUnits="userSpaceOnUse">
+                          <stop offset="0%" stopColor={lightenColor(d.color, 0.35)}/>
+                          <stop offset="100%" stopColor={d.color}/>
+                        </linearGradient>
+                      ))}
                     </defs>
+
                     {/* Track */}
                     <path d={bgPath} fill="none" stroke="var(--border)" strokeWidth={sw} strokeLinecap="round"/>
-                    {/* Fill */}
-                    {fillPath && <path d={fillPath} fill="none" stroke="url(#gfill)" strokeWidth={sw} strokeLinecap="round"/>}
+
+                    {/* Status segments — sweep=1 (clockwise) = top half ✓ */}
+                    {segs.map((seg, i) => {
+                      const [sx, sy] = pt(seg.s);
+                      const [ex, ey] = pt(seg.e);
+                      const largeArc = seg.span > 180 ? 1 : 0;
+                      const path = `M${sx},${sy} A${R},${R} 0 ${largeArc},1 ${ex},${ey}`;
+                      const gradIdx = statusData.findIndex(d => d.name === seg.name);
+                      return (
+                        <path key={i} d={path} fill="none"
+                          stroke={`url(#ss-grad-${gradIdx})`}
+                          strokeWidth={sw} strokeLinecap="round"/>
+                      );
+                    })}
                   </svg>
 
-                  {/* Centre label — sits in the arc opening */}
+                  {/* Centre label in the arc opening */}
                   <div style={{ position:'absolute', bottom:0, left:'50%', transform:'translateX(-50%)', textAlign:'center', whiteSpace:'nowrap' }}>
-                    <div style={{ fontSize:36, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{winRate}%</div>
-                    <div style={{ fontSize:12.5, color:'var(--text-3)', marginTop:5 }}>
-                      <span style={{ fontWeight:700, color:'var(--text-2)' }}>{stats.wins}/{settled}</span>{' Gewonnen bets'}
-                    </div>
+                    {top ? (
+                      <>
+                        <div style={{ fontSize:30, fontWeight:800, color:top.color, lineHeight:1 }}>{top.pct}%</div>
+                        <div style={{ fontSize:12, color:'var(--text-3)', marginTop:4 }}>{top.name} · {top.value} bets</div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize:14, color:'var(--text-4)' }}>Geen data</div>
+                    )}
                   </div>
                 </div>
 
-                <div style={{ borderTop:'1px solid var(--border-subtle)', paddingTop:14, marginTop:8, display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
+                <div style={{ borderTop:'1px solid var(--border-subtle)', paddingTop:14, display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
                   {statusData.map((d,i) => (
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:7 }}>
                       <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
