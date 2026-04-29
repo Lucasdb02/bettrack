@@ -20,6 +20,15 @@ function bookColor(naam, idx) {
   return BOOKIE_BRAND_COLORS[naam] ?? FALLBACK_BOOK_COLORS[idx % FALLBACK_BOOK_COLORS.length];
 }
 
+function lightenColor(hex, factor = 0.22) {
+  if (!hex || !hex.startsWith('#') || hex.length < 7) return hex;
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  const lc = c => Math.min(255, Math.round(c + (255 - c) * factor));
+  return `#${lc(r).toString(16).padStart(2,'0')}${lc(g).toString(16).padStart(2,'0')}${lc(b).toString(16).padStart(2,'0')}`;
+}
+
 const PERIOD_OPTIONS = [
   { label:'Vandaag',                 filter:'today' },
   { label:'Gisteren',                filter:'yesterday' },
@@ -1024,9 +1033,18 @@ export default function Dashboard() {
                 </div>
                 <ResponsiveContainer width="100%" height={220}>
                   <PieChart style={{outline:'none'}} tabIndex={-1}>
-                    <Pie data={bookieBalanceData} cx="50%" cy="45%" innerRadius={62} outerRadius={88}
-                      dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}>
-                      {bookieBalanceData.map((entry,i) => <Cell key={i} fill={entry.color}/>)}
+                    <defs>
+                      {bookieBalanceData.map((entry,i) => (
+                        <linearGradient key={i} id={`bk-grad-${i}`} x1="0" y1="0" x2="0.6" y2="1">
+                          <stop offset="0%" stopColor={lightenColor(entry.color)}/>
+                          <stop offset="100%" stopColor={entry.color}/>
+                        </linearGradient>
+                      ))}
+                    </defs>
+                    <Pie data={bookieBalanceData} cx="50%" cy="45%" innerRadius={52} outerRadius={92}
+                      dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
+                      paddingAngle={3} cornerRadius={6}>
+                      {bookieBalanceData.map((entry,i) => <Cell key={i} fill={`url(#bk-grad-${i})`}/>)}
                       <Label content={({ viewBox }) => {
                         const cx = viewBox?.cx; const cy = viewBox?.cy;
                         if (!cx || !cy) return null;
@@ -1122,10 +1140,19 @@ export default function Dashboard() {
             return (
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart style={{outline:'none'}} tabIndex={-1}>
+                  <defs>
+                    {statusData.map((entry,i) => (
+                      <linearGradient key={i} id={`st-grad-${i}`} x1="0" y1="0" x2="0.6" y2="1">
+                        <stop offset="0%" stopColor={lightenColor(entry.color)}/>
+                        <stop offset="100%" stopColor={entry.color}/>
+                      </linearGradient>
+                    ))}
+                  </defs>
                   <Pie data={statusData.filter(d=>d.value>0).length>0 ? statusData : [{name:'Geen data',value:1,color:'var(--border)'}]}
-                    cx="50%" cy="45%" innerRadius={62} outerRadius={88}
-                    dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}>
-                    {statusData.map((entry,i) => <Cell key={i} fill={entry.color} opacity={entry.value===0?0.2:1}/>)}
+                    cx="50%" cy="45%" innerRadius={52} outerRadius={92}
+                    dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
+                    paddingAngle={3} cornerRadius={6}>
+                    {statusData.map((entry,i) => <Cell key={i} fill={entry.value===0 ? entry.color : `url(#st-grad-${i})`} opacity={entry.value===0?0.2:1}/>)}
                     {center && (
                       <Label content={({ viewBox }) => {
                         const cx = viewBox?.cx; const cy = viewBox?.cy;
