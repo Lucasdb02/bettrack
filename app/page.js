@@ -1056,6 +1056,93 @@ function FinalCTA() {
   );
 }
 
+/* ── FAQ ── */
+const FAQS = [
+  {
+    v: 'Wat is TrackMijnBets?',
+    a: 'TrackMijnBets is een professionele weddenschap-tracker voor Nederlandse sportwedders. Je houdt al je bets bij op één plek, ziet direct je winst/verlies per bookmaker, per sport en per periode — en krijgt inzicht in je strategie via heldere grafieken.',
+  },
+  {
+    v: 'Is TrackMijnBets gratis te gebruiken?',
+    a: 'Ja, er is een gratis Starter-plan waarmee je direct kunt beginnen. Wil je onbeperkte bets bijhouden, AI-analyses en volledige rapportage? Dan is het Pro-plan beschikbaar voor €9,99/maand of €7,99/maand bij jaarabonnement.',
+  },
+  {
+    v: 'Welke bookmakers worden ondersteund?',
+    a: 'Je kunt elke bookmaker handmatig toevoegen — Unibet, Bet365, TOTO, BetCity, Betway en alle andere. Je voert zelf in welke bookmaker je per bet hebt gebruikt, zodat je een volledig overzicht per platform hebt.',
+  },
+  {
+    v: 'Kan ik mijn bestaande bets importeren?',
+    a: 'Op dit moment voer je bets handmatig in via het dashboard. CSV-import en directe bookmaker-koppelingen zijn gepland voor een toekomstige update.',
+  },
+  {
+    v: 'Hoe werkt de AI-analyse?',
+    a: 'De ingebouwde AI analyseert al je historische bets en geeft persoonlijk advies: welke sporten of markten leveren je de meeste winst op, waar verlies je onnodig geld, en welke patronen zitten er in je weddenschappen. Beschikbaar op het Pro-plan.',
+  },
+  {
+    v: 'Is mijn data veilig?',
+    a: 'Ja. Al je gegevens zijn versleuteld opgeslagen en worden nooit gedeeld met derden of bookmakers. Je behoudt te allen tijde volledige controle over je eigen data en kunt je account en gegevens op elk moment verwijderen.',
+  },
+];
+
+function FAQ() {
+  const { dark } = useLp();
+  const [open, setOpen] = useState(0);
+  const bg = dark ? '#060e1a' : '#f8fafc';
+  const text1 = dark ? '#fff' : '#0f172a';
+  const text2 = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
+  const cardBg = dark ? '#0d1a2e' : '#ffffff';
+  const cardBorder = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const dashedBorder = dark ? '1px dashed rgba(255,255,255,0.18)' : '1px dashed #d1d5db';
+
+  return (
+    <section style={{ backgroundColor: bg, padding: '88px 32px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        <h2 style={{ fontSize: 38, fontWeight: 800, color: text1, textAlign: 'center', letterSpacing: '-0.03em', marginBottom: 12 }}>
+          Veelgestelde vragen
+        </h2>
+        <p style={{ fontSize: 15, color: text2, textAlign: 'center', marginBottom: 48 }}>
+          Heb je een vraag? Wij hebben het antwoord.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {FAQS.map((faq, i) => {
+            const isOpen = open === i;
+            return (
+              <div
+                key={i}
+                onClick={() => setOpen(isOpen ? null : i)}
+                style={{
+                  backgroundColor: isOpen ? cardBg : 'transparent',
+                  border: isOpen ? `1px solid ${cardBorder}` : dashedBorder,
+                  borderRadius: isOpen ? 16 : 12,
+                  padding: '20px 24px',
+                  cursor: 'pointer',
+                  boxShadow: isOpen ? '0 2px 16px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'border-radius 0.15s, background-color 0.15s',
+                }}
+                onMouseEnter={(e) => { if (!isOpen) e.currentTarget.style.backgroundColor = dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; }}
+                onMouseLeave={(e) => { if (!isOpen) e.currentTarget.style.backgroundColor = 'transparent'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: text1 }}>{faq.v}</span>
+                  <span style={{ fontSize: isOpen ? 20 : 22, color: text2, flexShrink: 0, lineHeight: 1, userSelect: 'none' }}>
+                    {isOpen ? '×' : '+'}
+                  </span>
+                </div>
+                {isOpen && (
+                  <p style={{ fontSize: 15, color: text2, marginTop: 12, lineHeight: 1.65, marginBottom: 0 }}>
+                    {faq.a}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ── Footer ── */
 function Footer() {
   const { dark } = useLp();
@@ -1102,6 +1189,7 @@ export default function LandingPage() {
         <HoeHetWerkt />
         <AnalysePreview />
         <Prijzen />
+        <FAQ />
         <FinalCTA />
         <Footer />
       </div>
