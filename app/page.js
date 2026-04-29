@@ -212,7 +212,7 @@ function Hero() {
       {/* Dotted grid — fades outward from where the dashboard lives */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
-        backgroundImage: `radial-gradient(circle, ${dark ? 'rgba(107,130,240,0.22)' : 'rgba(84,105,212,0.2)'} 1px, transparent 1px)`,
+        backgroundImage: `radial-gradient(circle, ${dark ? 'rgba(107,130,240,0.38)' : 'rgba(84,105,212,0.34)'} 1px, transparent 1px)`,
         backgroundSize: '22px 22px',
         WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 75% 50%, black 0%, transparent 65%)',
         maskImage:        'radial-gradient(ellipse 90% 90% at 75% 50%, black 0%, transparent 65%)',
@@ -225,7 +225,7 @@ function Hero() {
       <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
         {/* Left text — aligned to 1400px grid */}
-        <div style={{ flexShrink: 0, width: '44%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))' }}>
+        <div style={{ flexShrink: 0, width: '50%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: dark ? 'rgba(84,105,212,0.15)' : 'rgba(84,105,212,0.1)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
