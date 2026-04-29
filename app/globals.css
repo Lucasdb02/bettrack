@@ -225,12 +225,12 @@ html.dark .app-main {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  /* Fill: linear gradient #18171C → #312F37 */
-  background: linear-gradient(180deg, #18171C 0%, #312F37 100%) !important;
+  /* Fill: linear gradient #5469d4 (dark blue) → #6b82f0 (light blue) */
+  background: linear-gradient(180deg, #5469d4 0%, #6b82f0 100%) !important;
   /* Text color: #FFFFFF */
   color: #ffffff !important;
-  /* Stroke: #18171C */
-  border: 1px solid #18171C !important;
+  /* Stroke: dark blue */
+  border: 1px solid #5469d4 !important;
   border-radius: 9px !important;
   padding: 8px 16px !important;
   font-size: 13.5px !important;
@@ -248,7 +248,7 @@ html.dark .app-main {
 }
 .btn-primary:hover:not(:disabled),
 .btn-primary-glass:hover:not(:disabled) {
-  background: linear-gradient(180deg, #24232A 0%, #3D3A45 100%) !important;
+  background: linear-gradient(180deg, #6276e0 0%, #7a96f8 100%) !important;
   transform: translateY(-1px);
   box-shadow:
     0 4px 8px rgba(1,1,1,0.22),
@@ -264,11 +264,11 @@ html.dark .app-main {
     inset 0 4px 4px rgba(255,255,255,0.10) !important;
 }
 
-/* Dark mode — same liquid dark style */
+/* Dark mode — same liquid blue style */
 html.dark .btn-primary,
 html.dark .btn-primary-glass {
-  background: linear-gradient(180deg, #18171C 0%, #312F37 100%) !important;
-  border: 1px solid #18171C !important;
+  background: linear-gradient(180deg, #5469d4 0%, #6b82f0 100%) !important;
+  border: 1px solid #5469d4 !important;
   box-shadow:
     0 2px 4px rgba(1,1,1,0.25),
     0 4px 4px -3px rgba(180,178,189,0.7),
@@ -276,7 +276,7 @@ html.dark .btn-primary-glass {
 }
 html.dark .btn-primary:hover:not(:disabled),
 html.dark .btn-primary-glass:hover:not(:disabled) {
-  background: linear-gradient(180deg, #24232A 0%, #3D3A45 100%) !important;
+  background: linear-gradient(180deg, #6276e0 0%, #7a96f8 100%) !important;
   box-shadow:
     0 4px 8px rgba(1,1,1,0.35),
     0 6px 6px -3px rgba(180,178,189,0.5),
