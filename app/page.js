@@ -696,65 +696,121 @@ function AppShowcase() {
 /* ── How it works ── */
 function HoeHetWerkt() {
   const { dark } = useLp();
-  const bg       = dark ? '#060e1a' : '#ffffff';
-  const sectionBorder = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
-  const text1    = dark ? '#fff' : '#0f172a';
-  const text2    = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
-  const cardBg   = dark
-    ? 'linear-gradient(135deg, rgba(107,130,240,0.07) 0%, rgba(84,105,212,0.04) 100%)'
-    : 'linear-gradient(135deg, #eef2ff 0%, #e8eeff 55%, #f3f0ff 100%)';
-  const cardBorder = dark ? 'rgba(107,130,240,0.14)' : 'rgba(99,102,241,0.18)';
-  const pillBg   = dark ? 'rgba(255,255,255,0.07)' : '#ffffff';
-  const pillBorder = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)';
-  const stepLine = dark ? 'rgba(255,255,255,0.1)' : 'rgba(99,102,241,0.22)';
+  const bg        = dark ? '#060e1a' : '#f8fafc';
+  const text1     = dark ? '#fff' : '#0f172a';
+  const text2     = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
+  const cardBg    = dark ? '#0d1a2e' : '#ffffff';
+  const cardBdr   = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+  const arrowClr  = dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1';
 
   const steps = [
-    { num: '1', title: 'Voer je bet in',      desc: 'Vul sport, wedstrijd, markt, selectie, odds en inzet in. Zie direct je potentiële winst voordat je de bet opslaat.' },
-    { num: '2', title: 'Bijhouden & updaten', desc: 'Zodra de uitkomst bekend is, update je de bet met één klik. TrackMijnBets berekent automatisch je winst of verlies.' },
-    { num: '3', title: 'Analyseer je data',   desc: 'Bekijk per sport, markt en bookmaker waar je goed en slecht presteert. Verbeter je strategie op basis van echte data.' },
+    { num: '1', title: 'Open je betslip',     desc: 'Ga naar de bookmaker van je keuze en navigeer naar je betslip of bet history.' },
+    { num: '2', title: 'Klik de extensie',    desc: 'Klik op het TrackMijnBets icoontje rechtsbovenin Chrome. De extensie maakt automatisch een screenshot.' },
+    { num: '3', title: 'Controleer & sla op', desc: 'Bekijk de herkende bets, pas eventueel aan en klik Opslaan — klaar.' },
+  ];
+
+  // SVG icons matching dashboard stroke style
+  const GlobeIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+  );
+  const CameraIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  );
+  const CpuIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="6" height="6" rx="1"/>
+      <path d="M15 2v3M9 2v3M2 9h3M2 15h3M9 22v-3M15 22v-3M22 9h-3M22 15h-3"/>
+      <rect x="4" y="4" width="16" height="16" rx="2"/>
+    </svg>
+  );
+  const CheckIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  );
+
+  const flow = [
+    { label: 'bet365.com',  sub: 'Open betslip',          dot: '#20a851', iconBg: '#dcfce7', iconClr: '#16a34a', Icon: GlobeIcon  },
+    { label: 'Screenshot',  sub: 'Extensie klik',          dot: '#6b82f0', iconBg: '#eef2ff', iconClr: '#5469d4', Icon: CameraIcon },
+    { label: 'AI Analyse',  sub: 'Claude herkent de bet',  dot: '#f59e0b', iconBg: '#fef3c7', iconClr: '#d97706', Icon: CpuIcon    },
+    { label: 'Opgeslagen',  sub: 'Zichtbaar in je bets',   dot: '#3b82f6', iconBg: '#dbeafe', iconClr: '#2563eb', Icon: CheckIcon  },
   ];
 
   return (
-    <section id="hoe-het-werkt" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${sectionBorder}`, transition: 'background-color 0.3s ease' }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 24, padding: '64px 56px' }}>
+    <section id="hoe-het-werkt" style={{ backgroundColor: bg, padding: '96px 32px', transition: 'background-color 0.3s ease' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'flex-start', gap: 80 }}>
 
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', background: pillBg, border: `1px solid ${pillBorder}`, borderRadius: 99, padding: '5px 18px', marginBottom: 20 }}>
-              <span style={{ fontSize: 13, fontWeight: 500, color: text1 }}>Hoe het werkt</span>
-            </div>
-            <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
-              In drie stappen naar inzicht
-            </h2>
+        {/* Left — steps */}
+        <div style={{ flex: '0 0 auto', width: '46%' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#6b82f0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>
+            Hoe het werkt
           </div>
+          <h2 style={{ fontSize: 42, fontWeight: 800, color: text1, letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 48 }}>
+            Drie stappen,<br />minder dan 10 seconden
+          </h2>
 
-          {/* Steps */}
-          <div className="lp-steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
             {steps.map((step, i) => (
-              <div key={i} style={{ textAlign: 'center', position: 'relative', padding: '0 40px' }}>
-                {i < 2 && (
-                  <div className="lp-step-line" style={{ position: 'absolute', top: 22, left: 'calc(50% + 32px)', right: 'calc(-50% + 32px)', height: 1, backgroundColor: stepLine, zIndex: 0 }} />
-                )}
-                {/* Badge — same style as Dashboard button in header */}
+              <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
                 <div style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0, width: 44, height: 44, borderRadius: '50%',
                   background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
                   color: '#fff', fontWeight: 800, fontSize: 17,
-                  width: 44, height: 44, borderRadius: 8,
-                  boxShadow: '0 4px 16px rgba(84,105,212,0.45)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  margin: '0 auto 24px', position: 'relative', zIndex: 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 4px 16px rgba(84,105,212,0.4)',
                 }}>
                   {step.num}
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: text1, marginBottom: 10 }}>{step.title}</h3>
-                <p style={{ fontSize: 15, color: text2, lineHeight: 1.7, maxWidth: 280, margin: '0 auto' }}>{step.desc}</p>
+                <div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: text1, marginBottom: 7 }}>{step.title}</h3>
+                  <p style={{ fontSize: 15, color: text2, lineHeight: 1.65 }}>{step.desc}</p>
+                </div>
               </div>
             ))}
           </div>
-
         </div>
+
+        {/* Right — flow cards */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {flow.map((item, i) => (
+            <div key={i}>
+              <div style={{
+                backgroundColor: cardBg, border: `1px solid ${cardBdr}`,
+                borderRadius: 14, padding: '16px 20px',
+                display: 'flex', alignItems: 'center', gap: 14,
+                boxShadow: dark ? 'none' : '0 1px 4px rgba(0,0,0,0.05)',
+              }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                  backgroundColor: dark ? 'rgba(255,255,255,0.07)' : item.iconBg,
+                  color: dark ? 'rgba(255,255,255,0.7)' : item.iconClr,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <item.Icon />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: text1 }}>{item.label}</div>
+                  <div style={{ fontSize: 13, color: text2, marginTop: 2 }}>{item.sub}</div>
+                </div>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: item.dot, flexShrink: 0 }} />
+              </div>
+              {i < flow.length - 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
+                  <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                    <path d="M8 0v16M2 10l6 8 6-8" stroke={arrowClr} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
