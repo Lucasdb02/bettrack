@@ -986,8 +986,8 @@ export default function Dashboard() {
               <>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
                   <div>
-                    <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Balance per Bookmaker</p>
-                    <p style={{ fontSize:12.5, color:'var(--text-4)' }}>Verdeling over je bookmakers</p>
+                    <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</p>
+                    <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling over je bookmakers</p>
                   </div>
                   <div style={{ textAlign:'right' }}>
                     <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Totaal</p>
@@ -1041,7 +1041,7 @@ export default function Dashboard() {
             );
           })() : (
             <>
-              <div className="mb-5"><p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Balance per Bookmaker</p><p style={{ fontSize:12.5, color:'var(--text-4)' }}>Verdeling over je bookmakers</p></div>
+              <div className="mb-5"><p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</p><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling over je bookmakers</p></div>
               {empty()}
             </>
           )}
