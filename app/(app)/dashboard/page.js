@@ -907,6 +907,11 @@ export default function Dashboard() {
             const sl = baseData.slice(s, e);
             return { ...d, pnlSmooth: parseFloat((sl.reduce((a, x) => a + x.pnl, 0) / sl.length).toFixed(2)) };
           });
+          // Y-axis domain with 18% padding so lines never touch top/bottom edges
+          const allVals = chartData.flatMap(d => [d.pnlSmooth, d.dayPnl, d.trend].filter(v => v != null));
+          const yMin = Math.min(...allVals); const yMax = Math.max(...allVals);
+          const yPad = (yMax - yMin) * 0.18;
+          const yDomain = [Math.floor(yMin - yPad), Math.ceil(yMax + yPad)];
           return (
             <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
               <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
@@ -956,7 +961,7 @@ export default function Dashboard() {
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                     <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
-                    <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
+                    <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={yDomain}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                     <Area type="linear" dataKey="pnlSmooth" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}} strokeLinejoin="round" strokeLinecap="round"/>
