@@ -327,6 +327,7 @@ function Hero() {
             boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12)',
             overflow: 'hidden',
             width: '115%',
+            marginLeft: '8%',
             display: 'flex',
             flexDirection: 'column',
           }}>
