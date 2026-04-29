@@ -1135,95 +1135,53 @@ export default function Dashboard() {
           ):empty()}
         </div>
 
-        {/* Status Breakdown — half-donut, all statuses with gradients */}
+        {/* Status Breakdown — half-donut, identical style to Balance per Bookmaker */}
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
           <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling van alle bet statussen</p></div>
           {(() => {
             const total = statusData.reduce((s,d) => s + d.value, 0);
-            const active = statusData.filter(d => d.value > 0);
-
-            // SVG geometry — same midline radius / stroke approach as before
-            const W = 260, sw = 26, R = 100;
-            const cxG = W / 2;
-            // circle centre at bottom of SVG so only the top half shows
-            const cyG = R + sw / 2 + 4;
-            const H   = cyG + sw / 2 + 6;
-
-            // Point on the midline arc at angle deg (180=left, 90=top, 0=right; y-axis flipped for SVG)
-            const pt = (deg) => {
-              const rad = deg * Math.PI / 180;
-              return [+(cxG + R * Math.cos(rad)).toFixed(2), +(cyG - R * Math.sin(rad)).toFixed(2)];
-            };
-
-            // Distribute 180° among segments — same gap & corner style as Balance donut
-            const GAP = active.length > 1 ? 3 : 0; // degrees between segments
-            const usable = 180 - GAP * Math.max(0, active.length - 1);
-
-            let cursor = 180;
-            const segs = total > 0
-              ? active.map((d) => {
-                  const span = d.value / total * usable;
-                  const s = cursor;
-                  const e = +(cursor - span).toFixed(3);
-                  cursor = e - GAP;
-                  return { ...d, s, e, span };
-                })
-              : [];
-
-            // Background full-semicircle track
-            const [lx, ly] = pt(180);
-            const [rx, ry] = pt(0);
-            const bgPath = `M${lx},${ly} A${R},${R} 0 0,1 ${rx},${ry}`;
-
-            // Dominant segment for center label
-            const top = total > 0 ? [...statusData].sort((a,b) => b.value - a.value)[0] : null;
-
+            const top   = total > 0 ? [...statusData].sort((a,b) => b.value - a.value)[0] : null;
+            const data  = statusData.filter(d => d.value > 0).length > 0
+              ? statusData
+              : [{ name:'Geen data', value:1, color:'var(--border)', pct:0 }];
             return (
               <>
-                <div style={{ position:'relative', display:'flex', justifyContent:'center', paddingBottom: 48 }}>
-                  <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible', display:'block' }}>
+                {/* cy="85%" with height=155 → cy≈132, arc top ≈ 32px — fully visible */}
+                <ResponsiveContainer width="100%" height={155}>
+                  <PieChart style={{outline:'none'}} tabIndex={-1}>
                     <defs>
-                      {/* Per-segment gradient: light → full color, diagonal like Balance chart */}
-                      {statusData.map((d,i) => (
-                        <linearGradient key={i} id={`ss-grad-${i}`}
-                          x1={cxG - R} y1={cyG - R} x2={cxG + R} y2={cyG}
-                          gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor={lightenColor(d.color, 0.35)}/>
-                          <stop offset="100%" stopColor={d.color}/>
+                      {statusData.map((entry,i) => (
+                        <linearGradient key={i} id={`st3-grad-${i}`} x1="0" y1="0" x2="0.6" y2="1">
+                          <stop offset="0%" stopColor={lightenColor(entry.color)}/>
+                          <stop offset="100%" stopColor={entry.color}/>
                         </linearGradient>
                       ))}
                     </defs>
-
-                    {/* Track */}
-                    <path d={bgPath} fill="none" stroke="var(--border)" strokeWidth={sw} strokeLinecap="round"/>
-
-                    {/* Status segments — sweep=1 (clockwise) = top half ✓ */}
-                    {segs.map((seg, i) => {
-                      const [sx, sy] = pt(seg.s);
-                      const [ex, ey] = pt(seg.e);
-                      const largeArc = seg.span > 180 ? 1 : 0;
-                      const path = `M${sx},${sy} A${R},${R} 0 ${largeArc},1 ${ex},${ey}`;
-                      const gradIdx = statusData.findIndex(d => d.name === seg.name);
-                      return (
-                        <path key={i} d={path} fill="none"
-                          stroke={`url(#ss-grad-${gradIdx})`}
-                          strokeWidth={sw} strokeLinecap="round"/>
-                      );
-                    })}
-                  </svg>
-
-                  {/* Centre label in the arc opening */}
-                  <div style={{ position:'absolute', bottom:0, left:'50%', transform:'translateX(-50%)', textAlign:'center', whiteSpace:'nowrap' }}>
-                    {top ? (
-                      <>
-                        <div style={{ fontSize:30, fontWeight:800, color:top.color, lineHeight:1 }}>{top.pct}%</div>
-                        <div style={{ fontSize:12, color:'var(--text-3)', marginTop:4 }}>{top.name} · {top.value} bets</div>
-                      </>
-                    ) : (
-                      <div style={{ fontSize:14, color:'var(--text-4)' }}>Geen data</div>
-                    )}
-                  </div>
-                </div>
+                    <Pie
+                      data={data}
+                      cx="50%" cy="85%"
+                      startAngle={180} endAngle={0}
+                      innerRadius={60} outerRadius={100}
+                      dataKey="value" strokeWidth={0}
+                      paddingAngle={3} cornerRadius={6}
+                    >
+                      {data.map((entry,i) => {
+                        const idx = statusData.findIndex(d => d.name === entry.name);
+                        return <Cell key={i} fill={idx >= 0 && entry.value > 0 ? `url(#st3-grad-${idx})` : 'var(--border)'}/>;
+                      })}
+                      <Label content={({ viewBox }) => {
+                        const { cx, cy } = viewBox || {};
+                        if (!cx || !cy) return null;
+                        return (
+                          <g>
+                            <text x={cx} y={cy - 14} textAnchor="middle" fontSize={22} fontWeight={800} fill={top?.color || 'var(--text-2)'}>{top?.pct ?? 0}%</text>
+                            <text x={cx} y={cy + 6}  textAnchor="middle" fontSize={12} fill="var(--text-3)">{top?.name ?? ''} · {top?.value ?? 0} bets</text>
+                          </g>
+                        );
+                      }} position="center"/>
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
 
                 <div style={{ borderTop:'1px solid var(--border-subtle)', paddingTop:14, display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
                   {statusData.map((d,i) => (
