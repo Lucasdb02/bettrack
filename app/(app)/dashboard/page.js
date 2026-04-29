@@ -102,13 +102,15 @@ function ChartTip({ active, payload, label, suffix }) {
     return fmtPnl(v);
   };
   return (
-    <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:10, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:13, pointerEvents:'none' }}>
-      {label && <p style={{ color:'var(--text-3)', marginBottom:6, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
+    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'12px 18px', boxShadow:'0 4px 24px rgba(0,0,0,0.10)', fontSize:13, pointerEvents:'none', textAlign:'center', minWidth:140 }}>
+      {label && <p style={{ color:'var(--text-4)', fontSize:11, fontWeight:500, marginBottom:8, letterSpacing:'0.02em' }}>{label}</p>}
       {payload.map((p,i) => (
-        <div key={i} style={{ display:'flex', alignItems:'center', gap:7, marginBottom: i<payload.length-1?3:0 }}>
-          <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:p.color, flexShrink:0 }}/>
-          <span style={{ color:'var(--text-3)', fontSize:12 }}>{p.name}:</span>
-          <span style={{ fontWeight:700, color:p.color }}>{fmtVal(p.value)}</span>
+        <div key={i} style={{ marginBottom: i<payload.length-1?5:0 }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:6, marginBottom:2 }}>
+            <div style={{ width:8, height:2, borderRadius:1, backgroundColor:p.color, flexShrink:0 }}/>
+            <span style={{ fontSize:11, color:'var(--text-4)' }}>{p.name}</span>
+          </div>
+          <span style={{ fontSize:18, fontWeight:800, color:p.value>=0?p.color:'#fb2b37' }}>{fmtVal(p.value)}</span>
         </div>
       ))}
     </div>
@@ -123,20 +125,17 @@ function CumulTip({ active, payload, label }) {
   const day = payload.find(p => p.dataKey === 'dayPnl');
   const cumVal = cum?.value;
   return (
-    <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:10, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:13, pointerEvents:'none' }}>
-      {label && <p style={{ color:'var(--text-3)', marginBottom:7, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
+    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'12px 18px', boxShadow:'0 4px 24px rgba(0,0,0,0.10)', fontSize:13, pointerEvents:'none', textAlign:'center', minWidth:150 }}>
+      {label && <p style={{ color:'var(--text-4)', fontSize:11, fontWeight:500, marginBottom:8, letterSpacing:'0.02em' }}>{label}</p>}
       {cum && (
-        <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
-          <div style={{ width:8, height:2, backgroundColor:'#5469d4', borderRadius:1, flexShrink:0 }}/>
-          <span style={{ color:'var(--text-3)', fontSize:12 }}>Cumulatief:</span>
-          <span style={{ fontWeight:700, color: cumVal >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(cumVal)}</span>
-        </div>
+        <p style={{ fontSize:20, fontWeight:800, color: cumVal >= 0 ? '#00c951' : '#fb2b37', lineHeight:1, marginBottom: day ? 8 : 0 }}>
+          {fmtPnl(cumVal)}
+        </p>
       )}
       {day && (
-        <div style={{ display:'flex', alignItems:'center', gap:7 }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:5 }}>
           <div style={{ width:8, height:2, backgroundColor:'#f59e0b', borderRadius:1, flexShrink:0 }}/>
-          <span style={{ color:'var(--text-3)', fontSize:12 }}>Dagelijks:</span>
-          <span style={{ fontWeight:700, color: day.value >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(day.value)}</span>
+          <span style={{ fontSize:12, color:'var(--text-3)', fontWeight:600 }}>{fmtPnl(day.value)}</span>
         </div>
       )}
     </div>
@@ -962,7 +961,7 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                     <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={yDomain}/>
-                    <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
+                    <Tooltip content={<CumulTip/>} allowEscapeViewBox={{ x:false, y:true }} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none',transform:'translateY(calc(-100% - 12px))'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                     {/* Blue renders first (bottom layer), orange on top — orange masks blue below the daily line */}
                     <Area type={cardinalCurve} dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" baseValue={yDomain[0]} dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
@@ -1101,7 +1100,7 @@ export default function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                   <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(bookLineData.length, isMobile)}/>
                   <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:55} mirror={isMobile} domain={bkDomain}/>
-                  <Tooltip content={<ChartTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
+                  <Tooltip content={<ChartTip/>} allowEscapeViewBox={{ x:false, y:true }} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none',transform:'translateY(calc(-100% - 12px))'}}/>
                   <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
                   <Legend content={<BookieLegend/>}/>
                   {bookmakers.map((bk,i)=><Line key={bk} type={cardinalCurve} dataKey={bk} stroke={bookColor(bk,i)} strokeWidth={2} dot={false} activeDot={{r:4,fill:bookColor(bk,i),stroke:'#fff',strokeWidth:2}}/>)}
