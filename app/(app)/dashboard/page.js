@@ -878,160 +878,100 @@ export default function Dashboard() {
         <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}/>
       </div>
 
-      {/* Chart 1: Cumulative P&L */}
-      {(() => {
-        const hp         = hoverIdx !== null ? cumulData[hoverIdx] : null;
-        const dispPnl    = hp ? hp.pnl    : stats.totalWinst;
-        const dispRoi    = hp ? hp.roi    : stats.roi;
-        const dispDayPnl = hp ? hp.dayPnl : null;
-        const dispW      = hp ? hp.w      : stats.wins;
-        const dispL      = hp ? hp.l      : stats.losses;
-        const dispP      = hp ? hp.p      : stats.pushes;
-        const roiColor   = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
+      {/* Cumulatieve P&L (70%) + Balance per Bookmaker (30%) */}
+      <div style={{ display:'grid', gridTemplateColumns:'7fr 3fr', gap:16, marginBottom:16, alignItems:'start' }}>
 
-        // Linear regression trend line
-        const n = cumulData.length;
-        const sumX  = (n * (n - 1)) / 2;
-        const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6;
-        const sumY  = cumulData.reduce((s, d) => s + d.pnl, 0);
-        const sumXY = cumulData.reduce((s, d, i) => s + i * d.pnl, 0);
-        const slope     = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
-        const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
-        const chartData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
-
-        return (
-          <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:16 }}>
-            {/* Header row */}
-            <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
-              {/* Left: P&L + ROI + daily */}
-              <div>
-                <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Cumulatieve P&L</p>
-                <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
-                  <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
-                  <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
-                </div>
-                {dispDayPnl !== null && (
-                  <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
-                    <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
-                    <span style={{ fontSize:12, color:'var(--text-4)' }}>Dagelijks:</span>
-                    <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(dispDayPnl)}</span>
+        {/* LEFT 70%: Cumulative P&L */}
+        {(() => {
+          const hp         = hoverIdx !== null ? cumulData[hoverIdx] : null;
+          const dispPnl    = hp ? hp.pnl    : stats.totalWinst;
+          const dispRoi    = hp ? hp.roi    : stats.roi;
+          const dispDayPnl = hp ? hp.dayPnl : null;
+          const dispW      = hp ? hp.w      : stats.wins;
+          const dispL      = hp ? hp.l      : stats.losses;
+          const dispP      = hp ? hp.p      : stats.pushes;
+          const roiColor   = dispRoi >= 0 ? 'var(--color-win)' : 'var(--color-loss)';
+          const n = cumulData.length;
+          const sumX  = (n * (n - 1)) / 2;
+          const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6;
+          const sumY  = cumulData.reduce((s, d) => s + d.pnl, 0);
+          const sumXY = cumulData.reduce((s, d, i) => s + i * d.pnl, 0);
+          const slope     = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
+          const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
+          const chartData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
+          return (
+            <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
+              <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
+                <div>
+                  <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Cumulatieve P&L</p>
+                  <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
+                    <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
+                    <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
                   </div>
-                )}
-              </div>
-              {/* Right: Record + legend */}
-              <div style={{ textAlign:'right' }}>
-                <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
-                <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
-                <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                    <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
-                    <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
-                  </div>
-                  <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                    <div style={{ width:16, height:3, backgroundColor:'#f59e0b', borderRadius:2 }}/>
-                    <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
-                  </div>
-                  <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                    <svg width="16" height="3" viewBox="0 0 16 3"><line x1="0" y1="1.5" x2="16" y2="1.5" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5 2.5"/></svg>
-                    <span style={{ fontSize:11, color:'var(--text-4)' }}>Trend</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {cumulData.length > 1 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart
-                  data={chartData}
-                  margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}}
-                  tabIndex={-1}
-                  onMouseMove={(e) => { if (e?.activeTooltipIndex !== undefined) setHoverIdx(e.activeTooltipIndex); }}
-                  onMouseLeave={() => setHoverIdx(null)}
-                >
-                  <defs>
-                    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#5469d4" stopOpacity={0.18}/>
-                      <stop offset="95%" stopColor="#5469d4" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-                  <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
-                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
-                  <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'3 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
-                  <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                  <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2.5} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                  <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={2.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
-                  <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
-                </ComposedChart>
-              </ResponsiveContainer>
-            ) : empty(300)}
-          </div>
-        );
-      })()}
-
-      {/* Charts: Dagelijkse P&L + Status Breakdown */}
-      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
-        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
-          <div className="dash-chart-hdr mb-5">
-            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Stake / Profit Ratio</h2>
-            <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verhouding inzet tot winst</p>
-          </div>
-          {(() => {
-            const totalInzet = stats.totalInzet || 0;
-            const totalWinst = stats.totalWinst || 0;
-            const ratio = totalWinst !== 0 ? Math.abs(totalInzet / totalWinst) : null;
-            const ratioColor = totalWinst >= 0 ? '#00c951' : '#fb2b37';
-            return (
-              <div style={{ display:'flex', flexDirection:'column', flex:1, gap:12 }}>
-                {/* Big center ratio */}
-                <div style={{ background:'var(--bg-page)', borderRadius:10, flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'24px 16px', minHeight:120 }}>
-                  {ratio !== null ? (
-                    <>
-                      <span style={{ fontSize:52, fontWeight:800, color:ratioColor, lineHeight:1, letterSpacing:'-0.03em' }}>
-                        {ratio.toFixed(2)}
-                      </span>
-                      <span style={{ fontSize:12, color:'var(--text-4)', marginTop:6, fontWeight:500 }}>
-                        €1 winst per €{ratio.toFixed(2)} inzet
-                      </span>
-                    </>
-                  ) : (
-                    <span style={{ fontSize:32, fontWeight:800, color:'var(--text-4)', lineHeight:1 }}>—</span>
+                  {dispDayPnl !== null && (
+                    <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
+                      <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
+                      <span style={{ fontSize:12, color:'var(--text-4)' }}>Dagelijks:</span>
+                      <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(dispDayPnl)}</span>
+                    </div>
                   )}
                 </div>
-                {/* Bottom stats */}
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                  <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
-                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Totale inzet</p>
-                    <p style={{ fontSize:20, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{totalInzet.toFixed(2)}</p>
-                  </div>
-                  <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
-                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winst</p>
-                    <p style={{ fontSize:20, fontWeight:800, color: totalWinst >= 0 ? '#00c951' : '#fb2b37', lineHeight:1 }}>
-                      {fmtPnl(totalWinst)}
-                    </p>
+                <div style={{ textAlign:'right' }}>
+                  <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
+                  <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
+                  <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                      <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
+                      <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
+                    </div>
+                    <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                      <div style={{ width:16, height:3, backgroundColor:'#f59e0b', borderRadius:2 }}/>
+                      <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
+                    </div>
+                    <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                      <svg width="16" height="3" viewBox="0 0 16 3"><line x1="0" y1="1.5" x2="16" y2="1.5" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5 2.5"/></svg>
+                      <span style={{ fontSize:11, color:'var(--text-4)' }}>Trend</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            );
-          })()}
-        </div>
+              {cumulData.length > 1 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={chartData} margin={isMobile ? {top:5,right:0,left:0,bottom:0} : {top:5,right:10,left:0,bottom:0}} tabIndex={-1}
+                    onMouseMove={(e) => { if (e?.activeTooltipIndex !== undefined) setHoverIdx(e.activeTooltipIndex); }}
+                    onMouseLeave={() => setHoverIdx(null)}>
+                    <defs>
+                      <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor="#5469d4" stopOpacity={0.15}/>
+                        <stop offset="95%" stopColor="#5469d4" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+                    <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
+                    <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
+                    <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
+                    <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
+                    <Area type="linear" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Line type="linear" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                    <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
+                  </ComposedChart>
+                </ResponsiveContainer>
+              ) : empty(300)}
+            </div>
+          );
+        })()}
 
-        {/* Balance per bookmaker donut */}
+        {/* RIGHT 30%: Balance per Bookmaker */}
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
           {bookieBalanceData.length > 0 ? (() => {
             const total = bookieBalanceData.reduce((s,d)=>s+d.value,0);
             return (
               <>
-                <div className="mb-5" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
-                  <div>
-                    <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2>
-                    <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Huidige verdeling van je totale balance</p>
-                  </div>
-                  <div style={{ textAlign:'right' }}>
-                    <p style={{ fontSize:11, fontWeight:600, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:2 }}>Totale balance</p>
-                    <p style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{total.toFixed(2)}</p>
-                  </div>
+                <div className="mb-5">
+                  <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2>
+                  <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>€{total.toFixed(2)} totaal</p>
                 </div>
-                <ResponsiveContainer width="100%" height={220}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart style={{outline:'none'}} tabIndex={-1}>
                     <defs>
                       {bookieBalanceData.map((entry,i) => (
@@ -1041,7 +981,7 @@ export default function Dashboard() {
                         </linearGradient>
                       ))}
                     </defs>
-                    <Pie data={bookieBalanceData} cx="50%" cy="45%" innerRadius={52} outerRadius={92}
+                    <Pie data={bookieBalanceData} cx="50%" cy="50%" innerRadius={52} outerRadius={85}
                       dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
                       paddingAngle={3} cornerRadius={6}>
                       {bookieBalanceData.map((entry,i) => <Cell key={i} fill={`url(#bk-grad-${i})`}/>)}
@@ -1050,8 +990,8 @@ export default function Dashboard() {
                         if (!cx || !cy) return null;
                         return (
                           <g>
-                            <text x={cx} y={cy-8} textAnchor="middle" fontSize={20} fontWeight={800} fill="var(--text-1)">€{total.toFixed(0)}</text>
-                            <text x={cx} y={cy+14} textAnchor="middle" fontSize={12} fill="var(--text-3)">Totaal</text>
+                            <text x={cx} y={cy-7} textAnchor="middle" fontSize={18} fontWeight={800} fill="var(--text-1)">€{total.toFixed(0)}</text>
+                            <text x={cx} y={cy+13} textAnchor="middle" fontSize={11} fill="var(--text-3)">Totaal</text>
                           </g>
                         );
                       }} position="center"/>
@@ -1073,13 +1013,12 @@ export default function Dashboard() {
                     }}/>
                   </PieChart>
                 </ResponsiveContainer>
-                <div style={{ display:'flex', flexWrap:'wrap', gap:'6px 16px', marginTop:4 }}>
+                <div style={{ display:'flex', flexDirection:'column', gap:5, marginTop:8 }}>
                   {bookieBalanceData.map((d,i) => (
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:6 }}>
-                      <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
-                      <BookmakerIcon naam={d.name} size={14}/>
-                      <span style={{ fontSize:12, color:'var(--text-3)' }}>{d.name}</span>
-                      <span style={{ fontSize:12, fontWeight:700, color:'var(--text-2)', marginLeft:4 }}>€{d.value.toFixed(0)}</span>
+                      <div style={{ width:7, height:7, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
+                      <span style={{ fontSize:11.5, color:'var(--text-3)', flex:1 }}>{d.name}</span>
+                      <span style={{ fontSize:11.5, fontWeight:700, color:'var(--text-2)' }}>€{d.value.toFixed(0)}</span>
                     </div>
                   ))}
                 </div>
@@ -1091,6 +1030,46 @@ export default function Dashboard() {
               {empty()}
             </>
           )}
+        </div>
+      </div>
+
+      {/* Stake / Profit Ratio */}
+      <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
+          <div className="dash-chart-hdr mb-5">
+            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Stake / Profit Ratio</h2>
+            <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verhouding inzet tot winst</p>
+          </div>
+          {(() => {
+            const totalInzet = stats.totalInzet || 0;
+            const totalWinst = stats.totalWinst || 0;
+            const ratio = totalWinst !== 0 ? Math.abs(totalInzet / totalWinst) : null;
+            const ratioColor = totalWinst >= 0 ? '#00c951' : '#fb2b37';
+            return (
+              <div style={{ display:'flex', flexDirection:'column', flex:1, gap:12 }}>
+                <div style={{ background:'var(--bg-page)', borderRadius:10, flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'24px 16px', minHeight:120 }}>
+                  {ratio !== null ? (
+                    <>
+                      <span style={{ fontSize:52, fontWeight:800, color:ratioColor, lineHeight:1, letterSpacing:'-0.03em' }}>{ratio.toFixed(2)}</span>
+                      <span style={{ fontSize:12, color:'var(--text-4)', marginTop:6, fontWeight:500 }}>€1 winst per €{ratio.toFixed(2)} inzet</span>
+                    </>
+                  ) : (
+                    <span style={{ fontSize:32, fontWeight:800, color:'var(--text-4)', lineHeight:1 }}>—</span>
+                  )}
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                  <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Totale inzet</p>
+                    <p style={{ fontSize:20, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{totalInzet.toFixed(2)}</p>
+                  </div>
+                  <div style={{ background:'var(--bg-page)', borderRadius:8, padding:'14px 16px' }}>
+                    <p style={{ fontSize:10.5, color:'var(--text-4)', marginBottom:6, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em' }}>Winst</p>
+                    <p style={{ fontSize:20, fontWeight:800, color: totalWinst >= 0 ? '#00c951' : '#fb2b37', lineHeight:1 }}>{fmtPnl(totalWinst)}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
