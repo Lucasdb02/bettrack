@@ -344,9 +344,9 @@ function Hero() {
             {/* Dashboard screenshot — fills browser, top-anchored */}
             <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
               <img
-                src="https://www.image2url.com/r2/default/images/1777398082118-4b59d759-6343-40e8-8e5a-c29b34c2d48f.png"
+                src="https://www.image2url.com/r2/default/images/1777465020019-6a5651e8-1e10-4943-9495-b1d19c821d54.png"
                 alt="TrackMijnBets dashboard"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left', display: 'block' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top 15%', display: 'block' }}
                 draggable={false}
               />
             </div>
