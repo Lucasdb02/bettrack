@@ -912,10 +912,10 @@ export default function Dashboard() {
             const sl = baseData.slice(s, e);
             return { ...d, pnlSmooth: parseFloat((sl.reduce((a, x) => a + x.pnl, 0) / sl.length).toFixed(2)) };
           });
-          // Y-axis domain with 18% padding so lines never touch top/bottom edges
-          const allVals = chartData.flatMap(d => [d.pnlSmooth, d.dayPnl, d.trend].filter(v => v != null));
-          const yMin = Math.min(...allVals); const yMax = Math.max(...allVals);
-          const yPad = (yMax - yMin) * 0.18;
+          // Y-axis domain based only on visible series (pnlSmooth + trend), 15% padding
+          const visVals = chartData.flatMap(d => [d.pnlSmooth, d.trend].filter(v => v != null));
+          const yMin = Math.min(...visVals); const yMax = Math.max(...visVals);
+          const yPad = (yMax - yMin) * 0.15;
           const yDomain = [Math.floor(yMin - yPad), Math.ceil(yMax + yPad)];
           return (
             <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
