@@ -1048,7 +1048,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stake / Profit Ratio */}
+      {/* Stake / Profit Ratio + Cumulatieve P&L per Bookmaker */}
       <div className="chart-2col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
         <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', display:'flex', flexDirection:'column' }}>
           <div className="dash-chart-hdr mb-5">
@@ -1086,23 +1086,33 @@ export default function Dashboard() {
             );
           })()}
         </div>
-      </div>
 
-      {/* Cumulatieve P&L per Bookmaker */}
-      <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', marginBottom:16 }}>
-        <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Cumulatieve P&L per Bookmaker</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p></div>
-        {bookLineData.length>1?(
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={bookLineData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
-              <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(bookLineData.length, isMobile)}/>
-              <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:55} mirror={isMobile}/>
-              <Tooltip content={<ChartTip/>} cursor={false} wrapperStyle={{zIndex:9999,background:"none",border:"none",padding:0,boxShadow:"none"}}/>
-              <Legend content={<BookieLegend/>}/>
-              {bookmakers.map((bk,i)=><Line key={bk} type="monotone" dataKey={bk} stroke={bookColor(bk,i)} strokeWidth={2} dot={false} activeDot={{r:4,stroke:'#fff',strokeWidth:2}}/>)}
-            </LineChart>
-          </ResponsiveContainer>
-        ):empty()}
+        {/* Cumulatieve P&L per Bookmaker */}
+        <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
+          <div className="dash-chart-hdr mb-5">
+            <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Cumulatieve P&L per Bookmaker</h2>
+            <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Hoe presteren je bookmakers over tijd?</p>
+          </div>
+          {bookLineData.length>1 ? (() => {
+            const allBookVals = bookLineData.flatMap(d => bookmakers.map(bk => d[bk]).filter(v => v != null));
+            const bkMin = Math.min(...allBookVals); const bkMax = Math.max(...allBookVals);
+            const bkPad = (bkMax - bkMin) * 0.15;
+            const bkDomain = [Math.floor(bkMin - bkPad), Math.ceil(bkMax + bkPad)];
+            return (
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={bookLineData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+                  <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(bookLineData.length, isMobile)}/>
+                  <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:55} mirror={isMobile} domain={bkDomain}/>
+                  <Tooltip content={<ChartTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
+                  <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
+                  <Legend content={<BookieLegend/>}/>
+                  {bookmakers.map((bk,i)=><Line key={bk} type={cardinalCurve} dataKey={bk} stroke={bookColor(bk,i)} strokeWidth={2} dot={false} activeDot={{r:4,fill:bookColor(bk,i),stroke:'#fff',strokeWidth:2}}/>)}
+                </LineChart>
+              </ResponsiveContainer>
+            );
+          })() : empty()}
+        </div>
       </div>
 
       {/* ROI + Balance per Bookmaker */}
