@@ -884,7 +884,7 @@ export default function Dashboard() {
       </div>
 
       {/* Cumulatieve P&L (70%) + Balance per Bookmaker (30%) */}
-      <div style={{ display:'grid', gridTemplateColumns:'7fr 3fr', gap:16, marginBottom:16, alignItems:'stretch' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'6fr 4fr', gap:16, marginBottom:16, alignItems:'stretch' }}>
 
         {/* LEFT 70%: Cumulative P&L */}
         {(() => {
