@@ -879,7 +879,7 @@ export default function Dashboard() {
       </div>
 
       {/* Cumulatieve P&L (70%) + Balance per Bookmaker (30%) */}
-      <div style={{ display:'grid', gridTemplateColumns:'7fr 3fr', gap:16, marginBottom:16, alignItems:'start' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'7fr 3fr', gap:16, marginBottom:16, alignItems:'stretch' }}>
 
         {/* LEFT 70%: Cumulative P&L */}
         {(() => {
@@ -951,8 +951,8 @@ export default function Dashboard() {
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={['auto', 'auto']}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                    <Area type="linear" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                    <Line type="linear" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                    <Area type="monotone" dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Line type="monotone" dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                     <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                   </ComposedChart>
                 </ResponsiveContainer>
@@ -962,14 +962,19 @@ export default function Dashboard() {
         })()}
 
         {/* RIGHT 30%: Balance per Bookmaker */}
-        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
+        <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none', display:'flex', flexDirection:'column' }}>
           {bookieBalanceData.length > 0 ? (() => {
             const total = bookieBalanceData.reduce((s,d)=>s+d.value,0);
             return (
               <>
-                <div className="mb-5">
-                  <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2>
-                  <p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>€{total.toFixed(2)} totaal</p>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
+                  <div>
+                    <h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Balance per Bookmaker</h2>
+                  </div>
+                  <div style={{ textAlign:'right' }}>
+                    <p style={{ fontSize:11, color:'var(--text-4)', marginBottom:4 }}>Totaal</p>
+                    <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>€{total.toFixed(2)}</span>
+                  </div>
                 </div>
                 <ResponsiveContainer width="100%" height={200}>
                   <PieChart style={{outline:'none'}} tabIndex={-1}>
@@ -985,16 +990,6 @@ export default function Dashboard() {
                       dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
                       paddingAngle={3} cornerRadius={6}>
                       {bookieBalanceData.map((entry,i) => <Cell key={i} fill={`url(#bk-grad-${i})`}/>)}
-                      <Label content={({ viewBox }) => {
-                        const cx = viewBox?.cx; const cy = viewBox?.cy;
-                        if (!cx || !cy) return null;
-                        return (
-                          <g>
-                            <text x={cx} y={cy-7} textAnchor="middle" fontSize={18} fontWeight={800} fill="var(--text-1)">€{total.toFixed(0)}</text>
-                            <text x={cx} y={cy+13} textAnchor="middle" fontSize={11} fill="var(--text-3)">Totaal</text>
-                          </g>
-                        );
-                      }} position="center"/>
                     </Pie>
                     <Tooltip wrapperStyle={{zIndex:9999}} content={({active,payload})=>{
                       if(!active||!payload?.length) return null;
