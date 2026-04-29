@@ -655,6 +655,21 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
   to   { transform: translateX(-50%); }
 }
 
+@keyframes tmb-scroll-down {
+  from { transform: translateY(-50%); }
+  to   { transform: translateY(0); }
+}
+@keyframes tmb-scroll-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+.tmb-col-down  { animation: tmb-scroll-down  38s linear infinite; }
+.tmb-col-up    { animation: tmb-scroll-up    32s linear infinite; }
+.tmb-col-down2 { animation: tmb-scroll-down  44s linear infinite; }
+.tmb-track:hover .tmb-col-down,
+.tmb-track:hover .tmb-col-up,
+.tmb-track:hover .tmb-col-down2 { animation-play-state: paused; }
+
 @keyframes dot-pulse {
   0%   { box-shadow: 0 0 0 0 var(--dot-color, rgba(99,102,241,0.6)); }
   70%  { box-shadow: 0 0 0 5px transparent; }

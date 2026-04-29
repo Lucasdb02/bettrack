@@ -754,6 +754,100 @@ function HoeHetWerkt() {
   );
 }
 
+/* ── Testimonials ── */
+const TMB_REVIEWS = {
+  col1: [
+    { text: 'Eindelijk een tool die echt snapt hoe sportwedden werkt. Mijn win rate is al met 8% gestegen na twee maanden alles bijhouden.', name: 'Lars Kramer', role: 'Recreatief bettor', color: '#3b82f6' },
+    { text: 'TrackMijnBets liet me zien dat ik consistent verlies op voetbal onder 2.5, maar winst pak op tennis. Had dit nooit zelf uitgerekend.', name: 'Roos Visser', role: 'Part-time bettor', color: '#8b5cf6' },
+    { text: 'De AI-extensie werkt echt magisch. Screenshot maken en alles staat al ingevuld. Scheelt me elke dag veel tijd.', name: 'Daan Mulder', role: 'Casual bettor', color: '#06b6d4' },
+    { text: 'Ik gebruik het nu al 3 maanden en kan echt niet meer zonder. De grafieken geven me precies het overzicht dat ik nodig heb.', name: 'Stefan Bakker', role: 'Serieuze bettor', color: '#10b981' },
+    { text: 'Beste investering als bettor. Tientje per maand en je weet eindelijk waar je geld naartoe gaat. Onmisbaar.', name: 'Joris Hendriks', role: 'Sportwedder', color: '#f59e0b' },
+  ],
+  col2: [
+    { text: 'Al jaren wedden en nooit precies geweten hoe ik er voor stond. TrackMijnBets geeft me nu eindelijk echt inzicht in mijn resultaten.', name: 'Emma de Vries', role: 'Recreatief bettor', color: '#ec4899' },
+    { text: 'De bookmaker-vergelijking is goud waard. Bleek dat ik bij één bookie structureel slechter presteer. Nu weet ik dat tenminste.', name: 'Tim Roos', role: 'Value bettor', color: '#6366f1' },
+    { text: 'Geweldig product. Simpel, overzichtelijk en het doet precies wat het belooft. Aanrader voor elke serieuze bettor.', name: 'Kevin Smit', role: 'Hobbyist bettor', color: '#14b8a6' },
+    { text: 'Mijn vrienden gebruiken het inmiddels allemaal. We delen onze stats en proberen elkaar bij te houden — gezellig én nuttig.', name: 'Mark Jansen', role: 'Groepsbettor', color: '#f97316' },
+    { text: 'Van chaos naar overzicht in één week. Ik wist niet eens dat ik 6 maanden netto verlies maakte. Nu weet ik het en kan ik bijsturen.', name: 'Bas Otten', role: 'Beginnend bettor', color: '#84cc16' },
+  ],
+  col3: [
+    { text: 'De P&L grafiek per dag geeft me precies het gevoel van controle dat ik zocht. Echt een top tool!', name: 'Niels Willems', role: 'Dagelijks bettor', color: '#0ea5e9' },
+    { text: 'Had zelf Excel-sheets. Dit is tien keer beter. En de AI die bets herkent is geen gimmick — het werkt écht.', name: 'Thomas Aarts', role: 'Ex-Excel gebruiker', color: '#a855f7' },
+    { text: 'Ik raad het aan aan iedereen in mijn Telegram-groep. Zet je ego opzij en kijk gewoon naar de data.', name: 'Wouter Kok', role: 'Community bettor', color: '#22c55e' },
+    { text: 'Gewoon een heel solide product. Niks gaat mis, alles laadt snel. Precies wat je nodig hebt als bettor.', name: 'Rick Fontein', role: 'Pro bettor', color: '#ef4444' },
+    { text: 'De statistieken per sport hebben me verrast. Dacht dat voetbal mijn sterkste was, maar tennis is mijn cashcow.', name: 'Sanne Peters', role: 'Multi-sport bettor', color: '#d946ef' },
+  ],
+};
+
+function TmbCard({ r, dark }) {
+  const bg  = dark ? '#0d1a2e' : '#ffffff';
+  const bdr = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+  const t1  = dark ? '#fff' : '#0f172a';
+  const t2  = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+  const initials = r.name.split(' ').map(w => w[0]).slice(0,2).join('');
+  return (
+    <div style={{ backgroundColor: bg, border: `1px solid ${bdr}`, borderRadius: 16, padding: '20px 22px', marginBottom: 14, boxShadow: dark ? 'none' : '0 1px 4px rgba(0,0,0,0.05)' }}>
+      <svg width="24" height="18" viewBox="0 0 24 18" fill={r.color} style={{ marginBottom: 12, opacity: 0.9 }}>
+        <path d="M0 18V10.8C0 4.932 3.468 1.332 10.404 0L11.52 2.016C8.748 2.772 6.948 4.068 5.88 6.192 5.4 7.164 5.184 8.148 5.244 9H9.6V18H0zm14.4 0V10.8C14.4 4.932 17.868 1.332 24.804 0L25.92 2.016C23.148 2.772 21.348 4.068 20.28 6.192 19.8 7.164 19.584 8.148 19.644 9H24V18H14.4z" transform="scale(0.9)"/>
+      </svg>
+      <p style={{ fontSize: 15, color: t1, lineHeight: 1.65, marginBottom: 18, fontWeight: 450 }}>{r.text}</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 34, height: 34, borderRadius: '50%', backgroundColor: r.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{initials}</span>
+        </div>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: t1 }}>{r.name}</div>
+          <div style={{ fontSize: 12, color: t2 }}>{r.role}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Testimonials() {
+  const { dark } = useLp();
+  const bg    = dark ? '#060e1a' : '#ffffff';
+  const border = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const text1 = dark ? '#fff' : '#0f172a';
+  const text2 = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+
+  const mkCol = (reviews, doubled) => doubled ? [...reviews, ...reviews] : reviews;
+
+  return (
+    <section style={{ backgroundColor: bg, padding: '96px 0', borderTop: `1px solid ${border}`, overflow: 'hidden', transition: 'background-color 0.3s ease' }}>
+      <div style={{ textAlign: 'center', marginBottom: 60, padding: '0 32px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#5469d4' }}/>
+          <span style={{ fontSize: 13, color: text2, fontWeight: 500 }}>Wat bettors zeggen</span>
+        </div>
+        <h2 style={{ fontSize: 42, fontWeight: 800, color: text1, letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+          Geliefd bij bettors door heel Nederland
+        </h2>
+      </div>
+
+      {/* 3-column scroll grid */}
+      <div className="tmb-track" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, maxWidth: 1200, margin: '0 auto', padding: '0 32px', maxHeight: 640, overflow: 'hidden' }}>
+        {/* Left — scroll down */}
+        <div className="tmb-col-down">
+          {mkCol(TMB_REVIEWS.col1, true).map((r, i) => <TmbCard key={i} r={r} dark={dark}/>)}
+        </div>
+        {/* Middle — scroll up */}
+        <div className="tmb-col-up" style={{ marginTop: -80 }}>
+          {mkCol(TMB_REVIEWS.col2, true).map((r, i) => <TmbCard key={i} r={r} dark={dark}/>)}
+        </div>
+        {/* Right — scroll down (different speed) */}
+        <div className="tmb-col-down2">
+          {mkCol(TMB_REVIEWS.col3, true).map((r, i) => <TmbCard key={i} r={r} dark={dark}/>)}
+        </div>
+      </div>
+
+      {/* Fade edges top + bottom */}
+      <div style={{ position: 'relative', marginTop: -640, height: 640, pointerEvents: 'none',
+        backgroundImage: `linear-gradient(to bottom, ${bg} 0%, transparent 18%, transparent 82%, ${bg} 100%)` }}/>
+    </section>
+  );
+}
+
 /* ── Extension flow ── */
 function ExtensieFlow() {
   const { dark } = useLp();
@@ -1303,6 +1397,7 @@ export default function LandingPage() {
         <Header />
         <Hero />
         <AppShowcase />
+        <Testimonials />
         <HoeHetWerkt />
         <ExtensieFlow />
         <Prijzen />
