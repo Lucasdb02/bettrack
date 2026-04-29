@@ -954,14 +954,19 @@ export default function Dashboard() {
                         <stop offset="5%"  stopColor="#5469d4" stopOpacity={0.15}/>
                         <stop offset="95%" stopColor="#5469d4" stopOpacity={0}/>
                       </linearGradient>
+                      <linearGradient id="og" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor="#f59e0b" stopOpacity={0.18}/>
+                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                      </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
                     <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={yDomain}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                    <Area type={cardinalCurve} dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
-                    <Line type={cardinalCurve} dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
+                    {/* Blue renders first (bottom layer), orange on top — orange masks blue below the daily line */}
+                    <Area type={cardinalCurve} dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" baseValue={yDomain[0]} dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Area type={cardinalCurve} dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} fill="url(#og)" baseValue={yDomain[0]} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                     <Line type="linear" dataKey="trend" name="Trend" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="6 3" dot={false} activeDot={false} legendType="none"/>
                   </ComposedChart>
                 </ResponsiveContainer>
