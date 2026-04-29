@@ -1135,67 +1135,68 @@ export default function Dashboard() {
           ):empty()}
         </div>
 
-        {/* Status Breakdown donut */}
+        {/* Status Breakdown gauge */}
         <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)', userSelect:'none' }}>
-          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Verdeling van alle bet statussen</p></div>
+          <div className="mb-5"><h2 style={{ fontSize:15, fontWeight:600, color:'var(--text-2)' }}>Status Breakdown</h2><p style={{ fontSize:12.5, color:'var(--text-4)', marginTop:2 }}>Win rate op afgeronde bets</p></div>
           {(() => {
-            const total = statusData.reduce((s,d)=>s+d.value,0);
-            const center = total > 0 ? [...statusData].sort((a,b)=>b.value-a.value)[0] : null;
+            const settled = stats.wins + stats.losses + stats.pushes;
+            const winRate = settled > 0 ? parseFloat((stats.wins / settled * 100).toFixed(1)) : 0;
+            const gaugeData = [
+              { value: winRate > 0 ? winRate : 0 },
+              { value: Math.max(0, 100 - winRate) || (settled === 0 ? 100 : 0) },
+            ];
+            const hasData = settled > 0;
             return (
-              <ResponsiveContainer width="100%" height={220}>
-                <PieChart style={{outline:'none'}} tabIndex={-1}>
-                  <defs>
-                    {statusData.map((entry,i) => (
-                      <linearGradient key={i} id={`st-grad-${i}`} x1="0" y1="0" x2="0.6" y2="1">
-                        <stop offset="0%" stopColor={lightenColor(entry.color)}/>
-                        <stop offset="100%" stopColor={entry.color}/>
+              <>
+                <ResponsiveContainer width="100%" height={180}>
+                  <PieChart style={{outline:'none'}} tabIndex={-1} margin={{top:0,right:0,bottom:0,left:0}}>
+                    <defs>
+                      <linearGradient id="gauge-fill" x1="1" y1="0" x2="0" y2="0">
+                        <stop offset="0%" stopColor="#5469d4"/>
+                        <stop offset="100%" stopColor="#7c8ff5"/>
                       </linearGradient>
-                    ))}
-                  </defs>
-                  <Pie data={statusData.filter(d=>d.value>0).length>0 ? statusData : [{name:'Geen data',value:1,color:'var(--border)'}]}
-                    cx="50%" cy="45%" innerRadius={52} outerRadius={92}
-                    dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}
-                    paddingAngle={3} cornerRadius={6}>
-                    {statusData.map((entry,i) => <Cell key={i} fill={entry.value===0 ? entry.color : `url(#st-grad-${i})`} opacity={entry.value===0?0.2:1}/>)}
-                    {center && (
+                    </defs>
+                    <Pie
+                      data={gaugeData}
+                      cx="50%" cy="90%"
+                      startAngle={180} endAngle={0}
+                      innerRadius={62} outerRadius={92}
+                      dataKey="value"
+                      strokeWidth={0}
+                      cornerRadius={8}
+                      paddingAngle={hasData && winRate > 0 && winRate < 100 ? 3 : 0}
+                    >
+                      <Cell fill={hasData && winRate > 0 ? 'url(#gauge-fill)' : 'var(--border)'}/>
+                      <Cell fill="var(--border)"/>
                       <Label content={({ viewBox }) => {
-                        const cx = viewBox?.cx; const cy = viewBox?.cy;
+                        const { cx, cy } = viewBox || {};
                         if (!cx || !cy) return null;
                         return (
                           <g>
-                            <text x={cx} y={cy-8} textAnchor="middle" fontSize={20} fontWeight={800} fill={center.color}>{center.pct}%</text>
-                            <text x={cx} y={cy+14} textAnchor="middle" fontSize={12} fill="var(--text-3)">{center.name}</text>
+                            <text x={cx} y={cy - 18} textAnchor="middle" fontSize={30} fontWeight={800} fill="var(--text-1)">{winRate}%</text>
+                            <text x={cx} y={cy + 6} textAnchor="middle" fontSize={12.5}>
+                              <tspan fontWeight={700} fill="var(--text-2)">{stats.wins}/{settled}</tspan>
+                              <tspan fill="var(--text-3)"> Gewonnen bets</tspan>
+                            </text>
                           </g>
                         );
                       }} position="center"/>
-                    )}
-                  </Pie>
-                  <Tooltip wrapperStyle={{zIndex:9999}} content={({active,payload})=>{
-                    if(!active||!payload?.length) return null;
-                    const d = payload[0].payload;
-                    return (
-                      <div style={{backgroundColor:'var(--tooltip-bg)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 14px',boxShadow:'0 8px 24px rgba(0,0,0,0.2)',fontSize:13,pointerEvents:'none'}}>
-                        <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:4}}>
-                          <div style={{width:10,height:10,borderRadius:'50%',backgroundColor:d.color}}/>
-                          <span style={{fontWeight:700,color:'var(--text-1)'}}>{d.name}</span>
-                        </div>
-                        <p style={{color:'var(--text-3)',fontSize:12}}>{d.value} bets · <b style={{color:d.color}}>{d.pct}%</b></p>
-                      </div>
-                    );
-                  }}/>
-                </PieChart>
-              </ResponsiveContainer>
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+
+                <div style={{ borderTop:'1px solid var(--border-subtle)', paddingTop:14, marginTop:4, display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
+                  {statusData.map((d,i) => (
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:7 }}>
+                      <div style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0 }}/>
+                      <span style={{ fontSize:12, color:'var(--text-3)' }}>{d.name}</span>
+                      <span style={{ fontSize:12, fontWeight:700, color:'var(--text-2)', marginLeft:'auto' }}>{d.pct}%</span>
+                    </div>
+                  ))}
+                </div>
+              </>
             );
           })()}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px', marginTop:4 }}>
-            {statusData.map((d,i) => (
-              <div key={i} style={{ display:'flex', alignItems:'center', gap:7 }}>
-                <div className="pulse-dot" style={{ width:8, height:8, borderRadius:'50%', backgroundColor:d.color, flexShrink:0, '--dot-color': d.color + '99' }}/>
-                <span style={{ fontSize:12, color:'var(--text-3)' }}>{d.name}</span>
-                <span style={{ fontSize:12, fontWeight:700, color:'var(--text-2)', marginLeft:'auto' }}>{d.pct}%</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
