@@ -256,19 +256,22 @@ function Hero() {
 
           {/* Bookmaker logo scroll */}
           {(() => {
-            const col = dark ? 'rgba(255,255,255,0.3)' : '#94a3b8';
-            // Each entry: name + optional icon SVG path (d) + viewBox
+            // brightness(0) collapses all colours to black; opacity softens to gray.
+            // Works for any logo colour (green, white, coloured).
+            const imgFilter = dark
+              ? 'brightness(0) invert(1) opacity(0.4)'
+              : 'brightness(0) opacity(0.32)';
             const BOOKIES = [
-              { label: 'Unibet',   icon: <svg width="16" height="16" viewBox="0 0 32 32" fill={col}><path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 2c6.627 0 12 5.373 12 12S22.627 28 16 28 4 22.627 4 16 9.373 4 16 4zm-1 5v10.586l-3.293-3.293-1.414 1.414L16 23.414l5.707-5.707-1.414-1.414L17 19.586V9h-2z"/></svg> },
-              { label: 'bet365',   icon: null },
-              { label: 'TOTO',     icon: <svg width="14" height="14" viewBox="0 0 24 24" fill={col}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> },
-              { label: 'BetCity',  icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> },
-              { label: 'Betway',   icon: null },
-              { label: "Jack's",   icon: <svg width="13" height="13" viewBox="0 0 24 24" fill={col}><path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c5.523 0 10 2.239 10 5v1H2v-1c0-2.761 4.477-5 10-5z"/></svg> },
-              { label: 'Bingoal',  icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg> },
-              { label: 'Circus',   icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg> },
-              { label: 'LeoVegas', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={col} strokeWidth="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> },
-              { label: '888sport', icon: null },
+              { name: 'Unibet',   src: '/logos/unibet.svg' },
+              { name: 'bet365',   src: '/logos/bet365.svg' },
+              { name: 'TOTO',     src: '/logos/toto.svg' },
+              { name: 'BetCity',  src: '/logos/betcity.svg' },
+              { name: 'Betway',   src: '/logos/betway.svg' },
+              { name: "Jack's",   src: '/logos/jacks.png' },
+              { name: 'Bingoal',  src: '/logos/bingoal.jpg' },
+              { name: 'Circus',   src: '/logos/circus.png' },
+              { name: 'LeoVegas', src: '/logos/leovegas.jpg' },
+              { name: '888sport', src: '/logos/888sport.png' },
             ];
             return (
               <div style={{ marginBottom: 40 }}>
@@ -280,11 +283,14 @@ function Hero() {
                   WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
                   maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 36, width: 'max-content', animation: 'bookie-scroll 22s linear infinite' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 48, width: 'max-content', animation: 'bookie-scroll 26s linear infinite' }}>
                     {[...BOOKIES, ...BOOKIES].map((b, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, height: 22 }}>
-                        {b.icon && <span style={{ display: 'flex', alignItems: 'center', opacity: 0.7 }}>{b.icon}</span>}
-                        <span style={{ fontSize: 15, fontWeight: 700, color: col, letterSpacing: '-0.02em', lineHeight: 1, whiteSpace: 'nowrap' }}>{b.label}</span>
+                      <div key={i} style={{ height: 22, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                        <img
+                          src={b.src} alt={b.name}
+                          style={{ height: 22, width: 'auto', objectFit: 'contain', filter: imgFilter, display: 'block' }}
+                          draggable={false}
+                        />
                       </div>
                     ))}
                   </div>
