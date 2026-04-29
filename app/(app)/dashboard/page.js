@@ -119,10 +119,9 @@ function ChartTip({ active, payload, label, suffix }) {
 function CumulTip({ active, payload, label }) {
   const { fmtPnl } = useFmt();
   if (!active || !payload?.length) return null;
-  // pnlSmooth is used for the visual; read actual pnl from payload.payload for accurate tooltip
-  const cum = payload.find(p => p.dataKey === 'pnlSmooth');
+  const cum = payload.find(p => p.dataKey === 'pnl');
   const day = payload.find(p => p.dataKey === 'dayPnl');
-  const cumVal = cum?.payload?.pnl ?? cum?.value;
+  const cumVal = cum?.value;
   return (
     <div style={{ backgroundColor:'var(--tooltip-bg)', border:'1px solid var(--border)', borderRadius:10, padding:'10px 14px', boxShadow:'var(--shadow-lg)', fontSize:13, pointerEvents:'none' }}>
       {label && <p style={{ color:'var(--text-3)', marginBottom:7, fontWeight:600, fontSize:11, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</p>}
@@ -905,15 +904,9 @@ export default function Dashboard() {
           const sumXY = cumulData.reduce((s, d, i) => s + i * d.pnl, 0);
           const slope     = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
           const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
-          const baseData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
-          // 7-point centered rolling average for smooth display (actual values kept for tooltip via payload.pnl)
-          const chartData = baseData.map((d, i) => {
-            const s = Math.max(0, i - 3); const e = Math.min(baseData.length, i + 4);
-            const sl = baseData.slice(s, e);
-            return { ...d, pnlSmooth: parseFloat((sl.reduce((a, x) => a + x.pnl, 0) / sl.length).toFixed(2)) };
-          });
-          // Y-axis domain based only on visible series (pnlSmooth + trend), 15% padding
-          const visVals = chartData.flatMap(d => [d.pnlSmooth, d.trend].filter(v => v != null));
+          const chartData = cumulData.map((d, i) => ({ ...d, trend: parseFloat((intercept + slope * i).toFixed(2)) }));
+          // Y-axis domain based on actual pnl + trend, 15% padding
+          const visVals = chartData.flatMap(d => [d.pnl, d.trend].filter(v => v != null));
           const yMin = Math.min(...visVals); const yMax = Math.max(...visVals);
           const yPad = (yMax - yMin) * 0.15;
           const yDomain = [Math.floor(yMin - yPad), Math.ceil(yMax + yPad)];
@@ -973,7 +966,7 @@ export default function Dashboard() {
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={yDomain}/>
                     <Tooltip content={<CumulTip/>} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
                     <ReferenceLine y={0} stroke="var(--border)" strokeWidth={1}/>
-                    <Area type={cardinalCurve} dataKey="pnlSmooth" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
+                    <Area type={cardinalCurve} dataKey="pnl" name="P&L" stroke="#5469d4" strokeWidth={2} fill="url(#pg)" dot={false} activeDot={{r:5,fill:'#5469d4',stroke:'#fff',strokeWidth:2}}/>
                     {/* DAGELIJKS LINE — re-enable when needed:
                     <Line type={cardinalCurve} dataKey="dayPnl" name="Dagelijks" stroke="#f59e0b" strokeWidth={1.5} dot={false} activeDot={{r:5,fill:'#f59e0b',stroke:'#fff',strokeWidth:2}}/>
                     */}
