@@ -317,7 +317,7 @@ function Hero() {
         </div>
 
         {/* Right — screenshot in browser chrome, top/bottom aligned to left column content */}
-        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 128, paddingBottom: 80, paddingLeft: 8, minWidth: 0, alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
+        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 128, paddingBottom: 80, paddingLeft: 40, minWidth: 0, alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
           {/* Browser chrome — light theme, fills exact height */}
           <div style={{
             flex: 1,
@@ -346,7 +346,7 @@ function Hero() {
               <img
                 src="https://www.image2url.com/r2/default/images/1777465020019-6a5651e8-1e10-4943-9495-b1d19c821d54.png"
                 alt="TrackMijnBets dashboard"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top 15%', display: 'block' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left', display: 'block' }}
                 draggable={false}
               />
             </div>
