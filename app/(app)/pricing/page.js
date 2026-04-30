@@ -1,6 +1,14 @@
 'use client';
 import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { useSubscription } from '../../context/SubscriptionContext';
+
+const PRICE_IDS = {
+  pro_monthly:   'price_1TRoVaAEpVwWC6xG32WTf7rt',
+  pro_yearly:    'price_1TRoWLAEpVwWC6xGFCsX7oap',
+  elite_monthly: 'price_1TRoVnAEpVwWC6xGbHee4xyz',
+  elite_yearly:  'price_1TRoWdAEpVwWC6xGLdI4meyi',
+};
 
 const PLANS = [
   {
@@ -9,8 +17,6 @@ const PLANS = [
     sub: 'Voor casual bettors',
     maand: 0,
     jaar: 0,
-    cta: 'Huidig plan',
-    ctaDisabled: true,
     populair: false,
     features: [
       { label: 'Dashboard overzicht', ok: true },
@@ -33,8 +39,6 @@ const PLANS = [
     sub: 'Voor serieuze bettors',
     maand: 6.99,
     jaar: 5.59,
-    cta: 'Start 7 dagen gratis',
-    ctaDisabled: false,
     populair: true,
     features: [
       { label: 'Alles van Gratis', ok: true },
@@ -57,8 +61,6 @@ const PLANS = [
     sub: 'Voor professionele bettors',
     maand: 12.99,
     jaar: 10.39,
-    cta: 'Start 7 dagen gratis',
-    ctaDisabled: false,
     populair: false,
     features: [
       { label: 'Alles van Pro', ok: true },
@@ -97,6 +99,41 @@ function Check({ ok, dark }) {
 export default function PricingPage() {
   const { dark } = useTheme();
   const [jaarlijks, setJaarlijks] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState(null);
+  const { plan: currentPlan, status, loading: subLoading, startCheckout, openPortal } = useSubscription();
+
+  async function handleCta(planId) {
+    if (planId === 'gratis') return;
+
+    /* Beheer abonnement als al betaald plan */
+    if (currentPlan === planId && status !== 'canceled') {
+      await openPortal();
+      return;
+    }
+
+    const key = jaarlijks ? `${planId}_yearly` : `${planId}_monthly`;
+    const priceId = PRICE_IDS[key];
+    if (!priceId) return;
+
+    setLoadingPlan(planId);
+    try {
+      await startCheckout(priceId);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
+
+  function ctaLabel(plan) {
+    if (plan.id === 'gratis') return currentPlan === 'gratis' ? 'Huidig plan' : 'Downgraden';
+    if (currentPlan === plan.id && status !== 'canceled') return 'Abonnement beheren';
+    return 'Start 7 dagen gratis';
+  }
+
+  function ctaDisabled(plan) {
+    return plan.id === 'gratis' && currentPlan === 'gratis';
+  }
 
   return (
     <div style={{ padding: '32px 28px' }} className="app-page">
@@ -194,26 +231,37 @@ export default function PricingPage() {
               </div>
 
               {/* CTA */}
-              <button
-                disabled={plan.ctaDisabled}
-                style={{
-                  width: '100%', padding: '11px 0', borderRadius: 9, border: isPopulair ? 'none' : '1px solid var(--border)',
-                  fontSize: 14, fontWeight: 600, cursor: plan.ctaDisabled ? 'default' : 'pointer',
-                  background: plan.ctaDisabled
-                    ? 'var(--bg-subtle)'
-                    : isPopulair
-                      ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)'
-                      : 'var(--bg-card)',
-                  color: plan.ctaDisabled ? 'var(--text-4)' : isPopulair ? '#fff' : 'var(--text-2)',
-                  boxShadow: isPopulair && !plan.ctaDisabled ? '0 3px 12px rgba(84,105,212,0.4)' : 'none',
-                  transition: 'opacity 0.15s',
-                  marginBottom: 24,
-                }}
-                onMouseEnter={e => { if (!plan.ctaDisabled) e.currentTarget.style.opacity = '0.85'; }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-              >
-                {plan.cta}
-              </button>
+              {(() => {
+                const disabled = ctaDisabled(plan) || loadingPlan === plan.id;
+                const label    = loadingPlan === plan.id ? 'Laden...' : ctaLabel(plan);
+                return (
+                  <button
+                    disabled={disabled}
+                    onClick={() => handleCta(plan.id)}
+                    style={{
+                      width: '100%', padding: '11px 0', borderRadius: 9, border: isPopulair ? 'none' : '1px solid var(--border)',
+                      fontSize: 14, fontWeight: 600, cursor: disabled ? 'default' : 'pointer',
+                      background: disabled
+                        ? 'var(--bg-subtle)'
+                        : isPopulair
+                          ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)'
+                          : 'var(--bg-card)',
+                      color: disabled ? 'var(--text-4)' : isPopulair ? '#fff' : 'var(--text-2)',
+                      boxShadow: isPopulair && !disabled ? '0 3px 12px rgba(84,105,212,0.4)' : 'none',
+                      transition: 'opacity 0.15s',
+                      marginBottom: 24,
+                      opacity: loadingPlan === plan.id ? 0.6 : 1,
+                    }}
+                    onMouseEnter={e => { if (!disabled) e.currentTarget.style.opacity = '0.85'; }}
+                    onMouseLeave={e => { if (loadingPlan !== plan.id) e.currentTarget.style.opacity = '1'; }}
+                  >
+                    {currentPlan === plan.id && status !== 'canceled' && plan.id !== 'gratis' && (
+                      <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: '#00c951', marginRight: 7, verticalAlign: 'middle' }}/>
+                    )}
+                    {label}
+                  </button>
+                );
+              })()}
 
               {/* Features */}
               <div>
