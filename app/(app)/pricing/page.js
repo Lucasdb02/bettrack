@@ -4,10 +4,10 @@ import { useTheme } from '../../context/ThemeContext';
 import { useSubscription } from '../../context/SubscriptionContext';
 
 const PRICE_IDS = {
-  pro_monthly:   'price_1TRoVaAEpVwWC6xG32WTf7rt',
-  pro_yearly:    'price_1TRoWLAEpVwWC6xGFCsX7oap',
-  elite_monthly: 'price_1TRoVnAEpVwWC6xGbHee4xyz',
-  elite_yearly:  'price_1TRoWdAEpVwWC6xGLdI4meyi',
+  pro_monthly:   'price_1TRyiRAFCw5K2LNNmDJsHjbu',
+  pro_yearly:    'price_1TRyiRAFCw5K2LNNfu7fpdRu',
+  elite_monthly: 'price_1TRyiRAFCw5K2LNNJJN8yN72',
+  elite_yearly:  'price_1TRyiSAFCw5K2LNNDsbFc4h1',
 };
 
 const PLANS = [
