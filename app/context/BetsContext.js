@@ -30,20 +30,20 @@ export function BetsProvider({ children }) {
 
   useEffect(() => {
     async function fetchBets() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { setLoaded(true); return; }
+        const { data, error } = await supabase
+          .from('bets')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('datum', { ascending: false });
+        if (!error && data) setBets(data);
+      } catch (e) {
+        console.error('[BetsContext] fetchBets error:', e);
+      } finally {
         setLoaded(true);
-        return;
       }
-      const { data, error } = await supabase
-        .from('bets')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('datum', { ascending: false });
-      if (!error && data) {
-        setBets(data);
-      }
-      setLoaded(true);
     }
     fetchBets();
   }, []);
