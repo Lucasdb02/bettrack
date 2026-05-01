@@ -29,14 +29,12 @@ export function BetsProvider({ children }) {
   const supabase = createClient();
 
   useEffect(() => {
-    async function fetchBets() {
+    async function fetchBets(userId) {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { setLoaded(true); return; }
         const { data, error } = await supabase
           .from('bets')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
           .order('datum', { ascending: false });
         if (error) console.error('[BetsContext] bets query error:', error);
         if (!error && data) setBets(data);
@@ -46,7 +44,27 @@ export function BetsProvider({ children }) {
         setLoaded(true);
       }
     }
-    fetchBets();
+
+    // Initial load: check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchBets(session.user.id);
+      } else {
+        setLoaded(true);
+      }
+    });
+
+    // Re-fetch whenever auth state changes (sign-in, token refresh, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        fetchBets(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setBets([]);
+        setLoaded(true);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const addBet = async (bet) => {
