@@ -38,6 +38,7 @@ export function BetsProvider({ children }) {
           .select('*')
           .eq('user_id', user.id)
           .order('datum', { ascending: false });
+        if (error) console.error('[BetsContext] bets query error:', error);
         if (!error && data) setBets(data);
       } catch (e) {
         console.error('[BetsContext] fetchBets error:', e);
