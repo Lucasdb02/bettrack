@@ -233,10 +233,10 @@ function Hero() {
       <div style={{ position: 'absolute', top: '10%', left: '42%', width: 700, height: 600, background: 'radial-gradient(ellipse, rgba(84,105,212,0.1) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* Full-width flex — left text | right mockup */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
+      <div className="lp-hero-row" style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
         {/* Left text — aligned to 1400px grid */}
-        <div style={{ flexShrink: 0, width: '50%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))' }}>
+        <div className="lp-hero-text" style={{ flexShrink: 0, width: '50%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: dark ? 'rgba(84,105,212,0.15)' : 'rgba(84,105,212,0.1)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4' }} />
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
@@ -958,10 +958,10 @@ function ExtensieFlow() {
 
   return (
     <section id="extensie" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'flex-start', gap: 80 }}>
+      <div className="lp-ext-row" style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'flex-start', gap: 80 }}>
 
         {/* Left — title + steps */}
-        <div style={{ flex: '0 0 auto', width: '46%' }}>
+        <div className="lp-ext-left" style={{ flex: '0 0 auto', width: '46%' }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#6b82f0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>
             Hoe het werkt
           </div>
