@@ -177,7 +177,7 @@ export default function PricingPage() {
       </div>
 
       {/* Plans */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="grid-3-to-1" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
         {PLANS.map((plan) => {
           const prijs = jaarlijks ? plan.jaar : plan.maand;
           const isPopulair = plan.populair;

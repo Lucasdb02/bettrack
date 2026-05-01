@@ -1258,7 +1258,7 @@ function Prijzen() {
         </div>
 
         {/* Plans */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28, alignItems: 'stretch' }}>
+        <div className="lp-pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28, alignItems: 'stretch' }}>
           {LP_PLANS.map((plan) => {
             const prijs = jaarlijks ? plan.jaar : plan.maand;
             const isPopulair = plan.populair;

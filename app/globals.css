@@ -500,12 +500,15 @@ html.dark .glass-card {
   .lp-analyse-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .lp-analyse-title { font-size: 28px !important; }
   .lp-calc-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-  .lp-pricing-grid { grid-template-columns: 1fr !important; max-width: 360px !important; margin-left: auto !important; margin-right: auto !important; }
+  .lp-pricing-grid { grid-template-columns: 1fr !important; }
   .lp-final-cta-section { padding: 64px 20px !important; }
   .lp-final-cta-title { font-size: 30px !important; }
   .lp-final-cta-btn { display: flex !important; width: 100% !important; max-width: 300px !important; margin: 0 auto 16px !important; justify-content: center !important; }
   .lp-footer-section { padding: 32px 20px !important; }
   .lp-footer-inner { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 12px !important; }
+  .tmb-track { grid-template-columns: 1fr !important; max-height: 480px !important; }
+  .tmb-track > div:nth-child(2),
+  .tmb-track > div:nth-child(3) { display: none !important; }
 }
 
 /* ══════════════════════════════════════════════
@@ -631,6 +634,7 @@ html.dark .glass-card {
 @media (max-width: 768px) {
   .stat-card-icon { margin-top: -6px !important; margin-right: -6px !important; }
   .dash-recent-hdr { border-bottom: none !important; padding-bottom: 8px !important; }
+  .dash-main-grid { grid-template-columns: 1fr !important; }
 }
 
 /* ══════════════════════════════════════════════
