@@ -311,7 +311,7 @@ export default function StatistiekenPage() {
   }, []);
 
   // filters
-  const [periodFilter, setPeriodFilter] = useState('thisMonth');
+  const [periodFilter, setPeriodFilter] = useState('last28');
   const [customRange,  setCustomRange]  = useState(null);
   const [sportFilter,  setSportFilter]  = useState(null);
   const [bookFilter,   setBookFilter]   = useState(null);

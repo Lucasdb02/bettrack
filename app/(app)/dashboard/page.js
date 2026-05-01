@@ -634,7 +634,7 @@ export default function Dashboard() {
   const { bets, loaded } = useBets();
   const { fmtPnl, fmtAmt } = useFmt();
 
-  const [periodFilter,  setPeriodFilter]  = useState('thisMonth');
+  const [periodFilter,  setPeriodFilter]  = useState('last28');
   const [customRange,   setCustomRange]   = useState(null);
   const [showCalendar,  setShowCalendar]  = useState(false);
   const [sportFilter,   setSportFilter]   = useState(null);
