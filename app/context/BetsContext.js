@@ -6,6 +6,11 @@ const BetsContext = createContext();
 
 const SCHEMA_FIELDS = ['datum', 'sport', 'wedstrijd', 'markt', 'selectie', 'odds', 'inzet', 'uitkomst', 'bookmaker', 'notities', 'tags'];
 
+// Module-level cache: survives component remounts within the same browser session.
+// Prevents the "Laden..." flash whenever BetsProvider re-mounts due to navigation or
+// a router.refresh() cycle.
+let _cache = null; // { userId: string, bets: Bet[] } | null
+
 function toDbRow(bet, userId) {
   const row = { user_id: userId };
   for (const field of SCHEMA_FIELDS) {
@@ -19,13 +24,12 @@ export function berekenWinst(uitkomst, odds, inzet) {
   if (uitkomst === 'verloren')      return parseFloat((-inzet).toFixed(2));
   if (uitkomst === 'half_gewonnen') return parseFloat(((odds - 1) * inzet / 2).toFixed(2));
   if (uitkomst === 'half_verloren') return parseFloat((-inzet / 2).toFixed(2));
-  // push, void, onbeslist → inzet terug, geen P&L
   return 0;
 }
 
 export function BetsProvider({ children }) {
-  const [bets, setBets] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+  const [bets, setBets] = useState(_cache?.bets ?? []);
+  const [loaded, setLoaded] = useState(_cache !== null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -33,13 +37,20 @@ export function BetsProvider({ children }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user) { setLoaded(true); return; }
+
+        // If we already have a fresh cache for this user, skip the fetch.
+        if (_cache?.userId === session.user.id) return;
+
         const { data, error } = await supabase
           .from('bets')
           .select('*')
           .eq('user_id', session.user.id)
           .order('datum', { ascending: false });
         if (error) console.error('[BetsContext] bets query error:', error);
-        if (!error && data) setBets(data);
+        if (!error && data) {
+          _cache = { userId: session.user.id, bets: data };
+          setBets(data);
+        }
       } catch (e) {
         console.error('[BetsContext] fetchBets error:', e);
       } finally {
@@ -60,7 +71,11 @@ export function BetsProvider({ children }) {
       .select()
       .single();
     if (error) { console.error('[addBet] supabase error:', error); return null; }
-    setBets((prev) => [data, ...prev]);
+    setBets((prev) => {
+      const next = [data, ...prev];
+      if (_cache) _cache = { ..._cache, bets: next };
+      return next;
+    });
     return data;
   };
 
@@ -73,19 +88,20 @@ export function BetsProvider({ children }) {
       .insert(rows)
       .select();
     if (!error && data) {
-      setBets((prev) => [...data, ...prev]);
+      setBets((prev) => {
+        const next = [...data, ...prev];
+        if (_cache) _cache = { ..._cache, bets: next };
+        return next;
+      });
       return data;
     }
     return [];
   };
 
-  // Vervangt alle eerder auto-geïmporteerde bets door een nieuwe snapshot.
-  // Zonder een _source kolom in de DB valt dit terug op een gewone bulk-insert.
   const replaceAutoImports = async (newBets) => {
     return addBets(newBets);
   };
 
-  // Voegt screenshot-geïmporteerde bets toe (elke upload is een nieuwe set).
   const addScreenshotBets = async (newBets) => {
     return addBets(newBets);
   };
@@ -111,13 +127,19 @@ export function BetsProvider({ children }) {
     if (error) {
       console.error('[updateBet] supabase error:', error);
       setBets(prevBets);
+      if (_cache) _cache = { ..._cache, bets: prevBets };
       return false;
     }
     if (data) {
-      setBets((prev) => prev.map((b) => (b.id === id ? data : b)));
+      setBets((prev) => {
+        const next = prev.map((b) => (b.id === id ? data : b));
+        if (_cache) _cache = { ..._cache, bets: next };
+        return next;
+      });
       return true;
     }
     setBets(prevBets);
+    if (_cache) _cache = { ..._cache, bets: prevBets };
     return false;
   };
 
@@ -127,7 +149,11 @@ export function BetsProvider({ children }) {
       .delete()
       .eq('id', id);
     if (!error) {
-      setBets((prev) => prev.filter((b) => b.id !== id));
+      setBets((prev) => {
+        const next = prev.filter((b) => b.id !== id);
+        if (_cache) _cache = { ..._cache, bets: next };
+        return next;
+      });
     }
   };
 
