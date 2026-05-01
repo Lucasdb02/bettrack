@@ -643,6 +643,8 @@ html.dark .glass-card {
   .stat-card-icon { margin-top: -6px !important; margin-right: -6px !important; }
   .dash-recent-hdr { border-bottom: none !important; padding-bottom: 8px !important; }
   .dash-main-grid { grid-template-columns: 1fr !important; }
+  .dash-main-grid > * { min-width: 0; }
+  .chart-2col > * { min-width: 0; }
 }
 
 /* ══════════════════════════════════════════════
