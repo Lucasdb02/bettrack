@@ -32,16 +32,25 @@ export function BetsProvider({ children }) {
 
     async function fetchBets(userId) {
       try {
-        const { data, error } = await supabase
+        const query = supabase
           .from('bets')
           .select('*')
           .eq('user_id', userId)
           .order('datum', { ascending: false });
+
+        // If Supabase hangs (expired token refresh, network stall), resolve after 6s
+        const { data, error } = await Promise.race([
+          query,
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('bets fetch timeout')), 6000)
+          ),
+        ]);
+
         if (!active) return;
         if (!error && data) setBets(data);
         else if (error) console.error('[BetsContext] bets query error:', error);
       } catch (e) {
-        console.error('[BetsContext] fetchBets error:', e);
+        console.error('[BetsContext] fetchBets error:', e.message);
       } finally {
         if (active) setLoaded(true);
       }
