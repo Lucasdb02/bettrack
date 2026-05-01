@@ -1118,10 +1118,17 @@ function AnalysePreview() {
 }
 
 /* ── Pricing ── */
+const LP_PRICE_IDS = {
+  pro_monthly:   'price_1TRyiRAFCw5K2LNNmDJsHjbu',
+  pro_yearly:    'price_1TRyiRAFCw5K2LNNfu7fpdRu',
+  elite_monthly: 'price_1TRyiRAFCw5K2LNNJJN8yN72',
+  elite_yearly:  'price_1TRyiSAFCw5K2LNNDsbFc4h1',
+};
+
 const LP_PLANS = [
   {
     id: 'gratis', naam: 'Gratis', sub: 'Voor casual bettors', maand: 0, jaar: 0,
-    cta: 'Huidig plan', ctaDisabled: true, populair: false,
+    cta: 'Gratis starten', ctaDisabled: false, populair: false,
     features: [
       { label: 'Dashboard overzicht', ok: true },
       { label: 'Tot 30 bets per maand', ok: true },
@@ -1193,10 +1200,36 @@ const LP_TRUST = [
 function Prijzen() {
   const { dark } = useLp();
   const [jaarlijks, setJaarlijks] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState(null);
   const bg     = dark ? '#060e1a' : '#ffffff';
   const border = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
   const text1  = dark ? '#fff' : '#0f172a';
   const text2  = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+
+  async function handleCta(plan) {
+    if (plan.id === 'gratis') { window.location.href = '/signup'; return; }
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = '/signup'; return; }
+    const key = jaarlijks ? `${plan.id}_yearly` : `${plan.id}_monthly`;
+    const priceId = LP_PRICE_IDS[key];
+    if (!priceId) return;
+    setLoadingPlan(plan.id);
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ priceId }),
+      });
+      const { url, error } = await res.json();
+      if (error) throw new Error(error);
+      window.location.href = url;
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
 
   return (
     <section id="prijzen" className="lp-section-pad" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
@@ -1266,17 +1299,20 @@ function Prijzen() {
                 </div>
 
                 {/* CTA */}
-                {plan.ctaDisabled ? (
-                  <button disabled style={{ width: '100%', padding: '11px 0', borderRadius: 9, border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, fontSize: 14, fontWeight: 600, cursor: 'default', background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', color: text2, marginBottom: 24 }}>
-                    {plan.cta}
-                  </button>
-                ) : (
-                  <Link href="/signup" style={{ display: 'block', width: '100%', padding: '11px 0', borderRadius: 9, border: isPopulair ? 'none' : `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, fontSize: 14, fontWeight: 600, textAlign: 'center', textDecoration: 'none', background: isPopulair ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : (dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'), color: isPopulair ? '#fff' : text1, boxShadow: isPopulair ? '0 3px 12px rgba(84,105,212,0.4)' : 'none', transition: 'opacity 0.15s', marginBottom: 24 }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
-                    {plan.cta}
-                  </Link>
-                )}
+                {(() => {
+                  const isLoading = loadingPlan === plan.id;
+                  return (
+                    <button
+                      disabled={isLoading}
+                      onClick={() => handleCta(plan)}
+                      style={{ width: '100%', padding: '11px 0', borderRadius: 9, border: isPopulair ? 'none' : `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, fontSize: 14, fontWeight: 600, cursor: isLoading ? 'default' : 'pointer', background: isPopulair ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : (dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'), color: isPopulair ? '#fff' : text1, boxShadow: isPopulair && !isLoading ? '0 3px 12px rgba(84,105,212,0.4)' : 'none', transition: 'opacity 0.15s', marginBottom: 24, opacity: isLoading ? 0.6 : 1 }}
+                      onMouseEnter={e => { if (!isLoading) e.currentTarget.style.opacity = '0.85'; }}
+                      onMouseLeave={e => { if (!isLoading) e.currentTarget.style.opacity = '1'; }}
+                    >
+                      {isLoading ? 'Laden...' : plan.cta}
+                    </button>
+                  );
+                })()}
 
                 {/* Features */}
                 <div style={{ flex: 1 }}>
