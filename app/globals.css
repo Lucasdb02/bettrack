@@ -91,6 +91,7 @@
    DESIGN TOKENS — Dark mode
    ══════════════════════════════════════════════ */
 html.dark {
+  background-color: #07091a;
   --color-win:  #00c951;
   --color-loss: #fb2b37;
 
@@ -481,7 +482,10 @@ html.dark .glass-card {
   .lp-nav-links { display: none !important; }
   .lp-header-pad { padding: 0 16px !important; }
   .lp-header-login { display: none !important; }
+  .lp-header-actions { display: none !important; }
+  .lp-hamburger { display: flex !important; }
   .lp-hero-section { padding-top: 0 !important; padding-bottom: 0 !important; }
+  .lp-mockup-wrap { display: none !important; }
   .lp-hero-row { flex-direction: column !important; }
   .lp-hero-text {
     width: 100% !important;
@@ -495,7 +499,6 @@ html.dark .glass-card {
   .lp-cta-row a, .lp-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; }
   .lp-stats-row { gap: 16px !important; justify-content: center !important; }
   .lp-stats-row > div { min-width: 80px; }
-  .lp-mockup-wrap { flex: none !important; width: 100% !important; padding: 0 16px 48px !important; margin-top: 0 !important; }
   .lp-mockup-sidebar { display: none !important; }
   .lp-ext-row { flex-direction: column !important; gap: 48px !important; }
   .lp-ext-left { width: 100% !important; }
@@ -514,7 +517,7 @@ html.dark .glass-card {
   .lp-final-cta-btn { display: flex !important; width: 100% !important; max-width: 300px !important; margin: 0 auto 16px !important; justify-content: center !important; }
   .lp-footer-section { padding: 32px 20px !important; }
   .lp-footer-inner { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 12px !important; }
-  .tmb-track { grid-template-columns: 1fr !important; max-height: 480px !important; }
+  .tmb-track { grid-template-columns: 1fr !important; max-height: 520px !important; }
   .tmb-track > div:nth-child(2),
   .tmb-track > div:nth-child(3) { display: none !important; }
 }
