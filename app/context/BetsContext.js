@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 
 const BetsContext = createContext();
@@ -19,6 +19,7 @@ export function berekenWinst(uitkomst, odds, inzet) {
   if (uitkomst === 'verloren')      return parseFloat((-inzet).toFixed(2));
   if (uitkomst === 'half_gewonnen') return parseFloat(((odds - 1) * inzet / 2).toFixed(2));
   if (uitkomst === 'half_verloren') return parseFloat((-inzet / 2).toFixed(2));
+  // push, void, onbeslist → inzet terug, geen P&L
   return 0;
 }
 
@@ -26,36 +27,26 @@ export function BetsProvider({ children }) {
   const [bets, setBets] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const supabase = createClient();
-  const didFetch = useRef(false);
 
   useEffect(() => {
-    if (didFetch.current) return;
-    didFetch.current = true;
-
-    // Hard fallback: never stay on Laden... longer than 8 seconds
-    const fallback = setTimeout(() => setLoaded(true), 8000);
-
     async function fetchBets() {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { setLoaded(true); return; }
         const { data, error } = await supabase
           .from('bets')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('user_id', user.id)
           .order('datum', { ascending: false });
         if (error) console.error('[BetsContext] bets query error:', error);
         if (!error && data) setBets(data);
       } catch (e) {
         console.error('[BetsContext] fetchBets error:', e);
       } finally {
-        clearTimeout(fallback);
         setLoaded(true);
       }
     }
-
     fetchBets();
-    return () => clearTimeout(fallback);
   }, []);
 
   const addBet = async (bet) => {
@@ -88,8 +79,16 @@ export function BetsProvider({ children }) {
     return [];
   };
 
-  const replaceAutoImports = async (newBets) => addBets(newBets);
-  const addScreenshotBets = async (newBets) => addBets(newBets);
+  // Vervangt alle eerder auto-geïmporteerde bets door een nieuwe snapshot.
+  // Zonder een _source kolom in de DB valt dit terug op een gewone bulk-insert.
+  const replaceAutoImports = async (newBets) => {
+    return addBets(newBets);
+  };
+
+  // Voegt screenshot-geïmporteerde bets toe (elke upload is een nieuwe set).
+  const addScreenshotBets = async (newBets) => {
+    return addBets(newBets);
+  };
 
   const updateBet = async (id, updates) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();

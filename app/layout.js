@@ -1,6 +1,5 @@
 import "./globals.css";
 import { ThemeProvider } from "./context/ThemeContext";
-import { BetsProvider } from "./context/BetsContext";
 
 export const metadata = {
   title: "TrackMijnBets — Sports Betting Analyse Tool",
@@ -17,11 +16,7 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="h-full antialiased" suppressHydrationWarning>
-        <ThemeProvider>
-          <BetsProvider>
-            {children}
-          </BetsProvider>
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
