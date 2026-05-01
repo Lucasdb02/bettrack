@@ -1224,14 +1224,14 @@ function Prijzen() {
           </div>
         </div>
 
-        {/* Plans — outer wrapper adds paddingTop:13 on all cards so badge space is consistent */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28, alignItems: 'start' }}>
+        {/* Plans */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28, alignItems: 'stretch' }}>
           {LP_PLANS.map((plan) => {
             const prijs = jaarlijks ? plan.jaar : plan.maand;
             const isPopulair = plan.populair;
             return (
-              <div key={plan.id} style={{ paddingTop: 13 }}>
-              <div style={{ borderRadius: 14, padding: '24px 22px', border: isPopulair ? '2px solid #6366f1' : `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, background: isPopulair ? (dark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.03)') : (dark ? '#0d1a2e' : '#ffffff'), position: 'relative', boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(99,102,241,0.15)') : 'none', display: 'flex', flexDirection: 'column' }}>
+              <div key={plan.id} style={{ paddingTop: 13, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ borderRadius: 14, padding: '24px 22px', border: isPopulair ? '2px solid #6366f1' : `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, background: isPopulair ? (dark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.03)') : (dark ? '#0d1a2e' : '#ffffff'), position: 'relative', boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(99,102,241,0.15)') : 'none', display: 'flex', flexDirection: 'column', flex: 1 }}>
 
                 {/* Popular badge */}
                 {isPopulair && (
@@ -1240,13 +1240,13 @@ function Prijzen() {
                   </div>
                 )}
 
-                {/* Plan name — fixed height so button aligns */}
+                {/* Plan name */}
                 <div style={{ minHeight: 52, marginBottom: 16 }}>
                   <p style={{ fontSize: 17, fontWeight: 700, color: text1, marginBottom: 3 }}>{plan.naam}</p>
                   <p style={{ fontSize: 13, color: text2 }}>{plan.sub}</p>
                 </div>
 
-                {/* Price — fixed height so button aligns */}
+                {/* Price */}
                 <div style={{ minHeight: 88, marginBottom: 20 }}>
                   {prijs === 0 ? (
                     <p style={{ fontSize: 32, fontWeight: 800, color: text1, lineHeight: 1 }}>Gratis</p>
@@ -1265,15 +1265,21 @@ function Prijzen() {
                   )}
                 </div>
 
-                {/* CTA button */}
-                <button disabled={plan.ctaDisabled} style={{ width: '100%', padding: '11px 0', borderRadius: 9, border: isPopulair ? 'none' : `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, fontSize: 14, fontWeight: 600, cursor: plan.ctaDisabled ? 'default' : 'pointer', background: plan.ctaDisabled ? (dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') : isPopulair ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : (dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'), color: plan.ctaDisabled ? text2 : isPopulair ? '#fff' : text1, boxShadow: isPopulair && !plan.ctaDisabled ? '0 3px 12px rgba(84,105,212,0.4)' : 'none', transition: 'opacity 0.15s', marginBottom: 24 }}
-                  onMouseEnter={e => { if (!plan.ctaDisabled) e.currentTarget.style.opacity = '0.85'; }}
-                  onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
-                  {plan.cta}
-                </button>
+                {/* CTA */}
+                {plan.ctaDisabled ? (
+                  <button disabled style={{ width: '100%', padding: '11px 0', borderRadius: 9, border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, fontSize: 14, fontWeight: 600, cursor: 'default', background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', color: text2, marginBottom: 24 }}>
+                    {plan.cta}
+                  </button>
+                ) : (
+                  <Link href="/signup" style={{ display: 'block', width: '100%', padding: '11px 0', borderRadius: 9, border: isPopulair ? 'none' : `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, fontSize: 14, fontWeight: 600, textAlign: 'center', textDecoration: 'none', background: isPopulair ? 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)' : (dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'), color: isPopulair ? '#fff' : text1, boxShadow: isPopulair ? '0 3px 12px rgba(84,105,212,0.4)' : 'none', transition: 'opacity 0.15s', marginBottom: 24 }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
+                    {plan.cta}
+                  </Link>
+                )}
 
                 {/* Features */}
-                <div>
+                <div style={{ flex: 1 }}>
                   <p style={{ fontSize: 11.5, fontWeight: 700, color: text2, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Inclusief:</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {plan.features.map((f, i) => (
