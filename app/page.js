@@ -473,383 +473,124 @@ function Hero() {
 function AppShowcase() {
   const { dark } = useLp();
 
-  /* ── Section colours ── */
-  const sectionBg    = dark ? '#04111f' : '#f8fafc';
-  const text1        = dark ? '#fff'    : '#0f172a';
-  const text2        = dark ? 'rgba(255,255,255,0.45)' : '#64748b';
+  const sectionBg = dark ? '#04111f' : '#f8fafc';
+  const text1     = dark ? '#fff'    : '#0f172a';
+  const text2     = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
+  const cardBg    = dark ? 'rgba(14,22,44,0.72)'   : '#ffffff';
+  const cardBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const imgBg     = dark ? 'rgba(255,255,255,0.05)' : '#e8ecf0';
+  const fadeStop  = dark ? 'rgba(14,22,44,0.72)'    : '#ffffff';
 
-  /* ── Dashboard mockup colours (mirror real CSS vars) ── */
-  const dashBg      = dark ? '#060e1a' : '#f1f5f9';
-  const cardBg      = dark ? '#0d1a2e' : '#ffffff';
-  const cardBorder  = dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0';
-  const t1          = dark ? '#f1f5f9' : '#0f172a';
-  const t2          = dark ? 'rgba(255,255,255,0.55)' : '#64748b';
-  const t3          = dark ? 'rgba(255,255,255,0.30)' : '#94a3b8';
-  const t4          = dark ? 'rgba(255,255,255,0.14)' : '#cbd5e1';
-  const rowDiv      = dark ? 'rgba(255,255,255,0.04)' : '#f1f5f9';
-  const innerBg     = dark ? 'rgba(255,255,255,0.03)' : '#f8fafc';
-  const shadowCard  = dark ? 'none' : '0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04)';
-
-  /* ── Browser chrome colours ── */
-  const chromeBorder  = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.12)';
-  const chromeBarBg   = dark ? '#0a1220' : '#dde3ec';
-  const urlBarBg      = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)';
-  const urlText       = dark ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.38)';
-
-  /* ── Static demo data ── */
-  const BOOKIE_DATA = [
-    { name: 'Unibet', value: 284.50, color: '#5469d4' },
-    { name: 'Bet365', value: 156.20, color: '#20a851' },
-    { name: 'TOTO',   value:  97.80, color: '#f59e0b' },
-    { name: 'BetCity',value:  62.40, color: '#8b5cf6' },
-  ];
-  const STATUS_DATA = [
-    { name: 'Gewonnen', value: 87, color: '#20a851', pct: 60 },
-    { name: 'Verloren', value: 45, color: '#cd3b3a', pct: 31 },
-    { name: 'Push',     value:  8, color: '#f59e0b', pct:  6 },
-    { name: 'Lopend',   value:  7, color: '#5469d4', pct:  5 },
-  ];
-  const ROI_DATA = [
-    { bk: 'Unibet', roi: 11.2, color: '#5469d4' },
-    { bk: 'Bet365', roi:  7.8, color: '#20a851' },
-    { bk: 'TOTO',   roi:  5.4, color: '#f59e0b' },
-    { bk: 'BetCity',roi: -1.2, color: '#cd3b3a' },
-  ];
-  const RECENT = [
-    { match: 'Ajax vs PSV',            market: '1X2',       book: 'Unibet', odds: 2.10, pl: +55,  w: 'gewonnen' },
-    { match: 'Sinner vs Alcaraz',      market: 'Winnaar',   book: 'Bet365', odds: 1.85, pl: +34,  w: 'gewonnen' },
-    { match: 'Man City vs Liverpool',  market: 'BTTS',      book: 'TOTO',   odds: 1.75, pl: -30,  w: 'verloren' },
-    { match: 'Lakers vs Warriors',     market: 'Handicap',  book: 'Unibet', odds: 2.20, pl: -25,  w: 'verloren' },
-    { match: 'Barça vs Atlético',      market: 'Over 2.5',  book: 'BetCity',odds: 1.90, pl:   0,  w: 'lopend'   },
+  const FEATURES = [
+    {
+      tag: 'P&L Tracking', tagColor: '#5469d4', tagBg: 'rgba(84,105,212,0.12)',
+      title: 'Volg je winst & verlies in realtime',
+      desc: 'Zie precies hoe je portfolio groeit met cumulatieve P&L grafieken, dagelijkse resultaten en een trendlijn over elke gewenste periode.',
+      imgH: 220,
+    },
+    {
+      tag: 'AI Analyse', tagColor: '#8b5cf6', tagBg: 'rgba(139,92,246,0.12)',
+      title: 'Scan een betslip en TrackMijnBets vult de rest in',
+      desc: 'Maak een foto van je betslip en onze AI herkent automatisch de wedstrijd, markt, odds en inzet. Invoeren was nog nooit zo snel.',
+      imgH: 220,
+    },
+    {
+      tag: 'Statistieken', tagColor: '#20a851', tagBg: 'rgba(32,168,81,0.12)',
+      title: 'Diepgaande statistieken per bookmaker en sport',
+      desc: 'Win rate, ROI, gemiddelde odds, CLV en meer — uitgesplitst per bookmaker, sport, markt en tijdsperiode.',
+      imgH: 180,
+    },
+    {
+      tag: 'Calculators', tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,0.12)',
+      title: '6 professionele betting calculators',
+      desc: 'Van dutching tot Kelly Criterion — alle tools die een serieuze bettor nodig heeft, direct beschikbaar in de app.',
+      imgH: 180,
+    },
+    {
+      tag: 'Bookmakers', tagColor: '#06b6d4', tagBg: 'rgba(6,182,212,0.12)',
+      title: 'Alle bookmakers in één overzicht',
+      desc: 'Koppel onbeperkt bookmakers en zie je saldo, ROI en prestaties per platform naast elkaar.',
+      imgH: 180,
+    },
   ];
 
-  /* ── P&L SVG curve points (viewBox 0 0 440 140; y=0 top=max profit, y=140 bottom=baseline) ── */
-  const PNL_PTS   = [[0,130],[44,114],[88,98],[132,82],[176,66],[220,52],[264,38],[308,25],[352,15],[396,8],[440,4]];
-  const DAILY_PTS = [[0,133],[44,120],[88,105],[132,88],[176,72],[220,58],[264,44],[308,30],[352,18],[396,10],[440,6]];
-  const pnlLine   = mkSmoothPath(PNL_PTS);
-  const pnlArea   = pnlLine  + ' L440,140 L0,140 Z';
-  const dailyLine = mkSmoothPath(DAILY_PTS);
-  const dailyArea = dailyLine + ' L440,140 L0,140 Z';
-
-  const bookTotal  = BOOKIE_DATA.reduce((s, d) => s + d.value, 0);
-  const statusTop  = [...STATUS_DATA].sort((a, b) => b.value - a.value)[0];
-  const maxRoiAbs  = Math.max(...ROI_DATA.map(d => Math.abs(d.roi)));
-
-  const BADGE = {
-    gewonnen: { bg: 'rgba(32,168,81,0.12)',  border: 'rgba(32,168,81,0.25)',  text: '#20a851', label: 'Gewonnen' },
-    verloren:  { bg: 'rgba(205,59,58,0.12)',  border: 'rgba(205,59,58,0.25)',  text: '#cd3b3a', label: 'Verloren'  },
-    lopend:    { bg: 'rgba(84,105,212,0.12)', border: 'rgba(84,105,212,0.25)', text: '#5469d4', label: 'Lopend'    },
-    push:      { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.25)', text: '#f59e0b', label: 'Push'      },
-  };
-
-  const NAV_ITEMS = [
-    { label: 'Dashboard',        active: true,  icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> },
-    { label: 'Mijn Bets',       active: false, icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> },
-    { label: 'Statistieken',    active: false, icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> },
-    { label: 'Bookmakers',      active: false, icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20"/></svg> },
-    { label: 'Maandoverzicht',  active: false, icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
-    { label: 'Calculators',     active: false, icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 3H5a2 2 0 00-2 2v4"/><path d="M9 21H5a2 2 0 01-2-2v-4"/><path d="M15 3h4a2 2 0 012 2v4"/><path d="M15 21h4a2 2 0 002-2v-4"/><rect x="7" y="8" width="10" height="8" rx="1"/></svg> },
-  ];
-
-  const STAT_CARDS = [
-    { label: 'Totale P&L',  value: '+€847',   sub: '147 afgeronde bets',     color: '#20a851', icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg> },
-    { label: 'Win Rate',    value: '60.5%',   sub: '87W — 45L — 8P',         color: t1,        icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
-    { label: 'ROI',         value: '+8.3%',   sub: 'Totale inzet: €9.840',   color: '#20a851', icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg> },
-    { label: 'Record',      value: '87-45-8', sub: 'W — L — P  •  147 bets', color: t1,        icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> },
-  ];
+  function FeatureCard({ f, large }) {
+    return (
+      <div style={{
+        background: cardBg,
+        border: `1px solid ${cardBorder}`,
+        borderRadius: 16,
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        boxShadow: dark ? '0 4px 24px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.06)',
+      }}>
+        {/* Image placeholder */}
+        <div style={{ position: 'relative', height: f.imgH, background: imgBg, flexShrink: 0 }}>
+          {/* Grid lines for visual texture */}
+          <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
+            {[20,40,60,80].map(p => (
+              <line key={`h${p}`} x1="0" y1={`${p}%`} x2="100%" y2={`${p}%`} stroke={dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'} strokeWidth="1"/>
+            ))}
+            {[20,40,60,80].map(p => (
+              <line key={`v${p}`} x1={`${p}%`} y1="0" x2={`${p}%`} y2="100%" stroke={dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'} strokeWidth="1"/>
+            ))}
+          </svg>
+          {/* White fade at bottom */}
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%',
+            background: `linear-gradient(to bottom, transparent, ${fadeStop})`,
+            pointerEvents: 'none',
+          }}/>
+        </div>
+        {/* Text */}
+        <div style={{ padding: large ? '20px 24px 24px' : '16px 20px 20px' }}>
+          <span style={{
+            display: 'inline-block',
+            fontSize: 11, fontWeight: 700,
+            color: f.tagColor,
+            background: f.tagBg,
+            border: `1px solid ${f.tagColor}33`,
+            borderRadius: 6,
+            padding: '2px 8px',
+            marginBottom: 10,
+            letterSpacing: '0.03em',
+          }}>{f.tag}</span>
+          <p style={{ fontSize: large ? 17 : 15, fontWeight: 700, color: text1, marginBottom: 8, lineHeight: 1.35 }}>{f.title}</p>
+          <p style={{ fontSize: 13.5, color: text2, lineHeight: 1.6 }}>{f.desc}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section id="functies" style={{ backgroundColor: sectionBg, padding: '96px 32px', transition: 'background-color 0.3s' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
-        {/* ── Section header ── */}
-        <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>De tool</span>
-          <h2 style={{ fontSize: 44, fontWeight: 800, color: text1, marginTop: 12, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
-            Alles in één platform
+        {/* Header */}
+        <div style={{ marginBottom: 48 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#5469d4', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Functies</span>
+          <h2 style={{ fontSize: 40, fontWeight: 800, color: text1, marginTop: 10, letterSpacing: '-0.025em', lineHeight: 1.2, maxWidth: 580 }}>
+            Alles wat je nodig hebt om beter te betten
           </h2>
-          <p style={{ fontSize: 17, color: text2, marginTop: 14, maxWidth: 520, margin: '14px auto 0', lineHeight: 1.6 }}>
+          <p style={{ fontSize: 16, color: text2, marginTop: 12, maxWidth: 480, lineHeight: 1.65 }}>
             Van bet invoeren tot diepgaande analyse — TrackMijnBets heeft elk onderdeel van je betting workflow gedekt.
           </p>
         </div>
 
-        {/* ── Feature pills ── */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 44, flexWrap: 'wrap' }}>
-          {[
-            { dot: '#20a851', text: 'Live P&L tracking' },
-            { dot: '#5469d4', text: 'AI-analyse per bet' },
-            { dot: '#f59e0b', text: 'Multi-bookmaker support' },
-            { dot: '#8b5cf6', text: 'Professionele calculators' },
-          ].map((p, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 99, background: dark ? 'rgba(255,255,255,0.05)' : '#fff', border: `1px solid ${dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)'}`, boxShadow: dark ? 'none' : '0 1px 2px rgba(0,0,0,0.04)' }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: p.dot }}/>
-              <span style={{ fontSize: 12.5, color: dark ? 'rgba(255,255,255,0.65)' : '#334155', fontWeight: 500 }}>{p.text}</span>
-            </div>
-          ))}
+        {/* Top row: 2 large cards */}
+        <div className="lp-bento-top" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <FeatureCard f={FEATURES[0]} large />
+          <FeatureCard f={FEATURES[1]} large />
         </div>
 
-        {/* ── Browser chrome ── */}
-        <div style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${chromeBorder}`, boxShadow: dark ? '0 40px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04)' : '0 20px 60px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.05)' }}>
+        {/* Bottom row: 3 smaller cards */}
+        <div className="lp-bento-bottom" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <FeatureCard f={FEATURES[2]} />
+          <FeatureCard f={FEATURES[3]} />
+          <FeatureCard f={FEATURES[4]} />
+        </div>
 
-          {/* Browser bar */}
-          <div style={{ background: chromeBarBg, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)'}` }}>
-            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-              {['#ff5f57','#febc2e','#28c840'].map((c,i) => <div key={i} style={{ width: 11, height: 11, borderRadius: '50%', backgroundColor: c }}/>)}
-            </div>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-              <div style={{ background: urlBarBg, borderRadius: 6, padding: '4px 14px', display: 'flex', alignItems: 'center', gap: 7 }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={urlText} strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                <span style={{ fontSize: 11, color: urlText, fontWeight: 500 }}>trackmijnbets.nl/dashboard</span>
-              </div>
-            </div>
-            <div style={{ fontSize: 10, color: urlText, padding: '3px 10px', borderRadius: 4, background: urlBarBg, border: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, flexShrink: 0 }}>
-              Afgelopen 6 maanden
-            </div>
-          </div>
-
-          {/* ── Dashboard layout ── */}
-          <div style={{ display: 'flex', height: 590, backgroundColor: dashBg }}>
-
-            {/* ── Sidebar ── */}
-            <div style={{ width: 192, backgroundColor: '#060a14', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-              {/* Logo */}
-              <div style={{ padding: '14px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: 6, background: 'linear-gradient(135deg,#6b82f0,#5469d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  </div>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>TrackMijnBets</span>
-                </div>
-              </div>
-              {/* Nav items */}
-              <div style={{ padding: '10px 8px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {NAV_ITEMS.map((item, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 9px', borderRadius: 7, backgroundColor: item.active ? 'rgba(107,130,240,0.14)' : 'transparent', color: item.active ? '#7b9ef0' : 'rgba(255,255,255,0.38)' }}>
-                    {item.icon}
-                    <span style={{ fontSize: 11, fontWeight: item.active ? 600 : 400 }}>{item.label}</span>
-                    {item.active && <div style={{ marginLeft: 'auto', width: 4, height: 4, borderRadius: '50%', backgroundColor: '#7b9ef0' }}/>}
-                  </div>
-                ))}
-              </div>
-              {/* Bookmaker balances */}
-              <div style={{ marginTop: 'auto', padding: '10px 14px 14px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                <p style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Saldi</p>
-                {BOOKIE_DATA.map((b, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: b.color, flexShrink: 0 }}/>
-                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', flex: 1 }}>{b.name}</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>€{b.value.toFixed(0)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── Main content ── */}
-            <div style={{ flex: 1, overflow: 'hidden', backgroundColor: dashBg, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-
-              {/* Row 1: 4 Stat cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, flexShrink: 0 }}>
-                {STAT_CARDS.map((c, i) => (
-                  <div key={i} style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 10, padding: '12px 14px', boxShadow: shadowCard, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 6 }}>
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ fontSize: 8.5, fontWeight: 600, color: t2, marginBottom: 7 }}>{c.label}</p>
-                      <p style={{ fontSize: 17, fontWeight: 800, color: c.color, lineHeight: 1 }}>{c.value}</p>
-                      <p style={{ fontSize: 8, color: t3, marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.sub}</p>
-                    </div>
-                    <div style={{ background: 'rgba(84,105,212,0.15)', border: '1px solid rgba(123,158,240,0.2)', width: 26, height: 26, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{c.icon}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Row 2: Cumulatieve P&L (6fr) + Balance per Bookmaker donut (4fr) */}
-              <div style={{ display: 'grid', gridTemplateColumns: '6fr 4fr', gap: 10, flexShrink: 0 }}>
-
-                {/* P&L chart */}
-                <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 10, padding: '14px 14px 10px', boxShadow: shadowCard }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                    <div>
-                      <p style={{ fontSize: 9, fontWeight: 600, color: t2, marginBottom: 4 }}>Cumulatieve P&L</p>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 7 }}>
-                        <span style={{ fontSize: 19, fontWeight: 800, color: t1, lineHeight: 1 }}>+€847</span>
-                        <span style={{ fontSize: 10, fontWeight: 600, color: '#20a851' }}>+8.3% ROI</span>
-                      </div>
-                      <p style={{ fontSize: 8, color: t3, marginTop: 2 }}>87W — 45L — 8P</p>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
-                      {[{ color:'#5469d4', label:'Cumulatief' },{ color:'#f59e0b', label:'Dagelijks' },{ color:'#94a3b8', label:'Trend', dashed:true }].map((leg,li) => (
-                        <div key={li} style={{ display:'flex', alignItems:'center', gap:5 }}>
-                          {leg.dashed
-                            ? <svg width="12" height="2" viewBox="0 0 12 2"><line x1="0" y1="1" x2="12" y2="1" stroke={leg.color} strokeWidth="1.5" strokeDasharray="3 1.5"/></svg>
-                            : <div style={{ width:12, height:2, backgroundColor:leg.color, borderRadius:1 }}/>}
-                          <span style={{ fontSize:8, color:t3 }}>{leg.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <svg viewBox="0 0 440 140" preserveAspectRatio="none" style={{ width:'100%', height:140, display:'block' }}>
-                    <defs>
-                      <linearGradient id="as-plg" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#5469d4" stopOpacity="0.22"/>
-                        <stop offset="95%" stopColor="#5469d4" stopOpacity="0"/>
-                      </linearGradient>
-                      <linearGradient id="as-dlg" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#f59e0b" stopOpacity="0.18"/>
-                        <stop offset="95%" stopColor="#f59e0b" stopOpacity="0"/>
-                      </linearGradient>
-                    </defs>
-                    {[35,70,105].map((y,i) => <line key={i} x1="0" y1={y} x2="440" y2={y} stroke={dark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)'} strokeWidth="1"/>)}
-                    <line x1="0" y1="135" x2="440" y2="135" stroke={dark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)'} strokeWidth="1"/>
-                    <path d={pnlArea}  fill="url(#as-plg)" stroke="none"/>
-                    <path d={pnlLine}  fill="none" stroke="#5469d4" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
-                    <path d={dailyArea} fill="url(#as-dlg)" stroke="none"/>
-                    <path d={dailyLine} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round"/>
-                    <line x1="0" y1="130" x2="440" y2="4" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="6 3"/>
-                  </svg>
-                </div>
-
-                {/* Balance per Bookmaker donut */}
-                <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 10, padding: 14, boxShadow: shadowCard, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                    <div>
-                      <p style={{ fontSize: 9, fontWeight: 600, color: t2 }}>Balance per Bookmaker</p>
-                      <p style={{ fontSize: 8, color: t3, marginTop: 2 }}>Verdeling over je bookmakers</p>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontSize: 8.5, color: t2, fontWeight: 600, marginBottom: 2 }}>Totaal</p>
-                      <span style={{ fontSize: 16, fontWeight: 800, color: t1 }}>€{bookTotal.toFixed(0)}</span>
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ResponsiveContainer width="100%" height={120}>
-                      <PieChart style={{ outline:'none' }} tabIndex={-1}>
-                        <defs>
-                          {BOOKIE_DATA.map((d,i) => (
-                            <linearGradient key={i} id={`as-bk-g${i}`} x1="0" y1="0" x2="0.6" y2="1">
-                              <stop offset="0%"   stopColor={lightenColor(d.color)}/>
-                              <stop offset="100%" stopColor={d.color}/>
-                            </linearGradient>
-                          ))}
-                        </defs>
-                        <Pie data={BOOKIE_DATA} cx="50%" cy="50%" innerRadius={38} outerRadius={56} dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0} paddingAngle={3} cornerRadius={5}>
-                          {BOOKIE_DATA.map((d,i) => <Cell key={i} fill={`url(#as-bk-g${i})`}/>)}
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {BOOKIE_DATA.map((d,i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: d.color, flexShrink: 0 }}/>
-                        <span style={{ fontSize: 9.5, color: t2, flex: 1 }}>{d.name}</span>
-                        <span style={{ fontSize: 9.5, fontWeight: 700, color: t1 }}>€{d.value.toFixed(2)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Row 3: ROI per Bookmaker + Status Breakdown + Recente Bets */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 10, flexShrink: 0 }}>
-
-                {/* ROI per Bookmaker */}
-                <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 10, padding: '12px 14px', boxShadow: shadowCard }}>
-                  <p style={{ fontSize: 9, fontWeight: 600, color: t2, marginBottom: 2 }}>ROI per Bookmaker</p>
-                  <p style={{ fontSize: 8, color: t3, marginBottom: 12 }}>Vergelijk prestaties per platform</p>
-                  {ROI_DATA.map((d,i) => {
-                    const pct = Math.abs(d.roi) / maxRoiAbs * 100;
-                    const neg = d.roi < 0;
-                    return (
-                      <div key={i} style={{ marginBottom: 11 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                          <span style={{ fontSize: 9.5, color: t2, fontWeight: 500 }}>{d.bk}</span>
-                          <span style={{ fontSize: 9.5, fontWeight: 700, color: neg ? '#cd3b3a' : d.color }}>{neg ? '' : '+'}{d.roi}%</span>
-                        </div>
-                        <div style={{ height: 6, backgroundColor: dark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', borderRadius: 99, overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: `${pct}%`, borderRadius: 99, background: neg ? 'linear-gradient(90deg,#fb7185,#cd3b3a)' : `linear-gradient(90deg,${lightenColor(d.color)},${d.color})` }}/>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Status Breakdown half-donut */}
-                <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 10, padding: '12px 14px', boxShadow: shadowCard }}>
-                  <p style={{ fontSize: 9, fontWeight: 600, color: t2, marginBottom: 2 }}>Status Breakdown</p>
-                  <p style={{ fontSize: 8, color: t3, marginBottom: 4 }}>Verdeling van alle bet statussen</p>
-                  <ResponsiveContainer width="100%" height={92}>
-                    <PieChart style={{ outline:'none' }} tabIndex={-1}>
-                      <defs>
-                        {STATUS_DATA.map((d,i) => (
-                          <linearGradient key={i} id={`as-st-g${i}`} x1="0" y1="0" x2="0.6" y2="1">
-                            <stop offset="0%"   stopColor={lightenColor(d.color)}/>
-                            <stop offset="100%" stopColor={d.color}/>
-                          </linearGradient>
-                        ))}
-                      </defs>
-                      <Pie data={STATUS_DATA} cx="50%" cy="88%" startAngle={180} endAngle={0} innerRadius={36} outerRadius={56} dataKey="value" strokeWidth={0} paddingAngle={2} cornerRadius={4}>
-                        {STATUS_DATA.map((d,i) => <Cell key={i} fill={`url(#as-st-g${i})`}/>)}
-                        <Label content={({ viewBox }) => {
-                          const { cx, cy } = viewBox || {};
-                          if (!cx || !cy) return null;
-                          return (
-                            <g>
-                              <text x={cx} y={cy-10} textAnchor="middle" fontSize={14} fontWeight={800} fill={statusTop.color}>{statusTop.pct}%</text>
-                              <text x={cx} y={cy+4}  textAnchor="middle" fontSize={7.5} fill={t3}>{statusTop.name}</text>
-                            </g>
-                          );
-                        }} position="center"/>
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}`, paddingTop: 8, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 6px' }}>
-                    {STATUS_DATA.map((d,i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: d.color, flexShrink: 0 }}/>
-                        <span style={{ fontSize: 8.5, color: t2 }}>{d.name}</span>
-                        <span style={{ fontSize: 8.5, fontWeight: 700, color: t1, marginLeft: 'auto' }}>{d.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Recente Bets table */}
-                <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 10, padding: '12px 14px', boxShadow: shadowCard }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                    <div>
-                      <p style={{ fontSize: 9, fontWeight: 600, color: t2 }}>Recente Bets</p>
-                      <p style={{ fontSize: 8, color: t3 }}>Laatste activiteit</p>
-                    </div>
-                    <span style={{ fontSize: 8.5, color: '#5469d4', fontWeight: 600 }}>Alles bekijken →</span>
-                  </div>
-                  {/* Table header */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '0 10px', padding: '4px 0', borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}`, marginBottom: 4 }}>
-                    {['Wedstrijd','Odds','Status','P&L'].map((h,i) => (
-                      <span key={i} style={{ fontSize: 7.5, fontWeight: 700, color: t4, textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: i > 0 ? 'right' : 'left' }}>{h}</span>
-                    ))}
-                  </div>
-                  {/* Rows */}
-                  {RECENT.map((r,i) => {
-                    const cfg = BADGE[r.w] || BADGE.lopend;
-                    return (
-                      <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '0 10px', padding: '6px 0', alignItems: 'center', borderBottom: i < RECENT.length-1 ? `1px solid ${dark ? 'rgba(255,255,255,0.04)' : '#f8fafc'}` : 'none' }}>
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ fontSize: 9.5, fontWeight: 500, color: t1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.match}</p>
-                          <p style={{ fontSize: 7.5, color: t3 }}>{r.market} · {r.book}</p>
-                        </div>
-                        <span style={{ fontSize: 9, color: t2, fontWeight: 500 }}>{r.odds}</span>
-                        <span style={{ display:'inline-flex', background: cfg.bg, border:`1px solid ${cfg.border}`, color: cfg.text, borderRadius: 4, padding:'2px 6px', fontSize: 8, fontWeight: 600, whiteSpace:'nowrap' }}>{cfg.label}</span>
-                        <span style={{ fontSize: 9.5, fontWeight: 700, color: r.pl > 0 ? '#20a851' : r.pl < 0 ? '#cd3b3a' : t3, textAlign: 'right' }}>
-                          {r.pl > 0 ? `+€${r.pl}` : r.pl < 0 ? `-€${Math.abs(r.pl)}` : '—'}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-            </div>{/* end main */}
-          </div>{/* end dashboard layout */}
-        </div>{/* end browser chrome */}
       </div>
     </section>
   );

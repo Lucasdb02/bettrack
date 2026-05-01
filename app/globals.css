@@ -506,6 +506,8 @@ html.dark .glass-card {
   .lp-section-title { font-size: 28px !important; }
   .lp-section-sub { font-size: 15px !important; }
   .lp-bento-row { grid-template-columns: 1fr !important; }
+  .lp-bento-top { grid-template-columns: 1fr !important; }
+  .lp-bento-bottom { grid-template-columns: 1fr !important; }
   .lp-steps-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
   .lp-step-line { display: none !important; }
   .lp-analyse-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
