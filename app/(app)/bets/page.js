@@ -413,7 +413,7 @@ export default function BetsPage() {
   const [filterU, setFilterU] = useState('alle');
   const [filterS, setFilterS] = useState('alle');
   const [filterT, setFilterT] = useState('alle');
-  const [filterPeriod, setFilterPeriod] = useState('thisMonth');
+  const [filterPeriod, setFilterPeriod] = useState('last28');
   const [customPeriodRange, setCustomPeriodRange] = useState(null);
   const [zoeken, setZoeken] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);

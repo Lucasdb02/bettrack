@@ -224,7 +224,7 @@ export default function BookmakersPage() {
   const [editBalance, setEditBalance]     = useState({});
   const [editDate,    setEditDate]        = useState({});
   const [selectedToAdd, setSelectedToAdd] = useState('');
-  const [period, setPeriod]               = useState('thisMonth');
+  const [period, setPeriod]               = useState('last28');
   const [customRange, setCustomRange]     = useState(null);
   const [filterBookies, setFilterBookies] = useState([]);
 
