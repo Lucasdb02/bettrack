@@ -1,15 +1,10 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase';
 
 const BetsContext = createContext();
 
 const SCHEMA_FIELDS = ['datum', 'sport', 'wedstrijd', 'markt', 'selectie', 'odds', 'inzet', 'uitkomst', 'bookmaker', 'notities', 'tags'];
-
-// Module-level cache: survives component remounts within the same browser session.
-// Prevents the "Laden..." flash whenever BetsProvider re-mounts due to navigation or
-// a router.refresh() cycle.
-let _cache = null; // { userId: string, bets: Bet[] } | null
 
 function toDbRow(bet, userId) {
   const row = { user_id: userId };
@@ -28,36 +23,39 @@ export function berekenWinst(uitkomst, odds, inzet) {
 }
 
 export function BetsProvider({ children }) {
-  const [bets, setBets] = useState(_cache?.bets ?? []);
-  const [loaded, setLoaded] = useState(_cache !== null);
+  const [bets, setBets] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const supabase = createClient();
+  const didFetch = useRef(false);
 
   useEffect(() => {
+    if (didFetch.current) return;
+    didFetch.current = true;
+
+    // Hard fallback: never stay on Laden... longer than 8 seconds
+    const fallback = setTimeout(() => setLoaded(true), 8000);
+
     async function fetchBets() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) { setLoaded(true); return; }
-
-        // If we already have a fresh cache for this user, skip the fetch.
-        if (_cache?.userId === session.user.id) return;
-
+        if (!session?.user) return;
         const { data, error } = await supabase
           .from('bets')
           .select('*')
           .eq('user_id', session.user.id)
           .order('datum', { ascending: false });
         if (error) console.error('[BetsContext] bets query error:', error);
-        if (!error && data) {
-          _cache = { userId: session.user.id, bets: data };
-          setBets(data);
-        }
+        if (!error && data) setBets(data);
       } catch (e) {
         console.error('[BetsContext] fetchBets error:', e);
       } finally {
+        clearTimeout(fallback);
         setLoaded(true);
       }
     }
+
     fetchBets();
+    return () => clearTimeout(fallback);
   }, []);
 
   const addBet = async (bet) => {
@@ -71,11 +69,7 @@ export function BetsProvider({ children }) {
       .select()
       .single();
     if (error) { console.error('[addBet] supabase error:', error); return null; }
-    setBets((prev) => {
-      const next = [data, ...prev];
-      if (_cache) _cache = { ..._cache, bets: next };
-      return next;
-    });
+    setBets((prev) => [data, ...prev]);
     return data;
   };
 
@@ -88,23 +82,14 @@ export function BetsProvider({ children }) {
       .insert(rows)
       .select();
     if (!error && data) {
-      setBets((prev) => {
-        const next = [...data, ...prev];
-        if (_cache) _cache = { ..._cache, bets: next };
-        return next;
-      });
+      setBets((prev) => [...data, ...prev]);
       return data;
     }
     return [];
   };
 
-  const replaceAutoImports = async (newBets) => {
-    return addBets(newBets);
-  };
-
-  const addScreenshotBets = async (newBets) => {
-    return addBets(newBets);
-  };
+  const replaceAutoImports = async (newBets) => addBets(newBets);
+  const addScreenshotBets = async (newBets) => addBets(newBets);
 
   const updateBet = async (id, updates) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -127,19 +112,13 @@ export function BetsProvider({ children }) {
     if (error) {
       console.error('[updateBet] supabase error:', error);
       setBets(prevBets);
-      if (_cache) _cache = { ..._cache, bets: prevBets };
       return false;
     }
     if (data) {
-      setBets((prev) => {
-        const next = prev.map((b) => (b.id === id ? data : b));
-        if (_cache) _cache = { ..._cache, bets: next };
-        return next;
-      });
+      setBets((prev) => prev.map((b) => (b.id === id ? data : b)));
       return true;
     }
     setBets(prevBets);
-    if (_cache) _cache = { ..._cache, bets: prevBets };
     return false;
   };
 
@@ -149,11 +128,7 @@ export function BetsProvider({ children }) {
       .delete()
       .eq('id', id);
     if (!error) {
-      setBets((prev) => {
-        const next = prev.filter((b) => b.id !== id);
-        if (_cache) _cache = { ..._cache, bets: next };
-        return next;
-      });
+      setBets((prev) => prev.filter((b) => b.id !== id));
     }
   };
 
