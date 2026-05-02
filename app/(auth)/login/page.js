@@ -23,11 +23,13 @@ export default function LoginPage() {
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
+        setRedirecting(true);
         window.location.href = '/dashboard';
       }
     });
@@ -62,6 +64,19 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); setLoading(false); return; }
     // Redirect happens via onAuthStateChange SIGNED_IN — fired after cookie is written
+  }
+
+  if (redirecting) {
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, zIndex: 9999 }}>
+        <svg style={{ width: 32, height: 32, animation: 'spin 1s linear infinite', color: '#6b82f0' }} fill="none" viewBox="0 0 24 24">
+          <circle style={{ opacity: 0.2 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+          <path style={{ opacity: 0.85 }} fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+        </svg>
+        <span style={{ fontSize: 14, color: text3, fontWeight: 500 }}>Laden...</span>
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
   }
 
   return (
