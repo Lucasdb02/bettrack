@@ -487,7 +487,7 @@ function AppShowcase() {
       title: 'Volg je winst & verlies in realtime',
       desc: 'Zie precies hoe je portfolio groeit met cumulatieve P&L grafieken, dagelijkse resultaten en een trendlijn over elke gewenste periode.',
       imgH: 220,
-      img: 'https://www.image2url.com/r2/default/images/1777716107941-0019cfe8-496d-4b58-9d12-f0ab8a1ab6cd.pn',
+      img: 'https://www.image2url.com/r2/default/images/1777716107941-0019cfe8-496d-4b58-9d12-f0ab8a1ab6cd.png',
     },
     {
       tag: 'AI Analyse', tagColor: '#8b5cf6', tagBg: 'rgba(139,92,246,0.12)',
