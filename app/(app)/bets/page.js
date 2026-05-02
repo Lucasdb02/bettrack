@@ -25,7 +25,7 @@ function UitkomstBadge({ value }) {
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       padding: '2px 8px', borderRadius: 4, fontSize: 11.5, fontWeight: 600,
       background: bg, color: textColor, border: `1px solid ${border}`,
-      whiteSpace: 'nowrap', lineHeight: '18px', width: 80, boxSizing: 'border-box',
+      whiteSpace: 'nowrap', lineHeight: '18px', minWidth: 80, boxSizing: 'border-box',
     }}>
       {cfg.label}
     </span>

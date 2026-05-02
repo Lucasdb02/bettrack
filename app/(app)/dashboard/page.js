@@ -228,7 +228,7 @@ function UitkomstBadge({ u }) {
   const bg        = dark ? cfg.darkBg        : cfg.bg;
   const border    = dark ? cfg.darkBorder    : cfg.border;
   const textColor = dark ? cfg.darkTextColor : cfg.textColor;
-  return <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', verticalAlign:'middle', background:bg, color:textColor, border:`1px solid ${border}`, padding:'2px 8px', borderRadius:4, fontSize:11.5, fontWeight:600, lineHeight:'18px', whiteSpace:'nowrap', width:80, boxSizing:'border-box' }}>{cfg.label}</span>;
+  return <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', verticalAlign:'middle', background:bg, color:textColor, border:`1px solid ${border}`, padding:'2px 8px', borderRadius:4, fontSize:11.5, fontWeight:600, lineHeight:'18px', whiteSpace:'nowrap', minWidth:80, boxSizing:'border-box' }}>{cfg.label}</span>;
 }
 
 /* ─── Chevron ─── */
