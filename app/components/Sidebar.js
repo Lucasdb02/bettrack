@@ -99,7 +99,7 @@ function NavItem({ item, active, dark }) {
           if (!active) {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = dark ? '#7090b0' : '#334155';
+            e.currentTarget.style.color = 'var(--text-2)';
           }
         }}
       >
@@ -304,7 +304,7 @@ export default function Sidebar() {
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'transparent';
-            e.currentTarget.style.color = dark ? '#7090b0' : '#334155';
+            e.currentTarget.style.color = 'var(--text-2)';
           }}
         >
           <span style={{ color: 'var(--text-2)', flexShrink: 0 }}>
