@@ -487,6 +487,7 @@ function AppShowcase() {
       title: 'Volg je winst & verlies in realtime',
       desc: 'Zie precies hoe je portfolio groeit met cumulatieve P&L grafieken, dagelijkse resultaten en een trendlijn over elke gewenste periode.',
       imgH: 220,
+      img: 'https://www.image2url.com/r2/default/images/1777716107941-0019cfe8-496d-4b58-9d12-f0ab8a1ab6cd.pn',
     },
     {
       tag: 'AI Analyse', tagColor: '#8b5cf6', tagBg: 'rgba(139,92,246,0.12)',
@@ -525,20 +526,31 @@ function AppShowcase() {
         flexDirection: 'column',
         boxShadow: dark ? '0 4px 24px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.06)',
       }}>
-        {/* Image placeholder */}
-        <div style={{ position: 'relative', height: f.imgH, background: imgBg, flexShrink: 0 }}>
-          {/* Grid lines for visual texture */}
-          <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
-            {[20,40,60,80].map(p => (
-              <line key={`h${p}`} x1="0" y1={`${p}%`} x2="100%" y2={`${p}%`} stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'} strokeWidth="1"/>
-            ))}
-            {[20,40,60,80].map(p => (
-              <line key={`v${p}`} x1={`${p}%`} y1="0" x2={`${p}%`} y2="100%" stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'} strokeWidth="1"/>
-            ))}
-          </svg>
-          {/* White fade at bottom */}
+        {/* Image area */}
+        <div style={{ position: 'relative', height: f.imgH, background: imgBg, flexShrink: 0, overflow: 'hidden' }}>
+          {f.img ? (
+            <img
+              src={f.img}
+              alt={f.title}
+              style={{
+                position: 'absolute', top: 0, left: 0, width: '100%', height: 'auto',
+                objectFit: 'cover', objectPosition: 'top',
+              }}
+            />
+          ) : (
+            /* Grid lines for visual texture */
+            <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
+              {[20,40,60,80].map(p => (
+                <line key={`h${p}`} x1="0" y1={`${p}%`} x2="100%" y2={`${p}%`} stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'} strokeWidth="1"/>
+              ))}
+              {[20,40,60,80].map(p => (
+                <line key={`v${p}`} x1={`${p}%`} y1="0" x2={`${p}%`} y2="100%" stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'} strokeWidth="1"/>
+              ))}
+            </svg>
+          )}
+          {/* Fade at bottom */}
           <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%',
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%',
             background: `linear-gradient(to bottom, transparent, ${fadeStop})`,
             pointerEvents: 'none',
           }}/>
