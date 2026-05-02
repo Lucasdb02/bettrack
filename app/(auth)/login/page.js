@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createClient } from '../../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
@@ -23,6 +23,16 @@ export default function LoginPage() {
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        window.location.href = '/dashboard';
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const bg        = dark ? '#0d1117' : '#f8fafc';
   const text1     = dark ? '#e6edf3' : '#0f172a';
@@ -51,7 +61,7 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); setLoading(false); return; }
-    window.location.href = '/dashboard';
+    // Redirect happens via onAuthStateChange SIGNED_IN — fired after cookie is written
   }
 
   return (
