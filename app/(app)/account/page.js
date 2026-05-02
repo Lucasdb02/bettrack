@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { usePreferences, useFmt } from '../../context/PreferencesContext';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { createClient } from '@/lib/supabase';
@@ -180,11 +179,9 @@ export default function AccountPage() {
   const { prefs, setPrefs, updatePref, loaded } = usePreferences();
   const { bets } = useBets();
   const [tab, setTab] = useState('overzicht');
-  const router = useRouter();
 
-  async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+  function handleLogout() {
+    createClient().auth.signOut();
     window.location.href = '/';
   }
 
