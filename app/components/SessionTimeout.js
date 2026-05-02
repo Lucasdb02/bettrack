@@ -65,14 +65,24 @@ export default function SessionTimeout() {
     };
   }, [resetTimers, clearAll]);
 
-  /* Uitloggen wanneer tab/venster niet meer zichtbaar is */
+  /* Uitloggen wanneer tab langer dan IDLE_MS verborgen is geweest */
   useEffect(() => {
+    let hiddenAt = null;
     const handleVisibility = () => {
-      if (document.hidden) doLogout();
+      if (document.hidden) {
+        hiddenAt = Date.now();
+      } else {
+        if (hiddenAt !== null && Date.now() - hiddenAt >= IDLE_MS) {
+          doLogout();
+        } else {
+          hiddenAt = null;
+          resetTimers();
+        }
+      }
     };
     document.addEventListener('visibilitychange', handleVisibility);
     return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [doLogout]);
+  }, [doLogout, resetTimers]);
 
   if (!showWarning) return null;
 
