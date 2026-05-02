@@ -706,10 +706,10 @@ export default function Dashboard() {
     const total = stats.wins + stats.losses + stats.pushes + ns;
     const pct   = v => total > 0 ? parseFloat((v/total*100).toFixed(1)) : 0;
     return [
-      { name:'Won',         value:stats.wins,    color:'#20a851',  pct:pct(stats.wins)    },
-      { name:'Lost',        value:stats.losses,  color:'#cd3b3a', pct:pct(stats.losses)  },
+      { name:'Won',         value:stats.wins,    color:'#20a851', pct:pct(stats.wins)    },
       { name:'Push',        value:stats.pushes,  color:'#f59e0b', pct:pct(stats.pushes)  },
       { name:'Not settled', value:ns,            color:'#6b7280', pct:pct(ns)            },
+      { name:'Lost',        value:stats.losses,  color:'#cd3b3a', pct:pct(stats.losses)  },
     ];
   }, [stats]);
 
