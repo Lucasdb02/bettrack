@@ -182,7 +182,7 @@ export default function AccountPage() {
 
   async function handleLogout() {
     await createClient().auth.signOut({ scope: 'local' });
-    window.location.href = '/login';
+    window.location.href = '/';
   }
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
