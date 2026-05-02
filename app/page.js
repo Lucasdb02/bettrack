@@ -473,13 +473,13 @@ function Hero() {
 function AppShowcase() {
   const { dark } = useLp();
 
-  const sectionBg = dark ? '#04111f' : '#f8fafc';
-  const text1     = dark ? '#fff'    : '#0f172a';
-  const text2     = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
-  const cardBg    = dark ? 'rgba(14,22,44,0.72)'   : '#ffffff';
-  const cardBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const imgBg     = dark ? 'rgba(255,255,255,0.05)' : '#e8ecf0';
-  const fadeStop  = dark ? 'rgba(14,22,44,0.72)'    : '#ffffff';
+  const sectionBg  = dark ? '#060c1a' : '#f1f5f9';
+  const text1      = dark ? '#e8edf6'  : '#0f172a';
+  const text2      = dark ? 'rgba(200,210,230,0.6)' : '#64748b';
+  const cardBg     = dark ? '#0c1829'  : '#ffffff';
+  const cardBorder = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const imgBg      = dark ? '#111f38'  : '#dde3ed';
+  const fadeStop   = dark ? '#0c1829'  : '#ffffff';
 
   const FEATURES = [
     {
@@ -530,10 +530,10 @@ function AppShowcase() {
           {/* Grid lines for visual texture */}
           <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
             {[20,40,60,80].map(p => (
-              <line key={`h${p}`} x1="0" y1={`${p}%`} x2="100%" y2={`${p}%`} stroke={dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'} strokeWidth="1"/>
+              <line key={`h${p}`} x1="0" y1={`${p}%`} x2="100%" y2={`${p}%`} stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'} strokeWidth="1"/>
             ))}
             {[20,40,60,80].map(p => (
-              <line key={`v${p}`} x1={`${p}%`} y1="0" x2={`${p}%`} y2="100%" stroke={dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'} strokeWidth="1"/>
+              <line key={`v${p}`} x1={`${p}%`} y1="0" x2={`${p}%`} y2="100%" stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'} strokeWidth="1"/>
             ))}
           </svg>
           {/* White fade at bottom */}
