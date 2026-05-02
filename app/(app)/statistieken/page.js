@@ -411,9 +411,9 @@ export default function StatistiekenPage() {
             c: huidig.type === 'win' ? 'var(--color-win)' : huidig.type === 'loss' ? 'var(--color-loss)' : 'var(--text-1)',
           },
         ].map(s => (
-          <div key={s.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '18px 20px', boxShadow: 'var(--shadow-sm)' }}>
-            <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{s.label}</p>
-            <p style={{ fontSize: 22, fontWeight: 700, color: s.c || 'var(--text-1)', lineHeight: 1 }}>{s.v}</p>
+          <div key={s.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '20px 24px', boxShadow: 'var(--shadow-sm)' }}>
+            <p style={{ fontSize: 15, color: 'var(--text-2)', fontWeight: 600, marginBottom: 10 }}>{s.label}</p>
+            <p style={{ fontSize: 22, fontWeight: 800, color: s.c || 'var(--text-1)', lineHeight: 1 }}>{s.v}</p>
             <p style={{ fontSize: 11.5, color: 'var(--text-4)', marginTop: 5 }}>{s.sub}</p>
           </div>
         ))}

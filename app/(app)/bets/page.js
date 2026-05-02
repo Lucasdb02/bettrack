@@ -123,7 +123,8 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
   const pot = form.odds&&form.inzet&&!isNaN(Number(form.odds))&&!isNaN(Number(form.inzet))
     ? ((Number(form.odds)-1)*Number(form.inzet)).toFixed(2) : null;
 
-  const iS = {width:'100%',padding:'8px 12px',border:`1px solid ${border}`,borderRadius:7,fontSize:13.5,color:text1,backgroundColor:bgInput,transition:'border-color 0.15s'};
+  const iS = {width:'100%',padding:'8px 12px',height:'42px',boxSizing:'border-box',border:`1px solid ${border}`,borderRadius:7,fontSize:13.5,color:text1,backgroundColor:bgInput,transition:'border-color 0.15s'};
+  const sS = {...iS, WebkitAppearance:'auto', appearance:'auto'};
 
   return createPortal(
     <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:10000,backgroundColor:'rgba(0,0,0,0.55)',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
@@ -149,7 +150,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
                 <SingleDatePicker value={form.datum} onChange={v=>set('datum',v)} style={{width:'100%',height:38,boxSizing:'border-box'}}/>
               </FF>
               <FF label="Sport" required text2={text2}>
-                <select value={form.sport} onChange={e=>set('sport',e.target.value)} style={iS}>
+                <select value={form.sport} onChange={e=>set('sport',e.target.value)} style={sS}>
                   {SPORTEN.map(s=><option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
                 </select>
               </FF>
@@ -158,7 +159,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
                 {fouten.wedstrijd&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.wedstrijd}</p>}
               </FF>
               <FF label="Markt" required text2={text2}>
-                <select value={form.markt} onChange={e=>set('markt',e.target.value)} style={iS}>
+                <select value={form.markt} onChange={e=>set('markt',e.target.value)} style={sS}>
                   {MARKTEN.map(m=><option key={m}>{m}</option>)}
                 </select>
               </FF>
@@ -200,12 +201,12 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
             <p style={{fontSize:11.5,fontWeight:700,color:text3,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:12}}>Administratie</p>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
               <FF label="Bookmaker" required text2={text2}>
-                <select value={form.bookmaker} onChange={e=>set('bookmaker',e.target.value)} style={iS}>
+                <select value={form.bookmaker} onChange={e=>set('bookmaker',e.target.value)} style={sS}>
                   {BOOKMAKERS.map(b=><option key={b}>{b}</option>)}
                 </select>
               </FF>
               <FF label="Uitkomst" text2={text2}>
-                <select value={form.uitkomst} onChange={e=>set('uitkomst',e.target.value)} style={iS}>
+                <select value={form.uitkomst} onChange={e=>set('uitkomst',e.target.value)} style={sS}>
                   {UITKOMSTEN.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
                 </select>
               </FF>

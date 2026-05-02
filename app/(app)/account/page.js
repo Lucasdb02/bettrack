@@ -13,7 +13,15 @@ const TABS = [
 
 function TabBtn({ active, onClick, children }) {
   return (
-    <button onClick={onClick} style={{ padding:'8px 18px', border:'none', borderBottom: active ? '2px solid var(--brand)' : '2px solid transparent', backgroundColor:'transparent', fontSize:13.5, fontWeight: active ? 600 : 400, color: active ? 'var(--brand)' : 'var(--text-3)', cursor:'pointer', transition:'all 0.15s', marginBottom:-1 }}>
+    <button onClick={onClick} style={{
+      padding: '0 16px', fontSize: 13, fontWeight: 600,
+      border: 'none', borderRadius: 6, cursor: 'pointer',
+      height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      backgroundColor: active ? 'var(--bg-card)' : 'transparent',
+      color: active ? 'var(--brand)' : 'var(--text-3)',
+      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
+      transition: 'all 0.12s', whiteSpace: 'nowrap',
+    }}>
       {children}
     </button>
   );
@@ -68,9 +76,9 @@ function OverzichtTab({ prefs, bets }) {
   return (
     <div className="account-stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
       {stats.map(s => (
-        <div key={s.label} style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 22px', boxShadow:'var(--shadow-sm)' }}>
-          <p style={{ fontSize:11.5, color:'var(--text-3)', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:6 }}>{s.label}</p>
-          <p style={{ fontSize:22, fontWeight:700, color: s.color || 'var(--text-1)', lineHeight:1 }}>{s.value}</p>
+        <div key={s.label} style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)' }}>
+          <p style={{ fontSize:15, color:'var(--text-2)', fontWeight:600, marginBottom:10 }}>{s.label}</p>
+          <p style={{ fontSize:22, fontWeight:800, color: s.color || 'var(--text-1)', lineHeight:1 }}>{s.value}</p>
         </div>
       ))}
     </div>
@@ -177,7 +185,7 @@ export default function AccountPage() {
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push('/');
     router.refresh();
   }
 
@@ -208,7 +216,7 @@ export default function AccountPage() {
           Uitloggen
         </button>
       </div>
-      <div style={{ borderBottom:'1px solid var(--border)', marginBottom:28, display:'flex', gap:4 }}>
+      <div style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:10, marginBottom:28, width:'fit-content', height:38 }}>
         {TABS.map(t => <TabBtn key={t.id} active={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</TabBtn>)}
       </div>
       {tab === 'overzicht'   && <OverzichtTab prefs={prefs} bets={bets} />}

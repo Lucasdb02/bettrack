@@ -154,6 +154,7 @@ body {
   font-family: 'Inter', 'Inter Display', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.03em;
   transition: background-color 0.2s ease, color 0.2s ease;
   font-feature-settings: 'cv11', 'ss01';
 }
@@ -220,68 +221,59 @@ html.dark .app-main {
    UTILITY BUTTON CLASSES
    ══════════════════════════════════════════════ */
 
-/* Primary — blue gradient in light mode */
+/* Primary — blue gradient matching home "Gratis beginnen" button */
 .btn-primary,
 .btn-primary-glass {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  /* Fill: linear gradient #5469d4 (dark blue) → #6b82f0 (light blue) */
-  background: linear-gradient(180deg, #5469d4 0%, #6b82f0 100%) !important;
-  /* Text color: #FFFFFF */
+  background: linear-gradient(135deg, #6b82f0 0%, #5469d4 100%) !important;
   color: #ffffff !important;
-  /* Stroke: dark blue */
-  border: 1px solid #5469d4 !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
   border-radius: 9px !important;
   padding: 8px 16px !important;
   font-size: 13.5px !important;
   font-weight: 600 !important;
   font-family: var(--font-inter) !important;
-  letter-spacing: -0.01em !important;
+  letter-spacing: 0.03em !important;
   cursor: pointer;
-  /* Drop shadow #010101 15% Y:2 Blur:4 | Drop shadow #B4B2BD 100% Y:4 Blur:4 Spread:-3 | Inner shadow #FFFFFF 15% Y:4 Blur:4 */
   box-shadow:
-    0 2px 4px rgba(1,1,1,0.15),
-    0 4px 4px -3px rgba(180,178,189,1),
-    inset 0 4px 4px rgba(255,255,255,0.15) !important;
+    0 4px 20px rgba(84,105,212,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.2) !important;
   transition: all 0.15s ease !important;
   text-decoration: none;
 }
 .btn-primary:hover:not(:disabled),
 .btn-primary-glass:hover:not(:disabled) {
-  background: linear-gradient(180deg, #6276e0 0%, #7a96f8 100%) !important;
+  background: linear-gradient(135deg, #7a96f8 0%, #6276e0 100%) !important;
   transform: translateY(-1px);
   box-shadow:
-    0 4px 8px rgba(1,1,1,0.22),
-    0 6px 6px -3px rgba(180,178,189,0.85),
-    inset 0 4px 4px rgba(255,255,255,0.20) !important;
+    0 6px 28px rgba(84,105,212,0.65),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
 }
 .btn-primary:active:not(:disabled),
 .btn-primary-glass:active:not(:disabled) {
   transform: translateY(0);
   box-shadow:
-    0 1px 2px rgba(1,1,1,0.15),
-    0 2px 2px -3px rgba(180,178,189,0.6),
-    inset 0 4px 4px rgba(255,255,255,0.10) !important;
+    0 2px 10px rgba(84,105,212,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
 }
 
-/* Dark mode — same liquid blue style */
+/* Dark mode — same style */
 html.dark .btn-primary,
 html.dark .btn-primary-glass {
-  background: linear-gradient(180deg, #5469d4 0%, #6b82f0 100%) !important;
-  border: 1px solid #5469d4 !important;
+  background: linear-gradient(135deg, #6b82f0 0%, #5469d4 100%) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
   box-shadow:
-    0 2px 4px rgba(1,1,1,0.25),
-    0 4px 4px -3px rgba(180,178,189,0.7),
-    inset 0 4px 4px rgba(255,255,255,0.15) !important;
+    0 4px 24px rgba(84,105,212,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.18) !important;
 }
 html.dark .btn-primary:hover:not(:disabled),
 html.dark .btn-primary-glass:hover:not(:disabled) {
-  background: linear-gradient(180deg, #6276e0 0%, #7a96f8 100%) !important;
+  background: linear-gradient(135deg, #7a96f8 0%, #6276e0 100%) !important;
   box-shadow:
-    0 4px 8px rgba(1,1,1,0.35),
-    0 6px 6px -3px rgba(180,178,189,0.5),
-    inset 0 4px 4px rgba(255,255,255,0.20) !important;
+    0 6px 32px rgba(84,105,212,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
 }
 
 /* Secondary — ghost */

@@ -268,9 +268,9 @@ export default function MaandoverzichtPage() {
           {l:'Winstdagen',v:maandStats.winstDagen,c:'var(--color-win)'},
           {l:'Verliesdagen',v:maandStats.verliesdagen,c:'var(--color-loss)'},
         ].map(s=>(
-          <div key={s.l} style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'16px 20px',boxShadow:'var(--shadow-sm)'}}>
-            <p style={{fontSize:11,color:'var(--text-3)',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}>{s.l}</p>
-            <p style={{fontSize:22,fontWeight:700,color:s.c,lineHeight:1}}>{s.v}</p>
+          <div key={s.l} style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'20px 24px',boxShadow:'var(--shadow-sm)'}}>
+            <p style={{fontSize:15,color:'var(--text-2)',fontWeight:600,marginBottom:10}}>{s.l}</p>
+            <p style={{fontSize:22,fontWeight:800,color:s.c,lineHeight:1}}>{s.v}</p>
           </div>
         ))}
       </div>

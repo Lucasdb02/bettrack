@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { createClient } from '../../lib/supabase';
 import { useBets, berekenWinst } from '../context/BetsContext';
@@ -153,6 +153,21 @@ const drawerNav = [
   },
 ];
 
+const ALL_SEARCH_PAGES = [
+  { label: 'Dashboard',       href: '/dashboard',     icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> },
+  { label: 'Bets Overzicht',  href: '/bets',          icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> },
+  { label: 'Bet Invoeren',    href: '/bets/new',      icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> },
+  { label: 'Maandoverzicht',  href: '/maandoverzicht', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+  { label: 'Statistieken',    href: '/statistieken',  icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
+  { label: 'Bookmakers',      href: '/bookmakers',    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> },
+  { label: 'Odds Vergelijker', href: '/odds-v2',      icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg> },
+  { label: 'Calculators',     href: '/calculators',   icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="10" y2="11"/><line x1="14" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="10" y2="15"/><line x1="14" y1="15" x2="16" y2="15"/></svg> },
+  { label: 'Asian Lines',     href: '/asian-lines',   icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="8 7 3 12 8 17"/><polyline points="16 7 21 12 16 17"/></svg> },
+  { label: 'Account',         href: '/account',       icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
+  { label: 'Abonnement',      href: '/pricing',       icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> },
+  { label: 'Support',         href: '/support',       icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+];
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -161,6 +176,33 @@ export default function Sidebar() {
   const { bets } = useBets();
   const [dbBookmakers, setDbBookmakers] = useState([]);
   const [transactions, setTransactions] = useState([]);
+
+  const searchRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+        setSearchOpen(true);
+      }
+      if (e.key === 'Escape') {
+        setSearchOpen(false);
+        setSearchQuery('');
+        searchRef.current?.blur();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return ALL_SEARCH_PAGES.filter(p => p.label.toLowerCase().includes(q));
+  }, [searchQuery]);
 
   useEffect(() => {
     async function fetchBalanceData() {
@@ -218,6 +260,50 @@ export default function Sidebar() {
           <p style={{ color: dark ? '#fff' : '#334155', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>TrackMijnBets</p>
           <p style={{ color: dark ? '#4a6885' : '#94a3b8', fontSize: 10.5 }}>Analyse Tool</p>
         </div>
+      </div>
+
+      {/* Search bar */}
+      <div style={{ padding: '8px 10px', borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : '#ebebeb'}`, position: 'relative' }}>
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 10px', background: dark ? 'rgba(255,255,255,0.04)' : '#f1f5f9', border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`, borderRadius: 8, cursor: 'text' }}
+          onClick={() => searchRef.current?.focus()}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={dark ? '#4a6885' : '#94a3b8'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            ref={searchRef}
+            value={searchQuery}
+            onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+            onFocus={() => setSearchOpen(true)}
+            onBlur={() => setTimeout(() => { setSearchOpen(false); setSearchQuery(''); }, 160)}
+            placeholder="Zoeken..."
+            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 12.5, color: dark ? '#c5d8ec' : '#334155', fontFamily: 'inherit', letterSpacing: '0.03em' }}
+          />
+          {!searchQuery && (
+            <div style={{ display: 'flex', alignItems: 'center', padding: '2px 5px', borderRadius: 4, background: dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'}`, fontSize: 10, fontWeight: 700, color: dark ? '#4a6885' : '#94a3b8', whiteSpace: 'nowrap', flexShrink: 0 }}>
+              ⌘K
+            </div>
+          )}
+        </div>
+
+        {searchOpen && searchResults.length > 0 && (
+          <div style={{ position: 'absolute', left: 10, right: 10, top: 'calc(100% - 4px)', zIndex: 9999, background: dark ? '#0d1526' : '#fff', border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`, borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.18)', overflow: 'hidden' }}>
+            {searchResults.map((page, i) => (
+              <Link
+                key={page.href}
+                href={page.href}
+                onMouseDown={() => { setSearchQuery(''); setSearchOpen(false); }}
+                style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 12px', color: dark ? '#c5d8ec' : '#334155', fontSize: 13, fontWeight: 500, textDecoration: 'none', borderBottom: i < searchResults.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}` : 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : '#f8fafc'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                <span style={{ color: dark ? '#4a6885' : '#94a3b8', flexShrink: 0 }}>{page.icon}</span>
+                {page.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Scrollable nav */}
