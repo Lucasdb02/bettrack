@@ -961,7 +961,7 @@ export default function Dashboard() {
                         <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} fill="none"/>
                     <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(cumulData.length, isMobile)}/>
                     <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile ? 0 : 55} mirror={isMobile} domain={yDomain}/>
                     <Tooltip content={<CumulTip/>} position={{ y: 0 }} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
@@ -1101,7 +1101,7 @@ export default function Dashboard() {
             return (
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={bookLineData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} fill="none"/>
                   <XAxis dataKey="datum" tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} interval={xTick(bookLineData.length, isMobile)}/>
                   <YAxis tick={{fontSize:11,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`€${v}`} width={isMobile?0:55} mirror={isMobile} domain={bkDomain}/>
                   <Tooltip content={<ChartTip/>} position={{ y: 0 }} cursor={{ stroke:'var(--border)', strokeDasharray:'4 3', strokeWidth:1 }} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>
@@ -1122,7 +1122,7 @@ export default function Dashboard() {
           {roiData.length>0?(
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={roiData} margin={isMobile?{top:5,right:0,left:0,bottom:0}:{top:5,right:10,left:0,bottom:0}} tabIndex={-1} barCategoryGap="30%">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false}/>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} fill="none"/>
                 <XAxis dataKey="bk" tick={(props) => <BookieXTick {...props}/>} axisLine={false} tickLine={false} height={36}/>
                 <YAxis tick={{fontSize:10,fill:'#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={v=>`${v}%`} width={isMobile?0:46} mirror={isMobile}/>
                 <Tooltip content={<ChartTip prefix="" suffix="%"/>} cursor={false} wrapperStyle={{zIndex:9999,background:'none',border:'none',padding:0,boxShadow:'none'}}/>

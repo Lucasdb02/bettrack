@@ -427,7 +427,7 @@ export default function StatistiekenPage() {
           {maandData.length > 0 ? (
             <ResponsiveContainer width="100%" height={185}>
               <BarChart data={maandData} margin={{ top: 4, right: 8, left: 0, bottom: isMobile ? 28 : 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} fill="none"/>
                 <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} interval={isMobile ? Math.max(0, Math.ceil(maandData.length / 5) - 1) : 0} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 52} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
@@ -446,7 +446,7 @@ export default function StatistiekenPage() {
           {settled.length > 0 ? (
             <ResponsiveContainer width="100%" height={185}>
               <BarChart data={dagData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} fill="none"/>
                 <XAxis dataKey="dag" tick={{ fontSize: 11, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 46} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
@@ -477,7 +477,7 @@ export default function StatistiekenPage() {
         {curve.length > 1 ? (
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={curve} margin={{ top: 4, right: 10, left: 0, bottom: isMobile ? 4 : 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} fill="none"/>
               <XAxis dataKey="i" tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false}
                 interval={isMobile ? Math.max(1, Math.ceil(curve.length / 5)) : 'preserveStartEnd'}
                 label={!isMobile ? { value: 'Bet #', position: 'insideBottomRight', offset: -4, fontSize: 10.5, fill: 'var(--text-4)' } : undefined} />
@@ -498,7 +498,7 @@ export default function StatistiekenPage() {
           <div className="odds-range-inner">
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={oddsData} margin={{ top: 4, right: 10, left: 0, bottom: isMobile ? 28 : 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} fill="none"/>
                 <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} angle={isMobile ? -35 : 0} textAnchor={isMobile ? 'end' : 'middle'} height={isMobile ? 38 : 20} interval={isMobile ? Math.max(0, Math.ceil(oddsData.length / 5) - 1) : 0} />
                 <YAxis tick={{ fontSize: 10.5, fill: 'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} width={isMobile ? 0 : 50} mirror={isMobile} />
                 <Tooltip content={<Tip />} cursor={false} wrapperStyle={{ zIndex: 9999, background: 'none', border: 'none', padding: 0, boxShadow: 'none' }} />
