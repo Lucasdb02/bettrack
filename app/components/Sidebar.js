@@ -263,12 +263,12 @@ export default function Sidebar() {
       </div>
 
       {/* Search bar */}
-      <div style={{ padding: '8px 10px', borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : '#ebebeb'}`, position: 'relative' }}>
+      <div style={{ padding: '8px 10px', borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : '#ebebeb'}`, position: 'relative', boxSizing: 'border-box', overflow: 'visible' }}>
         <div
-          style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 10px', background: dark ? 'rgba(255,255,255,0.04)' : '#f1f5f9', border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`, borderRadius: 8, cursor: 'text' }}
           onClick={() => searchRef.current?.focus()}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, height: 32, padding: '0 8px', background: dark ? 'rgba(255,255,255,0.05)' : '#eaecef', border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : '#dde0e4'}`, borderRadius: 20, cursor: 'text', boxSizing: 'border-box', width: '100%' }}
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={dark ? '#4a6885' : '#94a3b8'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={dark ? '#5a7a9a' : '#9ca3af'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
           <input
@@ -277,28 +277,28 @@ export default function Sidebar() {
             onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
             onFocus={() => setSearchOpen(true)}
             onBlur={() => setTimeout(() => { setSearchOpen(false); setSearchQuery(''); }, 160)}
-            placeholder="Zoeken..."
-            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 12.5, color: dark ? '#c5d8ec' : '#334155', fontFamily: 'inherit', letterSpacing: '0.03em' }}
+            placeholder="Search"
+            style={{ flex: 1, minWidth: 0, background: 'none', border: 'none', outline: 'none', fontSize: 12.5, color: dark ? '#c5d8ec' : '#374151', fontFamily: 'inherit', letterSpacing: '0.03em' }}
           />
           {!searchQuery && (
-            <div style={{ display: 'flex', alignItems: 'center', padding: '2px 5px', borderRadius: 4, background: dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'}`, fontSize: 10, fontWeight: 700, color: dark ? '#4a6885' : '#94a3b8', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', padding: '2px 6px', borderRadius: 6, background: dark ? 'rgba(255,255,255,0.12)' : '#fff', border: `1px solid ${dark ? 'rgba(255,255,255,0.15)' : '#d1d5db'}`, boxShadow: dark ? 'none' : '0 1px 2px rgba(0,0,0,0.08)', fontSize: 10, fontWeight: 700, color: dark ? '#6a8aaa' : '#6b7280', letterSpacing: '0.01em' }}>
               ⌘K
             </div>
           )}
         </div>
 
         {searchOpen && searchResults.length > 0 && (
-          <div style={{ position: 'absolute', left: 10, right: 10, top: 'calc(100% - 4px)', zIndex: 9999, background: dark ? '#0d1526' : '#fff', border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`, borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.18)', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', left: 10, right: 10, top: 'calc(100% + 2px)', zIndex: 9999, background: dark ? '#0d1526' : '#fff', border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : '#e5e7eb'}`, borderRadius: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.18)', overflow: 'hidden' }}>
             {searchResults.map((page, i) => (
               <Link
                 key={page.href}
                 href={page.href}
                 onMouseDown={() => { setSearchQuery(''); setSearchOpen(false); }}
-                style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 12px', color: dark ? '#c5d8ec' : '#334155', fontSize: 13, fontWeight: 500, textDecoration: 'none', borderBottom: i < searchResults.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}` : 'none' }}
-                onMouseEnter={e => { e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : '#f8fafc'; }}
+                style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', color: dark ? '#c5d8ec' : '#374151', fontSize: 12.5, fontWeight: 500, textDecoration: 'none', borderBottom: i < searchResults.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.05)' : '#f3f4f6'}` : 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : '#f9fafb'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
               >
-                <span style={{ color: dark ? '#4a6885' : '#94a3b8', flexShrink: 0 }}>{page.icon}</span>
+                <span style={{ color: dark ? '#4a6885' : '#9ca3af', flexShrink: 0 }}>{page.icon}</span>
                 {page.label}
               </Link>
             ))}
