@@ -100,26 +100,27 @@ export default function PricingPage() {
   const { dark } = useTheme();
   const [jaarlijks, setJaarlijks] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState(null);
+  const [checkoutError, setCheckoutError] = useState('');
   const { plan: currentPlan, status, loading: subLoading, startCheckout, openPortal } = useSubscription();
 
   async function handleCta(planId) {
     if (planId === 'gratis') return;
+    setCheckoutError('');
 
-    /* Beheer abonnement als al betaald plan */
     if (currentPlan === planId && status !== 'canceled') {
-      await openPortal();
+      try { await openPortal(); } catch (err) { setCheckoutError(err.message); }
       return;
     }
 
     const key = jaarlijks ? `${planId}_yearly` : `${planId}_monthly`;
     const priceId = PRICE_IDS[key];
-    if (!priceId) return;
+    if (!priceId) { setCheckoutError(`Geen priceId gevonden voor ${key}`); return; }
 
     setLoadingPlan(planId);
     try {
       await startCheckout(priceId);
     } catch (err) {
-      alert(err.message);
+      setCheckoutError(err.message || 'Onbekende fout bij checkout');
     } finally {
       setLoadingPlan(null);
     }
@@ -175,6 +176,14 @@ export default function PricingPage() {
           })}
         </div>
       </div>
+
+      {/* Checkout error */}
+      {checkoutError && (
+        <div style={{ marginBottom: 20, padding: '12px 16px', borderRadius: 9, background: 'rgba(251,43,55,0.08)', border: '1px solid rgba(251,43,55,0.2)', color: '#fb2b37', fontSize: 13.5, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+          <svg style={{ flexShrink: 0, marginTop: 1 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span><strong>Fout:</strong> {checkoutError}</span>
+        </div>
+      )}
 
       {/* Plans */}
       <div className="grid-3-to-1" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
