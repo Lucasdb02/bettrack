@@ -180,9 +180,9 @@ export default function AccountPage() {
   const { bets } = useBets();
   const [tab, setTab] = useState('overzicht');
 
-  function handleLogout() {
-    createClient().auth.signOut();
-    window.location.href = '/';
+  async function handleLogout() {
+    await createClient().auth.signOut({ scope: 'local' });
+    window.location.href = '/login';
   }
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;
