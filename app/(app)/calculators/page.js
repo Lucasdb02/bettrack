@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useTheme } from '../../context/ThemeContext';
+import PaywallGate from '../../components/PaywallGate';
 
 const calculators = [
   {
@@ -84,6 +85,7 @@ export default function CalculatorsPage() {
   const { dark } = useTheme();
 
   return (
+    <PaywallGate requiredPlan="pro" title="Ontgrendel alle Calculators" description="Bereken arbitrage, expected value, Kelly criterion, vig en meer met onze 6 professionele bettingcalculators.">
     <div style={{ padding: '24px' }} className="app-page">
       <div className="mb-6 page-header">
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)', marginBottom: 4 }}>Calculators</h1>
@@ -96,6 +98,7 @@ export default function CalculatorsPage() {
         ))}
       </div>
     </div>
+    </PaywallGate>
   );
 }
 

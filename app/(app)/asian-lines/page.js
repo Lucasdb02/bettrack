@@ -1,5 +1,6 @@
 'use client';
 import { useTheme } from '../../context/ThemeContext';
+import PaywallGate from '../../components/PaywallGate';
 
 const negativeLines = [
   {
@@ -265,6 +266,7 @@ export default function AsianLinesPage() {
   const { dark } = useTheme();
 
   return (
+    <PaywallGate requiredPlan="pro" title="Ontgrendel Asian Lines" description="Begrijp Asian Handicap en kwart-lijnen volledig met onze interactieve uitlegpagina en rekenvoorbeelden.">
     <div style={{ padding: '24px 28px' }} className="app-page">
       {/* Header */}
       <div className="mb-5 page-header">
@@ -327,5 +329,6 @@ export default function AsianLinesPage() {
         </p>
       </div>
     </div>
+    </PaywallGate>
   );
 }

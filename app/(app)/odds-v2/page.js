@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { SingleDatePicker } from '../../components/PeriodDropdown';
+import PaywallGate from '../../components/PaywallGate';
 
 // ── Datum helpers ─────────────────────────────────────────────────────────────
 const NL_DAYS_SHORT   = ['zo','ma','di','wo','do','vr','za'];
@@ -581,6 +582,7 @@ export default function OddsV2Page() {
   })).filter(l => l.fixtures.length > 0), [leagues, activeFilter, search]);
 
   return (
+    <PaywallGate requiredPlan="pro" title="Ontgrendel Odds Vergelijker" description="Vergelijk live odds van alle grote bookmakers en vind de beste waarde voor elke wedstrijd. Nooit meer een betere lijn missen.">
     <div className="app-page" style={{ padding: '40px 32px' }}>
       <style>{`
         @keyframes spin  { to { transform: rotate(360deg); } }
@@ -684,5 +686,6 @@ export default function OddsV2Page() {
         filtered.map((league, i) => <LeagueCard key={league.id} league={league} defaultOpen={i < 3} />)
       )}
     </div>
+    </PaywallGate>
   );
 }

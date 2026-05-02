@@ -6,6 +6,7 @@ import { useFmt } from '../../context/PreferencesContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
 import { TagChip } from '../../components/TagInput';
 import { sportEmoji } from '../../lib/sports';
+import PaywallGate from '../../components/PaywallGate';
 import PeriodDropdown from '../../components/PeriodDropdown';
 import MultiSelect from '../../components/MultiSelect';
 import {
@@ -364,6 +365,7 @@ export default function StatistiekenPage() {
   const curveColor = curve.length > 0 && curve[curve.length - 1].pnl >= 0 ? '#00c951' : '#fb2b37';
 
   return (
+    <PaywallGate requiredPlan="pro" title="Ontgrendel Statistieken" description="Duik diep in je bettingdata met geavanceerde grafieken, sport- en bookmaker-analyses, en uitgebreide prestatie-inzichten.">
     <div style={{ padding: '24px' }} className="app-page">
 
       {/* Header */}
@@ -562,5 +564,6 @@ export default function StatistiekenPage() {
       {perTag.length       > 0 && <GroepTabel data={perTag}       title="Analyse per Tag"       type="tag"       isMobile={isMobile} />}
 
     </div>
+    </PaywallGate>
   );
 }
