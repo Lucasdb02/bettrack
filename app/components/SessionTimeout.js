@@ -2,97 +2,143 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase';
+import { useTheme } from '../context/ThemeContext';
 
-const IDLE_MS = 20 * 60 * 1000;      // 20 minutes inactivity → auto-logout
-const WARN_MS = IDLE_MS - 60 * 1000; // show warning 1 minute before
+const IDLE_MS  = 30 * 60 * 1000;        // 30 minuten inactiviteit → uitloggen
+const WARN_MS  = IDLE_MS - 30 * 1000;   // popup 30 seconden voor uitloggen
+const WARN_SEC = 30;
 
 export default function SessionTimeout() {
   const router = useRouter();
-  const idleTimer = useRef(null);
-  const warnTimer = useRef(null);
-  const [showWarning, setShowWarning] = useState(false);
-  const [countdown, setCountdown] = useState(60);
+  const { dark } = useTheme();
+
+  const idleTimer    = useRef(null);
+  const warnTimer    = useRef(null);
   const countdownRef = useRef(null);
 
+  const [showWarning, setShowWarning] = useState(false);
+  const [countdown,   setCountdown]   = useState(WARN_SEC);
+
+  const clearAll = useCallback(() => {
+    clearTimeout(warnTimer.current);
+    clearTimeout(idleTimer.current);
+    clearInterval(countdownRef.current);
+  }, []);
+
   const doLogout = useCallback(async () => {
+    clearAll();
     setShowWarning(false);
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/login');
     router.refresh();
-  }, [router]);
+  }, [router, clearAll]);
 
   const resetTimers = useCallback(() => {
+    clearAll();
     setShowWarning(false);
-    setCountdown(60);
-    if (countdownRef.current) clearInterval(countdownRef.current);
-    if (warnTimer.current) clearTimeout(warnTimer.current);
-    if (idleTimer.current) clearTimeout(idleTimer.current);
+    setCountdown(WARN_SEC);
 
     warnTimer.current = setTimeout(() => {
       setShowWarning(true);
-      setCountdown(60);
-      let secs = 60;
+      setCountdown(WARN_SEC);
+      let secs = WARN_SEC;
       countdownRef.current = setInterval(() => {
         secs -= 1;
         setCountdown(secs);
-        if (secs <= 0) {
-          clearInterval(countdownRef.current);
-        }
+        if (secs <= 0) clearInterval(countdownRef.current);
       }, 1000);
     }, WARN_MS);
 
     idleTimer.current = setTimeout(doLogout, IDLE_MS);
-  }, [doLogout]);
+  }, [clearAll, doLogout]);
 
+  /* Activiteitslisteners */
   useEffect(() => {
     const events = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll', 'click'];
     const handler = () => resetTimers();
     events.forEach(e => document.addEventListener(e, handler, { passive: true }));
     resetTimers();
-
     return () => {
       events.forEach(e => document.removeEventListener(e, handler));
-      if (warnTimer.current) clearTimeout(warnTimer.current);
-      if (idleTimer.current) clearTimeout(idleTimer.current);
-      if (countdownRef.current) clearInterval(countdownRef.current);
+      clearAll();
     };
-  }, [resetTimers]);
+  }, [resetTimers, clearAll]);
+
+  /* Uitloggen wanneer tab/venster niet meer zichtbaar is */
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) doLogout();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [doLogout]);
 
   if (!showWarning) return null;
+
+  /* ── Thema-kleuren ── */
+  const overlay  = dark ? 'rgba(0,0,0,0.65)'            : 'rgba(0,0,0,0.4)';
+  const cardBg   = dark ? 'rgba(10,16,34,0.96)'         : 'rgba(255,255,255,0.97)';
+  const cardBdr  = dark ? 'rgba(255,255,255,0.09)'      : 'rgba(0,0,0,0.10)';
+  const shadow   = dark
+    ? '0 24px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07)'
+    : '0 16px 48px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.8)';
+  const heading  = dark ? '#e6edf3'                     : '#111827';
+  const body     = dark ? '#8b949e'                     : '#6b7280';
+  const accent   = '#f59e0b';
+  const btnSecBg = dark ? 'rgba(255,255,255,0.07)'      : 'rgba(0,0,0,0.06)';
+  const btnSecCl = dark ? 'rgba(255,255,255,0.65)'      : '#374151';
+  const btnSecBd = dark ? 'rgba(255,255,255,0.12)'      : 'rgba(0,0,0,0.12)';
+
+  /* Cirkel-progress voor countdown */
+  const radius       = 22;
+  const circumference = 2 * Math.PI * radius;
+  const progress     = (countdown / WARN_SEC) * circumference;
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 99999,
-      backgroundColor: 'rgba(0,0,0,0.6)',
+      backgroundColor: overlay,
       backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 24,
     }}>
       <div style={{
-        background: 'rgba(10,16,34,0.92)',
+        background: cardBg,
         backdropFilter: 'blur(24px) saturate(1.5)',
         WebkitBackdropFilter: 'blur(24px) saturate(1.5)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 24px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07)',
-        borderRadius: 16, padding: '32px 36px', maxWidth: 380, width: '100%', textAlign: 'center',
+        border: `1px solid ${cardBdr}`,
+        boxShadow: shadow,
+        borderRadius: 18, padding: '32px 36px', maxWidth: 380, width: '100%', textAlign: 'center',
       }}>
-        <div style={{
-          width: 52, height: 52, borderRadius: '50%', margin: '0 auto 20px',
-          background: 'rgba(251,182,52,0.12)', border: '1px solid rgba(251,182,52,0.28)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbb634" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        {/* Cirkel-countdown */}
+        <div style={{ position: 'relative', width: 64, height: 64, margin: '0 auto 20px' }}>
+          <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx="32" cy="32" r={radius} fill="none"
+              stroke={dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}
+              strokeWidth="4" />
+            <circle cx="32" cy="32" r={radius} fill="none"
+              stroke={accent} strokeWidth="4"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference - progress}
+              strokeLinecap="round"
+              style={{ transition: 'stroke-dashoffset 0.9s linear' }} />
           </svg>
+          <span style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 16, fontWeight: 700, color: accent,
+          }}>
+            {countdown}
+          </span>
         </div>
 
-        <h2 style={{ color: '#e6edf3', fontSize: 18, fontWeight: 700, marginBottom: 10, letterSpacing: '-0.02em' }}>
-          Sessie verloopt bijna
+        <h2 style={{ color: heading, fontSize: 18, fontWeight: 700, marginBottom: 10, letterSpacing: '-0.02em' }}>
+          Nog ingelogd blijven?
         </h2>
-        <p style={{ color: '#8b949e', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
-          Je wordt automatisch uitgelogd wegens inactiviteit over{' '}
-          <strong style={{ color: '#fbb634' }}>{countdown}</strong> seconden.
+        <p style={{ color: body, fontSize: 14, lineHeight: 1.65, marginBottom: 26 }}>
+          Je sessie verloopt over <strong style={{ color: accent }}>{countdown}</strong> seconden wegens inactiviteit.
+          Klik op &ldquo;Ingelogd blijven&rdquo; om door te gaan.
         </p>
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
@@ -102,19 +148,16 @@ export default function SessionTimeout() {
               padding: '9px 22px', borderRadius: 8, fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
               background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
               color: '#fff', border: '1px solid rgba(255,255,255,0.15)',
-              boxShadow: '0 2px 16px rgba(84,105,212,0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
+              boxShadow: '0 2px 16px rgba(84,105,212,0.35), inset 0 1px 0 rgba(255,255,255,0.2)',
             }}
           >
-            Sessie verlengen
+            Ingelogd blijven
           </button>
           <button
             onClick={doLogout}
             style={{
               padding: '9px 18px', borderRadius: 8, fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
-              background: 'rgba(255,255,255,0.07)',
-              backdropFilter: 'blur(12px)',
-              color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.14)',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+              background: btnSecBg, color: btnSecCl, border: `1px solid ${btnSecBd}`,
             }}
           >
             Uitloggen
