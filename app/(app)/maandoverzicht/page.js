@@ -46,7 +46,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:12,width:'100%',maxWidth:isMobile?480:960,maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'var(--shadow-lg)'}}
+        style={{backgroundColor:bg,border:`1px solid ${border}`,borderRadius:12,width:'100%',maxWidth:isMobile?480:1060,maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'var(--shadow-lg)'}}
       >
         {/* Header */}
         <div style={{padding:'20px 24px',borderBottom:`1px solid ${border}`,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
@@ -146,7 +146,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
                           {cfg.label}
                         </span>
                       </td>
-                      <td style={{padding:'12px 16px',fontSize:13,fontWeight:600,color:bet.uitkomst==='lopend'?text3:w>=0?'var(--color-win)':'var(--color-loss)'}}>
+                      <td style={{padding:'12px 16px',fontSize:13,fontWeight:600,whiteSpace:'nowrap',color:bet.uitkomst==='lopend'?text3:w>=0?'var(--color-win)':'var(--color-loss)'}}>
                         {bet.uitkomst==='lopend'?'—':fmtPnl(w)}
                       </td>
                     </tr>
