@@ -251,7 +251,7 @@ function EditPreviewModal({ bet, onSave, onClose }) {
   const pot = form.odds && form.inzet && !isNaN(Number(form.odds)) && !isNaN(Number(form.inzet))
     ? ((Number(form.odds) - 1) * Number(form.inzet)).toFixed(2) : null;
 
-  const iS = { width: '100%', padding: '8px 12px', border: `1px solid ${border}`, borderRadius: 7, fontSize: 13.5, color: text1, backgroundColor: bgInput, transition: 'border-color 0.15s' };
+  const iS = { width: '100%', padding: '8px 12px', height: '42px', boxSizing: 'border-box', border: `1px solid ${border}`, borderRadius: 7, fontSize: 13.5, color: text1, backgroundColor: bgInput, transition: 'border-color 0.15s' };
 
   const FField = ({ label, required, children }) => (
     <div>
