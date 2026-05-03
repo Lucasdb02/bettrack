@@ -681,6 +681,10 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .pulse-dot {
   animation: dot-pulse 2s ease-in-out infinite;
 }
+.status-dot-pulse {
+  animation: dot-pulse 2s ease-in-out infinite;
+  --dot-color: rgba(0,201,81,0.6);
+}
 
 /* ══════════════════════════════════════════════
    ACCOUNT — Mobile stats grid

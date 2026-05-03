@@ -264,10 +264,12 @@ export default function PricingPage() {
                     onMouseEnter={e => { if (!disabled) e.currentTarget.style.opacity = '0.85'; }}
                     onMouseLeave={e => { if (loadingPlan !== plan.id) e.currentTarget.style.opacity = '1'; }}
                   >
-                    {currentPlan === plan.id && status !== 'canceled' && plan.id !== 'gratis' && (
-                      <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: '#00c951', marginRight: 7, verticalAlign: 'middle' }}/>
-                    )}
-                    {label}
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      {currentPlan === plan.id && status !== 'canceled' && plan.id !== 'gratis' && (
+                        <span className="status-dot-pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#00c951', flexShrink: 0 }}/>
+                      )}
+                      {label}
+                    </span>
                   </button>
                 );
               })()}
