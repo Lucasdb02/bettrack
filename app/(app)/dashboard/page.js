@@ -203,7 +203,7 @@ function GradBar({ x, y, width, height, fill }) {
 /* ─── Stat card ─── */
 function StatCard({ label, value, sub, color, icon }) {
   return (
-    <div style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)', transition:'box-shadow 0.15s' }}>
+    <div className="stat-card" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'20px 24px', boxShadow:'var(--shadow-sm)', transition:'box-shadow 0.15s', minWidth:0, overflow:'hidden' }}>
       <div className="flex items-start justify-between">
         <div style={{ minWidth:0 }}>
           <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:10 }}>{label}</p>
@@ -912,12 +912,13 @@ export default function Dashboard() {
           const yDomain = [Math.floor(yMin - yPad), Math.ceil(yMax + yPad)];
           return (
             <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
-              <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
-                <div>
+              <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20, flexWrap: isMobile ? 'wrap' : 'nowrap', gap: isMobile ? 8 : 0 }}>
+                {/* P&L section */}
+                <div style={{ minWidth:0 }}>
                   <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Cumulatieve P&L</p>
-                  <div style={{ display:'flex', alignItems:'baseline', gap:10 }}>
-                    <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{fmtPnl(dispPnl)}</span>
-                    <span style={{ fontSize:13, fontWeight:600, color:roiColor }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
+                  <div style={{ display:'flex', alignItems:'baseline', gap:10, flexWrap:'nowrap' }}>
+                    <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1, whiteSpace:'nowrap' }}>{fmtPnl(dispPnl)}</span>
+                    <span style={{ fontSize:13, fontWeight:600, color:roiColor, whiteSpace:'nowrap' }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
                   </div>
                   {dispDayPnl !== null && (
                     <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
@@ -927,10 +928,11 @@ export default function Dashboard() {
                     </div>
                   )}
                 </div>
-                <div style={{ textAlign:'right' }}>
+                {/* Record + legend section */}
+                <div style={{ textAlign: isMobile ? 'left' : 'right', flexShrink: isMobile ? 0 : 1 }}>
                   <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
                   <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
-                  <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
+                  <div style={{ display:'flex', gap:14, justifyContent: isMobile ? 'flex-start' : 'flex-end', marginTop:8, flexWrap:'wrap' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                       <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
                       <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>

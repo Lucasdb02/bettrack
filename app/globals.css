@@ -453,8 +453,9 @@ html.dark .glass-card {
   .dash-chart-section { padding-left: 16px !important; padding-right: 16px !important; }
   .dash-chart-hdr { padding-left: 0 !important; padding-right: 0 !important; }
 
+  .stat-card { padding: 14px 14px !important; }
   .stats-grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .grid-4-to-2 { grid-template-columns: repeat(2, 1fr) !important; }
+  .grid-4-to-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .grid-4-to-1, .grid-3-to-1, .grid-2-to-1 { grid-template-columns: 1fr !important; }
 
   .table-scroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
