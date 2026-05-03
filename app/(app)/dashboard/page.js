@@ -912,27 +912,48 @@ export default function Dashboard() {
           const yDomain = [Math.floor(yMin - yPad), Math.ceil(yMax + yPad)];
           return (
             <div className="dash-chart-section" style={{ backgroundColor:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:24, boxShadow:'var(--shadow-sm)' }}>
-              <div className="dash-chart-hdr" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20, flexWrap: isMobile ? 'wrap' : 'nowrap', gap: isMobile ? 8 : 0 }}>
-                {/* P&L section */}
-                <div style={{ minWidth:0 }}>
-                  <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Cumulatieve P&L</p>
-                  <div style={{ display:'flex', alignItems:'baseline', gap:10, flexWrap:'nowrap' }}>
-                    <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1, whiteSpace:'nowrap' }}>{fmtPnl(dispPnl)}</span>
-                    <span style={{ fontSize:13, fontWeight:600, color:roiColor, whiteSpace:'nowrap' }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
-                  </div>
-                  {dispDayPnl !== null && (
-                    <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
-                      <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
-                      <span style={{ fontSize:12, color:'var(--text-4)' }}>Dagelijks:</span>
-                      <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(dispDayPnl)}</span>
+              <div className="dash-chart-hdr" style={{ marginBottom:20 }}>
+                {/* Top row: P&L left, Record right — always side by side */}
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom: isMobile ? 10 : 0 }}>
+                  <div style={{ minWidth:0 }}>
+                    <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Cumulatieve P&L</p>
+                    <div style={{ display:'flex', alignItems:'baseline', gap:10, flexWrap:'nowrap' }}>
+                      <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1, whiteSpace:'nowrap' }}>{fmtPnl(dispPnl)}</span>
+                      <span style={{ fontSize:13, fontWeight:600, color:roiColor, whiteSpace:'nowrap' }}>{dispRoi >= 0 ? '+' : ''}{dispRoi.toFixed(1)}% ROI</span>
                     </div>
-                  )}
+                    {dispDayPnl !== null && (
+                      <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:5 }}>
+                        <div style={{ width:10, height:2, backgroundColor:'#f59e0b', borderRadius:1 }}/>
+                        <span style={{ fontSize:12, color:'var(--text-4)' }}>Dagelijks:</span>
+                        <span style={{ fontSize:13, fontWeight:700, color: dispDayPnl >= 0 ? '#00c951' : '#fb2b37' }}>{fmtPnl(dispDayPnl)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ textAlign:'right', flexShrink:0, marginLeft:12 }}>
+                    <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
+                    <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
+                    {/* Legend inline on desktop only */}
+                    {!isMobile && (
+                      <div style={{ display:'flex', gap:14, justifyContent:'flex-end', marginTop:8 }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                          <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
+                          <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
+                        </div>
+                        <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                          <div style={{ width:16, height:3, backgroundColor:'#f59e0b', borderRadius:2 }}/>
+                          <span style={{ fontSize:11, color:'var(--text-4)' }}>Dagelijks</span>
+                        </div>
+                        <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                          <svg width="16" height="3" viewBox="0 0 16 3"><line x1="0" y1="1.5" x2="16" y2="1.5" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5 2.5"/></svg>
+                          <span style={{ fontSize:11, color:'var(--text-4)' }}>Trend</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                {/* Record + legend section */}
-                <div style={{ textAlign: isMobile ? 'left' : 'right', flexShrink: isMobile ? 0 : 1 }}>
-                  <p style={{ fontSize:15, fontWeight:600, color:'var(--text-2)', marginBottom:6 }}>Record</p>
-                  <span style={{ fontSize:22, fontWeight:800, color:'var(--text-1)', lineHeight:1 }}>{dispW}-{dispL}-{dispP}</span>
-                  <div style={{ display:'flex', gap:14, justifyContent: isMobile ? 'flex-start' : 'flex-end', marginTop:8, flexWrap:'wrap' }}>
+                {/* Legend below on mobile */}
+                {isMobile && (
+                  <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                       <div style={{ width:16, height:3, backgroundColor:'#5469d4', borderRadius:2 }}/>
                       <span style={{ fontSize:11, color:'var(--text-4)' }}>Cumulatief</span>
@@ -946,7 +967,7 @@ export default function Dashboard() {
                       <span style={{ fontSize:11, color:'var(--text-4)' }}>Trend</span>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
               {cumulData.length > 1 ? (
                 <ResponsiveContainer width="100%" height={300}>
