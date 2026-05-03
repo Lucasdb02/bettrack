@@ -82,7 +82,7 @@ function buildChartData(bets, activeBookies, bookmakersConfig, period, customRan
       const bm = dbBookmakers?.find(b => b.naam === naam);
       const netTx = bm && transactions ? transactions
         .filter(tx => tx.bookmaker_id === bm.id && new Date(tx.datum).getTime() < cutoff)
-        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0)
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : tx.type === 'withdrawal' ? -Number(tx.amount) : Number(tx.amount)), 0)
         : 0;
 
       const bal = parseFloat((startBalance + pnl + netTx).toFixed(2));
@@ -316,7 +316,7 @@ export default function BookmakersPage() {
     dbBookmakers.forEach(bm => {
       map[bm.naam] = transactions
         .filter(tx => tx.bookmaker_id === bm.id)
-        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0);
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : tx.type === 'withdrawal' ? -Number(tx.amount) : Number(tx.amount)), 0);
     });
     return map;
   }, [transactions, dbBookmakers]);
@@ -566,6 +566,29 @@ export default function BookmakersPage() {
             <SingleDatePicker value={txDate} onChange={setTxDate} style={{ width:'100%', height:'100%', boxSizing:'border-box' }}/>
           </div>
 
+          {/* Type toggle */}
+          <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
+            {[
+              { val:'deposit',    label:'Storting',  activeColor:'var(--color-win)'  },
+              { val:'withdrawal', label:'Opname',    activeColor:'var(--color-loss)' },
+              { val:'correctie',  label:'Correctie', activeColor:'var(--text-2)'     },
+            ].map(opt => (
+              <button
+                key={opt.val}
+                onClick={() => setTxType(opt.val)}
+                style={{
+                  minWidth:72, padding:'0 10px', fontSize:13, fontWeight:600,
+                  border: 'none', borderRadius:6,
+                  cursor:'pointer', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
+                  backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
+                  color: txType === opt.val ? opt.activeColor : 'var(--text-3)',
+                  boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  transition:'all 0.12s',
+                }}
+              >{opt.label}</button>
+            ))}
+          </div>
+
           {/* Submit */}
           <button
             className="bm-tx-submit"
@@ -583,30 +606,6 @@ export default function BookmakersPage() {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Registreren
           </button>
-
-          {/* Type toggle */}
-          <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
-            {[
-              { val:'deposit',    label:'Storting' },
-              { val:'withdrawal', label:'Opname'   },
-            ].map(opt => (
-              <button
-                key={opt.val}
-                onClick={() => setTxType(opt.val)}
-                style={{
-                  minWidth:72, padding:'0 10px', fontSize:13, fontWeight:600,
-                  border: 'none', borderRadius:6,
-                  cursor:'pointer', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
-                  backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
-                  color: txType === opt.val
-                    ? (opt.val === 'deposit' ? 'var(--color-win)' : 'var(--color-loss)')
-                    : 'var(--text-3)',
-                  boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
-                  transition:'all 0.12s',
-                }}
-              >{opt.label}</button>
-            ))}
-          </div>
         </div>
 
         {/* Transaction history */}
@@ -620,17 +619,21 @@ export default function BookmakersPage() {
             ) : [...filteredTransactions].reverse().map(tx => {
               const bmNaam = dbBookmakers.find(b => b.id === tx.bookmaker_id)?.naam || '—';
               const isDeposit = tx.type === 'deposit';
+              const isCorrectie = tx.type === 'correctie';
+              const txColor = isDeposit ? 'var(--color-win)' : isCorrectie ? 'var(--text-2)' : 'var(--color-loss)';
+              const txPrefix = isDeposit || isCorrectie ? '+' : '-';
+              const txLabel = isDeposit ? 'Storting' : isCorrectie ? 'Correctie' : 'Opname';
               return (
                 <div key={tx.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 10px', borderRadius:7, backgroundColor:'var(--bg-subtle)' }}>
-                  <span style={{ fontSize:12, fontWeight:700, color: isDeposit ? 'var(--color-win)' : 'var(--color-loss)', width:76, flexShrink:0, lineHeight:1 }}>
-                    {isDeposit ? '+' : '-'}€{Number(tx.amount).toFixed(2)}
+                  <span style={{ fontSize:12, fontWeight:700, color: txColor, width:76, flexShrink:0, lineHeight:1 }}>
+                    {txPrefix}€{Number(tx.amount).toFixed(2)}
                   </span>
                   <span style={{ fontSize:12, fontWeight:600, color:'var(--text-2)', flex:1, lineHeight:1 }}>{bmNaam}</span>
                   <span style={{ fontSize:11.5, color:'var(--text-4)', flexShrink:0, lineHeight:1 }}>
                     {new Date(tx.datum).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' })}
                   </span>
                   <span style={{ fontSize:11, color:'var(--text-4)', flexShrink:0, fontWeight:500, lineHeight:1 }}>
-                    {isDeposit ? 'Storting' : 'Opname'}
+                    {txLabel}
                   </span>
                   <button
                     onClick={() => deleteTransaction(tx.id)}
