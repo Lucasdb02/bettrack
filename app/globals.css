@@ -698,3 +698,12 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
   .bet-filter-extra { display: none !important; }
   .bets-search-wrap { display: none !important; }
 }
+
+/* ══════════════════════════════════════════════
+   MOBILE — Prevent iOS auto-zoom on input focus
+   ══════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
