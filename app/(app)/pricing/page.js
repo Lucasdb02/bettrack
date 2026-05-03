@@ -218,7 +218,12 @@ export default function PricingPage() {
 
               {/* Plan naam */}
               <div style={{ marginBottom: 20 }}>
-                <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-1)', marginBottom: 3 }}>{plan.naam}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                  {currentPlan === plan.id && status !== 'canceled' && plan.id !== 'gratis' && (
+                    <span className="status-dot-pulse" style={{ width: 8, height: 8, borderRadius: '50%', background: '#00c951', flexShrink: 0 }}/>
+                  )}
+                  <p style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-1)' }}>{plan.naam}</p>
+                </div>
                 <p style={{ fontSize: 13, color: 'var(--text-4)' }}>{plan.sub}</p>
               </div>
 
@@ -264,12 +269,7 @@ export default function PricingPage() {
                     onMouseEnter={e => { if (!disabled) e.currentTarget.style.opacity = '0.85'; }}
                     onMouseLeave={e => { if (loadingPlan !== plan.id) e.currentTarget.style.opacity = '1'; }}
                   >
-                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                      {currentPlan === plan.id && status !== 'canceled' && plan.id !== 'gratis' && (
-                        <span className="status-dot-pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#00c951', flexShrink: 0 }}/>
-                      )}
-                      {label}
-                    </span>
+                    {label}
                   </button>
                 );
               })()}
