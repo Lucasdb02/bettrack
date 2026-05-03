@@ -308,7 +308,7 @@ export default function MaandoverzichtPage() {
               >
                 {isMobile ? (
                   <>
-                    <div style={{fontSize:11,fontWeight:400,color:isToday?'#fff':hasBets?'var(--text-2)':'var(--text-4)',backgroundColor:isToday?'var(--brand)':'transparent',borderRadius:'50%',width:20,height:20,display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,marginBottom:hasBets?3:0}}>
+                    <div style={{fontSize:11,fontWeight:400,color:isToday?'#fff':hasBets?'var(--text-2)':'var(--text-4)',backgroundColor:isToday?'var(--brand)':'transparent',borderRadius:isToday?6:'50%',width:20,height:20,display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,marginBottom:hasBets?3:0}}>
                       {dag}
                     </div>
                     {hasBets&&(
@@ -319,7 +319,7 @@ export default function MaandoverzichtPage() {
                   </>
                 ) : (
                   <>
-                    <div className="cal-day-num" style={{width:26,height:26,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',backgroundColor:isToday?'var(--brand)':'transparent',fontSize:12.5,fontWeight:isToday?700:hasBets?600:400,color:isToday?'#fff':hasBets?'var(--text-1)':'var(--text-4)',lineHeight:1,marginBottom:4,flexShrink:0}}>
+                    <div className="cal-day-num" style={{width:26,height:26,borderRadius:isToday?7:'50%',display:'flex',alignItems:'center',justifyContent:'center',backgroundColor:isToday?'var(--brand)':'transparent',fontSize:12.5,fontWeight:isToday?700:hasBets?600:400,color:isToday?'#fff':hasBets?'var(--text-1)':'var(--text-4)',lineHeight:1,marginBottom:4,flexShrink:0}}>
                       {dag}
                     </div>
                     {hasBets&&(
