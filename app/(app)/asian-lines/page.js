@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import PaywallGate from '../../components/PaywallGate';
 
@@ -264,25 +265,44 @@ function AHTable({ lines, dark }) {
 
 export default function AsianLinesPage() {
   const { dark } = useTheme();
+  const [mobileTab, setMobileTab] = useState('neg');
+
+  const legend = [
+    { type: 'win',      label: 'Winst' },
+    { type: 'halfWin',  label: 'Halve winst' },
+    { type: 'push',     label: 'Inzet terug' },
+    { type: 'halfLoss', label: 'Half verlies' },
+    { type: 'loss',     label: 'Verlies' },
+  ];
 
   return (
     <PaywallGate requiredPlan="pro" title="Ontgrendel Asian Lines" description="Begrijp Asian Handicap en kwart-lijnen volledig met onze interactieve uitlegpagina en rekenvoorbeelden.">
     <div style={{ padding: '24px 28px' }} className="app-page">
+      <style>{`
+        .ah-legend   { display: flex; }
+        .ah-switch   { display: none; }
+        .ah-grid     { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .ah-col-neg  { display: block; }
+        .ah-col-pos  { display: block; }
+        @media (min-width: 769px) {
+          .ah-col-neg, .ah-col-pos { display: block !important; }
+        }
+        @media (max-width: 768px) {
+          .ah-legend  { display: none; }
+          .ah-switch  { display: flex; }
+          .ah-grid    { grid-template-columns: 1fr; }
+        }
+      `}</style>
+
       {/* Header */}
       <div className="mb-5 page-header">
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)', marginBottom: 4 }}>Asian Lines Overzicht</h1>
         <p style={{ fontSize: 14, color: 'var(--text-3)' }}>Referentietabel voor alle Asian Handicap uitkomsten</p>
       </div>
 
-      {/* Legend */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
-        {[
-          { type: 'win',      label: 'Winst' },
-          { type: 'halfWin',  label: 'Halve winst' },
-          { type: 'push',     label: 'Inzet terug' },
-          { type: 'halfLoss', label: 'Half verlies' },
-          { type: 'loss',     label: 'Verlies' },
-        ].map(({ type, label }) => {
+      {/* Legend — desktop only */}
+      <div className="ah-legend" style={{ alignItems: 'center', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
+        {legend.map(({ type, label }) => {
           const s = typeStyle(type, dark);
           return (
             <span key={type} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600 }}>
@@ -293,14 +313,40 @@ export default function AsianLinesPage() {
         })}
       </div>
 
-      {/* Tables side by side */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 16,
-      }}>
+      {/* Switch — mobile only */}
+      <div className="ah-switch" style={{ justifyContent: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'inline-flex', background: 'var(--bg-subtle)', border: '1px solid var(--border)', borderRadius: 10, padding: 3, gap: 2 }}>
+          {[
+            { id: 'neg', label: '− Favoriet' },
+            { id: 'pos', label: '+ Underdog' },
+          ].map(opt => {
+            const active = mobileTab === opt.id;
+            return (
+              <button
+                key={opt.id}
+                onClick={() => setMobileTab(opt.id)}
+                style={{
+                  padding: '7px 20px', borderRadius: 7, border: 'none', cursor: 'pointer',
+                  fontSize: 13.5, fontWeight: active ? 700 : 500,
+                  background: active ? 'var(--bg-card)' : 'transparent',
+                  color: active
+                    ? (opt.id === 'neg' ? '#fb2b37' : '#00c951')
+                    : 'var(--text-3)',
+                  boxShadow: active ? 'var(--shadow-xs)' : 'none',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tables */}
+      <div className="ah-grid">
         {/* Negatief */}
-        <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden', display: mobileTab === 'neg' ? 'block' : 'none' }} className="ah-col-neg">
           <div style={{ padding: '11px 16px', background: 'var(--bg-subtle)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#fb2b37', display: 'inline-block' }}/>
             <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Favoriet (negatieve handicap)</span>
@@ -309,7 +355,7 @@ export default function AsianLinesPage() {
         </div>
 
         {/* Positief */}
-        <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden', display: mobileTab === 'pos' ? 'block' : 'none' }} className="ah-col-pos">
           <div style={{ padding: '11px 16px', background: 'var(--bg-subtle)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#00c951', display: 'inline-block' }}/>
             <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Underdog (positieve handicap)</span>
