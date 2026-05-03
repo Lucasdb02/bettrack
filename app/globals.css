@@ -707,3 +707,7 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
     font-size: 16px !important;
   }
 }
+
+@media (max-width: 768px) {
+  .calc-desc { display: none !important; }
+}

@@ -140,8 +140,8 @@ function CalcCard({ calc, dark }) {
         <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-2)' }}>{calc.label}</p>
       </div>
 
-      {/* Description */}
-      <p style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>{calc.desc}</p>
+      {/* Description — desktop only */}
+      <p className="calc-desc" style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>{calc.desc}</p>
     </Link>
   );
 }
