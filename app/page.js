@@ -62,18 +62,10 @@ function Header() {
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        window.location.href = '/dashboard';
-        return;
-      }
-      setUser(null);
+      setUser(session?.user ?? null);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        window.location.href = '/dashboard';
-        return;
-      }
-      setUser(null);
+      setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
   }, []);
