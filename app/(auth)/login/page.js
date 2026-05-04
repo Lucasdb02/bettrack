@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { createClient } from '../../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -18,6 +19,7 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const { dark } = useTheme();
+  const searchParams = useSearchParams();
   const [email, setEmail]           = useState('');
   const [password, setPassword]     = useState('');
   const [error, setError]           = useState('');
@@ -25,16 +27,18 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
+  const nextPath = searchParams.get('next') || '/dashboard';
+
   useEffect(() => {
     const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         setRedirecting(true);
-        window.location.href = '/dashboard';
+        window.location.href = nextPath;
       }
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [nextPath]);
 
   const bg        = dark ? '#0d1117' : '#f8fafc';
   const text1     = dark ? '#e6edf3' : '#0f172a';
