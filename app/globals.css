@@ -271,32 +271,44 @@ html.dark .btn-primary-glass:hover:not(:disabled) {
     0 6px 32px rgba(84,105,212,0.7) !important;
 }
 
-/* Secondary — ghost */
+/* Secondary */
 .btn-glass {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: var(--bg-card) padding-box, linear-gradient(90deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.14) 50%, rgba(0,0,0,0.04) 100%) border-box !important;
-  color: var(--text-2) !important;
+  background:
+    rgba(227,227,227,0.80) padding-box,
+    linear-gradient(180deg, #FDFDFD 0%, #F1F1F1 100%) border-box !important;
+  color: var(--text-1) !important;
   border: 1px solid transparent !important;
   border-radius: 9px !important;
   padding: 8px 16px !important;
   font-size: 13.5px !important;
   font-weight: 500 !important;
   cursor: pointer;
-  box-shadow: var(--shadow-xs) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.16) !important;
   transition: all 0.15s ease !important;
 }
 .btn-glass:hover:not(:disabled) {
-  background: var(--bg-subtle) padding-box, linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.06) 100%) border-box !important;
-  color: var(--text-1) !important;
+  background:
+    rgba(215,215,215,0.90) padding-box,
+    linear-gradient(180deg, #FDFDFD 0%, #EBEBEB 100%) border-box !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.18) !important;
 }
 html.dark .btn-glass {
-  background: rgba(255,255,255,0.06) padding-box, linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%) border-box !important;
-  backdrop-filter: blur(12px);
+  background:
+    linear-gradient(180deg, #201E25 0%, #323137 100%) padding-box,
+    linear-gradient(180deg, #4B4951 0%, #313036 100%) border-box !important;
+  color: rgba(255,255,255,0.85) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.10), 0 0 0 1px #0d0d0d !important;
+  backdrop-filter: none;
 }
 html.dark .btn-glass:hover:not(:disabled) {
-  background: rgba(255,255,255,0.1) padding-box, linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.24) 50%, transparent 100%) border-box !important;
+  background:
+    linear-gradient(180deg, #2a2830 0%, #3c3b41 100%) padding-box,
+    linear-gradient(180deg, #5a5860 0%, #3d3c42 100%) border-box !important;
+  color: rgba(255,255,255,0.95) !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.20), 0 0 0 1px #0d0d0d !important;
 }
 
 /* Danger */
