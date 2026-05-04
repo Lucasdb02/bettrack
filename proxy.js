@@ -40,7 +40,9 @@ export async function proxy(request) {
 
   // Redirect niet-ingelogde gebruikers weg van app-pagina's
   if (!user && !isAuthPage && !isPublicPage) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('next', pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return supabaseResponse;
