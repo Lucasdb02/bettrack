@@ -75,9 +75,9 @@ export function BetsProvider({ children }) {
   }, []);
 
   const addBet = async (bet) => {
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) { console.error('[addBet] auth error:', authError); return null; }
-    const row = toDbRow(bet, user.id);
+    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    if (authError || !session?.user) { console.error('[addBet] auth error:', authError); return null; }
+    const row = toDbRow(bet, session.user.id);
     const { data, error } = await supabase.from('bets').insert(row).select().single();
     if (error) { console.error('[addBet] supabase error:', error); return null; }
     setBets((prev) => [data, ...prev]);
@@ -85,11 +85,12 @@ export function BetsProvider({ children }) {
   };
 
   const addBets = async (newBets) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
-    const rows = newBets.map((bet) => toDbRow(bet, user.id));
+    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    if (authError || !session?.user) { console.error('[addBets] auth error:', authError); return []; }
+    const rows = newBets.map((bet) => toDbRow(bet, session.user.id));
     const { data, error } = await supabase.from('bets').insert(rows).select();
-    if (!error && data) { setBets((prev) => [...data, ...prev]); return data; }
+    if (error) { console.error('[addBets] supabase error:', error); return []; }
+    if (data) { setBets((prev) => [...data, ...prev]); return data; }
     return [];
   };
 

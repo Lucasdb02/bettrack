@@ -470,10 +470,16 @@ function ScreenshotImport() {
     setPreview(prev => prev.map((b, idx) => idx === i ? { ...b, [field]: value } : b));
   };
 
-  const importeer = () => {
+  const importeer = async () => {
     const toImport = preview.filter((_, i) => selected.has(i));
-    addScreenshotBets(toImport);
-    setImportCount(toImport.length);
+    setStatus('saving');
+    const saved = await addScreenshotBets(toImport);
+    if (!saved || saved.length === 0) {
+      setErrorMsg('Opslaan mislukt — probeer opnieuw.');
+      setStatus('error');
+      return;
+    }
+    setImportCount(saved.length);
     if (imgUrl) URL.revokeObjectURL(imgUrl);
     setImgUrl(null);
     setStatus('done');
@@ -531,13 +537,17 @@ function ScreenshotImport() {
       )}
 
       {/* Analysing */}
-      {status === 'analysing' && (
+      {(status === 'analysing' || status === 'saving') && (
         <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,overflow:'hidden'}}>
           {imgUrl && <img src={imgUrl} alt="screenshot" style={{width:'100%',maxHeight:280,objectFit:'cover',display:'block',borderBottom:'1px solid var(--border-subtle)',opacity:0.6}}/>}
           <div style={{textAlign:'center',padding:'32px 24px'}}>
             <div style={{width:40,height:40,border:'3px solid var(--border)',borderTopColor:'var(--brand)',borderRadius:'50%',margin:'0 auto 14px',animation:'spin 0.8s linear infinite'}}/>
-            <p style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:4}}>AI analyseert je screenshot…</p>
-            <p style={{fontSize:13,color:'var(--text-3)'}}>Dit duurt een paar seconden</p>
+            <p style={{fontSize:14,fontWeight:600,color:'var(--text-1)',marginBottom:4}}>
+              {status === 'saving' ? 'Bets opslaan…' : 'AI analyseert je screenshot…'}
+            </p>
+            <p style={{fontSize:13,color:'var(--text-3)'}}>
+              {status === 'saving' ? 'Even geduld' : 'Dit duurt een paar seconden'}
+            </p>
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
           </div>
         </div>
