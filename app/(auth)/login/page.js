@@ -27,7 +27,8 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
-  const nextPath = searchParams.get('next') || '/dashboard';
+  const rawNext = searchParams.get('next') || '';
+  const nextPath = rawNext.startsWith('/') && rawNext !== '/' ? rawNext : '/dashboard';
 
   useEffect(() => {
     const supabase = createClient();
