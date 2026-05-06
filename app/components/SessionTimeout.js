@@ -1,15 +1,14 @@
 'use client';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
 
-const IDLE_MS  = 30 * 60 * 1000;        // 30 minuten inactiviteit → uitloggen
-const WARN_MS  = IDLE_MS - 30 * 1000;   // popup 30 seconden voor uitloggen
-const WARN_SEC = 30;
+const IDLE_MS         = 30 * 60 * 1000;
+const WARN_MS         = IDLE_MS - 30 * 1000;
+const WARN_SEC        = 30;
+const LAST_ACTIVE_KEY = 'tmb_last_active';
 
 export default function SessionTimeout() {
-  const router = useRouter();
   const { dark } = useTheme();
 
   const idleTimer    = useRef(null);
@@ -28,16 +27,17 @@ export default function SessionTimeout() {
   const doLogout = useCallback(async () => {
     clearAll();
     setShowWarning(false);
+    localStorage.removeItem(LAST_ACTIVE_KEY);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
-  }, [router, clearAll]);
+    window.location.href = 'https://trackmijnbets.nl';
+  }, [clearAll]);
 
   const resetTimers = useCallback(() => {
     clearAll();
     setShowWarning(false);
     setCountdown(WARN_SEC);
+    localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
 
     warnTimer.current = setTimeout(() => {
       setShowWarning(true);
@@ -53,8 +53,14 @@ export default function SessionTimeout() {
     idleTimer.current = setTimeout(doLogout, IDLE_MS);
   }, [clearAll, doLogout]);
 
-  /* Activiteitslisteners */
+  /* Bij mount: check of sessie al verlopen is voor page reload/browser-herstart */
   useEffect(() => {
+    const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0', 10);
+    if (lastActive && Date.now() - lastActive >= IDLE_MS) {
+      doLogout();
+      return;
+    }
+    // Activiteitslisteners
     const events = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll', 'click'];
     const handler = () => resetTimers();
     events.forEach(e => document.addEventListener(e, handler, { passive: true }));
@@ -63,19 +69,18 @@ export default function SessionTimeout() {
       events.forEach(e => document.removeEventListener(e, handler));
       clearAll();
     };
-  }, [resetTimers, clearAll]);
+  }, [resetTimers, clearAll, doLogout]);
 
   /* Uitloggen wanneer tab langer dan IDLE_MS verborgen is geweest */
   useEffect(() => {
-    let hiddenAt = null;
     const handleVisibility = () => {
       if (document.hidden) {
-        hiddenAt = Date.now();
+        localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
       } else {
-        if (hiddenAt !== null && Date.now() - hiddenAt >= IDLE_MS) {
+        const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0', 10);
+        if (lastActive && Date.now() - lastActive >= IDLE_MS) {
           doLogout();
         } else {
-          hiddenAt = null;
           resetTimers();
         }
       }
