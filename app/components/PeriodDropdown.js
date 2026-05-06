@@ -400,9 +400,9 @@ export function SingleDatePicker({ value, onChange, style }) {
 
       {mounted && open && rect && createPortal(
         <>
-          <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
+          <div onClick={close} style={{ position:'fixed', inset:0, zIndex:10001 }}/>
           <div style={{
-            position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
+            position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:10002,
             backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
             borderRadius:12, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
             padding:'16px', minWidth:260,
