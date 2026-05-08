@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { createClient } from '../../lib/supabase';
@@ -155,7 +155,6 @@ const drawerNav = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { dark, toggle } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { bets } = useBets();
@@ -192,10 +191,8 @@ export default function Sidebar() {
   }, [dbBookmakers, transactions, bets]);
 
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
+    try { await createClient().auth.signOut({ scope: 'local' }); } catch {}
+    window.location.href = '/login';
   }
 
   const isActive = (href) => {

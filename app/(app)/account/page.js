@@ -181,8 +181,8 @@ export default function AccountPage() {
   const [tab, setTab] = useState('overzicht');
 
   async function handleLogout() {
-    await createClient().auth.signOut({ scope: 'local' });
-    window.location.href = '/';
+    try { await createClient().auth.signOut({ scope: 'local' }); } catch {}
+    window.location.href = '/login';
   }
 
   if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color:'var(--text-4)' }}>Laden...</div>;

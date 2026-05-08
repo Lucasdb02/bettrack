@@ -28,9 +28,8 @@ export default function SessionTimeout() {
     clearAll();
     setShowWarning(false);
     localStorage.removeItem(LAST_ACTIVE_KEY);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    window.location.href = 'https://trackmijnbets.nl';
+    try { await createClient().auth.signOut({ scope: 'local' }); } catch {}
+    window.location.href = '/login';
   }, [clearAll]);
 
   const resetTimers = useCallback(() => {
