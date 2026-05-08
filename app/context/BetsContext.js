@@ -124,7 +124,18 @@ export function BetsProvider({ children }) {
   };
 
   const replaceAutoImports = async (newBets) => addBets(newBets);
-  const addScreenshotBets  = async (newBets) => addBets(newBets);
+
+  const addScreenshotBets = async (newBets) => {
+    const res = await fetch('/api/save-bets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bets: newBets }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Opslaan mislukt');
+    if (json.bets?.length) setBets((prev) => [...json.bets, ...prev]);
+    return json.bets || [];
+  };
 
   const updateBet = async (id, updates) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
