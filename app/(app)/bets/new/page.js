@@ -473,17 +473,22 @@ function ScreenshotImport() {
   const importeer = async () => {
     const toImport = preview.filter((_, i) => selected.has(i));
     setStatus('saving');
-    const saved = await addScreenshotBets(toImport);
-    if (!saved || saved.length === 0) {
-      setErrorMsg('Opslaan mislukt — probeer opnieuw.');
+    try {
+      const saved = await addScreenshotBets(toImport);
+      if (!saved || saved.length === 0) {
+        setErrorMsg('Opslaan mislukt — geen rijen teruggegeven door database.');
+        setStatus('error');
+        return;
+      }
+      setImportCount(saved.length);
+      if (imgUrl) URL.revokeObjectURL(imgUrl);
+      setImgUrl(null);
+      setStatus('done');
+      setTimeout(() => router.push('/bets'), 1500);
+    } catch (err) {
+      setErrorMsg(err.message || 'Opslaan mislukt — probeer opnieuw.');
       setStatus('error');
-      return;
     }
-    setImportCount(saved.length);
-    if (imgUrl) URL.revokeObjectURL(imgUrl);
-    setImgUrl(null);
-    setStatus('done');
-    setTimeout(() => router.push('/bets'), 1500);
   };
 
   const ef = {
@@ -557,7 +562,7 @@ function ScreenshotImport() {
       {status === 'error' && (
         <div style={{backgroundColor:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:12,padding:'24px'}}>
           <div style={{padding:'16px 20px',borderRadius:9,backgroundColor:'rgba(244,63,94,0.1)',border:'1px solid rgba(244,63,94,0.3)',marginBottom:20}}>
-            <p style={{fontSize:14,fontWeight:700,color:'#FB7185',marginBottom:4}}>Analyse mislukt</p>
+            <p style={{fontSize:14,fontWeight:700,color:'#FB7185',marginBottom:4}}>{errorMsg.startsWith('Auth') || errorMsg.startsWith('Opslaan') || errorMsg.startsWith('Database') || errorMsg.startsWith('Timeout') ? 'Opslaan mislukt' : 'Analyse mislukt'}</p>
             <p style={{fontSize:13,color:'var(--text-3)'}}>{errorMsg}</p>
           </div>
           <button onClick={reset} className="btn-primary-glass" style={{padding:'9px 20px',fontSize:13.5,fontWeight:600,cursor:'pointer'}}>

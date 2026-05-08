@@ -50,7 +50,7 @@ Geef de bets terug als een JSON array. Elk bet-object moet de volgende velden he
 - inzet: ingezet bedrag als getal (bv. 10.00)
 - uitkomst: een van: "gewonnen", "verloren", "lopend", "push", "void", "half_gewonnen", "half_verloren", "onbeslist"
 - bookmaker: naam van de bookmaker (bv. "bet365", "BetCity") of "Overig"
-- sport: een van: "Voetbal", "Tennis", "Basketball", "Hockey", "Formule 1", "Wielrennen", "Darts", "Snooker", "American Football", "Overig"
+- sport: een van: "Voetbal", "Tennis", "Basketbal", "Hockey", "Formule 1", "Wielrennen", "Darts", "Snooker", "American Football", "Baseball", "Overig"
 
 Belangrijke regels:
 - Gebruik voor het "wedstrijd" veld altijd korte teamafkortingen zoals op de afbeelding zichtbaar (bv. "NEC - FEY", "CHE - MCI", "MAN - PSG"). Schrijf GEEN volledige teamnamen uit tenzij er geen afkorting beschikbaar is.
@@ -89,22 +89,26 @@ Als er geen bets zichtbaar zijn, geef een lege array terug: []`,
     // Sanitise each bet
     const today = new Date().toISOString().split('T')[0];
     const VALID_UITKOMSTEN = ['gewonnen','verloren','lopend','push','void','half_gewonnen','half_verloren','onbeslist'];
-    const VALID_SPORTEN = ['Voetbal','Tennis','Basketball','Hockey','Formule 1','Wielrennen','Darts','Snooker','American Football','Overig'];
+    const VALID_SPORTEN = ['Voetbal','Tennis','Basketbal','Hockey','Formule 1','Wielrennen','Darts','Snooker','American Football','Baseball','Overig'];
+    const SPORT_ALIASES = { 'Basketball': 'Basketbal', 'basketball': 'Basketbal' };
 
-    const sanitised = bets.map(b => ({
-      datum:     (b.datum && /^\d{4}-\d{2}-\d{2}$/.test(b.datum)) ? b.datum : today,
-      wedstrijd: b.wedstrijd || '',
-      selectie:  b.selectie  || '',
-      markt:     b.markt     || 'Overig',
-      odds:      parseFloat(b.odds)  || 1,
-      inzet:     parseFloat(b.inzet) || 0,
-      uitkomst:  VALID_UITKOMSTEN.includes(b.uitkomst) ? b.uitkomst : 'lopend',
-      bookmaker: b.bookmaker || 'Overig',
-      sport:     VALID_SPORTEN.includes(b.sport) ? b.sport : 'Overig',
-      notities:  '',
-      tags:      [],
-      _source:   'screenshot-import',
-    }));
+    const sanitised = bets.map(b => {
+      const sport = SPORT_ALIASES[b.sport] || (VALID_SPORTEN.includes(b.sport) ? b.sport : 'Overig');
+      return {
+        datum:     (b.datum && /^\d{4}-\d{2}-\d{2}$/.test(b.datum)) ? b.datum : today,
+        wedstrijd: b.wedstrijd || '',
+        selectie:  b.selectie  || '',
+        markt:     b.markt     || 'Overig',
+        odds:      parseFloat(b.odds)  || 1,
+        inzet:     parseFloat(b.inzet) || 0,
+        uitkomst:  VALID_UITKOMSTEN.includes(b.uitkomst) ? b.uitkomst : 'lopend',
+        bookmaker: b.bookmaker || 'Overig',
+        sport,
+        notities:  '',
+        tags:      [],
+        _source:   'screenshot-import',
+      };
+    });
 
     return Response.json({ bets: sanitised }, { headers: CORS });
   } catch (err) {

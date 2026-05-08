@@ -94,20 +94,22 @@ export function BetsProvider({ children }) {
 
   const addBets = async (newBets) => {
     const { data: { session }, error: authError } = await supabase.auth.getSession();
-    if (authError || !session?.user) { console.error('[addBets] auth error:', authError); return []; }
-    const rows = newBets.map((bet) => toDbRow(bet, session.user.id));
-    try {
-      const { data, error } = await Promise.race([
-        supabase.from('bets').insert(rows).select(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('insert timeout')), 12000)),
-      ]);
-      if (error) { console.error('[addBets] supabase error:', error); return []; }
-      if (data) { setBets((prev) => [...data, ...prev]); return data; }
-      return [];
-    } catch (e) {
-      console.error('[addBets] error:', e.message);
-      return [];
+    if (authError || !session?.user) {
+      const msg = authError?.message || 'Niet ingelogd';
+      console.error('[addBets] auth error:', msg);
+      throw new Error(`Auth mislukt: ${msg}`);
     }
+    const rows = newBets.map((bet) => toDbRow(bet, session.user.id));
+    const { data, error } = await Promise.race([
+      supabase.from('bets').insert(rows).select(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Opslaan duurde te lang (timeout)')), 12000)),
+    ]);
+    if (error) {
+      console.error('[addBets] supabase error:', error);
+      throw new Error(error.message || 'Database fout');
+    }
+    if (data) { setBets((prev) => [...data, ...prev]); return data; }
+    return [];
   };
 
   const replaceAutoImports = async (newBets) => addBets(newBets);
