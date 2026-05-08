@@ -99,17 +99,28 @@ export function BetsProvider({ children }) {
       console.error('[addBets] auth error:', msg);
       throw new Error(`Auth mislukt: ${msg}`);
     }
-    const rows = newBets.map((bet) => toDbRow(bet, session.user.id));
-    const { data, error } = await Promise.race([
-      supabase.from('bets').insert(rows).select(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Opslaan duurde te lang (timeout)')), 12000)),
-    ]);
-    if (error) {
-      console.error('[addBets] supabase error:', error);
-      throw new Error(error.message || 'Database fout');
+    // Insert one at a time — batch inserts can hang; single inserts match addBet which works
+    const saved = [];
+    let lastError = null;
+    for (const bet of newBets) {
+      const row = toDbRow(bet, session.user.id);
+      try {
+        const { data, error } = await Promise.race([
+          supabase.from('bets').insert(row).select().single(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout per bet')), 10000)),
+        ]);
+        if (error) { lastError = error; console.error('[addBets] insert error:', error); }
+        else if (data) saved.push(data);
+      } catch (e) {
+        lastError = e;
+        console.error('[addBets] error:', e.message);
+      }
     }
-    if (data) { setBets((prev) => [...data, ...prev]); return data; }
-    return [];
+    if (saved.length === 0 && lastError) {
+      throw new Error(lastError.message || 'Database fout');
+    }
+    if (saved.length > 0) setBets((prev) => [...saved, ...prev]);
+    return saved;
   };
 
   const replaceAutoImports = async (newBets) => addBets(newBets);
