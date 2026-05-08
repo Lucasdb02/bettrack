@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '../../../lib/supabase';
@@ -30,17 +30,6 @@ export default function LoginPage() {
   const rawNext = searchParams.get('next') || '';
   const nextPath = rawNext.startsWith('/') && rawNext !== '/' ? rawNext : '/dashboard';
 
-  useEffect(() => {
-    const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        setRedirecting(true);
-        window.location.href = nextPath;
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [nextPath]);
-
   const bg        = dark ? '#0d1117' : '#f8fafc';
   const text1     = dark ? '#e6edf3' : '#0f172a';
   const text3     = dark ? '#8b949e' : '#64748b';
@@ -68,7 +57,8 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); setLoading(false); return; }
-    // Redirect happens via onAuthStateChange SIGNED_IN — fired after cookie is written
+    setRedirecting(true);
+    window.location.href = nextPath;
   }
 
   if (redirecting) {

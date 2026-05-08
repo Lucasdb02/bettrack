@@ -190,9 +190,8 @@ export default function Sidebar() {
     }, 0);
   }, [dbBookmakers, transactions, bets]);
 
-  async function handleLogout() {
-    try { await createClient().auth.signOut({ scope: 'local' }); } catch {}
-    window.location.href = '/login';
+  function handleLogout() {
+    window.location.href = '/api/logout';
   }
 
   const isActive = (href) => {

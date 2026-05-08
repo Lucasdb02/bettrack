@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { createClient } from '../../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
 
 const IDLE_MS         = 30 * 60 * 1000;
@@ -24,12 +23,11 @@ export default function SessionTimeout() {
     clearInterval(countdownRef.current);
   }, []);
 
-  const doLogout = useCallback(async () => {
+  const doLogout = useCallback(() => {
     clearAll();
     setShowWarning(false);
     localStorage.removeItem(LAST_ACTIVE_KEY);
-    try { await createClient().auth.signOut({ scope: 'local' }); } catch {}
-    window.location.href = '/login';
+    window.location.href = '/api/logout';
   }, [clearAll]);
 
   const resetTimers = useCallback(() => {
