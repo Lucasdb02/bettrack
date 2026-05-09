@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { createClient } from '../../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 
 function GoogleIcon() {
