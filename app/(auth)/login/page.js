@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { createClient } from '../../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 
 function GoogleIcon() {
@@ -54,11 +53,21 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setError(error.message); setLoading(false); return; }
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, next: nextPath }),
+      redirect: 'follow',
+    });
+    if (!res.ok) {
+      let msg = 'Inloggen mislukt';
+      try { const j = await res.json(); msg = j.error || msg; } catch {}
+      setError(msg);
+      setLoading(false);
+      return;
+    }
     setRedirecting(true);
-    window.location.href = nextPath;
+    window.location.href = res.url || nextPath;
   }
 
   if (redirecting) {
