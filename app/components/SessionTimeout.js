@@ -50,14 +50,7 @@ export default function SessionTimeout() {
     idleTimer.current = setTimeout(doLogout, IDLE_MS);
   }, [clearAll, doLogout]);
 
-  /* Bij mount: check of sessie al verlopen is voor page reload/browser-herstart */
   useEffect(() => {
-    const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0', 10);
-    if (lastActive && Date.now() - lastActive >= IDLE_MS) {
-      doLogout();
-      return;
-    }
-    // Activiteitslisteners
     const events = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll', 'click'];
     const handler = () => resetTimers();
     events.forEach(e => document.addEventListener(e, handler, { passive: true }));
@@ -66,7 +59,7 @@ export default function SessionTimeout() {
       events.forEach(e => document.removeEventListener(e, handler));
       clearAll();
     };
-  }, [resetTimers, clearAll, doLogout]);
+  }, [resetTimers, clearAll]);
 
   /* Uitloggen wanneer tab langer dan IDLE_MS verborgen is geweest */
   useEffect(() => {
