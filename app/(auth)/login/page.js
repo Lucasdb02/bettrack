@@ -54,19 +54,11 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, next: nextPath }),
-    });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(json.error || 'Inloggen mislukt');
-      setLoading(false);
-      return;
-    }
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { setError(error.message); setLoading(false); return; }
     setRedirecting(true);
-    window.location.href = json.redirectTo || nextPath;
+    window.location.href = nextPath;
   }
 
   if (redirecting) {
