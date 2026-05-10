@@ -5,23 +5,6 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   const cookieStore = await cookies();
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll(); },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {}
-        },
-      },
-    }
-  );
-
   let body;
   try {
     body = await request.json();
@@ -30,12 +13,31 @@ export async function POST(request) {
   }
 
   const { email, password, next } = body;
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const redirectTo = next?.startsWith('/') && next !== '/' ? next : '/dashboard';
 
+  // Build the response first — Supabase sets session cookies directly on it
+  const response = NextResponse.json({ ok: true, redirectTo });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 401 });
   }
 
-  const redirectTo = next?.startsWith('/') && next !== '/' ? next : '/dashboard';
-  return NextResponse.redirect(new URL(redirectTo, request.url));
+  // Cookies are on `response` — browser stores them before the client navigates
+  return response;
 }

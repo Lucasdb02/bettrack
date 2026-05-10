@@ -58,17 +58,15 @@ export default function LoginPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, next: nextPath }),
-      redirect: 'follow',
     });
+    const json = await res.json();
     if (!res.ok) {
-      let msg = 'Inloggen mislukt';
-      try { const j = await res.json(); msg = j.error || msg; } catch {}
-      setError(msg);
+      setError(json.error || 'Inloggen mislukt');
       setLoading(false);
       return;
     }
     setRedirecting(true);
-    window.location.href = res.url || nextPath;
+    window.location.href = json.redirectTo || nextPath;
   }
 
   if (redirecting) {
