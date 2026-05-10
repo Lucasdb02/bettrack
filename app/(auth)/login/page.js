@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -19,6 +19,7 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const { dark } = useTheme();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail]           = useState('');
   const [password, setPassword]     = useState('');
@@ -58,7 +59,8 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); setLoading(false); return; }
     setRedirecting(true);
-    window.location.href = nextPath;
+    router.refresh();
+    router.push(nextPath);
   }
 
   if (redirecting) {
