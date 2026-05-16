@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { HeroSection } from '@/components/ui/hero-section-9';
+import { HeroSection } from '@/components/ui/hero-section-1';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts';
 import { createClient } from '@/lib/supabase';
