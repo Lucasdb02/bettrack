@@ -2,6 +2,69 @@
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════
+   SHADCN/UI THEME TOKENS
+   Maps shadcn semantic classes (bg-background, text-muted-foreground, etc.)
+   to the existing CSS variable system so dark mode works automatically.
+   ══════════════════════════════════════════════ */
+
+/* Light mode base values */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: #0f172a;
+  --primary-foreground: #f8fafc;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --ui-input: #e2e8f0;
+  --ui-ring: #0f172a;
+  --radius: 0.5rem;
+}
+
+/* Dark mode overrides (applied via ThemeContext adding .dark to <html>) */
+.dark {
+  --background: #0d1117;
+  --foreground: #e6edf3;
+  --primary: #e6edf3;
+  --primary-foreground: #0d1117;
+  --secondary: #161c2a;
+  --secondary-foreground: #e6edf3;
+  --muted: #1c2335;
+  --muted-foreground: #8b949e;
+  --accent: #1c2335;
+  --accent-foreground: #e6edf3;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --ui-input: rgba(255, 255, 255, 0.1);
+  --ui-ring: #7b9ef0;
+}
+
+/* Wire shadcn semantic names into Tailwind v4's @theme system */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border, #e2e8f0);
+  --color-input: var(--ui-input);
+  --color-ring: var(--ui-ring);
+  --radius: var(--radius);
+}
+
+/* ══════════════════════════════════════════════
    TYPOGRAPHY TOKENS
    ══════════════════════════════════════════════ */
 :root {
