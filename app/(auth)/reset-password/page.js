@@ -14,38 +14,29 @@ export default function ResetPasswordPage() {
   const [status, setStatus] = useState('loading'); // 'loading' | 'ready' | 'expired'
 
   useEffect(() => {
-    const supabase = createClient();
-
-    // If we already set the flag on a previous render/event, show form immediately
-    if (sessionStorage.getItem('reset_mode') === 'true') {
+    // PKCE flow: callback already exchanged the code and set the session in cookies,
+    // then redirected here with ?mode=recovery — show the form immediately.
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'recovery') {
       setStatus('ready');
+      return;
     }
 
+    // Implicit/legacy flow: wait for PASSWORD_RECOVERY event from hash token
+    const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
-        // Store flag so SIGNED_IN (which Supabase also fires) doesn't redirect us away
-        sessionStorage.setItem('reset_mode', 'true');
         setStatus('ready');
-      } else if (event === 'SIGNED_IN') {
-        // Only redirect if this is a normal login, not a password-reset flow
-        if (sessionStorage.getItem('reset_mode') !== 'true') {
-          router.replace('/dashboard');
-        }
-        // If reset_mode is set, status is already 'ready' — do nothing
       }
     });
 
-    const timer = setTimeout(() => {
-      if (sessionStorage.getItem('reset_mode') !== 'true') {
-        setStatus('expired');
-      }
-    }, 10000);
+    const timer = setTimeout(() => setStatus('expired'), 10000);
 
     return () => {
       subscription.unsubscribe();
       clearTimeout(timer);
     };
-  }, [router]);
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
