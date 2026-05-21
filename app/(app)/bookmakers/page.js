@@ -564,7 +564,7 @@ export default function BookmakersPage() {
 
           {/* Amount */}
           <div className="bm-tx-amount" style={{ position:'relative', flex:'0 0 130px' }}>
-            <span className="bm-tx-euro" style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13.5, pointerEvents:'none', zIndex:1 }}>€</span>
+            <span className="bm-tx-euro" style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'var(--text-1)', fontSize:13.5, lineHeight:1, pointerEvents:'none', zIndex:1 }}>€</span>
             <input
               type="number" min={txType === 'correctie' ? undefined : '0.01'} step="0.01"
               placeholder="0.00"
