@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import { HeroSection } from '@/components/ui/hero-section-1';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts';
 import { createClient } from '@/lib/supabase';
@@ -1354,7 +1353,6 @@ export default function LandingPage() {
   return (
     <LpTheme.Provider value={{ dark, setDark }}>
       <div style={{ backgroundColor: dark ? '#04111f' : '#ffffff', transition: 'background-color 0.3s ease' }}>
-        <HeroSection />
         <Header />
         <Hero />
         <AppShowcase />

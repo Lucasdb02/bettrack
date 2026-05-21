@@ -3,7 +3,6 @@ import { BetsProvider } from "../context/BetsContext";
 import { PreferencesProvider } from "../context/PreferencesContext";
 import { SubscriptionProvider } from "../context/SubscriptionContext";
 import { AppShell } from "../components/AppShell";
-import SessionTimeout from "../components/SessionTimeout";
 import AppMain from "../components/AppMain";
 
 export default function AppLayout({ children }) {
@@ -12,7 +11,6 @@ export default function AppLayout({ children }) {
       <SubscriptionProvider>
         <BetsProvider>
           <AppShell>
-            <SessionTimeout />
             <Sidebar />
             <AppMain>
               {children}
