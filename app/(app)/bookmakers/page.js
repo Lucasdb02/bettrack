@@ -392,7 +392,8 @@ export default function BookmakersPage() {
 
   const addTransaction = async () => {
     const amt = parseFloat(txAmount);
-    if (!txBookie || !txAmount || isNaN(amt) || amt <= 0) return;
+    if (!txBookie || !txAmount || isNaN(amt)) return;
+    if (txType !== 'correctie' && amt <= 0) return;
     setTxLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setTxLoading(false); return; }
@@ -556,7 +557,7 @@ export default function BookmakersPage() {
           <div className="bm-tx-amount" style={{ position:'relative', flex:'0 0 130px' }}>
             <span className="bm-tx-euro" style={{ position:'absolute', left:9, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13, pointerEvents:'none', zIndex:1 }}>€</span>
             <input
-              type="number" min="0.01" step="0.01"
+              type="number" min={txType === 'correctie' ? undefined : '0.01'} step="0.01"
               placeholder="0.00"
               value={txAmount}
               onChange={e => setTxAmount(e.target.value)}
@@ -570,46 +571,47 @@ export default function BookmakersPage() {
             <SingleDatePicker value={txDate} onChange={setTxDate} style={{ width:'100%', height:'100%', boxSizing:'border-box' }}/>
           </div>
 
-          {/* Type toggle */}
-          <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
-            {[
-              { val:'deposit',    label:'Storting',  activeColor:'var(--color-win)'  },
-              { val:'withdrawal', label:'Opname',    activeColor:'var(--color-loss)' },
-              { val:'correctie',  label:'Correctie', activeColor:'var(--text-2)'     },
-            ].map(opt => (
-              <button
-                key={opt.val}
-                onClick={() => setTxType(opt.val)}
-                style={{
-                  minWidth:72, padding:'0 10px', fontSize:13, fontWeight:600,
-                  border: 'none', borderRadius:6,
-                  cursor:'pointer', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
-                  backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
-                  color: txType === opt.val ? opt.activeColor : 'var(--text-3)',
-                  boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
-                  transition:'all 0.12s',
-                }}
-              >{opt.label}</button>
-            ))}
-          </div>
+          {/* Type toggle + Submit — always on the same row */}
+          <div style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'nowrap', flex:'1 1 auto' }}>
+            <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
+              {[
+                { val:'deposit',    label:'Storting',  activeColor:'var(--color-win)'  },
+                { val:'withdrawal', label:'Opname',    activeColor:'var(--color-loss)' },
+                { val:'correctie',  label:'Correctie', activeColor:'var(--text-2)'     },
+              ].map(opt => (
+                <button
+                  key={opt.val}
+                  onClick={() => setTxType(opt.val)}
+                  style={{
+                    minWidth:72, padding:'0 10px', fontSize:13, fontWeight:600,
+                    border: 'none', borderRadius:6,
+                    cursor:'pointer', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
+                    backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
+                    color: txType === opt.val ? opt.activeColor : 'var(--text-3)',
+                    boxShadow: txType === opt.val ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                    transition:'all 0.12s',
+                  }}
+                >{opt.label}</button>
+              ))}
+            </div>
 
-          {/* Submit */}
-          <button
-            className="bm-tx-submit"
-            onClick={addTransaction}
-            disabled={txLoading || !txBookie || !txAmount}
-            style={{
-              padding:'9px 18px', fontSize:13.5, fontWeight:600,
-              background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : 'var(--bg-input)',
-              color: (!txBookie || !txAmount) ? 'var(--text-4)' : 'var(--text-1)',
-              border:'1px solid var(--border)', borderRadius:7,
-              cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
-              display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap',
-            }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Registreren
-          </button>
+            <button
+              className="bm-tx-submit"
+              onClick={addTransaction}
+              disabled={txLoading || !txBookie || !txAmount}
+              style={{
+                padding:'9px 18px', fontSize:13.5, fontWeight:600,
+                background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : 'var(--bg-input)',
+                color: (!txBookie || !txAmount) ? 'var(--text-4)' : 'var(--text-1)',
+                border:'1px solid var(--border)', borderRadius:7,
+                cursor: (!txBookie || !txAmount) ? 'default' : 'pointer',
+                display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap',
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Registreren
+            </button>
+          </div>
         </div>
 
         {/* Transaction history */}
