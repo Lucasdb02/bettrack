@@ -390,7 +390,7 @@ function Hero() {
                   WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
                   maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 48, width: 'max-content', animation: 'bookie-scroll 26s linear infinite' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, width: 'max-content', animation: 'bookie-scroll 26s linear infinite' }}>
                     {[...BOOKIES, ...BOOKIES].map((b, i) => (
                       <div key={i} style={{ height: 32, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                         <img
