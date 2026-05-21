@@ -572,7 +572,7 @@ export default function BookmakersPage() {
           </div>
 
           {/* Type toggle + Submit — always on the same row */}
-          <div style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'nowrap', flex:'1 1 auto' }}>
+          <div className="bm-tx-action-row" style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'nowrap', flex:'1 1 auto' }}>
             <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
               {[
                 { val:'deposit',    label:'Storting',  activeColor:'var(--color-win)'  },

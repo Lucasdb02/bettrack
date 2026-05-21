@@ -685,23 +685,24 @@ html.dark .glass-card {
   .bm-add-row { flex-direction: column !important; align-items: stretch !important; }
   .bm-add-row > div:first-child { max-width: 100% !important; flex: 1 1 100% !important; }
   .bm-add-row > button { width: 100% !important; justify-content: center !important; }
-  .bm-tx-row { display: grid !important; grid-template-columns: 1fr 1fr !important; align-items: end !important; }
-  .bm-tx-bookie { grid-column: 1 / -1 !important; }
-  .bm-tx-amount { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; }
-  .bm-tx-date { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; min-width: 0 !important; }
-  .bm-tx-submit { grid-column: 1 / 2 !important; flex: none !important; width: 100% !important; justify-content: center; }
-  .bm-tx-type { grid-column: 2 / 3 !important; flex: none !important; width: 100% !important; }
-  .bm-tx-row input, .bm-tx-row select { padding: 7px 10px !important; font-size: 13px !important; }
-  .bm-tx-amount input { padding-left: 24px !important; }
-  .bm-tx-type button { padding: 7px 10px !important; font-size: 12px !important; flex: 1 !important; }
-  .bm-tx-submit { padding: 7px 10px !important; font-size: 13px !important; }
+  /* Deposits form: single-column stack on mobile */
+  .bm-tx-row { display: flex !important; flex-direction: column !important; gap: 8px !important; align-items: stretch !important; }
+  .bm-tx-bookie,
+  .bm-tx-amount,
+  .bm-tx-date   { flex: none !important; width: 100% !important; min-width: 0 !important; }
+  .bm-tx-amount input  { width: 100% !important; box-sizing: border-box !important; padding-left: 24px !important; }
+  .bm-tx-bookie select { width: 100% !important; box-sizing: border-box !important; }
+  .bm-tx-date button   { width: 100% !important; box-sizing: border-box !important; }
+  /* Type + Registreren side-by-side */
+  .bm-tx-action-row { flex-wrap: nowrap !important; width: 100% !important; }
+  .bm-tx-type   { flex: 1 1 0 !important; min-width: 0 !important; }
+  .bm-tx-type button { flex: 1 !important; font-size: 12px !important; padding: 0 6px !important; }
+  .bm-tx-submit { flex: 0 0 auto !important; white-space: nowrap !important; }
   .bm-add-row input, .bm-add-row select { padding: 8px 10px !important; font-size: 13px !important; }
   .bm-field-progress { display: none !important; }
   .bm-card { position: relative !important; }
   .bm-remove { position: absolute !important; top: 12px !important; right: 12px !important; margin-left: 0 !important; align-self: auto !important; color: var(--text-3) !important; padding: 4px !important; }
   .bm-name-section { padding-right: 32px !important; }
-  .bm-tx-row { align-items: center !important; }
-  .bm-tx-date { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; line-height: 38px !important; }
 }
 
 /* ══════════════════════════════════════════════
