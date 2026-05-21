@@ -304,16 +304,25 @@ export default function BookmakersPage() {
   );
 
   const filteredTransactions = useMemo(() => {
-    if (period === 'all') return transactions;
+    // Resolve selected bookmaker names → IDs
+    const allowedIds = filterBookies.length > 0
+      ? new Set(dbBookmakers.filter(b => filterBookies.includes(b.naam)).map(b => b.id))
+      : null;
+
+    let txs = allowedIds
+      ? transactions.filter(tx => allowedIds.has(tx.bookmaker_id))
+      : transactions;
+
+    if (period === 'all') return txs;
     if (period === 'custom') {
-      if (!customRange?.from || !customRange?.to) return transactions;
+      if (!customRange?.from || !customRange?.to) return txs;
       const end = new Date(customRange.to); end.setDate(end.getDate() + 1);
-      return transactions.filter(tx => { const d = new Date(tx.datum); return d >= customRange.from && d < end; });
+      return txs.filter(tx => { const d = new Date(tx.datum); return d >= customRange.from && d < end; });
     }
     const range = getDateRange(period);
-    if (!range) return transactions;
-    return transactions.filter(tx => { const d = new Date(tx.datum); return d >= range.from && d < range.to; });
-  }, [transactions, period, customRange]);
+    if (!range) return txs;
+    return txs.filter(tx => { const d = new Date(tx.datum); return d >= range.from && d < range.to; });
+  }, [transactions, period, customRange, filterBookies, dbBookmakers]);
 
   const netTxPerBookie = useMemo(() => {
     const map = {};
