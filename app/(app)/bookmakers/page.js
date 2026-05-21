@@ -138,7 +138,11 @@ function usePortalDropdown() {
   const close = useCallback(() => setOpen(false), []);
   useEffect(() => {
     if (!open) return;
-    const h = () => setOpen(false);
+    // Only close on page-level scroll, not on scroll inside the dropdown panel itself
+    const h = (e) => {
+      if (e.target && e.target.closest?.('.dropdown-panel')) return;
+      setOpen(false);
+    };
     window.addEventListener('scroll', h, true);
     return () => window.removeEventListener('scroll', h, true);
   }, [open]);
@@ -557,7 +561,7 @@ export default function BookmakersPage() {
               value={txAmount}
               onChange={e => setTxAmount(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addTransaction()}
-              style={{ width:'100%', padding:'9px 10px 9px 24px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)' }}
+              style={{ width:'100%', padding:'9px 10px 9px 24px', border:'1px solid var(--border)', borderRadius:7, color:'var(--text-1)', backgroundColor:'var(--bg-input)', WebkitAppearance:'none' }}
             />
           </div>
 

@@ -794,10 +794,14 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 
 /* ══════════════════════════════════════════════
    MOBILE — Prevent iOS auto-zoom on input focus
+   iOS zooms when computed font-size < 16px.
    ══════════════════════════════════════════════ */
-@media screen and (max-width: 768px) {
-  input, select, textarea {
+@media screen and (max-width: 900px) {
+  input, input[type="number"], input[type="text"],
+  input[type="email"], input[type="tel"],
+  select, textarea {
     font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
   }
 }
 
