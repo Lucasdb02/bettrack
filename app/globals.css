@@ -545,6 +545,7 @@ html.dark .glass-card {
 
   .page-header { flex-wrap: wrap !important; gap: 10px !important; margin-bottom: 16px !important; }
   .page-header h1 { font-size: 20px !important; }
+  .page-header-cta { display: none !important; }
 
   .chart-2col { grid-template-columns: 1fr !important; }
 

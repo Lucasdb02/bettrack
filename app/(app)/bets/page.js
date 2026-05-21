@@ -457,7 +457,7 @@ export default function BetsPage() {
     <div style={{ padding:'24px' }} className="app-page">
       <div className="flex items-center justify-between mb-4 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Bets Overzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>{bets.length} bets in totaal</p></div>
-        <Link href="/bets/new" className="btn-primary-glass" style={{padding:'9px 18px',fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7,borderRadius:9}}>
+        <Link href="/bets/new" className="btn-primary-glass page-header-cta" style={{padding:'9px 18px',fontSize:13.5,fontWeight:600,textDecoration:'none',display:'flex',alignItems:'center',gap:7,borderRadius:9}}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Bet Invoeren
         </Link>
