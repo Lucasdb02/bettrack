@@ -661,12 +661,12 @@ html.dark .glass-card {
 /* ══════════════════════════════════════════════
    BOOKMAKERS — Transaction row equal height
    ══════════════════════════════════════════════ */
-.bm-tx-row .bm-tx-submit  { height: 38px !important; box-sizing: border-box !important; }
-.bm-tx-row .bm-tx-type    { height: 38px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-submit  { height: 40px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-type    { height: 40px !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-type button { height: 100% !important; box-sizing: border-box !important; }
-.bm-tx-row .bm-tx-bookie select { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
-.bm-tx-row .bm-tx-amount input  { height: 38px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
-.bm-tx-row .bm-tx-date    { height: 38px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-bookie select { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-tx-row .bm-tx-amount input  { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-tx-row .bm-tx-date    { height: 40px !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-date button { height: 100% !important; box-sizing: border-box !important; }
 .bm-add-row select        { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 .bm-add-row button        { height: 40px !important; box-sizing: border-box !important; }

@@ -554,7 +554,7 @@ export default function BookmakersPage() {
             <select
               value={txBookie}
               onChange={e => setTxBookie(e.target.value)}
-              style={{ width:'100%', padding:'9px 30px 9px 10px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer' }}
+              style={{ width:'100%', height:40, padding:'0 30px 0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', appearance:'none', cursor:'pointer', boxSizing:'border-box' }}
             >
               <option value="">Bookmaker...</option>
               {activeBookies.map(naam => <option key={naam} value={naam}>{naam}</option>)}
@@ -564,25 +564,25 @@ export default function BookmakersPage() {
 
           {/* Amount */}
           <div className="bm-tx-amount" style={{ position:'relative', flex:'0 0 130px' }}>
-            <span className="bm-tx-euro" style={{ position:'absolute', left:9, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13, pointerEvents:'none', zIndex:1 }}>€</span>
+            <span className="bm-tx-euro" style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13.5, pointerEvents:'none', zIndex:1 }}>€</span>
             <input
               type="number" min={txType === 'correctie' ? undefined : '0.01'} step="0.01"
               placeholder="0.00"
               value={txAmount}
               onChange={e => setTxAmount(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addTransaction()}
-              style={{ width:'100%', padding:'9px 10px 9px 24px', border:'1px solid var(--border)', borderRadius:7, color:'var(--text-1)', backgroundColor:'var(--bg-input)', WebkitAppearance:'none' }}
+              style={{ width:'100%', height:40, padding:'0 10px 0 26px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', WebkitAppearance:'none', boxSizing:'border-box' }}
             />
           </div>
 
           {/* Date */}
           <div className="bm-tx-date" style={{ flex:'0 0 150px' }}>
-            <SingleDatePicker value={txDate} onChange={setTxDate} style={{ width:'100%', height:'100%', boxSizing:'border-box' }}/>
+            <SingleDatePicker value={txDate} onChange={setTxDate} style={{ width:'100%', height:40, boxSizing:'border-box', fontSize:13.5 }}/>
           </div>
 
           {/* Type toggle + Submit — always on the same row */}
           <div className="bm-tx-action-row" style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'nowrap', flex:'1 1 auto' }}>
-            <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
+            <div className="bm-tx-type" style={{ display:'flex', gap:3, padding:3, height:40, boxSizing:'border-box', backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:8, flexShrink:0 }}>
               {[
                 { val:'deposit',    label:'Storting',  activeColor:'var(--color-win)'  },
                 { val:'withdrawal', label:'Opname',    activeColor:'var(--color-loss)' },
@@ -592,8 +592,8 @@ export default function BookmakersPage() {
                   key={opt.val}
                   onClick={() => setTxType(opt.val)}
                   style={{
-                    minWidth:72, padding:'0 10px', fontSize:13, fontWeight:600,
-                    border: 'none', borderRadius:6,
+                    minWidth:72, padding:'0 10px', fontSize:13.5, fontWeight:600,
+                    border:'none', borderRadius:6,
                     cursor:'pointer', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
                     backgroundColor: txType === opt.val ? 'var(--bg-card)' : 'transparent',
                     color: txType === opt.val ? opt.activeColor : 'var(--text-3)',
@@ -609,7 +609,7 @@ export default function BookmakersPage() {
               onClick={addTransaction}
               disabled={txLoading || !txBookie || !txAmount}
               style={{
-                padding:'9px 18px', fontSize:13.5, fontWeight:600,
+                height:40, padding:'0 18px', fontSize:13.5, fontWeight:600, boxSizing:'border-box',
                 background: (!txBookie || !txAmount) ? 'var(--bg-subtle)' : 'var(--bg-input)',
                 color: (!txBookie || !txAmount) ? 'var(--text-4)' : 'var(--text-1)',
                 border:'1px solid var(--border)', borderRadius:7,
