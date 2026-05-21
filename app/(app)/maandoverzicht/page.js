@@ -1,6 +1,7 @@
 'use client';
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
+import BetsLoadGuard from '../../components/BetsLoadGuard';
 import { useFmt } from '../../context/PreferencesContext';
 import { uitkomstConfig, sportEmoji } from '../../lib/sports';
 import BookmakerIcon from '../../components/BookmakerIcon';
@@ -163,7 +164,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
 }
 
 export default function MaandoverzichtPage() {
-  const {bets,loaded}=useBets();
+  const {bets, loaded, fetchError}=useBets();
   const {fmtPnl,fmtAmt} = useFmt();
   const now=new Date();
   const [jaar,setJaar]=useState(now.getFullYear());
@@ -241,7 +242,7 @@ export default function MaandoverzichtPage() {
   const prev=()=>{if(maand===0){setMaand(11);setJaar(j=>j-1);}else setMaand(m=>m-1);setGeselecteerd(null);};
   const next=()=>{if(maand===11){setMaand(0);setJaar(j=>j+1);}else setMaand(m=>m+1);setGeselecteerd(null);};
 
-  if(!loaded) return <div className="flex items-center justify-center h-full" style={{color:'var(--text-4)'}}>Laden...</div>;
+  if (!loaded || fetchError) return <BetsLoadGuard />;
 
   const todayKey = now.toISOString().split('T')[0];
 

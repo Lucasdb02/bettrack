@@ -3,6 +3,7 @@ import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useFmt } from '../../context/PreferencesContext';
 import { useTheme } from '../../context/ThemeContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
+import BetsLoadGuard from '../../components/BetsLoadGuard';
 import { SPORTEN, sportEmoji, UITKOMSTEN, uitkomstConfig } from '../../lib/sports';
 import TagInput, { TagChip } from '../../components/TagInput';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
@@ -410,7 +411,7 @@ function filterBetsByPeriod(bets, filter, customRange) {
 }
 
 export default function BetsPage() {
-  const { bets, deleteBet, updateBet, loaded } = useBets();
+  const { bets, deleteBet, updateBet, loaded, fetchError } = useBets();
   const [filterU, setFilterU] = useState('alle');
   const [filterS, setFilterS] = useState('alle');
   const [filterT, setFilterT] = useState('alle');
@@ -448,7 +449,7 @@ export default function BetsPage() {
     }
   }, [editBet, updateBet]);
 
-  if (!loaded) return <div className="flex items-center justify-center h-full" style={{color:'var(--text-4)'}}>Laden...</div>;
+  if (!loaded || fetchError) return <BetsLoadGuard />;
 
   const sel = {padding:'7px 11px',border:'1px solid var(--border)',borderRadius:8,fontSize:13,color:'var(--text-1)',backgroundColor:'var(--bg-card)',cursor:'pointer'};
 

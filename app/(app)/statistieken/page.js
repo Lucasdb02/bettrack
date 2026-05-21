@@ -1,6 +1,7 @@
 'use client';
 import { useState, useMemo, useEffect } from 'react';
 import { useBets, berekenWinst } from '../../context/BetsContext';
+import BetsLoadGuard from '../../components/BetsLoadGuard';
 import { useTheme } from '../../context/ThemeContext';
 import { useFmt } from '../../context/PreferencesContext';
 import BookmakerIcon from '../../components/BookmakerIcon';
@@ -300,7 +301,7 @@ function GroepTabel({ data, title, type, isMobile }) {
 // ── page ───────────────────────────────────────────────────────────────────────
 
 export default function StatistiekenPage() {
-  const { bets, loaded } = useBets();
+  const { bets, loaded, fetchError } = useBets();
   const { fmtPnl, fmtAmt } = useFmt();
 
   const [isMobile, setIsMobile] = useState(false);
@@ -354,7 +355,7 @@ export default function StatistiekenPage() {
     return { mW, mL };
   }, [settled]);
 
-  if (!loaded) return <div className="flex items-center justify-center h-full" style={{ color: 'var(--text-4)' }}>Laden...</div>;
+  if (!loaded || fetchError) return <BetsLoadGuard />;
 
   const empty = (h = 160) => (
     <div style={{ height: h, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-4)', fontSize: 13.5 }}>

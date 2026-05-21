@@ -2,6 +2,7 @@
 import { useBets, berekenWinst } from '../../context/BetsContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useFmt } from '../../context/PreferencesContext';
+import BetsLoadGuard from '../../components/BetsLoadGuard';
 import BookmakerIcon, { BOOKIE_BRAND_COLORS } from '../../components/BookmakerIcon';
 import { uitkomstConfig, sportEmoji } from '../../lib/sports';
 import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
@@ -631,7 +632,7 @@ function DateRangeModal({ initial, onSave, onClose }) {
 
 /* ══════════════════════════════════════════════════════ */
 export default function Dashboard() {
-  const { bets, loaded } = useBets();
+  const { bets, loaded, fetchError } = useBets();
   const { fmtPnl, fmtAmt } = useFmt();
 
   const [periodFilter,  setPeriodFilter]  = useState('last28');
@@ -826,7 +827,7 @@ export default function Dashboard() {
 
   const recent = useMemo(() => [...filtered].sort((a,b)=>new Date(b.datum)-new Date(a.datum)).slice(0,6), [filtered]);
 
-  if (!loaded) return <div className="flex items-center justify-center h-full" style={{color:'var(--text-4)'}}>Laden...</div>;
+  if (!loaded || fetchError) return <BetsLoadGuard />;
 
   const ic = '#7b9ef0';
   const empty = (h=220) => <div style={{height:h,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-4)',fontSize:14}}>Voeg bets toe om de grafiek te zien</div>;
