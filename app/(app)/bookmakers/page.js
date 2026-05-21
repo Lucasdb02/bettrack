@@ -627,12 +627,13 @@ export default function BookmakersPage() {
               const isDeposit = tx.type === 'deposit';
               const isCorrectie = tx.type === 'correctie';
               const txColor = isDeposit ? 'var(--color-win)' : isCorrectie ? 'var(--text-2)' : 'var(--color-loss)';
-              const txPrefix = isDeposit || isCorrectie ? '+' : '-';
+              const txAmt = Number(tx.amount);
+              const txPrefix = isDeposit ? '+' : isCorrectie ? (txAmt < 0 ? '' : '+') : '-';
               const txLabel = isDeposit ? 'Storting' : isCorrectie ? 'Correctie' : 'Opname';
               return (
                 <div key={tx.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 10px', borderRadius:7, backgroundColor:'var(--bg-subtle)' }}>
                   <span style={{ fontSize:12, fontWeight:700, color: txColor, width:76, flexShrink:0, lineHeight:1 }}>
-                    {txPrefix}€{Number(tx.amount).toFixed(2)}
+                    {txPrefix}€{Math.abs(txAmt).toFixed(2)}
                   </span>
                   <span style={{ fontSize:12, fontWeight:600, color:'var(--text-2)', flex:1, lineHeight:1 }}>{bmNaam}</span>
                   <span style={{ fontSize:11.5, color:'var(--text-4)', flexShrink:0, lineHeight:1 }}>
