@@ -744,6 +744,11 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
   to   { transform: translateX(-50%); }
 }
 
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(84,105,212,0.6); }
+  50%       { box-shadow: 0 0 0 5px rgba(84,105,212,0); }
+}
+
 @keyframes tmb-scroll-down {
   from { transform: translateY(-50%); }
   to   { transform: translateY(0); }
