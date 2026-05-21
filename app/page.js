@@ -367,22 +367,18 @@ function Hero() {
 
           {/* Bookmaker logo scroll */}
           {(() => {
-            // brightness(0) collapses all colours to black; opacity softens to gray.
-            // Works for any logo colour (green, white, coloured).
-            const imgFilter = dark
-              ? 'brightness(0) invert(1) opacity(0.4)'
-              : 'brightness(0) opacity(0.32)';
             const BOOKIES = [
-              { name: 'Unibet',   src: '/logos/unibet.svg' },
-              { name: 'bet365',   src: '/logos/bet365.svg' },
-              { name: 'TOTO',     src: '/logos/toto.svg' },
-              { name: 'BetCity',  src: '/logos/betcity.svg' },
-              { name: 'Betway',   src: '/logos/betway.svg' },
-              { name: "Jack's",   src: '/logos/jacks.png' },
-              { name: 'Bingoal',  src: '/logos/bingoal.jpg' },
-              { name: 'Circus',   src: '/logos/circus.png' },
-              { name: 'LeoVegas', src: '/logos/leovegas.jpg' },
-              { name: '888sport', src: '/logos/888sport.png' },
+              { name: 'Unibet',    src: 'https://www.surebetnl.com/unibet.png' },
+              { name: 'bet365',    src: 'https://www.surebetnl.com/bet365.png' },
+              { name: 'TOTO',      src: 'https://www.surebetnl.com/toto.png' },
+              { name: 'BetCity',   src: 'https://www.surebetnl.com/betcity.png' },
+              { name: "Jack's",    src: 'https://www.surebetnl.com/jacks.png' },
+              { name: 'BetMGM',    src: 'https://www.surebetnl.com/betmgm.png' },
+              { name: 'Circus',    src: 'https://www.surebetnl.com/circus.png' },
+              { name: 'OneCasino', src: 'https://www.surebetnl.com/onecasino.png' },
+              { name: '711',       src: 'https://www.surebetnl.com/711.png' },
+              { name: 'Bingoal',   src: 'https://www.surebetnl.com/bingoal.png' },
+              { name: '888sport',  src: 'https://www.surebetnl.com/888sport.png' },
             ];
             return (
               <div style={{ marginBottom: 40 }}>
@@ -396,10 +392,10 @@ function Hero() {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 48, width: 'max-content', animation: 'bookie-scroll 26s linear infinite' }}>
                     {[...BOOKIES, ...BOOKIES].map((b, i) => (
-                      <div key={i} style={{ height: 22, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                      <div key={i} style={{ height: 32, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                         <img
                           src={b.src} alt={b.name}
-                          style={{ height: 22, width: 'auto', objectFit: 'contain', filter: imgFilter, display: 'block' }}
+                          style={{ height: 32, width: 'auto', objectFit: 'contain', display: 'block' }}
                           draggable={false}
                         />
                       </div>
