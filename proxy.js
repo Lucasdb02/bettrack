@@ -35,10 +35,9 @@ export async function proxy(request) {
     }
   );
 
-  // getSession() reads from the cookie — no network call, reliable for route protection.
-  // Token refresh is handled independently by the browser client.
-  const { data: { session } } = await supabase.auth.getSession();
-  const isLoggedIn = !!session?.user;
+  // getUser() validates the token server-side and triggers automatic refresh via setAll.
+  const { data: { user } } = await supabase.auth.getUser();
+  const isLoggedIn = !!user;
 
   const isAppRoute = APP_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(p + '/')
