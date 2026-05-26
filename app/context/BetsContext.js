@@ -90,7 +90,11 @@ export function BetsProvider({ children }) {
       if (session?.user) {
         fetchBets(session.user.id);
       } else {
-        setLoaded(true);
+        // No session on an app page → middleware should have caught this,
+        // but redirect to login as a safety net.
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
       }
     });
 
@@ -100,6 +104,7 @@ export function BetsProvider({ children }) {
         setBets([]);
         setLoaded(true);
         setFetchError(false);
+        if (typeof window !== 'undefined') window.location.href = '/login';
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         if (session?.user) fetchBets(session.user.id);
       }
