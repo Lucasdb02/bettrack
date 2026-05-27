@@ -3,6 +3,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
+import {
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+} from 'recharts';
 
 const ADMIN_EMAIL = 'lucas@mybuqo.com';
 
@@ -51,9 +55,8 @@ function PlanDropdown({ userId, plan, onChange, disabled }) {
   return (
     <>
       <button ref={btnRef} onClick={toggle} disabled={disabled} style={{
-        display:'flex', alignItems:'center', gap:5,
-        padding:'3px 8px 3px 5px', border:'1px solid var(--border)',
-        borderRadius:7, backgroundColor:'var(--bg-card)',
+        display:'flex', alignItems:'center', gap:5, padding:'3px 8px 3px 5px',
+        border:'1px solid var(--border)', borderRadius:7, backgroundColor:'var(--bg-card)',
         cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
       }}>
         <PlanBadge plan={plan}/>
@@ -66,10 +69,9 @@ function PlanDropdown({ userId, plan, onChange, disabled }) {
         <>
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
           <div className="dropdown-panel" style={{
-            position:'fixed', top: rect.bottom+4, left: rect.left,
-            zIndex:9999, backgroundColor: dropBg,
-            border:`1px solid ${dropBdr}`, borderRadius:10,
-            boxShadow:'0 8px 32px rgba(0,0,0,0.18)', minWidth:120, overflow:'hidden',
+            position:'fixed', top: rect.bottom+4, left: rect.left, zIndex:9999,
+            backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
+            borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)', minWidth:120, overflow:'hidden',
           }}>
             {PLANS.map((p, i) => {
               const c = PLAN_COLORS[p];
@@ -81,8 +83,7 @@ function PlanDropdown({ userId, plan, onChange, disabled }) {
                   fontSize:13, fontWeight: sel ? 700 : 400,
                   color: sel ? c.color : 'var(--text-1)',
                   backgroundColor: sel ? c.bg : 'transparent',
-                  border:'none', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none',
-                  cursor:'pointer',
+                  border:'none', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none', cursor:'pointer',
                 }}
                   onMouseEnter={e => { if (!sel) e.currentTarget.style.backgroundColor = hoverBg; }}
                   onMouseLeave={e => { if (!sel) e.currentTarget.style.backgroundColor = 'transparent'; }}
@@ -100,17 +101,65 @@ function PlanDropdown({ userId, plan, onChange, disabled }) {
   );
 }
 
-function StatCard({ label, value, sub, color }) {
+/* ─── KPI Card ─── */
+function KpiCard({ label, value, sub, color, trend, trendLabel, small }) {
+  const isPos = trend > 0;
+  const isNeg = trend < 0;
   return (
-    <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 22px', boxShadow:'var(--shadow-sm)' }}>
-      <p style={{ fontSize:11, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:8 }}>{label}</p>
-      <p style={{ fontSize:26, fontWeight:800, color: color || 'var(--text-1)', lineHeight:1 }}>{value}</p>
-      {sub && <p style={{ fontSize:12, color:'var(--text-4)', marginTop:6 }}>{sub}</p>}
+    <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'16px 18px', boxShadow:'var(--shadow-sm)' }}>
+      <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:8 }}>{label}</p>
+      <p style={{ fontSize: small ? 20 : 24, fontWeight:800, color: color || 'var(--text-1)', lineHeight:1 }}>{value}</p>
+      {(sub || trend != null) && (
+        <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:6 }}>
+          {trend != null && (
+            <span style={{ fontSize:11, fontWeight:700, color: isPos ? 'var(--color-win)' : isNeg ? 'var(--color-loss)' : 'var(--text-4)', display:'flex', alignItems:'center', gap:2 }}>
+              {isPos ? '▲' : isNeg ? '▼' : ''}
+              {Math.abs(trend).toFixed(1)}%
+            </span>
+          )}
+          {(trendLabel || sub) && (
+            <span style={{ fontSize:11, color:'var(--text-4)' }}>{trendLabel || sub}</span>
+          )}
+        </div>
+      )}
+      {sub && trend == null && <p style={{ fontSize:11, color:'var(--text-4)', marginTop:5 }}>{sub}</p>}
     </div>
   );
 }
 
+/* ─── Section header ─── */
+function SectionHeader({ title, sub }) {
+  return (
+    <div style={{ marginBottom:14, marginTop:28, borderBottom:'1px solid var(--border-subtle)', paddingBottom:10 }}>
+      <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-1)', marginBottom:2 }}>{title}</h2>
+      {sub && <p style={{ fontSize:12, color:'var(--text-4)' }}>{sub}</p>}
+    </div>
+  );
+}
+
+/* ─── Custom tooltip for charts ─── */
+function ChartTooltip({ active, payload, label, prefix = '€', suffix = '' }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:8, padding:'8px 12px', fontSize:12, boxShadow:'0 4px 16px rgba(0,0,0,0.15)' }}>
+      <p style={{ color:'var(--text-3)', marginBottom:4 }}>{label}</p>
+      {payload.map((p, i) => (
+        <p key={i} style={{ color: p.color || 'var(--text-1)', fontWeight:700 }}>
+          {p.name}: {prefix}{typeof p.value === 'number' ? p.value.toFixed(prefix === '€' ? 2 : 0) : p.value}{suffix}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function fmtMonth(m) {
+  const d = new Date(m + '-02');
+  return d.toLocaleDateString('nl-NL', { month: 'short', year: '2-digit' });
+}
+
+/* ─── Main page ─── */
 export default function AdminPage() {
+  const { dark } = useTheme();
   const supabase = createClient();
   const [data, setData]             = useState(null);
   const [loading, setLoading]       = useState(true);
@@ -124,10 +173,7 @@ export default function AdminPage() {
     setLoading(true); setErr(null);
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { setErr('Niet ingelogd'); setLoading(false); return; }
-    if (session.user.email !== ADMIN_EMAIL) {
-      window.location.href = '/dashboard';
-      return;
-    }
+    if (session.user.email !== ADMIN_EMAIL) { window.location.href = '/dashboard'; return; }
     const res = await fetch('/api/admin/dashboard', { headers: { Authorization: `Bearer ${session.access_token}` } });
     const json = await res.json();
     if (!res.ok) { setErr(json.error || 'Fout'); setLoading(false); return; }
@@ -146,10 +192,7 @@ export default function AdminPage() {
       body: JSON.stringify({ userId, plan }),
     });
     setChanging(p => ({ ...p, [userId]: false }));
-    setData(prev => ({
-      ...prev,
-      users: prev.users.map(u => u.id === userId ? { ...u, plan } : u),
-    }));
+    setData(prev => ({ ...prev, users: prev.users.map(u => u.id === userId ? { ...u, plan } : u) }));
   };
 
   const deleteUser = async (userId) => {
@@ -163,52 +206,136 @@ export default function AdminPage() {
     setConfirm(null);
   };
 
-  if (loading) return (
-    <div style={{ padding:'24px' }} className="app-page">
-      <div style={{ padding:'80px 0', textAlign:'center', color:'var(--text-4)', fontSize:14 }}>Laden...</div>
-    </div>
-  );
-  if (err) return (
-    <div style={{ padding:'24px' }} className="app-page">
-      <div style={{ padding:'60px 0', textAlign:'center', color:'#fb7185', fontSize:14 }}>{err}</div>
-    </div>
-  );
-  if (!data) return null;
+  if (loading) return <div style={{ padding:'24px' }} className="app-page"><div style={{ padding:'80px 0', textAlign:'center', color:'var(--text-4)', fontSize:14 }}>Laden...</div></div>;
+  if (err)     return <div style={{ padding:'24px' }} className="app-page"><div style={{ padding:'60px 0', textAlign:'center', color:'#fb7185', fontSize:14 }}>{err}</div></div>;
+  if (!data)   return null;
+
+  const { stats, revenue_trend } = data;
 
   const filtered = data.users
     .filter(u => planFilter === 'alle' || u.plan === planFilter)
     .filter(u => !search || (u.email || '').toLowerCase().includes(search.toLowerCase()));
 
-  const fmt = d => d ? new Date(d).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'2-digit' }) : '—';
+  const fmt    = d => d ? new Date(d).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'2-digit' }) : '—';
   const fmtEur = n => `€${Number(n).toLocaleString('nl-NL', { minimumFractionDigits:2, maximumFractionDigits:2 })}`;
+  const fmtPct = n => n != null ? `${n >= 0 ? '+' : ''}${n.toFixed(1)}%` : '—';
+
+  // Chart colors
+  const chartColor  = dark ? '#6b82f0' : '#5469d4';
+  const chartColor2 = dark ? '#34d399' : '#10b981';
+  const planBarColors = { gratis:'#6b7280', pro: dark ? '#6b82f0' : '#5469d4', elite:'#f59e0b' };
+
+  // Plan breakdown for bar chart
+  const planBreakdown = [
+    { plan:'Gratis', count: stats.total_users - stats.paying_users, color: planBarColors.gratis },
+    { plan:'Pro',    count: stats.pro_users,                         color: planBarColors.pro },
+    { plan:'Elite',  count: stats.elite_users,                       color: planBarColors.elite },
+  ];
 
   return (
     <div style={{ padding:'24px' }} className="app-page">
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 page-header">
+      <div className="flex items-center justify-between mb-2 page-header">
         <div>
-          <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Admin Dashboard</h1>
-          <p style={{ fontSize:14, color:'var(--text-3)' }}>Klantoverzicht & beheer</p>
+          <h1 style={{ fontSize:22, fontWeight:700, color:'var(--text-1)', marginBottom:3 }}>Admin Dashboard</h1>
+          <p style={{ fontSize:13, color:'var(--text-4)' }}>SaaS KPI's, klantoverzicht & beheer</p>
         </div>
-        <button onClick={load} style={{ display:'flex', alignItems:'center', gap:6, height:36, padding:'0 16px', border:'1px solid var(--border)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', color:'var(--text-2)', backgroundColor:'var(--bg-card)' }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        <button onClick={load} style={{ display:'flex', alignItems:'center', gap:6, height:34, padding:'0 14px', border:'1px solid var(--border)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', color:'var(--text-2)', backgroundColor:'var(--bg-card)' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
           Vernieuwen
         </button>
       </div>
 
-      {/* Stats */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:14, marginBottom:24 }}>
-        <StatCard label="Gebruikers"     value={data.stats.total_users}   sub={`+${data.stats.new_this_week} deze week`} />
-        <StatCard label="Nieuw (7d)"     value={data.stats.new_this_week} />
-        <StatCard label="Pro"            value={data.stats.pro_users}     color="var(--brand)" />
-        <StatCard label="Elite"          value={data.stats.elite_users}   color="#f59e0b" />
-        <StatCard label="Totale bets"    value={data.stats.total_bets}    />
-        <StatCard label="Stripe omzet"   value={fmtEur(data.stats.total_revenue)} color="var(--color-win)" sub="alle betaalde facturen" />
+      {/* ─── 1. Revenue & Groei ─── */}
+      <SectionHeader title="Revenue & Groei" sub="MRR, ARR en maand-op-maand groei uit actieve Stripe abonnementen"/>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12 }}>
+        <KpiCard label="MRR"       value={fmtEur(stats.mrr)}           sub="maandelijkse recurring omzet"     color="var(--color-win)" />
+        <KpiCard label="ARR"       value={fmtEur(stats.arr)}           sub="jaarlijkse recurring omzet"       color="var(--color-win)" />
+        <KpiCard label="MoM Groei" value={fmtPct(stats.mrr_growth)}    trend={stats.mrr_growth}               trendLabel="vs vorige maand" color={stats.mrr_growth >= 0 ? 'var(--color-win)' : 'var(--color-loss)'} />
+        <KpiCard label="ARPU"      value={fmtEur(stats.arpu)}          sub="per betalende gebruiker"          />
       </div>
 
+      {/* ─── 2. Klanten ─── */}
+      <SectionHeader title="Klanten & Conversie" sub="Gebruikersgroei, conversie van gratis naar betaald en activiteit"/>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12 }}>
+        <KpiCard label="Totale Gebruikers" value={stats.total_users}       sub={`+${stats.new_this_week} deze week`} />
+        <KpiCard label="Betalend"          value={stats.paying_users}      sub={`${stats.pro_users} pro · ${stats.elite_users} elite`} color="var(--brand)" />
+        <KpiCard label="Trial Conversie"   value={`${stats.trial_conversion.toFixed(1)}%`} sub="gratis → betaald" color={stats.trial_conversion >= 5 ? 'var(--color-win)' : 'var(--text-1)'} />
+        <KpiCard label="MAU"               value={stats.mau}              sub={`${stats.wau} WAU · ${stats.dau} DAU`} />
+      </div>
+
+      {/* ─── 3. Churn & Health ─── */}
+      <SectionHeader title="Churn & Gezondheid" sub="Opzeggingen, mislukte betalingen en retentie"/>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12 }}>
+        <KpiCard label="Churn Rate"       value={`${stats.churn_rate.toFixed(1)}%`}  sub="cumulatief opgezegd"    color={stats.churn_rate > 10 ? 'var(--color-loss)' : 'var(--text-1)'} />
+        <KpiCard label="Opzeggingen"      value={Math.round(stats.churn_rate / 100 * (stats.paying_users + Math.round(stats.churn_rate / 100 * stats.paying_users)))}  sub="totaal gecanceld" color="var(--color-loss)" />
+        <KpiCard label="Failed Payments"  value={stats.failed_payments}               sub="openstaande facturen"   color={stats.failed_payments > 0 ? '#f59e0b' : 'var(--text-4)'} />
+        <KpiCard label="Totale Omzet"     value={fmtEur(stats.total_revenue)}        sub="alle Stripe betalingen"  color="var(--color-win)" />
+      </div>
+
+      {/* ─── 4. Charts ─── */}
+      <SectionHeader title="Trends" sub="Revenue en gebruikersgroei per maand (laatste 12 maanden)"/>
+      <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:16, marginBottom:28 }}>
+
+        {/* Revenue + New Users area chart */}
+        <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px', boxShadow:'var(--shadow-sm)' }}>
+          <p style={{ fontSize:12, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:14 }}>Revenue per maand (€)</p>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={revenue_trend} margin={{ top:4, right:4, left:-10, bottom:0 }}>
+              <defs>
+                <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor={chartColor} stopOpacity={0.25}/>
+                  <stop offset="95%" stopColor={chartColor} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'} />
+              <XAxis dataKey="month" tickFormatter={fmtMonth} tick={{ fontSize:10.5, fill:'var(--text-4)' }} axisLine={false} tickLine={false}/>
+              <YAxis tick={{ fontSize:10.5, fill:'var(--text-4)' }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`}/>
+              <Tooltip content={<ChartTooltip prefix="€"/>}/>
+              <Area type="monotone" dataKey="revenue" name="Revenue" stroke={chartColor} strokeWidth={2} fill="url(#revGrad)" dot={false}/>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Plan breakdown + new users */}
+        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+          {/* Plan bar chart */}
+          <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px', boxShadow:'var(--shadow-sm)', flex:1 }}>
+            <p style={{ fontSize:12, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:14 }}>Plan verdeling</p>
+            <ResponsiveContainer width="100%" height={100}>
+              <BarChart data={planBreakdown} margin={{ top:0, right:4, left:-20, bottom:0 }} barSize={28}>
+                <XAxis dataKey="plan" tick={{ fontSize:11, fill:'var(--text-3)' }} axisLine={false} tickLine={false}/>
+                <YAxis tick={{ fontSize:10, fill:'var(--text-4)' }} axisLine={false} tickLine={false}/>
+                <Tooltip content={<ChartTooltip prefix="" suffix=" users"/>}/>
+                <Bar dataKey="count" name="Gebruikers" radius={[4,4,0,0]}>
+                  {planBreakdown.map((entry, i) => <Cell key={i} fill={entry.color}/>)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* New users bar chart */}
+          <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px', boxShadow:'var(--shadow-sm)', flex:1 }}>
+            <p style={{ fontSize:12, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:14 }}>Nieuwe gebruikers/maand</p>
+            <ResponsiveContainer width="100%" height={100}>
+              <BarChart data={revenue_trend} margin={{ top:0, right:4, left:-20, bottom:0 }} barSize={10}>
+                <XAxis dataKey="month" tickFormatter={fmtMonth} tick={{ fontSize:9.5, fill:'var(--text-4)' }} axisLine={false} tickLine={false}/>
+                <YAxis tick={{ fontSize:10, fill:'var(--text-4)' }} axisLine={false} tickLine={false} allowDecimals={false}/>
+                <Tooltip content={<ChartTooltip prefix="" suffix=" users"/>}/>
+                <Bar dataKey="new_users" name="Nieuw" fill={chartColor2} radius={[3,3,0,0]}/>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── 5. Klantentabel ─── */}
+      <SectionHeader title="Klantenoverzicht" sub={`${data.users.length} geregistreerde gebruikers`}/>
+
       {/* Filters */}
-      <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
-        <div style={{ position:'relative', flex:'1 1 240px' }}>
+      <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:12, flexWrap:'wrap' }}>
+        <div style={{ position:'relative', flex:'1 1 200px' }}>
           <svg style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'var(--text-4)', pointerEvents:'none' }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Zoek op e-mail..." style={{ width:'100%', height:34, padding:'0 12px 0 30px', border:'1px solid var(--border)', borderRadius:7, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-card)', boxSizing:'border-box' }}/>
         </div>
