@@ -56,11 +56,11 @@ function PlanDropdown({ userId, plan, onChange, disabled }) {
   return (
     <>
       <button ref={btnRef} onClick={toggle} disabled={disabled} style={{
-        display:'flex', alignItems:'center', gap:5, padding:'3px 8px 3px 5px',
+        display:'flex', alignItems:'center', gap:5, padding:'4px 8px',
         border:'1px solid var(--border)', borderRadius:7, backgroundColor:'var(--bg-card)',
         cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
       }}>
-        <PlanBadge plan={plan}/>
+        <span style={{ fontSize:12.5, fontWeight:600, color:'var(--text-1)', textTransform:'capitalize' }}>{plan}</span>
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
           style={{ flexShrink:0, transition:'transform 0.15s', transform: open ? 'rotate(180deg)' : 'none', color:'var(--text-3)' }}>
           <polyline points="6 9 12 15 18 9"/>
@@ -170,12 +170,14 @@ export default function AdminPage() {
   const [changing, setChanging]     = useState({});
   const [confirm, setConfirm]       = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [currentEmail, setCurrentEmail] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true); setErr(null);
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { setErr('Niet ingelogd'); setLoading(false); return; }
     if (!ADMIN_EMAILS.includes(session.user.email)) { window.location.href = '/dashboard'; return; }
+    setCurrentEmail(session.user.email);
     const res = await fetch('/api/admin/dashboard', { headers: { Authorization: `Bearer ${session.access_token}` } });
     const json = await res.json();
     if (!res.ok) { setErr(json.error || 'Fout'); setLoading(false); return; }
@@ -214,7 +216,9 @@ export default function AdminPage() {
 
   const { stats, revenue_trend } = data;
 
+  const otherAdmins = ADMIN_EMAILS.filter(e => e !== currentEmail);
   const filtered = data.users
+    .filter(u => !otherAdmins.includes(u.email))
     .filter(u => planFilter === 'alle' || u.plan === planFilter)
     .filter(u => !search || (u.email || '').toLowerCase().includes(search.toLowerCase()));
 
@@ -383,7 +387,20 @@ export default function AdminPage() {
                 <td style={{ padding:'11px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmt(u.created_at)}</td>
                 <td style={{ padding:'11px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmt(u.last_sign_in_at)}</td>
                 <td style={{ padding:'11px 14px' }} onClick={e => e.stopPropagation()}>
-                  <PlanDropdown userId={u.id} plan={u.plan} onChange={changePlan} disabled={!!changing[u.id]}/>
+                  <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                    <PlanDropdown userId={u.id} plan={u.plan} onChange={changePlan} disabled={!!changing[u.id]}/>
+                    {(() => {
+                      const daysOld = (Date.now() - new Date(u.created_at).getTime()) / (24*3600*1000);
+                      const inTrial = u.sub_status === 'trialing' || (daysOld < 30 && u.plan === 'gratis');
+                      const daysLeft = inTrial && u.sub_status !== 'trialing' ? Math.ceil(30 - daysOld) : null;
+                      if (!inTrial) return null;
+                      return (
+                        <span style={{ fontSize:10, fontWeight:700, padding:'2px 6px', borderRadius:4, backgroundColor:'rgba(107,130,240,0.12)', color:'#6b82f0', border:'1px solid rgba(107,130,240,0.3)', whiteSpace:'nowrap' }}>
+                          Trial{daysLeft != null ? ` · ${daysLeft}d` : ''}
+                        </span>
+                      );
+                    })()}
+                  </div>
                 </td>
                 <td style={{ padding:'11px 14px', fontSize:13, fontWeight:700, color:'var(--text-1)' }}>{u.bet_count}</td>
                 <td style={{ padding:'11px 14px', fontSize:13, color:'var(--color-win)', fontWeight:700 }}>{u.deposit_count}</td>

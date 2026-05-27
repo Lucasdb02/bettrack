@@ -47,10 +47,12 @@ function StatBox({ label, value, color }) {
 function TabBtn({ active, onClick, children }) {
   return (
     <button onClick={onClick} style={{
-      padding:'7px 14px', fontSize:12.5, fontWeight: active ? 700 : 500,
-      border:'none', borderBottom: active ? '2px solid var(--brand)' : '2px solid transparent',
-      background:'transparent', color: active ? 'var(--brand)' : 'var(--text-3)',
-      cursor:'pointer', transition:'all 0.12s', whiteSpace:'nowrap',
+      padding:'0 14px', fontSize:12.5, fontWeight:600, border:'none', borderRadius:6,
+      cursor:'pointer', height:'100%', display:'flex', alignItems:'center', gap:4,
+      backgroundColor: active ? 'var(--bg-card)' : 'transparent',
+      color: active ? 'var(--brand)' : 'var(--text-3)',
+      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
+      transition:'all 0.12s', whiteSpace:'nowrap',
     }}>
       {children}
     </button>
@@ -140,12 +142,12 @@ export default function UserDrawer({ user: summaryUser, onClose }) {
           </div>
 
           {/* Tabs */}
-          <div style={{ display:'flex', gap:0, marginBottom:-1 }}>
+          <div style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:10, marginBottom:14, width:'fit-content', height:38 }}>
             {['profiel','bets','transacties','timeline'].map(t => (
               <TabBtn key={t} active={tab===t} onClick={() => setTab(t)}>
                 {t === 'profiel' ? 'Profiel' : t === 'bets' ? 'Bets' : t === 'transacties' ? 'Transacties' : 'Timeline'}
-                {t === 'bets' && stats && <span style={{ marginLeft:5, fontSize:10.5, fontWeight:700, color:'var(--text-4)' }}>({stats.total_bets})</span>}
-                {t === 'transacties' && invoices.length > 0 && <span style={{ marginLeft:5, fontSize:10.5, fontWeight:700, color:'var(--text-4)' }}>({invoices.length})</span>}
+                {t === 'bets' && stats && <span style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)' }}>({stats.total_bets})</span>}
+                {t === 'transacties' && invoices.length > 0 && <span style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)' }}>({invoices.length})</span>}
               </TabBtn>
             ))}
           </div>
