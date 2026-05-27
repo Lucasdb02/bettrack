@@ -671,7 +671,7 @@ html.dark .glass-card {
 .bm-add-row select        { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 
 /* Placeholder kleur wit + euro-teken mee schalen op mobiel */
-.bm-tx-amount input::placeholder { color: var(--text-1) !important; opacity: 0.45; }
+.bm-tx-amount input::placeholder { color: var(--text-1) !important; opacity: 1; }
 @media screen and (max-width: 900px) {
   .bm-tx-euro { font-size: 16px !important; }
 }
