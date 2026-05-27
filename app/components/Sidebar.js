@@ -247,8 +247,8 @@ export default function Sidebar() {
           {toolsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
 
-        {/* Admin — alleen voor lucas@mybuqo.com */}
-        {userEmail === 'lucas@mybuqo.com' && (
+        {/* Admin — alleen voor dev accounts */}
+        {['lucas@mybuqo.com','matthijs@mybuqo.com'].includes(userEmail) && (
           <>
             <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600, paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Admin</p>
             <ul className="space-y-0.5">
@@ -508,8 +508,8 @@ export default function Sidebar() {
                 </ul>
               </div>
             ))}
-            {/* Admin sectie — alleen voor lucas@mybuqo.com */}
-            {userEmail === 'lucas@mybuqo.com' && (() => {
+            {/* Admin sectie — alleen voor dev accounts */}
+            {['lucas@mybuqo.com','matthijs@mybuqo.com'].includes(userEmail) && (() => {
               const active = pathname === '/admin';
               return (
                 <div style={{ marginBottom: 20 }}>

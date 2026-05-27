@@ -1,10 +1,10 @@
 import { createAdminClient, getUserFromRequest } from '@/lib/supabase-admin';
 
-const ADMIN_EMAIL = 'lucas@mybuqo.com';
+const ADMIN_EMAILS = ['lucas@mybuqo.com', 'matthijs@mybuqo.com'];
 
 export async function PATCH(request) {
   const caller = await getUserFromRequest(request);
-  if (!caller || caller.email !== ADMIN_EMAIL) {
+  if (!caller || !ADMIN_EMAILS.includes(caller.email)) {
     return Response.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
@@ -22,7 +22,7 @@ export async function PATCH(request) {
 
 export async function DELETE(request) {
   const caller = await getUserFromRequest(request);
-  if (!caller || caller.email !== ADMIN_EMAIL) {
+  if (!caller || !ADMIN_EMAILS.includes(caller.email)) {
     return Response.json({ error: 'Unauthorized' }, { status: 403 });
   }
 

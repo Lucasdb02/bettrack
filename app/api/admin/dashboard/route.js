@@ -1,7 +1,7 @@
 import { createAdminClient, getUserFromRequest } from '@/lib/supabase-admin';
 import { getStripe } from '@/lib/stripe';
 
-const ADMIN_EMAIL = 'lucas@mybuqo.com';
+const ADMIN_EMAILS = ['lucas@mybuqo.com', 'matthijs@mybuqo.com'];
 
 function getLast12Months() {
   const months = [];
@@ -16,7 +16,7 @@ function getLast12Months() {
 
 export async function GET(request) {
   const caller = await getUserFromRequest(request);
-  if (!caller || caller.email !== ADMIN_EMAIL) {
+  if (!caller || !ADMIN_EMAILS.includes(caller.email)) {
     return Response.json({ error: 'Unauthorized' }, { status: 403 });
   }
 

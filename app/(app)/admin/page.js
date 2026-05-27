@@ -9,7 +9,7 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 
-const ADMIN_EMAIL = 'lucas@mybuqo.com';
+const ADMIN_EMAILS = ['lucas@mybuqo.com', 'matthijs@mybuqo.com'];
 
 const PLAN_COLORS = {
   gratis: { bg:'rgba(156,163,175,0.12)', color:'#9ca3af', border:'rgba(156,163,175,0.3)' },
@@ -175,7 +175,7 @@ export default function AdminPage() {
     setLoading(true); setErr(null);
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { setErr('Niet ingelogd'); setLoading(false); return; }
-    if (session.user.email !== ADMIN_EMAIL) { window.location.href = '/dashboard'; return; }
+    if (!ADMIN_EMAILS.includes(session.user.email)) { window.location.href = '/dashboard'; return; }
     const res = await fetch('/api/admin/dashboard', { headers: { Authorization: `Bearer ${session.access_token}` } });
     const json = await res.json();
     if (!res.ok) { setErr(json.error || 'Fout'); setLoading(false); return; }
