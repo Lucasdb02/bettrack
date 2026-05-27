@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
+import UserDrawer from './UserDrawer';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Cell,
@@ -168,6 +169,7 @@ export default function AdminPage() {
   const [planFilter, setPlanFilter] = useState('alle');
   const [changing, setChanging]     = useState({});
   const [confirm, setConfirm]       = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true); setErr(null);
@@ -363,7 +365,10 @@ export default function AdminPage() {
             {filtered.length === 0 ? (
               <tr><td colSpan={10} style={{ padding:'40px', textAlign:'center', color:'var(--text-4)', fontSize:13 }}>Geen gebruikers gevonden.</td></tr>
             ) : filtered.map(u => (
-              <tr key={u.id} style={{ borderTop:'1px solid var(--border-subtle)' }}>
+              <tr key={u.id} onClick={() => setSelectedUser(u)} style={{ borderTop:'1px solid var(--border-subtle)', cursor:'pointer' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-subtle)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
                 <td style={{ padding:'11px 14px' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                     <div style={{ width:28, height:28, borderRadius:'50%', backgroundColor:'var(--bg-brand)', border:'1px solid var(--brand-soft)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'var(--brand)', flexShrink:0 }}>
@@ -377,7 +382,7 @@ export default function AdminPage() {
                 </td>
                 <td style={{ padding:'11px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmt(u.created_at)}</td>
                 <td style={{ padding:'11px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmt(u.last_sign_in_at)}</td>
-                <td style={{ padding:'11px 14px' }}>
+                <td style={{ padding:'11px 14px' }} onClick={e => e.stopPropagation()}>
                   <PlanDropdown userId={u.id} plan={u.plan} onChange={changePlan} disabled={!!changing[u.id]}/>
                 </td>
                 <td style={{ padding:'11px 14px', fontSize:13, fontWeight:700, color:'var(--text-1)' }}>{u.bet_count}</td>
@@ -406,6 +411,10 @@ export default function AdminPage() {
           </tbody>
         </table>
       </div>
+
+      {selectedUser && (
+        <UserDrawer user={selectedUser} onClose={() => setSelectedUser(null)}/>
+      )}
     </div>
   );
 }
