@@ -215,11 +215,20 @@ function HandmatigForm({ onSaved }) {
 
 // ── Edit modal for screenshot preview rows ────────────────────────────────────
 
+function PreviewFField({ label, required, children }) {
+  return (
+    <div>
+      <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)', marginBottom: 5 }}>
+        {label}{required && <span style={{ color: '#e02424', marginLeft: 3 }}>*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
 function EditPreviewModal({ bet, onSave, onClose }) {
-  const bg      = 'var(--bg-card)';
   const border  = 'var(--border)';
   const text1   = 'var(--text-1)';
-  const text2   = 'var(--text-2)';
   const text3   = 'var(--text-3)';
   const bgInput = 'var(--bg-input)';
 
@@ -253,15 +262,6 @@ function EditPreviewModal({ bet, onSave, onClose }) {
 
   const iS = { width: '100%', padding: '8px 12px', height: '42px', boxSizing: 'border-box', border: `1px solid ${border}`, borderRadius: 7, fontSize: 13.5, color: text1, backgroundColor: bgInput, transition: 'border-color 0.15s' };
 
-  const FField = ({ label, required, children }) => (
-    <div>
-      <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: text2, marginBottom: 5 }}>
-        {label}{required && <span style={{ color: '#e02424', marginLeft: 3 }}>*</span>}
-      </label>
-      {children}
-    </div>
-  );
-
   return createPortal(
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div onClick={e => e.stopPropagation()} style={{ backgroundColor: bg, border: `1px solid ${border}`, borderRadius: 12, width: '100%', maxWidth: 640, boxShadow: '0 20px 60px rgba(0,0,0,0.4)', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -282,21 +282,23 @@ function EditPreviewModal({ bet, onSave, onClose }) {
           <div>
             <p style={{ fontSize: 11.5, fontWeight: 700, color: text3, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Wedstrijd Info</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <FField label="Datum" required><input type="date" value={form.datum} onChange={e => set('datum', e.target.value)} style={iS}/></FField>
-              <FField label="Sport" required>
+              <PreviewFField label="Datum" required>
+                <SingleDatePicker value={form.datum} onChange={v => set('datum', v)} style={{ width: '100%', height: '42px', boxSizing: 'border-box' }}/>
+              </PreviewFField>
+              <PreviewFField label="Sport" required>
                 <select value={form.sport} onChange={e => set('sport', e.target.value)} style={iS}>
                   {SPORTEN.map(s => <option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
                 </select>
-              </FField>
-              <FField label="Wedstrijd" required>
+              </PreviewFField>
+              <PreviewFField label="Wedstrijd" required>
                 <input type="text" value={form.wedstrijd} onChange={e => set('wedstrijd', e.target.value)} style={{ ...iS, borderColor: fouten.wedstrijd ? '#e02424' : border }}/>
                 {fouten.wedstrijd && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.wedstrijd}</p>}
-              </FField>
-              <FField label="Markt" required>
+              </PreviewFField>
+              <PreviewFField label="Markt" required>
                 <select value={form.markt} onChange={e => set('markt', e.target.value)} style={iS}>
                   {MARKTEN.map(m => <option key={m}>{m}</option>)}
                 </select>
-              </FField>
+              </PreviewFField>
             </div>
           </div>
 
@@ -305,19 +307,19 @@ function EditPreviewModal({ bet, onSave, onClose }) {
             <p style={{ fontSize: 11.5, fontWeight: 700, color: text3, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Bet Details</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
               <div style={{ gridColumn: '1/2' }}>
-                <FField label="Selectie" required>
+                <PreviewFField label="Selectie" required>
                   <input type="text" value={form.selectie} onChange={e => set('selectie', e.target.value)} style={{ ...iS, borderColor: fouten.selectie ? '#e02424' : border }}/>
                   {fouten.selectie && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.selectie}</p>}
-                </FField>
+                </PreviewFField>
               </div>
-              <FField label="Odds" required>
+              <PreviewFField label="Odds" required>
                 <input type="number" step="0.001" min="1" value={form.odds} onChange={e => set('odds', e.target.value)} style={{ ...iS, borderColor: fouten.odds ? '#e02424' : border }}/>
                 {fouten.odds && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.odds}</p>}
-              </FField>
-              <FField label="Inzet (€)" required>
+              </PreviewFField>
+              <PreviewFField label="Inzet (€)" required>
                 <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border }}/>
                 {fouten.inzet && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.inzet}</p>}
-              </FField>
+              </PreviewFField>
             </div>
             {pot && (
               <div style={{ marginTop: 12, padding: '10px 14px', backgroundColor: 'var(--bg-brand)', borderRadius: 8, border: '1px solid var(--brand-soft)', display: 'flex', gap: 20 }}>
@@ -331,20 +333,20 @@ function EditPreviewModal({ bet, onSave, onClose }) {
           <div>
             <p style={{ fontSize: 11.5, fontWeight: 700, color: text3, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Administratie</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <FField label="Bookmaker" required>
+              <PreviewFField label="Bookmaker" required>
                 <select value={form.bookmaker} onChange={e => set('bookmaker', e.target.value)} style={iS}>
                   {BOOKMAKERS.map(b => <option key={b}>{b}</option>)}
                 </select>
-              </FField>
-              <FField label="Uitkomst">
+              </PreviewFField>
+              <PreviewFField label="Uitkomst">
                 <select value={form.uitkomst} onChange={e => set('uitkomst', e.target.value)} style={iS}>
                   {UITKOMSTEN.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
                 </select>
-              </FField>
+              </PreviewFField>
               <div style={{ gridColumn: '1/-1' }}>
-                <FField label="Notities">
+                <PreviewFField label="Notities">
                   <textarea value={form.notities} onChange={e => set('notities', e.target.value)} rows={3} placeholder="Reden voor bet, vorm analyse, ..." style={{ ...iS, resize: 'vertical', lineHeight: 1.5 }}/>
-                </FField>
+                </PreviewFField>
               </div>
             </div>
           </div>
