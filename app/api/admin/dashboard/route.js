@@ -31,11 +31,11 @@ export async function GET(request) {
 
   const txMap = {};
   txRows.forEach(t => {
-    if (!txMap[t.user_id]) txMap[t.user_id] = { count: 0, deposits: 0, withdrawals: 0 };
+    if (!txMap[t.user_id]) txMap[t.user_id] = { count: 0, deposits: 0, withdrawals: 0, deposit_count: 0, withdrawal_count: 0 };
     const amt = Number(t.amount);
     txMap[t.user_id].count++;
-    if (t.type === 'deposit')    txMap[t.user_id].deposits    += amt;
-    if (t.type === 'withdrawal') txMap[t.user_id].withdrawals += amt;
+    if (t.type === 'deposit')    { txMap[t.user_id].deposits    += amt; txMap[t.user_id].deposit_count++; }
+    if (t.type === 'withdrawal') { txMap[t.user_id].withdrawals += amt; txMap[t.user_id].withdrawal_count++; }
   });
 
   const enriched = users.map(u => ({
@@ -47,9 +47,11 @@ export async function GET(request) {
     sub_status:       subMap[u.id]?.status    ?? null,
     sub_interval:     subMap[u.id]?.interval  ?? null,
     bet_count:        betCountMap[u.id]       ?? 0,
-    tx_count:         txMap[u.id]?.count      ?? 0,
-    deposits:         txMap[u.id]?.deposits   ?? 0,
-    withdrawals:      txMap[u.id]?.withdrawals ?? 0,
+    tx_count:          txMap[u.id]?.count            ?? 0,
+    deposits:          txMap[u.id]?.deposits         ?? 0,
+    withdrawals:       txMap[u.id]?.withdrawals      ?? 0,
+    deposit_count:     txMap[u.id]?.deposit_count    ?? 0,
+    withdrawal_count:  txMap[u.id]?.withdrawal_count ?? 0,
   })).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);

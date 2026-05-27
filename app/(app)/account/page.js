@@ -259,7 +259,7 @@ function DevTab() {
 
   const filtered = data.users
     .filter(u => planFilter === 'alle' || u.plan === planFilter)
-    .filter(u => !search || u.email.toLowerCase().includes(search.toLowerCase()));
+    .filter(u => !search || (u.email || '').toLowerCase().includes(search.toLowerCase()));
 
   const fmt = (d) => d ? new Date(d).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'2-digit' }) : '—';
   const fmtTime = (d) => d ? new Date(d).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
@@ -313,10 +313,10 @@ function DevTab() {
                 <td style={{ padding:'11px 14px' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                     <div style={{ width:28, height:28, borderRadius:'50%', backgroundColor:'var(--bg-brand)', border:'1px solid var(--brand-soft)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'var(--brand)', flexShrink:0 }}>
-                      {u.email[0].toUpperCase()}
+                      {(u.email || u.id)[0].toUpperCase()}
                     </div>
                     <div>
-                      <p style={{ fontSize:13, color:'var(--text-1)', fontWeight:500 }}>{u.email}</p>
+                      <p style={{ fontSize:13, color:'var(--text-1)', fontWeight:500 }}>{u.email || <span style={{ color:'var(--text-4)', fontStyle:'italic' }}>geen e-mail</span>}</p>
                       <p style={{ fontSize:10.5, color:'var(--text-4)', fontFamily:'monospace' }}>{u.id.slice(0,8)}…</p>
                     </div>
                   </div>
@@ -339,8 +339,8 @@ function DevTab() {
                   </div>
                 </td>
                 <td style={{ padding:'11px 14px', fontSize:13, fontWeight:700, color:'var(--text-1)' }}>{u.bet_count}</td>
-                <td style={{ padding:'11px 14px', fontSize:13, color:'var(--color-win)' }}>+€{u.deposits.toFixed(2)}</td>
-                <td style={{ padding:'11px 14px', fontSize:13, color:'var(--color-loss)' }}>-€{u.withdrawals.toFixed(2)}</td>
+                <td style={{ padding:'11px 14px', fontSize:13, color:'var(--color-win)', fontWeight:700 }}>{u.deposit_count}</td>
+                <td style={{ padding:'11px 14px', fontSize:13, color:'var(--color-loss)', fontWeight:700 }}>{u.withdrawal_count}</td>
                 <td style={{ padding:'11px 14px' }} onClick={e => e.stopPropagation()}>
                   {confirm === u.id ? (
                     <div style={{ display:'flex', gap:4 }}>
@@ -348,8 +348,8 @@ function DevTab() {
                       <button onClick={() => setConfirm(null)} style={{ padding:'3px 8px', background:'var(--bg-subtle)', color:'var(--text-3)', border:'none', borderRadius:5, fontSize:11, cursor:'pointer' }}>Annuleer</button>
                     </div>
                   ) : (
-                    <button onClick={() => setConfirm(u.id)} style={{ background:'none', border:'1px solid var(--border)', borderRadius:5, cursor:'pointer', color:'var(--text-4)', padding:'3px 8px', fontSize:11 }} title="Verwijder gebruiker">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                    <button onClick={() => setConfirm(u.id)} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--border)', padding:4 }} title="Verwijder gebruiker">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                     </button>
                   )}
                 </td>
