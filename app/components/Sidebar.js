@@ -161,6 +161,7 @@ export default function Sidebar() {
   const [dbBookmakers, setDbBookmakers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [userEmail, setUserEmail] = useState(null);
+  const [toolsOpen, setToolsOpen] = useState(true);
 
 
   useEffect(() => {
@@ -241,11 +242,78 @@ export default function Sidebar() {
           {bookmakerNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
 
-        {/* Tools */}
-        <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600, paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Tools</p>
-        <ul className="space-y-0.5">
-          {toolsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
-        </ul>
+        {/* Tools — collapsible */}
+        <div style={{ marginTop: 20 }}>
+          <button
+            onClick={() => setToolsOpen(o => !o)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              width: '100%', padding: '7px 10px', borderRadius: 7,
+              marginBottom: toolsOpen ? 4 : 0,
+              background: 'transparent', border: '1px solid transparent',
+              cursor: 'pointer', transition: 'all 0.18s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
+              e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <span style={{ color: 'var(--text-3)', flexShrink: 0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                </svg>
+              </span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: dark ? '#c5d8ec' : '#334155' }}>Tools</span>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              style={{ flexShrink: 0, transition: 'transform 0.2s', transform: toolsOpen ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          {toolsOpen && (
+            <ul style={{ paddingLeft: 26 }} className="space-y-0.5">
+              {toolsNav.map(item => {
+                const active = isActive(item.href);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      style={{
+                        display: 'block', padding: '6px 10px', borderRadius: 6,
+                        fontSize: 12.5, fontWeight: active ? 600 : 400,
+                        color: active ? (dark ? '#e8f0ff' : '#4f46e5') : 'var(--text-2)',
+                        background: active ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
+                        border: active ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
+                        textDecoration: 'none', transition: 'all 0.18s',
+                      }}
+                      onMouseEnter={e => {
+                        if (!active) {
+                          e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
+                          e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
+                          e.currentTarget.style.color = dark ? '#b8d0e8' : '#334155';
+                        }
+                      }}
+                      onMouseLeave={e => {
+                        if (!active) {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.borderColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-2)';
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
 
         {/* Admin — alleen voor lucas@mybuqo.com */}
         {userEmail === 'lucas@mybuqo.com' && (

@@ -1,6 +1,8 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase';
+import { useTheme } from '../../context/ThemeContext';
 
 const ADMIN_EMAIL = 'lucas@mybuqo.com';
 
@@ -16,6 +18,85 @@ function PlanBadge({ plan }) {
     <span style={{ padding:'2px 8px', borderRadius:5, fontSize:11, fontWeight:700, background:c.bg, color:c.color, border:`1px solid ${c.border}`, textTransform:'uppercase', letterSpacing:'0.05em' }}>
       {plan}
     </span>
+  );
+}
+
+function usePortalDropdown() {
+  const btnRef = useRef(null);
+  const [open, setOpen]       = useState(false);
+  const [rect, setRect]       = useState(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const toggle = useCallback(() => {
+    if (!open && btnRef.current) setRect(btnRef.current.getBoundingClientRect());
+    setOpen(o => !o);
+  }, [open]);
+  const close = useCallback(() => setOpen(false), []);
+  useEffect(() => {
+    if (!open) return;
+    const h = e => { if (e.target?.closest?.('.dropdown-panel')) return; setOpen(false); };
+    window.addEventListener('scroll', h, true);
+    return () => window.removeEventListener('scroll', h, true);
+  }, [open]);
+  return { btnRef, open, rect, mounted, toggle, close };
+}
+
+function PlanDropdown({ userId, plan, onChange, disabled }) {
+  const { dark } = useTheme();
+  const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
+  const PLANS = ['gratis', 'pro', 'elite'];
+  const dropBg  = dark ? 'var(--bg-card)' : '#fff';
+  const dropBdr = dark ? 'var(--border)'  : '#e5e7eb';
+  const hoverBg = dark ? 'var(--bg-subtle)' : '#f9fafb';
+  return (
+    <>
+      <button ref={btnRef} onClick={toggle} disabled={disabled} style={{
+        display:'flex', alignItems:'center', gap:5,
+        padding:'3px 8px 3px 5px', border:'1px solid var(--border)',
+        borderRadius:7, backgroundColor:'var(--bg-card)',
+        cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
+      }}>
+        <PlanBadge plan={plan}/>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ flexShrink:0, transition:'transform 0.15s', transform: open ? 'rotate(180deg)' : 'none', color:'var(--text-3)' }}>
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      {mounted && open && rect && createPortal(
+        <>
+          <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
+          <div className="dropdown-panel" style={{
+            position:'fixed', top: rect.bottom+4, left: rect.left,
+            zIndex:9999, backgroundColor: dropBg,
+            border:`1px solid ${dropBdr}`, borderRadius:10,
+            boxShadow:'0 8px 32px rgba(0,0,0,0.18)', minWidth:120, overflow:'hidden',
+          }}>
+            {PLANS.map((p, i) => {
+              const c = PLAN_COLORS[p];
+              const sel = plan === p;
+              return (
+                <button key={p} onClick={() => { onChange(userId, p); close(); }} style={{
+                  display:'flex', alignItems:'center', justifyContent:'space-between',
+                  width:'100%', textAlign:'left', padding:'9px 14px',
+                  fontSize:13, fontWeight: sel ? 700 : 400,
+                  color: sel ? c.color : 'var(--text-1)',
+                  backgroundColor: sel ? c.bg : 'transparent',
+                  border:'none', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none',
+                  cursor:'pointer',
+                }}
+                  onMouseEnter={e => { if (!sel) e.currentTarget.style.backgroundColor = hoverBg; }}
+                  onMouseLeave={e => { if (!sel) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  <span style={{ textTransform:'capitalize' }}>{p}</span>
+                  {sel && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                </button>
+              );
+            })}
+          </div>
+        </>,
+        document.body
+      )}
+    </>
   );
 }
 
@@ -170,19 +251,7 @@ export default function AdminPage() {
                 <td style={{ padding:'11px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmt(u.created_at)}</td>
                 <td style={{ padding:'11px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmt(u.last_sign_in_at)}</td>
                 <td style={{ padding:'11px 14px' }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                    <PlanBadge plan={u.plan}/>
-                    <select
-                      value={u.plan}
-                      disabled={changing[u.id]}
-                      onChange={e => changePlan(u.id, e.target.value)}
-                      style={{ fontSize:11.5, padding:'2px 6px', border:'1px solid var(--border)', borderRadius:5, backgroundColor:'var(--bg-input)', color:'var(--text-2)', cursor:'pointer' }}
-                    >
-                      <option value="gratis">gratis</option>
-                      <option value="pro">pro</option>
-                      <option value="elite">elite</option>
-                    </select>
-                  </div>
+                  <PlanDropdown userId={u.id} plan={u.plan} onChange={changePlan} disabled={!!changing[u.id]}/>
                 </td>
                 <td style={{ padding:'11px 14px', fontSize:13, fontWeight:700, color:'var(--text-1)' }}>{u.bet_count}</td>
                 <td style={{ padding:'11px 14px', fontSize:13, color:'var(--color-win)', fontWeight:700 }}>{u.deposit_count}</td>
