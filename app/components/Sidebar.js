@@ -160,6 +160,7 @@ export default function Sidebar() {
   const { bets } = useBets();
   const [dbBookmakers, setDbBookmakers] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [userEmail, setUserEmail] = useState(null);
 
 
   useEffect(() => {
@@ -167,6 +168,7 @@ export default function Sidebar() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      setUserEmail(user.email);
       const [{ data: bms }, { data: txs }] = await Promise.all([
         supabase.from('bookmakers').select('id,naam,saldo').eq('user_id', user.id),
         supabase.from('transactions').select('bookmaker_id,type,amount').eq('user_id', user.id),
@@ -244,6 +246,24 @@ export default function Sidebar() {
         <ul className="space-y-0.5">
           {toolsNav.map((item) => <NavItem key={item.href} item={item} active={isActive(item.href)} dark={dark} />)}
         </ul>
+
+        {/* Admin — alleen voor lucas@mybuqo.com */}
+        {userEmail === 'lucas@mybuqo.com' && (
+          <>
+            <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600, paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Admin</p>
+            <ul className="space-y-0.5">
+              <NavItem
+                item={{
+                  label: 'Dashboard',
+                  href: '/admin',
+                  icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>,
+                }}
+                active={isActive('/admin')}
+                dark={dark}
+              />
+            </ul>
+          </>
+        )}
       </nav>
 
       {/* Footer: dark toggle + account */}
@@ -488,6 +508,25 @@ export default function Sidebar() {
                 </ul>
               </div>
             ))}
+            {/* Admin sectie — alleen voor lucas@mybuqo.com */}
+            {userEmail === 'lucas@mybuqo.com' && (() => {
+              const active = pathname === '/admin';
+              return (
+                <div style={{ marginBottom: 20 }}>
+                  <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 6 }}>Admin</p>
+                  <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                    <li>
+                      <Link href="/admin" onClick={() => setDrawerOpen(false)} style={{ display:'flex', alignItems:'center', gap:9, padding:'8px 10px', borderRadius:7, marginBottom:2, fontSize:13, fontWeight: active ? 600 : 400, color: active ? '#e8f0ff' : '#7090b0', background: active ? 'rgba(123,158,240,0.15)' : 'transparent', border: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent', textDecoration:'none' }}>
+                        <span style={{ color: active ? '#7b9ef0' : '#3d6080', flexShrink: 0 }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        </span>
+                        Admin Dashboard
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              );
+            })()}
           </nav>
 
           {/* Drawer footer: dark toggle + logout */}

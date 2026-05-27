@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 const APP_PREFIXES = [
   '/dashboard', '/bets', '/statistieken', '/maandoverzicht',
   '/calculators', '/bookmakers', '/account', '/extension',
-  '/asian-lines', '/odds-v2', '/pricing', '/support',
+  '/asian-lines', '/odds-v2', '/pricing', '/support', '/admin',
 ];
 const AUTH_PAGES = ['/login', '/signup', '/forgot-password'];
 
