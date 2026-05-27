@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { createPortal } from 'react-dom';
 
 export const PERIOD_OPTIONS = [
+  { label:'Alle tijd',              filter:'all' },
   { label:'Vandaag',                filter:'today' },
   { label:'Gisteren',               filter:'yesterday' },
   { label:'Afgelopen 7 dagen',      filter:'last7' },
@@ -52,7 +53,10 @@ function usePortalDropdown() {
 
   useEffect(() => {
     if (!open) return;
-    const h = () => setOpen(false);
+    const h = (e) => {
+      if (e.target && e.target.closest?.('.dropdown-panel')) return;
+      setOpen(false);
+    };
     window.addEventListener('scroll', h, true);
     return () => window.removeEventListener('scroll', h, true);
   }, [open]);
@@ -248,6 +252,7 @@ export default function PeriodDropdown({ filter, onSelect, customRange, onCustom
 
   const label = isCustom && customRange
     ? `${fmtDate(customRange.from)} – ${fmtDate(customRange.to)}`
+    : filter === 'all' ? 'Alle tijd'
     : 'Periode';
 
   const handleSelect = (f) => {
@@ -289,6 +294,7 @@ export default function PeriodDropdown({ filter, onSelect, customRange, onCustom
           }}>
             {PERIOD_OPTIONS.map(opt => {
               const isLast   = opt.filter === 'custom';
+              const isFirst  = opt.filter === 'all';
               const isActive = filter === opt.filter;
               return (
                 <button key={opt.filter} onClick={() => handleSelect(opt.filter)} style={{
@@ -297,8 +303,11 @@ export default function PeriodDropdown({ filter, onSelect, customRange, onCustom
                   fontSize:14, fontWeight: isActive ? 600 : 400,
                   color: isActive ? txtActive : txtDef,
                   backgroundColor: isActive ? bgActive : 'transparent',
-                  border:'none', borderTop: isLast ? `1px solid ${divider}` : 'none',
+                  border:'none',
+                  borderTop: isLast ? `1px solid ${divider}` : 'none',
+                  borderBottom: isFirst ? `1px solid ${divider}` : 'none',
                   marginTop: isLast ? 4 : 0,
+                  marginBottom: isFirst ? 4 : 0,
                   cursor:'pointer', transition:'background 0.1s',
                 }}
                 onMouseEnter={e => { if (!isActive) e.currentTarget.style.backgroundColor = hoverBg; }}
