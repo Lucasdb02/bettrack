@@ -185,7 +185,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
                 <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border}}/>
                 {fouten.inzet&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.inzet}</p>}
               </FF>
-              <FF label="Totale uitbetaling (€)" text2={text2}>
+              <FF label={<><span className="hide-mobile">Totale uitbetaling (€)</span><span className="show-mobile">Uitbetaling</span></>} text2={text2}>
                 <input type="number" step="0.01" min="0" placeholder="Bijv. 105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={iS}/>
               </FF>
             </div>

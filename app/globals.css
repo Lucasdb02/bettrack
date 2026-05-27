@@ -815,3 +815,10 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 @media (max-width: 768px) {
   .calc-desc { display: none !important; }
 }
+
+.hide-mobile { display: inline; }
+.show-mobile { display: none; }
+@media (max-width: 900px) {
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: inline !important; }
+}
