@@ -22,91 +22,65 @@ export function berekenWinst(uitkomst, odds, inzet) {
   return 0;
 }
 
-const FETCH_TIMEOUT_MS  = 12000;
-const UPDATE_TIMEOUT_MS = 12000;
-const MAX_RETRIES       = 2;
-const RETRY_DELAY_MS    = 2000;
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
 export function BetsProvider({ children }) {
-  const [bets, setBets]           = useState([]);
-  const [loaded, setLoaded]       = useState(false);
+  const [bets, setBets]             = useState([]);
+  const [loaded, setLoaded]         = useState(false);
   const [fetchError, setFetchError] = useState(false);
 
-  // Stable client reference — never recreated
   const supabaseRef = useRef(null);
   if (!supabaseRef.current) supabaseRef.current = createClient();
   const supabase = supabaseRef.current;
 
+  const userIdRef = useRef(null);
+
   const fetchBets = useCallback(async (userId) => {
     setFetchError(false);
-
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        const { data, error } = await Promise.race([
-          supabase
-            .from('bets')
-            .select('*')
-            .eq('user_id', userId)
-            .order('datum', { ascending: false }),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('bets fetch timeout')), FETCH_TIMEOUT_MS)
-          ),
-        ]);
-
-        if (error) throw error;
-        setBets(data ?? []);
-        setLoaded(true);
-        setFetchError(false);
-        return;
-      } catch (e) {
-        console.warn(`[BetsContext] fetchBets poging ${attempt + 1} mislukt:`, e.message);
-        if (attempt < MAX_RETRIES) {
-          await sleep(RETRY_DELAY_MS);
-        } else {
-          // All retries exhausted — show error, do NOT wipe existing bets
-          setLoaded(true);
-          setFetchError(true);
-        }
-      }
+    try {
+      const { data, error } = await supabase
+        .from('bets')
+        .select('*')
+        .eq('user_id', userId)
+        .order('datum', { ascending: false });
+      if (error) throw error;
+      setBets(data ?? []);
+      setLoaded(true);
+    } catch (e) {
+      console.warn('[BetsContext] fetchBets mislukt:', e.message);
+      setLoaded(true);
+      setFetchError(true);
     }
   }, [supabase]);
 
   const reloadBets = useCallback(async () => {
-    setLoaded(false);
-    setFetchError(false);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) await fetchBets(session.user.id);
-    else setLoaded(true);
-  }, [supabase, fetchBets]);
+    if (userIdRef.current) {
+      setLoaded(false);
+      await fetchBets(userIdRef.current);
+    }
+  }, [fetchBets]);
 
   useEffect(() => {
     let active = true;
 
-    // Immediately try to get the current session — don't wait for onAuthStateChange
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!active) return;
       if (session?.user) {
+        userIdRef.current = session.user.id;
         fetchBets(session.user.id);
       } else {
-        // No session on an app page → middleware should have caught this,
-        // but redirect to login as a safety net.
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
-        }
+        setLoaded(true);
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!active) return;
-      if (event === 'SIGNED_OUT') {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        userIdRef.current = session.user.id;
+        fetchBets(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        userIdRef.current = null;
         setBets([]);
         setLoaded(true);
         setFetchError(false);
-        if (typeof window !== 'undefined') window.location.href = '/login';
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        if (session?.user) fetchBets(session.user.id);
       }
     });
 
@@ -116,48 +90,31 @@ export function BetsProvider({ children }) {
     };
   }, [fetchBets, supabase]);
 
+  const getUid = async () => {
+    if (userIdRef.current) return userIdRef.current;
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user?.id ?? null;
+  };
+
   const addBet = async (bet) => {
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    if (authError || !session?.user) { console.error('[addBet] auth error:', authError); return null; }
-    const row = toDbRow(bet, session.user.id);
-    try {
-      const { data, error } = await Promise.race([
-        supabase.from('bets').insert(row).select().single(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('insert timeout')), UPDATE_TIMEOUT_MS)),
-      ]);
-      if (error) { console.error('[addBet] supabase error:', error); return null; }
-      setBets((prev) => [data, ...prev]);
-      return data;
-    } catch (e) {
-      console.error('[addBet] error:', e.message);
-      return null;
-    }
+    const uid = await getUid();
+    if (!uid) return null;
+    const { data, error } = await supabase.from('bets').insert(toDbRow(bet, uid)).select().single();
+    if (error) { console.error('[addBet]', error); return null; }
+    setBets(prev => [data, ...prev]);
+    return data;
   };
 
   const addBets = async (newBets) => {
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    if (authError || !session?.user) {
-      const msg = authError?.message || 'Niet ingelogd';
-      throw new Error(`Auth mislukt: ${msg}`);
-    }
+    const uid = await getUid();
+    if (!uid) throw new Error('Niet ingelogd');
     const saved = [];
-    let lastError = null;
     for (const bet of newBets) {
-      const row = toDbRow(bet, session.user.id);
-      try {
-        const { data, error } = await Promise.race([
-          supabase.from('bets').insert(row).select().single(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout per bet')), UPDATE_TIMEOUT_MS)),
-        ]);
-        if (error) { lastError = error; console.error('[addBets] insert error:', error); }
-        else if (data) saved.push(data);
-      } catch (e) {
-        lastError = e;
-        console.error('[addBets] error:', e.message);
-      }
+      const { data, error } = await supabase.from('bets').insert(toDbRow(bet, uid)).select().single();
+      if (!error && data) saved.push(data);
+      else if (error) console.error('[addBets]', error);
     }
-    if (saved.length === 0 && lastError) throw new Error(lastError.message || 'Database fout');
-    if (saved.length > 0) setBets((prev) => [...saved, ...prev]);
+    if (saved.length > 0) setBets(prev => [...saved, ...prev]);
     return saved;
   };
 
@@ -171,51 +128,31 @@ export function BetsProvider({ children }) {
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || 'Opslaan mislukt');
-    if (json.bets?.length) setBets((prev) => [...json.bets, ...prev]);
+    if (json.bets?.length) setBets(prev => [...json.bets, ...prev]);
     return json.bets || [];
   };
 
   const updateBet = async (id, updates) => {
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    if (authError || !session?.user) { console.error('[updateBet] auth error:', authError); return false; }
-
+    const uid = await getUid();
+    if (!uid) return false;
     const prevBets = bets;
-    // Optimistic update
-    setBets((prev) => prev.map((b) => (b.id === id ? { ...b, ...updates } : b)));
-
+    setBets(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b));
     const dbUpdates = {};
     for (const field of SCHEMA_FIELDS) {
       if (updates[field] !== undefined) dbUpdates[field] = updates[field];
     }
-
-    try {
-      const { data, error } = await Promise.race([
-        supabase.from('bets').update(dbUpdates).eq('id', id).eq('user_id', session.user.id).select().single(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('update timeout')), UPDATE_TIMEOUT_MS)),
-      ]);
-      if (error) throw error;
-      if (data) setBets((prev) => prev.map((b) => (b.id === id ? data : b)));
-      return true;
-    } catch (e) {
-      console.error('[updateBet] error:', e.message);
-      setBets(prevBets); // rollback
-      return false;
-    }
+    const { data, error } = await supabase
+      .from('bets').update(dbUpdates).eq('id', id).eq('user_id', uid).select().single();
+    if (error) { console.error('[updateBet]', error); setBets(prevBets); return false; }
+    if (data) setBets(prev => prev.map(b => b.id === id ? data : b));
+    return true;
   };
 
   const deleteBet = async (id) => {
     const prevBets = bets;
-    setBets((prev) => prev.filter((b) => b.id !== id));
-    try {
-      const { error } = await Promise.race([
-        supabase.from('bets').delete().eq('id', id),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('delete timeout')), UPDATE_TIMEOUT_MS)),
-      ]);
-      if (error) throw error;
-    } catch (e) {
-      console.error('[deleteBet] error:', e.message);
-      setBets(prevBets); // rollback
-    }
+    setBets(prev => prev.filter(b => b.id !== id));
+    const { error } = await supabase.from('bets').delete().eq('id', id);
+    if (error) { console.error('[deleteBet]', error); setBets(prevBets); }
   };
 
   return (

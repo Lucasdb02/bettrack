@@ -1,18 +1,19 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
-// Routes inside the app that require authentication
 const APP_PREFIXES = [
   '/dashboard', '/bets', '/statistieken', '/maandoverzicht',
   '/calculators', '/bookmakers', '/account', '/extension',
   '/asian-lines', '/odds-v2', '/pricing', '/support',
 ];
-
-// Auth pages — redirect to dashboard when already logged in
 const AUTH_PAGES = ['/login', '/signup', '/forgot-password'];
 
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith('/auth/') || pathname === '/reset-password') {
+    return NextResponse.next({ request });
+  }
 
   let response = NextResponse.next({ request });
 
@@ -21,9 +22,7 @@ export async function proxy(request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
+        getAll() { return request.cookies.getAll(); },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
@@ -35,22 +34,14 @@ export async function proxy(request) {
     }
   );
 
-  // getUser() validates the token server-side and triggers automatic refresh via setAll.
-  const { data: { user } } = await supabase.auth.getUser();
-  const isLoggedIn = !!user;
+  // getSession reads the cookie — no network call, no hangs, no redirect loops.
+  // The browser client handles token refresh automatically in the background.
+  const { data: { session } } = await supabase.auth.getSession();
+  const isLoggedIn = !!session?.user;
 
-  const isAppRoute = APP_PREFIXES.some(
-    (p) => pathname === p || pathname.startsWith(p + '/')
-  );
-  const isAuthPage = AUTH_PAGES.some(
-    (p) => pathname === p || pathname.startsWith(p + '/')
-  );
-  const isHomePage = pathname === '/';
-  // /reset-password and /auth/* are always accessible regardless of auth state
-  const isAlwaysPublic =
-    pathname === '/reset-password' || pathname.startsWith('/auth/');
+  const isAppRoute = APP_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'));
+  const isAuthPage = AUTH_PAGES.some(p => pathname === p || pathname.startsWith(p + '/'));
 
-  // 1. Protect app routes — send unauthenticated users to /login
   if (isAppRoute && !isLoggedIn) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -58,8 +49,7 @@ export async function proxy(request) {
     return NextResponse.redirect(url);
   }
 
-  // 2. Redirect authenticated users away from auth pages and homepage → dashboard
-  if ((isAuthPage || isHomePage) && isLoggedIn && !isAlwaysPublic) {
+  if ((isAuthPage || pathname === '/') && isLoggedIn) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     url.search = '';
@@ -70,8 +60,5 @@ export async function proxy(request) {
 }
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals, static files, and auth callback
-    '/((?!api|auth/callback|_next/static|_next/image|favicon\\.ico|icon\\.svg|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!api|auth/callback|_next/static|_next/image|favicon\\.ico|icon\\.svg|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };

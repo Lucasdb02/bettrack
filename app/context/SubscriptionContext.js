@@ -1,19 +1,8 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 
-const SubscriptionContext = createContext({
-  plan: 'gratis',
-  status: 'active',
-  interval: null,
-  currentPeriodEnd: null,
-  cancelAtPeriodEnd: false,
-  loading: true,
-  isPro: false,
-  isElite: false,
-  startCheckout,
-  openPortal,
-});
+const SubscriptionContext = createContext({});
 
 async function startCheckout(priceId, token) {
   const res = await fetch('/api/stripe/checkout', {
@@ -37,14 +26,20 @@ async function openPortal(token) {
 }
 
 export function SubscriptionProvider({ children }) {
-  const [sub, setSub] = useState({ plan: 'gratis', status: 'active', interval: null, currentPeriodEnd: null, cancelAtPeriodEnd: false, loading: true });
+  const [sub, setSub] = useState({
+    plan: 'gratis', status: 'active', interval: null,
+    currentPeriodEnd: null, cancelAtPeriodEnd: false, loading: true,
+  });
+
+  const supabaseRef = useRef(null);
+  if (!supabaseRef.current) supabaseRef.current = createClient();
+  const supabase = supabaseRef.current;
 
   useEffect(() => {
-    const supabase = createClient();
+    let active = true;
 
-    async function load() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setSub(s => ({ ...s, loading: false })); return; }
+    async function load(session) {
+      if (!session?.user) { setSub(s => ({ ...s, loading: false })); return; }
 
       const { data } = await supabase
         .from('subscriptions')
@@ -52,35 +47,45 @@ export function SubscriptionProvider({ children }) {
         .eq('user_id', session.user.id)
         .single();
 
+      if (!active) return;
+
       const isOwner = session.user.email === 'lucasdebruin0608@gmail.com';
       setSub({
-        plan:              isOwner ? 'pro' : (data?.plan              ?? 'gratis'),
+        plan:              isOwner ? 'pro'   : (data?.plan               ?? 'gratis'),
         status:            'active',
-        interval:          isOwner ? 'year' : (data?.interval          ?? null),
-        currentPeriodEnd:  isOwner ? null   : (data?.current_period_end ?? null),
-        cancelAtPeriodEnd: isOwner ? false  : (data?.cancel_at_period_end ?? false),
+        interval:          isOwner ? 'year'  : (data?.interval            ?? null),
+        currentPeriodEnd:  isOwner ? null    : (data?.current_period_end  ?? null),
+        cancelAtPeriodEnd: isOwner ? false   : (data?.cancel_at_period_end ?? false),
         loading: false,
       });
     }
 
-    load();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (active) load(session);
+    });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => load());
-    return () => subscription.unsubscribe();
-  }, []);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') load(session);
+      else if (event === 'SIGNED_OUT') setSub({ plan: 'gratis', status: 'active', interval: null, currentPeriodEnd: null, cancelAtPeriodEnd: false, loading: false });
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const isPro   = sub.plan === 'pro'   && sub.status !== 'canceled';
   const isElite = sub.plan === 'elite' && sub.status !== 'canceled';
 
   async function checkout(priceId) {
-    const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { window.location.href = '/login'; return; }
     await startCheckout(priceId, session.access_token);
   }
 
   async function portal() {
-    const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
     await openPortal(session.access_token);
