@@ -665,7 +665,8 @@ html.dark .glass-card {
 .bm-tx-row .bm-tx-type    { height: 40px !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-type button { height: 100% !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-bookie select { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
-.bm-tx-row .bm-tx-amount input  { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-tx-row .bm-tx-amount        { height: 40px !important; box-sizing: border-box !important; }
+.bm-tx-row .bm-tx-amount input  { height: 100% !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 .bm-tx-row .bm-tx-date    { height: 40px !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-date button { height: 100% !important; box-sizing: border-box !important; display: flex !important; align-items: center !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 .bm-add-row select        { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }

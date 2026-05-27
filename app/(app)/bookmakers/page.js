@@ -563,15 +563,15 @@ export default function BookmakersPage() {
           </div>
 
           {/* Amount */}
-          <div className="bm-tx-amount" style={{ position:'relative', flex:'0 0 130px' }}>
-            <span className="bm-tx-euro" style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'var(--text-1)', fontSize:13.5, lineHeight:1, pointerEvents:'none', zIndex:1 }}>€</span>
+          <div className="bm-tx-amount" style={{ display:'flex', alignItems:'center', flex:'0 0 130px', height:40, border:'1px solid var(--border)', borderRadius:7, backgroundColor:'var(--bg-input)', boxSizing:'border-box', overflow:'hidden' }}>
+            <span className="bm-tx-euro" style={{ paddingLeft:10, flexShrink:0, color:'var(--text-1)', fontSize:13.5, lineHeight:1, pointerEvents:'none' }}>€</span>
             <input
               type="number" min={txType === 'correctie' ? undefined : '0.01'} step="0.01"
               placeholder="0.00"
               value={txAmount}
               onChange={e => setTxAmount(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addTransaction()}
-              style={{ width:'100%', height:40, padding:'0 10px 0 26px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', WebkitAppearance:'none', boxSizing:'border-box' }}
+              style={{ flex:1, height:'100%', padding:'0 8px', border:'none', outline:'none', fontSize:13.5, color:'var(--text-1)', backgroundColor:'transparent', WebkitAppearance:'none', boxSizing:'border-box' }}
             />
           </div>
 
