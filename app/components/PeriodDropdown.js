@@ -395,7 +395,7 @@ export function SingleDatePicker({ value, onChange, style }) {
         style={{
           display:'flex', alignItems:'center', gap:7,
           padding:'0 10px', border:'1px solid var(--border)',
-          borderRadius:7, fontSize:13.5, color:'var(--text-1)',
+          borderRadius:7, fontSize:13.5, color:'var(--text-1)', lineHeight:1,
           backgroundColor:'var(--bg-input)', cursor:'pointer',
           whiteSpace:'nowrap', width:'fit-content', fontFamily:'inherit',
           height:40, boxSizing:'border-box',
