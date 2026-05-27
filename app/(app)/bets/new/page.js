@@ -227,8 +227,10 @@ function PreviewFField({ label, required, children }) {
 }
 
 function EditPreviewModal({ bet, onSave, onClose }) {
+  const bg      = 'var(--bg-card)';
   const border  = 'var(--border)';
   const text1   = 'var(--text-1)';
+  const text2   = 'var(--text-2)';
   const text3   = 'var(--text-3)';
   const bgInput = 'var(--bg-input)';
 
