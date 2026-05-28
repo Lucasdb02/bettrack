@@ -344,9 +344,9 @@ function Hero() {
 
           <h1 className="lp-hero-title" style={{ fontSize: 62, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
             Track je Bets{' '}
-            <span style={{ display:'inline-block', position:'relative', width:'0.72em', height:'0.72em', margin:'0 0.08em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
+            <span style={{ display:'inline-block', position:'relative', width:'0.84em', height:'0.84em', margin:'0 0.14em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
               {/* Outer tilted white card */}
-              <span style={{ position:'absolute', inset:0, backgroundColor:'#ffffff', borderRadius:'18%', transform:'rotate(-9deg)', boxShadow:'0 6px 22px rgba(0,0,0,0.18)', display:'block', zIndex:0 }}/>
+              <span style={{ position:'absolute', inset:0, backgroundColor:'#ffffff', borderRadius:'18%', transform:'rotate(-9deg)', boxShadow:'0 6px 22px rgba(0,0,0,0.14)', border:'1.5px solid rgba(0,0,0,0.09)', display:'block', zIndex:0 }}/>
               {/* Inner colored square */}
               <span style={{ position:'absolute', inset:'14%', backgroundColor:'rgba(84,105,212,0.13)', borderRadius:'14%', display:'block', zIndex:1 }}/>
               {/* Icon */}
