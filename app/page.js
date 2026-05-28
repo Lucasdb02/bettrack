@@ -342,27 +342,25 @@ function Hero() {
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
           </div>
 
-          <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 600, color: dark ? '#fff' : '#0f172a', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
-            Stop met gokken,
-            <span style={{ display:'inline-block', position:'relative', width:'0.72em', height:'0.72em', margin:'0 0.12em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
-              {/* Tilted white card behind */}
+          <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 600, color: dark ? '#fff' : '#0f172a', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
+            Track Je Bets{' '}
+            <span style={{ display:'inline-block', position:'relative', width:'0.72em', height:'0.72em', margin:'0 0.08em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
               <span style={{ position:'absolute', inset:0, backgroundColor:'#ffffff', borderRadius:'18%', transform:'rotate(-9deg)', boxShadow:'0 6px 22px rgba(0,0,0,0.18)', display:'block', zIndex:0 }}/>
-              {/* Icon on top */}
               <span style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', zIndex:1 }}>
                 <svg viewBox="0 0 24 24" fill="none" style={{ width:'60%', height:'60%' }}>
                   <path fill="#1e3a5f" d="M19,24H14a5.006,5.006,0,0,1-5-5V14a5.006,5.006,0,0,1,5-5h5a5.006,5.006,0,0,1,5,5v5A5.006,5.006,0,0,1,19,24ZM14,11a3,3,0,0,0-3,3v5a3,3,0,0,0,3,3h5a3,3,0,0,0,3-3V14a3,3,0,0,0-3-3Zm0,2a1,1,0,1,0,1,1A1,1,0,0,0,14,13Zm5,5a1,1,0,1,0,1,1A1,1,0,0,0,19,18ZM9,7A1,1,0,1,0,8,6,1,1,0,0,0,9,7ZM7,9a1,1,0,1,0-1,1A1,1,0,0,0,7,9Zm-.22,6.826a1,1,0,0,0-.154-1.405,3.15,3.15,0,0,1-.251-.228L2.864,10.634a3.005,3.005,0,0,1,.029-4.243L6.453,2.88a2.98,2.98,0,0,1,2.106-.864h.022a2.981,2.981,0,0,1,2.115.893L14.2,6.465c.057.058.111.117.163.179A1,1,0,1,0,15.9,5.356c-.083-.1-.17-.194-.266-.292L12.12,1.505a5,5,0,0,0-7.071-.049L1.489,4.967a5.007,5.007,0,0,0-.049,7.071L4.951,15.6a4.865,4.865,0,0,0,.423.381,1,1,0,0,0,1.406-.153Z"/>
                 </svg>
               </span>
             </span>
-            {' '}begin met{' '}
-            <span style={{ fontFamily: "'Tempting', cursive", background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.15em', letterSpacing: 0 }}>
-              analyseren
+            <br/>
+            <span style={{ fontWeight: 500, color: dark ? 'rgba(255,255,255,0.75)' : '#475569' }}>Slimmer met </span>
+            <span style={{ fontFamily: "'Tempting', cursive", background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.12em', letterSpacing: 0, fontWeight: 400 }}>
+              AI
             </span>
           </h1>
 
-          <p className="lp-hero-sub" style={{ fontSize: 18, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.7)' : '#334155', lineHeight: 1.55, marginBottom: 40, maxWidth: 440, letterSpacing: '-0.01em' }}>
-            Track je Bets Automatisch met{' '}
-            <span style={{ fontWeight: 700, background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI</span>.
+          <p className="lp-hero-sub" style={{ fontSize: 16, fontWeight: 400, color: dark ? 'rgba(255,255,255,0.55)' : '#64748b', lineHeight: 1.7, marginBottom: 40, maxWidth: 460 }}>
+            De meest geavanceerde sports bet tracker. Track je bets direct via screenshots of een browserextensie. Een compleet sportsbook trackingplatform met diepgaande analyses voor serieuze sportsbettors.
           </p>
 
           <div className="lp-cta-row" style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 52 }}>
