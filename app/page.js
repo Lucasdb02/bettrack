@@ -356,9 +356,7 @@ function Hero() {
                 </svg>
               </span>
             </span>
-            Slimmer en Automatisch
-            <br/>
-            met{' '}
+            Slimmer en Automatisch met{' '}
             <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               AI
             </span>
