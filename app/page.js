@@ -354,7 +354,7 @@ function Hero() {
             </span>
             <br/>
             Slimmer met{' '}
-            <span style={{ fontFamily: "'Tempting', cursive", background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.12em', letterSpacing: 0 }}>
+            <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               AI
             </span>
           </h1>
