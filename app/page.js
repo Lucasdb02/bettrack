@@ -344,7 +344,7 @@ function Hero() {
 
           <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 600, color: dark ? '#fff' : '#0f172a', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 22 }}>
             Stop met gokken,{' '}begin met{' '}
-            <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ fontFamily: "'Tempting', cursive", background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.15em', letterSpacing: 0 }}>
               analyseren
             </span>
           </h1>

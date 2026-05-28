@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Inter+Display:opsz,wght@40..140,100..900&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Tempting';
+  src: url('/fonts/Tempting.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ══════════════════════════════════════════════
    SHADCN/UI THEME TOKENS
    Maps shadcn semantic classes (bg-background, text-muted-foreground, etc.)
