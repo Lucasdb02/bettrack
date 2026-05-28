@@ -342,7 +342,7 @@ function Hero() {
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
           </div>
 
-          <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
+          <h1 className="lp-hero-title" style={{ fontSize: 62, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
             Track je Bets{' '}
             <span style={{ display:'inline-block', position:'relative', width:'0.72em', height:'0.72em', margin:'0 0.08em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
               {/* Outer tilted white card */}
@@ -356,8 +356,9 @@ function Hero() {
                 </svg>
               </span>
             </span>
+            Slimmer en Automatisch
             <br/>
-            Slimmer met{' '}
+            met{' '}
             <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               AI
             </span>
