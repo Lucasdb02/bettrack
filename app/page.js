@@ -342,7 +342,7 @@ function Hero() {
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
           </div>
 
-          <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 600, color: dark ? '#fff' : '#0f172a', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
+          <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
             Track Je Bets{' '}
             <span style={{ display:'inline-block', position:'relative', width:'0.72em', height:'0.72em', margin:'0 0.08em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
               <span style={{ position:'absolute', inset:0, backgroundColor:'#ffffff', borderRadius:'18%', transform:'rotate(-9deg)', boxShadow:'0 6px 22px rgba(0,0,0,0.18)', display:'block', zIndex:0 }}/>
@@ -353,13 +353,13 @@ function Hero() {
               </span>
             </span>
             <br/>
-            <span style={{ fontWeight: 500, color: dark ? 'rgba(255,255,255,0.75)' : '#475569' }}>Slimmer met </span>
-            <span style={{ fontFamily: "'Tempting', cursive", background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.12em', letterSpacing: 0, fontWeight: 400 }}>
+            Slimmer met{' '}
+            <span style={{ fontFamily: "'Tempting', cursive", background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.12em', letterSpacing: 0 }}>
               AI
             </span>
           </h1>
 
-          <p className="lp-hero-sub" style={{ fontSize: 16, fontWeight: 400, color: dark ? 'rgba(255,255,255,0.55)' : '#64748b', lineHeight: 1.7, marginBottom: 40, maxWidth: 460 }}>
+          <p className="lp-hero-sub" style={{ fontSize: 16, fontWeight: 400, color: dark ? 'rgba(255,255,255,0.55)' : '#64748b', lineHeight: 1.7, marginBottom: 40, maxWidth: 560 }}>
             De meest geavanceerde sports bet tracker. Track je bets direct via screenshots of een browserextensie. Een compleet sportsbook trackingplatform met diepgaande analyses voor serieuze sportsbettors.
           </p>
 
