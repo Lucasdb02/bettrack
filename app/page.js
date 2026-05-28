@@ -343,11 +343,15 @@ function Hero() {
           </div>
 
           <h1 className="lp-hero-title" style={{ fontSize: 52, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
-            Track Je Bets{' '}
+            Track je Bets{' '}
             <span style={{ display:'inline-block', position:'relative', width:'0.72em', height:'0.72em', margin:'0 0.08em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
+              {/* Outer tilted white card */}
               <span style={{ position:'absolute', inset:0, backgroundColor:'#ffffff', borderRadius:'18%', transform:'rotate(-9deg)', boxShadow:'0 6px 22px rgba(0,0,0,0.18)', display:'block', zIndex:0 }}/>
-              <span style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', zIndex:1 }}>
-                <svg viewBox="0 0 24 24" fill="none" style={{ width:'60%', height:'60%' }}>
+              {/* Inner colored square */}
+              <span style={{ position:'absolute', inset:'14%', backgroundColor:'rgba(84,105,212,0.13)', borderRadius:'14%', display:'block', zIndex:1 }}/>
+              {/* Icon */}
+              <span style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', zIndex:2 }}>
+                <svg viewBox="0 0 24 24" fill="none" style={{ width:'54%', height:'54%' }}>
                   <path fill="#1e3a5f" d="M19,24H14a5.006,5.006,0,0,1-5-5V14a5.006,5.006,0,0,1,5-5h5a5.006,5.006,0,0,1,5,5v5A5.006,5.006,0,0,1,19,24ZM14,11a3,3,0,0,0-3,3v5a3,3,0,0,0,3,3h5a3,3,0,0,0,3-3V14a3,3,0,0,0-3-3Zm0,2a1,1,0,1,0,1,1A1,1,0,0,0,14,13Zm5,5a1,1,0,1,0,1,1A1,1,0,0,0,19,18ZM9,7A1,1,0,1,0,8,6,1,1,0,0,0,9,7ZM7,9a1,1,0,1,0-1,1A1,1,0,0,0,7,9Zm-.22,6.826a1,1,0,0,0-.154-1.405,3.15,3.15,0,0,1-.251-.228L2.864,10.634a3.005,3.005,0,0,1,.029-4.243L6.453,2.88a2.98,2.98,0,0,1,2.106-.864h.022a2.981,2.981,0,0,1,2.115.893L14.2,6.465c.057.058.111.117.163.179A1,1,0,1,0,15.9,5.356c-.083-.1-.17-.194-.266-.292L12.12,1.505a5,5,0,0,0-7.071-.049L1.489,4.967a5.007,5.007,0,0,0-.049,7.071L4.951,15.6a4.865,4.865,0,0,0,.423.381,1,1,0,0,0,1.406-.153Z"/>
                 </svg>
               </span>
