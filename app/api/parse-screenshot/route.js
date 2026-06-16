@@ -49,7 +49,7 @@ Geef de bets terug als een JSON array. Elk bet-object moet de volgende velden he
 - odds: decimale odds als getal (bv. 2.10)
 - inzet: ingezet bedrag als getal (bv. 10.00)
 - uitkomst: een van: "gewonnen", "verloren", "lopend", "push", "void", "half_gewonnen", "half_verloren", "onbeslist"
-- bookmaker: gebruik EXACT één van deze namen (hoofdlettergevoelig): "bet365", "BetCity", "Unibet", "LeoVegas", "Holland Casino Online", "TOTO", "Jack's", "Bingoal", "Circus", "BetMGM", "Vbet", "711", "ZEbet", "One Casino", "Tonybet", "Starcasino", "888", "Betnation", "ComeOn", "Hommerson", "Overig". Gebruik "Overig" als de bookmaker niet in de lijst staat.
+- bookmaker: gebruik EXACT één van deze namen (hoofdlettergevoelig): "bet365", "BetCity", "Unibet", "LeoVegas", "Holland Casino Online", "TOTO", "Jack's", "Bingoal", "Circus", "BetMGM", "Vbet", "711", "ZEbet", "One Casino", "Tonybet", "Starcasino", "888", "Betnation", "ComeOn", "Hommerson", "OranjePalace", "Overig". Gebruik "Overig" als de bookmaker niet in de lijst staat.
 - sport: een van: "Voetbal", "Tennis", "Basketbal", "Hockey", "Formule 1", "Wielrennen", "Darts", "Snooker", "American Football", "Baseball", "Overig"
 
 Belangrijke regels:
@@ -132,7 +132,7 @@ Als er geen bets zichtbaar zijn, geef een lege array terug: []`,
     const SPORT_ALIASES = { 'Basketball': 'Basketbal', 'basketball': 'Basketbal' };
 
     // Canonical bookmaker names as stored in the database
-    const VALID_BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','Overig'];
+    const VALID_BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','OranjePalace','Overig'];
 
     // Case-insensitive alias map → canonical name
     const BOOKMAKER_ALIASES = {
@@ -156,6 +156,7 @@ Als er geen bets zichtbaar zijn, geef een lege array terug: []`,
       'betnation': 'Betnation', 'bet nation': 'Betnation',
       'comeon': 'ComeOn', 'come on': 'ComeOn',
       'hommerson': 'Hommerson', 'hommerson.nl': 'Hommerson',
+      'oranjepalace': 'OranjePalace', 'oranje palace': 'OranjePalace', 'oranjepalace.com': 'OranjePalace',
     };
 
     const normaliseBookmaker = (raw) => {

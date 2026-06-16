@@ -21,7 +21,7 @@ const MARKTEN = [
   'Tote Bet','Exotic Bet','Each Way Bet (Win)','Each Way Bet (Place)',
   'Trixie','Patent','Yankee','Lucky 15','Lucky 31','Lucky 63','Heinz','Super Heinz','Goliath',
 ];
-const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','Overig'];
+const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','OranjePalace','Overig'];
 
 function UitkomstBadge({ value }) {
   const { dark } = useTheme();

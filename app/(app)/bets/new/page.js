@@ -23,7 +23,7 @@ const SYSTEM_BETS = new Set(['Trixie','Patent','Yankee','Lucky 15','Lucky 31','L
 const TOTE_BETS   = new Set(['Tote Bet','Exotic Bet']);
 const MULTI_BETS  = new Set([...SYSTEM_BETS,'Multi Bet','Same Game Multi Bet']);
 const NO_MARKT    = new Set([...SYSTEM_BETS,...TOTE_BETS,'Multi Bet','Same Game Multi Bet','Lay Bet','Bonus Bet (SNR)','Bonus Bet (SR)','Future/Outright Bet','Match Total Bet','Player Prop Bet','Line Bet','Each Way Bet','Arb Bet','Promo Bet','Value Bet','Mug Bet','Qualifying Bet']);
-const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','Overig'];
+const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','OranjePalace','Overig'];
 const EW_FRACTIONS = ['1/4','1/5','1/3','1/8'];
 const today = () => new Date().toISOString().split('T')[0];
 const LEEG = { datum:today(), sport:'Voetbal', wedstrijd:'', betType:'Enkel', markt:'1X2', selectie:'', odds:'', inzet:'', uitkomst:'lopend', bookmaker:'bet365', notities:'', tags:[], ewFractie:'1/4', ewPlacen:'' };

@@ -23,6 +23,7 @@ export const BOOKIE_BRAND_COLORS = {
   'Betnation':             '#2563EB', // Blue
   'ComeOn':                '#DC2626', // Red
   'Hommerson':             '#1E40AF', // Blue
+  'OranjePalace':          '#F97316', // Orange
   'Overig':                '#6B7280', // Grey
 };
 
@@ -47,6 +48,7 @@ export const BOOKMAKER_DOMAINS = {
   'Betnation':             'betnation.com',
   'ComeOn':                'comeon.nl',
   'Hommerson':             'hommerson.nl',
+  'OranjePalace':          'oranjepalace.com',
   'Overig':                null,
 };
 
