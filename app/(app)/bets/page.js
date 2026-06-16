@@ -12,8 +12,16 @@ import Link from 'next/link';
 import PeriodDropdown, { SingleDatePicker } from '../../components/PeriodDropdown';
 import { getDateRange } from '../../lib/dateUtils';
 
-const MARKTEN = ['1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig'];
-const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Overig'];
+const MARKTEN = [
+  '1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig',
+  'Qualifying Bet','Mug Bet','Value Bet','Arb Bet','Promo Bet',
+  'Lay Bet','Bonus Bet (SNR)','Bonus Bet (SR)',
+  'Multi Bet','Same Game Multi Bet',
+  'Future/Outright Bet','Match Total Bet','Player Prop Bet','Line Bet',
+  'Tote Bet','Exotic Bet','Each Way Bet (Win)','Each Way Bet (Place)',
+  'Trixie','Patent','Yankee','Lucky 15','Lucky 31','Lucky 63','Heinz','Super Heinz','Goliath',
+];
+const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','Overig'];
 
 function UitkomstBadge({ value }) {
   const { dark } = useTheme();
@@ -436,7 +444,7 @@ export default function BetsPage() {
     .filter(b=>!zoeken||[b.wedstrijd,b.selectie,b.bookmaker,...(b.tags||[])].join(' ').toLowerCase().includes(zoeken.toLowerCase()))
     .sort((a,b)=>new Date(b.datum)-new Date(a.datum))
   ,[bets,filterU,filterS,filterT,filterPeriod,customPeriodRange,zoeken]);
-  const totaal = useMemo(()=>filtered.filter(b=>b.uitkomst!=='lopend').reduce((s,b)=>s+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet)),0),[filtered]);
+  const totaal = useMemo(()=>filtered.filter(b=>b.uitkomst!=='lopend').reduce((s,b)=>s+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt),0),[filtered]);
 
   const { fmtPnl } = useFmt();
 
@@ -521,7 +529,7 @@ export default function BetsPage() {
             {filtered.length===0 ? (
               <tr><td colSpan={10} style={{padding:'48px 24px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</td></tr>
             ) : filtered.map(bet => {
-              const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+              const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
               return (
                 <tr
                   key={bet.id}
@@ -585,7 +593,7 @@ export default function BetsPage() {
         {filtered.length===0 ? (
           <div style={{padding:'48px 0',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</div>
         ) : filtered.map(bet => {
-          const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+          const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
           return (
             <div key={bet.id} className="bet-card" onDoubleClick={()=>setEditBet(bet)}>
               {/* Top row: date + sport + uitkomst badge */}

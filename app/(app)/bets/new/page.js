@@ -10,9 +10,23 @@ import { useTheme } from '../../../context/ThemeContext';
 import { SingleDatePicker } from '../../../components/PeriodDropdown';
 
 const MARKTEN = ['1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig'];
-const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Overig'];
+const BET_TYPES = [
+  'Enkel',
+  'Qualifying Bet','Mug Bet','Value Bet','Arb Bet','Promo Bet',
+  'Lay Bet','Bonus Bet (SNR)','Bonus Bet (SR)',
+  'Multi Bet','Same Game Multi Bet',
+  'Future/Outright Bet','Match Total Bet','Player Prop Bet','Line Bet',
+  'Tote Bet','Exotic Bet','Each Way Bet',
+  'Trixie','Patent','Yankee','Lucky 15','Lucky 31','Lucky 63','Heinz','Super Heinz','Goliath',
+];
+const SYSTEM_BETS = new Set(['Trixie','Patent','Yankee','Lucky 15','Lucky 31','Lucky 63','Heinz','Super Heinz','Goliath']);
+const TOTE_BETS   = new Set(['Tote Bet','Exotic Bet']);
+const MULTI_BETS  = new Set([...SYSTEM_BETS,'Multi Bet','Same Game Multi Bet']);
+const NO_MARKT    = new Set([...SYSTEM_BETS,...TOTE_BETS,'Multi Bet','Same Game Multi Bet','Lay Bet','Bonus Bet (SNR)','Bonus Bet (SR)','Future/Outright Bet','Match Total Bet','Player Prop Bet','Line Bet','Each Way Bet','Arb Bet','Promo Bet','Value Bet','Mug Bet','Qualifying Bet']);
+const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','Overig'];
+const EW_FRACTIONS = ['1/4','1/5','1/3','1/8'];
 const today = () => new Date().toISOString().split('T')[0];
-const LEEG = { datum:today(), sport:'Voetbal', wedstrijd:'', markt:'1X2', selectie:'', odds:'', inzet:'', uitkomst:'lopend', bookmaker:'bet365', notities:'', tags:[] };
+const LEEG = { datum:today(), sport:'Voetbal', wedstrijd:'', betType:'Enkel', markt:'1X2', selectie:'', odds:'', inzet:'', uitkomst:'lopend', bookmaker:'bet365', notities:'', tags:[], ewFractie:'1/4', ewPlacen:'' };
 
 const iStyle = { width:'100%', height:'40px', padding:'0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s', boxSizing:'border-box' };
 const sStyle = { ...{width:'100%', height:'40px', padding:'0 36px 0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s', boxSizing:'border-box', appearance:'none', WebkitAppearance:'none', cursor:'pointer'} };
@@ -43,7 +57,7 @@ function FF({ label, required, hint, children }) {
 // ── Handmatig tab ─────────────────────────────────────────────────────────────
 
 function HandmatigForm({ onSaved }) {
-  const { addBet } = useBets();
+  const { addBet, addBets } = useBets();
   const router = useRouter();
   const [form, setForm] = useState(LEEG);
   const [fouten, setFouten] = useState({});
@@ -78,8 +92,13 @@ function HandmatigForm({ onSaved }) {
     const e = {};
     if (!form.wedstrijd.trim()) e.wedstrijd = 'Verplicht veld';
     if (!form.selectie.trim())  e.selectie  = 'Verplicht veld';
-    if (!form.odds || isNaN(Number(form.odds)) || Number(form.odds) < 1) e.odds = 'Voer geldige odds in (≥ 1.00)';
+    if (!TOTE_BETS.has(form.betType)) {
+      if (!form.odds || isNaN(Number(form.odds)) || Number(form.odds) < 1) e.odds = 'Voer geldige odds in (≥ 1.00)';
+    }
     if (!form.inzet || isNaN(Number(form.inzet)) || Number(form.inzet) <= 0) e.inzet = 'Voer een geldig bedrag in';
+    if (form.betType === 'Each Way Bet') {
+      if (!form.ewPlacen || isNaN(Number(form.ewPlacen)) || Number(form.ewPlacen) < 1) e.ewPlacen = 'Voer geldige place odds in (≥ 1.00)';
+    }
     return e;
   };
 
@@ -89,14 +108,46 @@ function HandmatigForm({ onSaved }) {
     if (Object.keys(err).length > 0) { setFouten(err); return; }
     setSaving(true);
     setSaveError('');
-    const result = await addBet({ ...form, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
-    setSaving(false);
-    if (!result) { setSaveError('Opslaan mislukt — zie browser console (F12) voor de exacte Supabase fout.'); return; }
+
+    const { betType, ewFractie, ewPlacen, ...formData } = form;
+
+    if (betType === 'Each Way Bet') {
+      const inzetPerDeel = parseFloat(Number(form.inzet).toFixed(2));
+      const winOdds  = parseFloat(Number(form.odds).toFixed(3));
+      const placeOdds = parseFloat(Number(ewPlacen).toFixed(3));
+      const bets = [
+        { ...formData, markt: 'Each Way Bet (Win)', odds: winOdds,   inzet: inzetPerDeel },
+        { ...formData, markt: 'Each Way Bet (Place)', odds: placeOdds, inzet: inzetPerDeel, notities: `EW fractie: ${ewFractie}${form.notities ? ' | ' + form.notities : ''}` },
+      ];
+      const saved = await addBets(bets);
+      setSaving(false);
+      if (!saved.length) { setSaveError('Opslaan mislukt — zie browser console (F12) voor de exacte Supabase fout.'); return; }
+    } else {
+      const effectiveMarkt = NO_MARKT.has(betType) ? betType : formData.markt;
+      const oddsVal = TOTE_BETS.has(betType) ? (parseFloat(form.odds) || 1) : parseFloat(Number(form.odds).toFixed(3));
+      const result = await addBet({ ...formData, markt: effectiveMarkt, odds: oddsVal, inzet: parseFloat(Number(form.inzet).toFixed(2)) });
+      setSaving(false);
+      if (!result) { setSaveError('Opslaan mislukt — zie browser console (F12) voor de exacte Supabase fout.'); return; }
+    }
+
     setOpgeslagen(true);
     setTimeout(() => { setOpgeslagen(false); setForm(LEEG); setTotaalUitbetaling(''); router.push('/bets'); }, 1000);
   };
 
+  const isLayBet = form.betType === 'Lay Bet';
+  const isEachWay = form.betType === 'Each Way Bet';
+  const isTote = TOTE_BETS.has(form.betType);
+
   const pot = form.odds && form.inzet && !isNaN(Number(form.odds)) && !isNaN(Number(form.inzet))
+    ? (isLayBet
+        ? Number(form.inzet).toFixed(2)
+        : form.betType === 'Bonus Bet (SNR)'
+          ? ((Number(form.odds) - 1) * Number(form.inzet)).toFixed(2)
+          : form.betType === 'Bonus Bet (SR)'
+            ? (Number(form.odds) * Number(form.inzet)).toFixed(2)
+            : ((Number(form.odds) - 1) * Number(form.inzet)).toFixed(2))
+    : null;
+  const liability = isLayBet && form.odds && form.inzet
     ? ((Number(form.odds) - 1) * Number(form.inzet)).toFixed(2) : null;
 
   const sh = { fontSize:13.5, fontWeight:700, color:'var(--text-1)', marginBottom:16, textTransform:'uppercase', letterSpacing:'0.04em' };
@@ -118,17 +169,26 @@ function HandmatigForm({ onSaved }) {
                 </select>
               </SelectWrap>
             </FF>
-            <FF label="Wedstrijd" required>
-              <input type="text" placeholder="bv. Ajax vs PSV" value={form.wedstrijd} onChange={e=>set('wedstrijd',e.target.value)} style={{...iStyle,borderColor:fouten.wedstrijd?'#FB7185':'var(--border)'}}/>
-              {fouten.wedstrijd && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.wedstrijd}</p>}
-            </FF>
-            <FF label="Markt" required>
+            <FF label="Type">
               <SelectWrap>
-                <select value={form.markt} onChange={e=>set('markt',e.target.value)} style={sStyle}>
-                  {MARKTEN.map(m=><option key={m}>{m}</option>)}
+                <select value={form.betType} onChange={e=>set('betType',e.target.value)} style={sStyle}>
+                  {BET_TYPES.map(t=><option key={t}>{t}</option>)}
                 </select>
               </SelectWrap>
             </FF>
+            <FF label="Wedstrijd" required>
+              <input type="text" placeholder={MULTI_BETS.has(form.betType) ? 'MULTI' : 'bv. Ajax vs PSV'} value={form.wedstrijd} onChange={e=>set('wedstrijd',e.target.value)} style={{...iStyle,borderColor:fouten.wedstrijd?'#FB7185':'var(--border)'}}/>
+              {fouten.wedstrijd && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.wedstrijd}</p>}
+            </FF>
+            {!NO_MARKT.has(form.betType) && (
+              <FF label="Markt" required>
+                <SelectWrap>
+                  <select value={form.markt} onChange={e=>set('markt',e.target.value)} style={sStyle}>
+                    {MARKTEN.map(m=><option key={m}>{m}</option>)}
+                  </select>
+                </SelectWrap>
+              </FF>
+            )}
           </div>
         </div>
 
@@ -141,22 +201,63 @@ function HandmatigForm({ onSaved }) {
                 {fouten.selectie && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.selectie}</p>}
               </FF>
             </div>
-            <FF label="Odds" required>
-              <input type="number" step="0.001" min="1" placeholder="2.100" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)',padding:'0 12px'}}/>
-              {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
-            </FF>
-            <FF label="Inzet (€)" required>
-              <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
-              {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
-            </FF>
-            <FF label="Totale uitbetaling (€)" hint="Vul in → odds wordt auto-berekend">
-              <input type="number" step="0.01" min="0" placeholder="105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={{...iStyle,padding:'0 12px'}}/>
-            </FF>
+            {isEachWay ? (
+              <>
+                <FF label="Win Odds" required>
+                  <input type="number" step="0.001" min="1" placeholder="5.000" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
+                </FF>
+                <FF label="Place Odds" required hint="Win odds × EW fractie">
+                  <input type="number" step="0.001" min="1" placeholder="2.000" value={form.ewPlacen} onChange={e=>set('ewPlacen',e.target.value)} style={{...iStyle,borderColor:fouten.ewPlacen?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  {fouten.ewPlacen && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.ewPlacen}</p>}
+                </FF>
+                <FF label="EW Fractie">
+                  <SelectWrap>
+                    <select value={form.ewFractie} onChange={e=>set('ewFractie',e.target.value)} style={sStyle}>
+                      {EW_FRACTIONS.map(f=><option key={f}>{f}</option>)}
+                    </select>
+                  </SelectWrap>
+                </FF>
+                <FF label="Inzet per deel (€)" required hint="Win + Place elk dit bedrag">
+                  <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
+                </FF>
+              </>
+            ) : (
+              <>
+                <FF label={isTote ? 'Odds (optioneel)' : 'Odds'} required={!isTote}>
+                  <input type="number" step="0.001" min="1" placeholder={isTote ? 'Invullen na uitslag' : '2.100'} value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
+                </FF>
+                <FF label="Inzet (€)" required>
+                  <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
+                </FF>
+                {!isTote && (
+                  <FF label="Totale uitbetaling (€)" hint="Vul in → odds wordt auto-berekend">
+                    <input type="number" step="0.01" min="0" placeholder="105.00" value={totaalUitbetaling} onChange={e=>handleTotaalChange(e.target.value)} style={{...iStyle,padding:'0 12px'}}/>
+                  </FF>
+                )}
+              </>
+            )}
           </div>
-          {pot && (
+          {isEachWay && form.odds && form.inzet && (
+            <div style={{marginTop:16,padding:'12px 16px',backgroundColor:'var(--bg-brand)',borderRadius:8,border:'1px solid var(--brand-soft)',display:'flex',gap:20,flexWrap:'wrap'}}>
+              <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale inzet</p><p style={{fontSize:16,fontWeight:700,color:'var(--text-1)'}}>€{(Number(form.inzet)*2).toFixed(2)}</p></div>
+              <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Win payout</p><p style={{fontSize:16,fontWeight:700,color:'var(--color-win)'}}>€{(Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>
+              {form.ewPlacen && <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Place payout</p><p style={{fontSize:16,fontWeight:700,color:'var(--color-win)'}}>€{(Number(form.ewPlacen)*Number(form.inzet)).toFixed(2)}</p></div>}
+            </div>
+          )}
+          {isLayBet && liability && (
+            <div style={{marginTop:16,padding:'12px 16px',backgroundColor:'rgba(251,113,133,0.08)',borderRadius:8,border:'1px solid rgba(251,113,133,0.25)',display:'flex',gap:20}}>
+              <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Aansprakelijkheid (als je verliest)</p><p style={{fontSize:16,fontWeight:700,color:'#FB7185'}}>-€{liability}</p></div>
+              <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Winst (als bet verliest)</p><p style={{fontSize:16,fontWeight:700,color:'var(--color-win)'}}>+€{pot}</p></div>
+            </div>
+          )}
+          {!isLayBet && !isEachWay && pot && (
             <div style={{marginTop:16,padding:'12px 16px',backgroundColor:'var(--bg-brand)',borderRadius:8,border:'1px solid var(--brand-soft)',display:'flex',gap:20}}>
               <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Potentiële winst</p><p style={{fontSize:16,fontWeight:700,color:'var(--color-win)'}}>+€{pot}</p></div>
-              <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale uitbetaling</p><p style={{fontSize:16,fontWeight:700,color:'var(--text-1)'}}>€{(Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>
+              {!isTote && <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale uitbetaling</p><p style={{fontSize:16,fontWeight:700,color:'var(--text-1)'}}>€{(Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>}
             </div>
           )}
         </div>
@@ -234,7 +335,16 @@ function EditPreviewModal({ bet, onSave, onClose }) {
   const text3   = 'var(--text-3)';
   const bgInput = 'var(--bg-input)';
 
-  const [form, setForm] = useState({ ...bet });
+  const ALL_SPECIAL = new Set(BET_TYPES.filter(t => t !== 'Enkel'));
+  const isSpecial = ALL_SPECIAL.has(bet.markt) || bet.markt?.startsWith('Each Way Bet');
+  const derivedBetType = bet.markt?.startsWith('Each Way Bet') ? 'Each Way Bet'
+    : ALL_SPECIAL.has(bet.markt) ? bet.markt : 'Enkel';
+  const [form, setForm] = useState({
+    ...bet,
+    betType: derivedBetType,
+    markt:   isSpecial ? '1X2' : (bet.markt || '1X2'),
+    ewFractie: '1/4', ewPlacen: '',
+  });
   const [fouten, setFouten] = useState({});
   const set = (f, v) => { setForm(p => ({ ...p, [f]: v })); if (fouten[f]) setFouten(p => ({ ...p, [f]: undefined })); };
 
@@ -242,7 +352,9 @@ function EditPreviewModal({ bet, onSave, onClose }) {
     const e = {};
     if (!form.wedstrijd?.trim()) e.wedstrijd = 'Verplicht veld';
     if (!form.selectie?.trim())  e.selectie  = 'Verplicht veld';
-    if (!form.odds || isNaN(Number(form.odds)) || Number(form.odds) < 1) e.odds = 'Voer geldige odds in (≥ 1.00)';
+    if (!TOTE_BETS.has(form.betType)) {
+      if (!form.odds || isNaN(Number(form.odds)) || Number(form.odds) < 1) e.odds = 'Voer geldige odds in (≥ 1.00)';
+    }
     if (!form.inzet || isNaN(Number(form.inzet)) || Number(form.inzet) <= 0) e.inzet = 'Voer een geldig bedrag in';
     return e;
   };
@@ -250,7 +362,9 @@ function EditPreviewModal({ bet, onSave, onClose }) {
   const handleSave = () => {
     const err = valideer();
     if (Object.keys(err).length > 0) { setFouten(err); return; }
-    onSave({ ...form, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
+    const { betType, ewFractie, ewPlacen, ...formData } = form;
+    const effectiveMarkt = NO_MARKT.has(betType) ? betType : formData.markt;
+    onSave({ ...formData, markt: effectiveMarkt, odds: parseFloat(Number(form.odds).toFixed(3)), inzet: parseFloat(Number(form.inzet).toFixed(2)) });
   };
 
   useEffect(() => {
@@ -292,15 +406,22 @@ function EditPreviewModal({ bet, onSave, onClose }) {
                   {SPORTEN.map(s => <option key={s} value={s}>{sportEmoji(s)} {s}</option>)}
                 </select>
               </PreviewFField>
+              <PreviewFField label="Type">
+                <select value={form.betType} onChange={e => set('betType', e.target.value)} style={iS}>
+                  {BET_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
+              </PreviewFField>
               <PreviewFField label="Wedstrijd" required>
                 <input type="text" value={form.wedstrijd} onChange={e => set('wedstrijd', e.target.value)} style={{ ...iS, borderColor: fouten.wedstrijd ? '#e02424' : border }}/>
                 {fouten.wedstrijd && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.wedstrijd}</p>}
               </PreviewFField>
-              <PreviewFField label="Markt" required>
-                <select value={form.markt} onChange={e => set('markt', e.target.value)} style={iS}>
-                  {MARKTEN.map(m => <option key={m}>{m}</option>)}
-                </select>
-              </PreviewFField>
+              {!NO_MARKT.has(form.betType) && (
+                <PreviewFField label="Markt" required>
+                  <select value={form.markt} onChange={e => set('markt', e.target.value)} style={iS}>
+                    {MARKTEN.map(m => <option key={m}>{m}</option>)}
+                  </select>
+                </PreviewFField>
+              )}
             </div>
           </div>
 
@@ -630,7 +751,7 @@ function ScreenshotImport() {
                   const uitkomstBg     = dark ? cfg.darkBg        : cfg.bg;
                   const uitkomstBorder = dark ? cfg.darkBorder    : cfg.border;
                   const uitkomstColor  = dark ? cfg.darkTextColor : cfg.textColor;
-                  const pnl = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+                  const pnl = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
                   return (
                     <tr key={i}
                       className="bet-row"
