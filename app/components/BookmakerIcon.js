@@ -48,7 +48,7 @@ export const BOOKMAKER_DOMAINS = {
   'Betnation':             'betnation.com',
   'ComeOn':                'comeon.nl',
   'Hommerson':             'hommerson.nl',
-  'OranjePalace':          'oranjepalace.com',
+  'OranjePalace':          'https://www.oranjepalace.nl/favicon.ico',
   'Overig':                null,
 };
 
@@ -68,9 +68,13 @@ export default function BookmakerIcon({ naam, size = 18 }) {
     );
   }
 
+  const src = domain.startsWith('http')
+    ? domain
+    : `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
   return (
     <img
-      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+      src={src}
       width={size}
       height={size}
       alt={naam}
