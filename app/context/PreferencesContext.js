@@ -6,7 +6,7 @@ const PreferencesContext = createContext({});
 export const ALL_BOOKMAKERS = [
   'bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',
   "Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino',
-  'Tonybet','Starcasino','888','Betnation','ComeOn','Overig',
+  'Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','Overig',
 ];
 
 const DEFAULTS = {

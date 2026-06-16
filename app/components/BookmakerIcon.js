@@ -22,6 +22,7 @@ export const BOOKIE_BRAND_COLORS = {
   '888':                   '#FF4500', // Red-orange
   'Betnation':             '#2563EB', // Blue
   'ComeOn':                '#DC2626', // Red
+  'Hommerson':             '#1E40AF', // Blue
   'Overig':                '#6B7280', // Grey
 };
 
@@ -45,6 +46,7 @@ export const BOOKMAKER_DOMAINS = {
   '888':                   '888sport.com',
   'Betnation':             'betnation.com',
   'ComeOn':                'comeon.nl',
+  'Hommerson':             'hommerson.nl',
   'Overig':                null,
 };
 
