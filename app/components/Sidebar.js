@@ -75,24 +75,24 @@ function NavItem({ item, active, dark }) {
           padding: '7px 10px', borderRadius: 7,
           fontSize: 13, fontWeight: active ? 600 : 400,
           color: active
-            ? (dark ? '#e8f0ff' : '#4f46e5')
+            ? (dark ? '#818cf8' : '#4f46e5')
             : 'var(--text-2)',
           background: active
-            ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff')
+            ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff')
             : 'transparent',
-          backdropFilter: active && dark ? 'blur(12px) saturate(1.5)' : 'none',
-          WebkitBackdropFilter: active && dark ? 'blur(12px) saturate(1.5)' : 'none',
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
           border: active
-            ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}`
+            ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}`
             : '1px solid transparent',
-          boxShadow: active && dark ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
+          boxShadow: 'none',
           textDecoration: 'none', transition: 'all 0.18s ease',
         }}
         onMouseEnter={(e) => {
           if (!active) {
-            e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.06)' : '#edf0f4';
-            e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
-            e.currentTarget.style.color = dark ? '#b8d0e8' : '#334155';
+            e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.04)' : '#edf0f4';
+            e.currentTarget.style.borderColor = dark ? '#2a2a2a' : '#e2e8f0';
+            e.currentTarget.style.color = dark ? '#b0b0b0' : '#334155';
           }
         }}
         onMouseLeave={(e) => {
@@ -103,7 +103,7 @@ function NavItem({ item, active, dark }) {
           }
         }}
       >
-        <span style={{ color: active ? (dark ? '#7b9ef0' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>{item.icon}</span>
+        <span style={{ color: active ? (dark ? '#818cf8' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>{item.icon}</span>
         {item.label}
       </Link>
     </li>
@@ -184,10 +184,10 @@ export default function Sidebar() {
     return dbBookmakers.reduce((sum, bm) => {
       const pnl = settledBets
         .filter(b => b.bookmaker === bm.naam)
-        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
+        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
       const netTx = transactions
         .filter(tx => tx.bookmaker_id === bm.id)
-        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0);
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : tx.type === 'withdrawal' ? -Number(tx.amount) : Number(tx.amount)), 0);
       return sum + (bm.saldo || 0) + pnl + netTx;
     }, 0);
   }, [dbBookmakers, transactions, bets]);
@@ -204,11 +204,11 @@ export default function Sidebar() {
 
   return (
     <>
-    <aside style={{ background: dark ? '#070917' : '#f5f5f5', borderRight: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'transparent'}`, width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
+    <aside style={{ background: dark ? '#121212' : '#f5f5f5', borderRight: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'transparent'}`, width: '220px', minHeight: '100vh' }} className="sidebar-desktop flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
       {/* Logo */}
       <div style={{ borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#ebebeb'}`, padding: '18px 16px' }} className="flex items-center gap-3">
-        <div style={{ background: 'linear-gradient(155deg, #060e1a 0%, #0a1628 60%, #0d1f38 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
+        <div style={{ background: 'linear-gradient(155deg, #0a0f2e 0%, #0d1640 60%, #1a2060 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(129,140,248,0.25)' }} className="flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
@@ -232,7 +232,7 @@ export default function Sidebar() {
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginBottom: 5, marginTop: 20 }}>
           <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600 }}>Bookmakers</p>
           {dbBookmakers.length > 0 && (
-            <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: totalBalance >= 0 ? (dark ? '#4a8fa8' : '#6366f1') : (dark ? '#a05070' : '#fb2b37') }}>
+            <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: totalBalance >= 0 ? (dark ? '#818cf8' : '#6366f1') : (dark ? '#888888' : '#fb2b37') }}>
               €{totalBalance.toFixed(2)}
             </span>
           )}
@@ -248,7 +248,7 @@ export default function Sidebar() {
         </ul>
 
         {/* Admin — alleen voor dev accounts */}
-        {['lucas@mybuqo.com','matthijs@mybuqo.com'].includes(userEmail) && (
+        {['matthijs@mybuqo.com'].includes(userEmail) && (
           <>
             <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600, paddingLeft: 10, marginBottom: 5, marginTop: 20 }}>Admin</p>
             <ul className="space-y-0.5">
@@ -274,9 +274,9 @@ export default function Sidebar() {
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 2,
-            background: pathname === '/support' ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
-            border: pathname === '/support' ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
-            color: pathname === '/support' ? (dark ? '#e8f0ff' : '#4f46e5') : 'var(--text-2)',
+            background: pathname === '/support' ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff') : 'transparent',
+            border: pathname === '/support' ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}` : '1px solid transparent',
+            color: pathname === '/support' ? (dark ? '#818cf8' : '#4f46e5') : 'var(--text-2)',
             fontSize: 13, fontWeight: pathname === '/support' ? 600 : 400,
             textDecoration: 'none', transition: 'all 0.18s',
           }}
@@ -293,7 +293,7 @@ export default function Sidebar() {
             }
           }}
         >
-          <span style={{ color: pathname === '/support' ? (dark ? '#7b9ef0' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
+          <span style={{ color: pathname === '/support' ? (dark ? '#818cf8' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
@@ -315,7 +315,7 @@ export default function Sidebar() {
           onMouseEnter={(e) => {
             e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0';
             e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : '#cbd5e1';
-            e.currentTarget.style.color = dark ? '#c5d8ec' : '#334155';
+            e.currentTarget.style.color = dark ? '#e0e0e0' : '#334155';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
@@ -346,9 +346,9 @@ export default function Sidebar() {
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 8,
-            background: pathname === '/pricing' ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
-            border: pathname === '/pricing' ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
-            color: pathname === '/pricing' ? (dark ? '#e8f0ff' : '#4f46e5') : 'var(--text-2)',
+            background: pathname === '/pricing' ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff') : 'transparent',
+            border: pathname === '/pricing' ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}` : '1px solid transparent',
+            color: pathname === '/pricing' ? (dark ? '#818cf8' : '#4f46e5') : 'var(--text-2)',
             fontSize: 13, fontWeight: pathname === '/pricing' ? 600 : 400,
             textDecoration: 'none', transition: 'all 0.18s',
           }}
@@ -365,7 +365,7 @@ export default function Sidebar() {
             }
           }}
         >
-          <span style={{ color: pathname === '/pricing' ? (dark ? '#7b9ef0' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
+          <span style={{ color: pathname === '/pricing' ? (dark ? '#818cf8' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
             </svg>
@@ -379,8 +379,8 @@ export default function Sidebar() {
           style={{
             display: 'flex', alignItems: 'center', gap: 10, padding: '7px 8px', borderRadius: 8,
             textDecoration: 'none', transition: 'all 0.18s',
-            background: pathname === '/account' ? (dark ? 'rgba(123,158,240,0.15)' : '#eef2ff') : 'transparent',
-            border: pathname === '/account' ? `1px solid ${dark ? 'rgba(123,158,240,0.25)' : '#c7d2fe'}` : '1px solid transparent',
+            background: pathname === '/account' ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff') : 'transparent',
+            border: pathname === '/account' ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}` : '1px solid transparent',
           }}
           onMouseEnter={e => {
             if (pathname !== '/account') {
@@ -395,14 +395,14 @@ export default function Sidebar() {
             }
           }}
         >
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(136,136,136,0.1)', border: '1px solid rgba(136,136,136,0.2)', flexShrink: 0 }} className="flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
           </div>
           <div className="min-w-0">
-            <p style={{ color: dark ? '#c5d8ec' : '#334155', fontSize: 12.5, fontWeight: 500 }} className="truncate">Mijn Account</p>
-            <p style={{ color: dark ? '#3d6080' : '#94a3b8', fontSize: 10.5 }}>Voorkeuren & export</p>
+            <p style={{ color: dark ? '#e0e0e0' : '#334155', fontSize: 12.5, fontWeight: 500 }} className="truncate">Mijn Account</p>
+            <p style={{ color: dark ? '#888888' : '#94a3b8', fontSize: 10.5 }}>Voorkeuren & export</p>
           </div>
         </Link>
       </div>
@@ -422,7 +422,7 @@ export default function Sidebar() {
 
       {/* Center: logo */}
       <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ background: 'rgba(10,20,44,0.9)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(123,158,240,0.2)' }} className="flex items-center justify-center">
+        <div style={{ background: 'linear-gradient(155deg, #0a0f2e 0%, #0d1640 60%, #1a2060 100%)', width: 30, height: 30, borderRadius: 7, flexShrink: 0, border: '1px solid rgba(129,140,248,0.25)' }} className="flex items-center justify-center">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
@@ -433,14 +433,14 @@ export default function Sidebar() {
       {/* Right: account + plus */}
       <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
         <Link href="/account" style={{ textDecoration: 'none', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}>
-          <div style={{ width: 30, height: 30, borderRadius: 7, background: 'rgba(84,105,212,0.2)', border: '1px solid rgba(123,158,240,0.25)', flexShrink: 0 }} className="flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div style={{ width: 30, height: 30, borderRadius: 7, background: 'rgba(136,136,136,0.1)', border: '1px solid rgba(136,136,136,0.2)', flexShrink: 0 }} className="flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
           </div>
         </Link>
         <Link href="/bets/new" style={{ textDecoration: 'none', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}>
-          <div style={{ width: 30, height: 30, borderRadius: 7, background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', border: '1px solid rgba(255,255,255,0.2)', flexShrink: 0, boxShadow: '0 2px 10px rgba(84,105,212,0.4)' }} className="flex items-center justify-center">
+          <div style={{ width: 30, height: 30, borderRadius: 7, background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.2)', flexShrink: 0, boxShadow: '0 2px 10px rgba(0,0,0,0.3)' }} className="flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
@@ -456,20 +456,20 @@ export default function Sidebar() {
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }} />
         {/* Drawer panel */}
         <div
-          style={{ position: 'relative', width: 260, height: '100%', background: '#070917', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)', zIndex: 1 }}
+          style={{ position: 'relative', width: 260, height: '100%', background: '#121212', borderRight: '1px solid #2a2a2a', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)', zIndex: 1 }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Drawer header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ background: 'rgba(10,20,44,0.9)', width: 28, height: 28, borderRadius: 7, border: '1px solid rgba(123,158,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ background: '#1a1a1a', width: 28, height: 28, borderRadius: 7, border: '1px solid rgba(136,136,136,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                 </svg>
               </div>
               <span style={{ color: '#e6edf3', fontWeight: 700, fontSize: 14 }}>TrackMijnBets</span>
             </div>
-            <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7090b0', padding: 4, WebkitTapHighlightColor: 'transparent' }}>
+            <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888888', padding: 4, WebkitTapHighlightColor: 'transparent' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
@@ -493,13 +493,13 @@ export default function Sidebar() {
                             display: 'flex', alignItems: 'center', gap: 9,
                             padding: '8px 10px', borderRadius: 7, marginBottom: 2,
                             fontSize: 13, fontWeight: active ? 600 : 400,
-                            color: active ? '#e8f0ff' : '#7090b0',
-                            background: active ? 'rgba(123,158,240,0.15)' : 'transparent',
-                            border: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent',
+                            color: active ? '#e0e0e0' : '#888888',
+                            background: active ? 'rgba(136,136,136,0.1)' : 'transparent',
+                            border: active ? '1px solid rgba(136,136,136,0.2)' : '1px solid transparent',
                             textDecoration: 'none',
                           }}
                         >
-                          <span style={{ color: active ? '#7b9ef0' : '#3d6080', flexShrink: 0 }}>{item.icon}</span>
+                          <span style={{ color: active ? '#888888' : '#555555', flexShrink: 0 }}>{item.icon}</span>
                           {item.label}
                         </Link>
                       </li>
@@ -509,15 +509,15 @@ export default function Sidebar() {
               </div>
             ))}
             {/* Admin sectie — alleen voor dev accounts */}
-            {['lucas@mybuqo.com','matthijs@mybuqo.com'].includes(userEmail) && (() => {
+            {['matthijs@mybuqo.com'].includes(userEmail) && (() => {
               const active = pathname === '/admin';
               return (
                 <div style={{ marginBottom: 20 }}>
                   <p style={{ color: '#2d5070', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 6 }}>Admin</p>
                   <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
                     <li>
-                      <Link href="/admin" onClick={() => setDrawerOpen(false)} style={{ display:'flex', alignItems:'center', gap:9, padding:'8px 10px', borderRadius:7, marginBottom:2, fontSize:13, fontWeight: active ? 600 : 400, color: active ? '#e8f0ff' : '#7090b0', background: active ? 'rgba(123,158,240,0.15)' : 'transparent', border: active ? '1px solid rgba(123,158,240,0.2)' : '1px solid transparent', textDecoration:'none' }}>
-                        <span style={{ color: active ? '#7b9ef0' : '#3d6080', flexShrink: 0 }}>
+                      <Link href="/admin" onClick={() => setDrawerOpen(false)} style={{ display:'flex', alignItems:'center', gap:9, padding:'8px 10px', borderRadius:7, marginBottom:2, fontSize:13, fontWeight: active ? 600 : 400, color: active ? '#e0e0e0' : '#888888', background: active ? 'rgba(136,136,136,0.1)' : 'transparent', border: active ? '1px solid rgba(136,136,136,0.2)' : '1px solid transparent', textDecoration:'none' }}>
+                        <span style={{ color: active ? '#888888' : '#555555', flexShrink: 0 }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                         </span>
                         Admin Dashboard
@@ -533,9 +533,9 @@ export default function Sidebar() {
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px', background: '#060713' }}>
             <button
               onClick={toggle}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, marginBottom: 4, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#7090b0', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, marginBottom: 4, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#888888', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}
             >
-              <span style={{ color: '#3d6080' }}>
+              <span style={{ color: '#555555' }}>
                 {dark ? (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -553,9 +553,9 @@ export default function Sidebar() {
             </button>
             <button
               onClick={handleLogout}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#7090b0', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#888888', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}
             >
-              <span style={{ color: '#3d6080' }}>
+              <span style={{ color: '#555555' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
                 </svg>
@@ -572,7 +572,11 @@ export default function Sidebar() {
       {[...mainNav.filter(item => item.href !== '/bets/new'), ...bookmakerNav].map((item) => (
         <Link key={item.href} href={item.href} className={`mobile-nav-item${isActive(item.href) ? ' active' : ''}`}>
           {item.icon}
-          <span>{item.label.replace('Bets Overzicht', 'Overzicht').replace('Maandoverzicht', 'Kalender').replace('Odds Vergelijker', 'Odds')}</span>
+          <span>
+            {item.href === '/bookmakers'
+              ? `€${totalBalance.toFixed(2)}`
+              : item.label.replace('Bets Overzicht', 'Overzicht').replace('Maandoverzicht', 'Kalender').replace('Odds Vergelijker', 'Odds')}
+          </span>
         </Link>
       ))}
     </nav>
