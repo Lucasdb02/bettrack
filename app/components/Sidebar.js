@@ -75,15 +75,15 @@ function NavItem({ item, active, dark }) {
           padding: '7px 10px', borderRadius: 7,
           fontSize: 13, fontWeight: active ? 600 : 400,
           color: active
-            ? (dark ? '#818cf8' : '#4f46e5')
+            ? (dark ? '#e0e0e0' : '#1e293b')
             : 'var(--text-2)',
           background: active
-            ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff')
+            ? (dark ? 'rgba(255,255,255,0.08)' : '#e8eaed')
             : 'transparent',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
           border: active
-            ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}`
+            ? `1px solid ${dark ? 'rgba(255,255,255,0.12)' : '#d1d5db'}`
             : '1px solid transparent',
           boxShadow: 'none',
           textDecoration: 'none', transition: 'all 0.18s ease',
@@ -103,7 +103,7 @@ function NavItem({ item, active, dark }) {
           }
         }}
       >
-        <span style={{ color: active ? (dark ? '#818cf8' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>{item.icon}</span>
+        <span style={{ color: active ? (dark ? '#e0e0e0' : '#1e293b') : 'var(--text-2)', flexShrink: 0 }}>{item.icon}</span>
         {item.label}
       </Link>
     </li>
@@ -274,9 +274,9 @@ export default function Sidebar() {
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 2,
-            background: pathname === '/support' ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff') : 'transparent',
-            border: pathname === '/support' ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}` : '1px solid transparent',
-            color: pathname === '/support' ? (dark ? '#818cf8' : '#4f46e5') : 'var(--text-2)',
+            background: pathname === '/support' ? (dark ? 'rgba(255,255,255,0.08)' : '#e8eaed') : 'transparent',
+            border: pathname === '/support' ? `1px solid ${dark ? 'rgba(255,255,255,0.12)' : '#d1d5db'}` : '1px solid transparent',
+            color: pathname === '/support' ? (dark ? '#e0e0e0' : '#1e293b') : 'var(--text-2)',
             fontSize: 13, fontWeight: pathname === '/support' ? 600 : 400,
             textDecoration: 'none', transition: 'all 0.18s',
           }}
@@ -293,7 +293,7 @@ export default function Sidebar() {
             }
           }}
         >
-          <span style={{ color: pathname === '/support' ? (dark ? '#818cf8' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
+          <span style={{ color: pathname === '/support' ? (dark ? '#e0e0e0' : '#1e293b') : 'var(--text-2)', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
@@ -346,9 +346,9 @@ export default function Sidebar() {
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 9,
             padding: '7px 10px', borderRadius: 7, marginBottom: 8,
-            background: pathname === '/pricing' ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff') : 'transparent',
-            border: pathname === '/pricing' ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}` : '1px solid transparent',
-            color: pathname === '/pricing' ? (dark ? '#818cf8' : '#4f46e5') : 'var(--text-2)',
+            background: pathname === '/pricing' ? (dark ? 'rgba(255,255,255,0.08)' : '#e8eaed') : 'transparent',
+            border: pathname === '/pricing' ? `1px solid ${dark ? 'rgba(255,255,255,0.12)' : '#d1d5db'}` : '1px solid transparent',
+            color: pathname === '/pricing' ? (dark ? '#e0e0e0' : '#1e293b') : 'var(--text-2)',
             fontSize: 13, fontWeight: pathname === '/pricing' ? 600 : 400,
             textDecoration: 'none', transition: 'all 0.18s',
           }}
@@ -365,7 +365,7 @@ export default function Sidebar() {
             }
           }}
         >
-          <span style={{ color: pathname === '/pricing' ? (dark ? '#818cf8' : '#6366f1') : 'var(--text-2)', flexShrink: 0 }}>
+          <span style={{ color: pathname === '/pricing' ? (dark ? '#e0e0e0' : '#1e293b') : 'var(--text-2)', flexShrink: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
             </svg>
