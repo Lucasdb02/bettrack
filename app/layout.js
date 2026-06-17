@@ -13,6 +13,9 @@ export default function RootLayout({ children }) {
     <html lang="nl" className="h-full scroll-smooth" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="h-full antialiased" suppressHydrationWarning>
