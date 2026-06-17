@@ -841,15 +841,9 @@ export default function Dashboard() {
           <h1 style={{ fontSize:24, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Dashboard</h1>
           <p style={{ fontSize:14, color:'var(--text-3)' }}>Overzicht van al je bets en resultaten</p>
         </div>
-        {/* Bet Invoeren — alleen desktop */}
-        <div className="hidden md:flex">
-          <Link href="/bets/new" className="btn-bet-invoeren" style={{ textDecoration:'none', borderRadius:9 }}>
-            Bet Invoeren
-          </Link>
-        </div>
       </div>
 
-      {/* Filter bar */}
+      {/* Filter bar + Bet Invoeren */}
       <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, flexWrap:'wrap' }}>
         <PeriodDropdown filter={periodFilter} onSelect={handlePeriodSelect} customRange={customRange}/>
 
@@ -865,6 +859,9 @@ export default function Dashboard() {
           options={allBookmakers} selected={bookFilter} onChange={setBookFilter}
         />
 
+        <Link href="/bets/new" className="hidden md:inline-flex btn-bet-invoeren" style={{ textDecoration:'none', marginLeft:'auto' }}>
+          + Bet Invoeren
+        </Link>
       </div>
 
       {/* Date range modal */}

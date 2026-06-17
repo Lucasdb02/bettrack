@@ -370,14 +370,14 @@ html.dark .btn-primary-glass:hover:not(:disabled) {
   text-decoration: none;
 }
 html.dark .btn-bet-invoeren {
-  background: rgba(59,130,246,0.10) !important;
-  border: 1px solid rgba(59,130,246,0.35) !important;
-  color: #60a5fa !important;
+  background: rgba(84,105,212,0.2) !important;
+  border: 1px solid rgba(123,158,240,0.25) !important;
+  color: #7b9ef0 !important;
   box-shadow: none !important;
 }
 html.dark .btn-bet-invoeren:hover {
-  background: rgba(59,130,246,0.18) !important;
-  border-color: rgba(59,130,246,0.55) !important;
+  background: rgba(84,105,212,0.32) !important;
+  border-color: rgba(123,158,240,0.45) !important;
   transform: translateY(-1px);
 }
 
