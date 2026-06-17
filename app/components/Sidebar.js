@@ -267,7 +267,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer: dark toggle + account */}
-      <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#ebebeb'}`, padding: '12px 14px', background: dark ? '#060713' : '#f5f5f5' }}>
+      <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : '#ebebeb'}`, padding: '12px 14px', background: dark ? '#111111' : '#f5f5f5' }}>
         {/* Support */}
         <Link
           href="/support"
@@ -530,7 +530,7 @@ export default function Sidebar() {
           </nav>
 
           {/* Drawer footer: dark toggle + logout */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px', background: '#060713' }}>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '12px', background: '#111111' }}>
             <button
               onClick={toggle}
               style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, marginBottom: 4, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#888888', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}
