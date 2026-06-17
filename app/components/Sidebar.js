@@ -232,7 +232,7 @@ export default function Sidebar() {
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginBottom: 5, marginTop: 20 }}>
           <p style={{ color: 'var(--text-2)', fontSize: 11, fontWeight: 600 }}>Bookmakers</p>
           {dbBookmakers.length > 0 && (
-            <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: totalBalance >= 0 ? (dark ? '#818cf8' : '#6366f1') : (dark ? '#888888' : '#fb2b37') }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: totalBalance >= 0 ? (dark ? '#818cf8' : '#6366f1') : (dark ? '#888888' : '#fb2b37') }}>
               €{totalBalance.toFixed(2)}
             </span>
           )}
