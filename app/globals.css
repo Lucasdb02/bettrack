@@ -36,10 +36,10 @@
 
 /* Dark mode overrides (applied via ThemeContext adding .dark to <html>) */
 .dark {
-  --background: #0d1117;
+  --background: #121212;
   --foreground: #e6edf3;
   --primary: #e6edf3;
-  --primary-foreground: #0d1117;
+  --primary-foreground: #121212;
   --secondary: #161c2a;
   --secondary-foreground: #e6edf3;
   --muted: #1c2335;
@@ -49,7 +49,7 @@
   --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
   --ui-input: rgba(255, 255, 255, 0.1);
-  --ui-ring: #7b9ef0;
+  --ui-ring: #888888;
 }
 
 /* Wire shadcn semantic names into Tailwind v4's @theme system */
@@ -162,56 +162,56 @@
    DESIGN TOKENS — Dark mode
    ══════════════════════════════════════════════ */
 html.dark {
-  background-color: #07091a;
+  background-color: #121212;
   --color-win:  #00c951;
   --color-loss: #fb2b37;
 
-  --bg-page:        #07091a;
-  --bg-card:        rgba(12,16,36,0.82);
-  --bg-subtle:      rgba(16,22,48,0.65);
-  --bg-input:       rgba(6,8,22,0.95);
+  --bg-page:        #121212;
+  --bg-card:        #1a1a1a;
+  --bg-subtle:      #1e1e1e;
+  --bg-input:       #161616;
   --bg-brand:       rgba(99,102,241,0.1);
   --bg-brand-hover: rgba(99,102,241,0.18);
 
-  --border:         rgba(255,255,255,0.07);
-  --border-subtle:  rgba(255,255,255,0.04);
-  --border-strong:  rgba(255,255,255,0.12);
+  --border:         #333333;
+  --border-subtle:  #2a2a2a;
+  --border-strong:  #444444;
 
-  --text-1:  #f1f5f9;
-  --text-2:  #cbd5e1;
-  --text-3:  #64748b;
-  --text-4:  #475569;
+  --text-1:  #e0e0e0;
+  --text-2:  #b0b0b0;
+  --text-3:  #888888;
+  --text-4:  #555555;
 
-  --badge-bg:    rgba(18,24,56,0.9);
-  --badge-color: #94a3b8;
+  --badge-bg:    #1e1e1e;
+  --badge-color: #888888;
 
   --brand:       #818cf8;
   --brand-soft:  #4338ca;
   --brand-hover: #6366f1;
 
-  --tooltip-bg:  rgba(7,9,22,0.97);
-  --row-hover:   rgba(14,20,48,0.65);
+  --tooltip-bg:  #1a1a1a;
+  --row-hover:   rgba(255,255,255,0.03);
 
-  --shadow-xs: 0 2px 5px -2px rgba(0,0,0,0.4);
-  --shadow-sm: 0 4px 10px -3px rgba(0,0,0,0.5);
-  --shadow-md: 0 6px 16px -4px rgba(0,0,0,0.55);
-  --shadow-lg: 0 10px 28px -4px rgba(0,0,0,0.6);
-  --shadow-xl: 0 16px 48px -6px rgba(0,0,0,0.65);
+  --shadow-xs: 0 2px 5px -2px rgba(0,0,0,0.5);
+  --shadow-sm: 0 4px 10px -3px rgba(0,0,0,0.6);
+  --shadow-md: 0 6px 16px -4px rgba(0,0,0,0.65);
+  --shadow-lg: 0 10px 28px -4px rgba(0,0,0,0.7);
+  --shadow-xl: 0 16px 48px -6px rgba(0,0,0,0.75);
 
-  --sidebar-bg:           rgba(7,9,22,0.98);
-  --sidebar-border:       rgba(255,255,255,0.05);
-  --nav-section:          rgba(99,102,241,0.3);
-  --nav-item-text:        #475569;
-  --nav-item-hover-text:  #94a3b8;
-  --nav-item-hover-bg:    rgba(255,255,255,0.04);
-  --nav-item-active-text: #e2e8f0;
-  --nav-item-active-bg:   rgba(99,102,241,0.13);
-  --nav-item-active-border: rgba(123,158,240,0.3);
-  --nav-icon:             #2d3f60;
-  --nav-icon-active:      #818cf8;
-  --sidebar-logo-text:    #f1f5f9;
-  --sidebar-logo-sub:     #2d3f60;
-  --sidebar-footer-bg:    rgba(0,0,0,0.2);
+  --sidebar-bg:             #121212;
+  --sidebar-border:         #2a2a2a;
+  --nav-section:            #444444;
+  --nav-item-text:          #555555;
+  --nav-item-hover-text:    #b0b0b0;
+  --nav-item-hover-bg:      rgba(255,255,255,0.04);
+  --nav-item-active-text:   #818cf8;
+  --nav-item-active-bg:     rgba(99,102,241,0.13);
+  --nav-item-active-border: rgba(129,140,248,0.3);
+  --nav-icon:               #555555;
+  --nav-icon-active:        #818cf8;
+  --sidebar-logo-text:      #e0e0e0;
+  --sidebar-logo-sub:       #444444;
+  --sidebar-footer-bg:      rgba(0,0,0,0.25);
 }
 
 /* ══════════════════════════════════════════════
@@ -247,13 +247,13 @@ button, input, select, textarea {
 /* ── Scrollbars ── */
 .sidebar-scroll::-webkit-scrollbar { width: 3px; }
 .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 2px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(136,136,136,0.25); border-radius: 2px; }
 
 html.dark ::-webkit-scrollbar { width: 7px; height: 7px; }
-html.dark ::-webkit-scrollbar-track { background: #070917; }
-html.dark ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 4px; }
-html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.45); }
-html.dark { scrollbar-color: rgba(99,102,241,0.25) #070917; }
+html.dark ::-webkit-scrollbar-track { background: #121212; }
+html.dark ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 4px; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.5); }
+html.dark { scrollbar-color: rgba(99,102,241,0.3) #121212; }
 
 /* ── Table rows ── */
 .bet-row:hover { background-color: var(--row-hover); }
@@ -270,10 +270,10 @@ svg:focus { outline: none !important; }
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--brand) !important;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+  box-shadow: 0 0 0 3px rgba(136,136,136,0.12) !important;
 }
 html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.2) !important;
+  box-shadow: 0 0 0 3px rgba(136,136,136,0.2) !important;
 }
 html.dark input, html.dark select, html.dark textarea { color-scheme: dark; }
 
@@ -285,7 +285,7 @@ html.dark input, html.dark select, html.dark textarea { color-scheme: dark; }
   min-height: 100vh;
 }
 html.dark .app-main {
-  background: #07091a;
+  background: #121212;
 }
 
 /* ══════════════════════════════════════════════
@@ -346,6 +346,38 @@ html.dark .btn-primary-glass:hover:not(:disabled) {
     linear-gradient(180deg, #FDFDFD 0%, #EBEBEB 100%) border-box !important;
   color: #0f0f0f !important;
   box-shadow: 0 3px 6px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.18) !important;
+  transform: translateY(-1px);
+}
+
+/* Bet Invoeren — blue ghost in dark mode */
+.btn-bet-invoeren {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background:
+    linear-gradient(180deg, #201E25 0%, #323137 100%) padding-box,
+    linear-gradient(180deg, #4B4951 0%, #313036 100%) border-box !important;
+  color: rgba(255,255,255,0.9) !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  padding: 8px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.10), 0 0 0 1px #0d0d0d !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none;
+}
+html.dark .btn-bet-invoeren {
+  background: rgba(59,130,246,0.10) !important;
+  border: 1px solid rgba(59,130,246,0.35) !important;
+  color: #60a5fa !important;
+  box-shadow: none !important;
+}
+html.dark .btn-bet-invoeren:hover {
+  background: rgba(59,130,246,0.18) !important;
+  border-color: rgba(59,130,246,0.55) !important;
   transform: translateY(-1px);
 }
 
@@ -437,8 +469,8 @@ html.dark .glass-card {
    STAT CARD VARIANTS (colored icon backgrounds)
    ══════════════════════════════════════════════ */
 .stat-icon-indigo {
-  background: linear-gradient(135deg, #818cf8, #6366f1);
-  box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+  background: linear-gradient(135deg, #888888, #555555);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 .stat-icon-emerald {
   background: linear-gradient(135deg, #34d399, #059669);
@@ -467,8 +499,8 @@ html.dark .glass-card {
   padding-right: 16px;
   align-items: center;
   justify-content: space-between;
-  background: #070917;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #121212;
+  border-bottom: 1px solid #2a2a2a;
 }
 
 .mobile-bottom-nav {
@@ -476,11 +508,11 @@ html.dark .glass-card {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 100;
-  background: #070917;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 6px 0 0;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
-  align-items: stretch;
+  background: #121212;
+  border-top: 1px solid #2a2a2a;
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  align-items: flex-start;
   justify-content: space-around;
 }
 
@@ -488,13 +520,15 @@ html.dark .glass-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  justify-content: flex-start;
+  gap: 4px;
   flex: 1;
-  padding: 5px 4px;
+  height: 70px;
+  padding: 6px 6px 0;
   text-decoration: none;
-  font-size: 8.5px;
+  font-size: 10px;
   font-weight: 500;
-  color: #7090b0;
+  color: #888888;
   transition: color 0.15s;
   border: none;
   background: none;
@@ -502,13 +536,14 @@ html.dark .glass-card {
   -webkit-tap-highlight-color: transparent;
 }
 .mobile-nav-item.active {
-  color: #818cf8;
+  color: #e0e0e0;
 }
 .mobile-nav-item.active svg {
-  color: #818cf8;
-  filter: drop-shadow(0 0 5px rgba(99,102,241,0.5));
+  color: #e0e0e0;
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.15));
 }
 .mobile-nav-item span { line-height: 1.2; text-align: center; }
+.mobile-nav-item svg { width: 21px; height: 21px; flex-shrink: 0; }
 
 /* ══════════════════════════════════════════════
    DASHBOARD
@@ -527,7 +562,7 @@ html.dark .glass-card {
 
   .app-main {
     padding-top: 0 !important;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
   }
   .app-main.mobile-header-shown {
     padding-top: calc(54px + env(safe-area-inset-top, 0px)) !important;
@@ -779,7 +814,7 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .tmb-col-down2 { animation: tmb-scroll-down  38s linear infinite; }
 
 @keyframes dot-pulse {
-  0%   { box-shadow: 0 0 0 0 var(--dot-color, rgba(99,102,241,0.6)); }
+  0%   { box-shadow: 0 0 0 0 var(--dot-color, rgba(136,136,136,0.6)); }
   70%  { box-shadow: 0 0 0 5px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }

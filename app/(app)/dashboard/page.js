@@ -694,7 +694,7 @@ export default function Dashboard() {
     const losses     = lost.length + halfLost.length;
     const pushes     = pushVoid.length;
     const totalInzet = settled.reduce((s, b) => s + Number(b.inzet), 0);
-    const totalWinst = settled.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
+    const totalWinst = settled.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
     return { settled, won, lost, halfWon, halfLost, pushVoid, wins, losses, pushes, totalInzet, totalWinst,
       winRate: (wins+losses)>0 ? (wins/(wins+losses))*100 : 0,
       roi: totalInzet>0 ? (totalWinst/totalInzet)*100 : 0,
@@ -718,10 +718,10 @@ export default function Dashboard() {
     return dbBookmakers.map((bm, i) => {
       const pnl = bets
         .filter(b => b.bookmaker === bm.naam && b.uitkomst !== 'lopend')
-        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
+        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
       const netTx = transactions
         .filter(tx => tx.bookmaker_id === bm.id)
-        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : -Number(tx.amount)), 0);
+        .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : tx.type === 'withdrawal' ? -Number(tx.amount) : Number(tx.amount)), 0);
       const balance = parseFloat(((bm.saldo || 0) + pnl + netTx).toFixed(2));
       return { name: bm.naam, value: Math.max(balance, 0), color: bookColor(bm.naam, i) };
     }).filter(d => d.value > 0);
@@ -737,7 +737,7 @@ export default function Dashboard() {
       .sort((a, b) => new Date(a.datum) - new Date(b.datum))
       .forEach(b => {
         const lbl = new Date(b.datum).toLocaleDateString('nl-NL', {day:'numeric', month:'short'});
-        const w = berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet));
+        const w = berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
         cumPnl   += w;
         cumInzet += Number(b.inzet);
         if (['gewonnen','half_gewonnen'].includes(b.uitkomst))       cumW++;
@@ -762,7 +762,7 @@ export default function Dashboard() {
       const bk = b.bookmaker||'Onbekend';
       const lbl = new Date(b.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
       if (!dayMap[lbl]) dayMap[lbl] = {...cum};
-      cum[bk] = parseFloat((cum[bk]+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet))).toFixed(2));
+      cum[bk] = parseFloat((cum[bk]+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt)).toFixed(2));
       dayMap[lbl] = {...cum};
     });
     return Object.entries(dayMap).map(([datum,vals])=>({datum,...vals}));
@@ -774,7 +774,7 @@ export default function Dashboard() {
       const bk = b.bookmaker||'Onbekend';
       const lbl = new Date(b.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
       if (!map[lbl]) { map[lbl]={datum:lbl}; bookmakers.forEach(k=>{map[lbl][k]=0;}); }
-      map[lbl][bk] = parseFloat(((map[lbl][bk]||0)+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet))).toFixed(2));
+      map[lbl][bk] = parseFloat(((map[lbl][bk]||0)+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt)).toFixed(2));
     });
     return Object.values(map);
   }, [filtered, bookmakers]);
@@ -785,7 +785,7 @@ export default function Dashboard() {
       const key = b.datum; // YYYY-MM-DD
       const lbl = new Date(b.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
       if (!map[key]) map[key] = {datum:lbl, pnl:0};
-      map[key].pnl = parseFloat((map[key].pnl+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet))).toFixed(2));
+      map[key].pnl = parseFloat((map[key].pnl+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt)).toFixed(2));
     });
     if (periodFilter === 'thisMonth') {
       const now = new Date();
@@ -809,7 +809,7 @@ export default function Dashboard() {
       const bk = b.bookmaker||'Onbekend';
       if (!map[bk]) map[bk]={bk,inzet:0,winst:0};
       map[bk].inzet += Number(b.inzet);
-      map[bk].winst += berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet));
+      map[bk].winst += berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt);
     });
     return Object.values(map).map(r=>({...r,winst:parseFloat(r.winst.toFixed(2)),roi:r.inzet>0?parseFloat(((r.winst/r.inzet)*100).toFixed(1)):0})).sort((a,b)=>b.roi-a.roi);
   }, [filtered]);
@@ -817,7 +817,7 @@ export default function Dashboard() {
   const distData = useMemo(() => {
     const settled = filtered.filter(b=>b.uitkomst!=='lopend');
     if (!settled.length) return [];
-    const results = settled.map(b=>berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet)));
+    const results = settled.map(b=>berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt));
     const minV=Math.min(...results), maxV=Math.max(...results);
     const BUCKETS=10, range=maxV-minV||1, size=range/BUCKETS;
     const buckets = Array.from({length:BUCKETS},(_,i)=>({ label:`${(minV+i*size).toFixed(0)}`, count:0, positive:(minV+(i+0.5)*size)>=0 }));
@@ -829,7 +829,7 @@ export default function Dashboard() {
 
   if (!loaded || fetchError) return <BetsLoadGuard />;
 
-  const ic = '#7b9ef0';
+  const ic = '#6366f1';
   const empty = (h=220) => <div style={{height:h,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-4)',fontSize:14}}>Voeg bets toe om de grafiek te zien</div>;
 
   return (
@@ -843,8 +843,7 @@ export default function Dashboard() {
         </div>
         {/* Bet Invoeren — alleen desktop */}
         <div className="hidden md:flex">
-          <Link href="/bets/new" className="btn-primary-glass" style={{ textDecoration:'none', borderRadius:9 }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <Link href="/bets/new" className="btn-bet-invoeren" style={{ textDecoration:'none', borderRadius:9 }}>
             Bet Invoeren
           </Link>
         </div>
@@ -1259,7 +1258,7 @@ export default function Dashboard() {
                 <tr><td colSpan={10} style={{ padding:'40px', textAlign:'center', color:'var(--text-4)', fontSize:14 }}>Geen bets in deze periode</td></tr>
               )}
               {recent.map(bet => {
-                const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+                const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
                 return (
                   <tr key={bet.id} style={{ borderTop:'1px solid var(--border-subtle)' }}>
                     <td style={{ padding:'13px 14px', fontSize:12.5, color:'var(--text-3)', whiteSpace:'nowrap', verticalAlign:'middle' }}>
@@ -1308,7 +1307,7 @@ export default function Dashboard() {
         <div className="bets-cards-mobile" style={{ padding:'0 12px 12px' }}>
           {recent.length === 0 && <p style={{ padding:'24px', textAlign:'center', color:'var(--text-4)', fontSize:14 }}>Geen bets in deze periode</p>}
           {recent.map(bet => {
-            const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet));
+            const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
             return (
               <div key={bet.id} className="bet-card">
                 <div className="bet-card-top">
