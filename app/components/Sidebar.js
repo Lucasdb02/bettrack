@@ -379,8 +379,8 @@ export default function Sidebar() {
           style={{
             display: 'flex', alignItems: 'center', gap: 10, padding: '7px 8px', borderRadius: 8,
             textDecoration: 'none', transition: 'all 0.18s',
-            background: pathname === '/account' ? (dark ? 'rgba(99,102,241,0.13)' : '#eef2ff') : 'transparent',
-            border: pathname === '/account' ? `1px solid ${dark ? 'rgba(129,140,248,0.3)' : '#c7d2fe'}` : '1px solid transparent',
+            background: pathname === '/account' ? (dark ? 'rgba(255,255,255,0.08)' : '#e8eaed') : 'transparent',
+            border: pathname === '/account' ? `1px solid ${dark ? 'rgba(255,255,255,0.12)' : '#d1d5db'}` : '1px solid transparent',
           }}
           onMouseEnter={e => {
             if (pathname !== '/account') {
