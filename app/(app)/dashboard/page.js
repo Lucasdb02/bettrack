@@ -268,6 +268,70 @@ function usePortalDropdown() {
   return { btnRef, open, rect, mounted, toggle, close };
 }
 
+/* ─── Tag dropdown ─── */
+function TagDropdown({ value, onChange, allTags }) {
+  const { dark } = useTheme();
+  const { btnRef, open, rect, mounted, toggle, close } = usePortalDropdown();
+  const active = value !== 'alle';
+  const dropBg  = dark ? 'var(--bg-card)'    : '#fff';
+  const dropBdr = dark ? 'var(--border)'     : '#e5e7eb';
+  const txtDef  = dark ? 'var(--text-1)'     : '#1a1f36';
+  const txtAct  = dark ? 'var(--brand)'      : '#3b5bdb';
+  const bgAct   = dark ? 'var(--bg-brand)'   : '#eef2ff';
+  const hoverBg = dark ? 'var(--bg-subtle)'  : '#f9fafb';
+
+  return (
+    <>
+      <button ref={btnRef} onClick={toggle} style={{
+        display:'flex', alignItems:'center', gap:7,
+        padding:'7px 11px', border:`1px solid ${active ? 'var(--brand)' : 'var(--border)'}`,
+        borderRadius:8, backgroundColor:'var(--bg-card)',
+        color: active ? 'var(--brand)' : 'var(--text-2)',
+        fontSize:13, fontWeight:500, cursor:'pointer', whiteSpace:'nowrap',
+      }}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+          <line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
+        {active ? value : 'Tags'}
+        <Chevron open={open}/>
+      </button>
+
+      {mounted && open && rect && createPortal(
+        <>
+          <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
+          <div style={{
+            position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
+            backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
+            borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
+            overflow:'hidden', minWidth:160, maxHeight:280, overflowY:'auto',
+          }}>
+            {['alle', ...allTags].map((tag) => {
+              const isSel = value === tag;
+              return (
+                <button key={tag} onClick={() => { onChange(tag); close(); }} style={{
+                  display:'block', width:'100%', textAlign:'left', padding:'9px 16px',
+                  fontSize:13, fontWeight: isSel ? 600 : 400,
+                  color: isSel ? txtAct : txtDef,
+                  backgroundColor: isSel ? bgAct : 'transparent',
+                  border:'none', cursor:'pointer',
+                  transition:'background 0.1s',
+                }}
+                  onMouseEnter={e => { if (!isSel) e.currentTarget.style.backgroundColor = hoverBg; }}
+                  onMouseLeave={e => { if (!isSel) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  {tag === 'alle' ? 'Alle tags' : tag}
+                </button>
+              );
+            })}
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
+}
+
 /* ─── Period dropdown ─── */
 function PeriodDropdown({ filter, onSelect, customRange }) {
   const { dark } = useTheme();
@@ -863,24 +927,8 @@ export default function Dashboard() {
         />
 
         {allTags.length > 0 && (
-          <div className="hidden md:block" style={{ position:'relative', flexShrink:0 }}>
-            <svg style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color: tagFilter !== 'alle' ? 'var(--brand)' : 'var(--text-3)', pointerEvents:'none', zIndex:1 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-              <line x1="7" y1="7" x2="7.01" y2="7"/>
-            </svg>
-            <select value={tagFilter} onChange={e => setTagFilter(e.target.value)} style={{
-              height: 32, paddingLeft: 30, paddingRight: 28, paddingTop: 0, paddingBottom: 0,
-              border: `1px solid ${tagFilter !== 'alle' ? 'var(--brand)' : 'var(--border)'}`,
-              borderRadius: 8, fontSize: 13, color: tagFilter !== 'alle' ? 'var(--brand)' : 'var(--text-2)',
-              backgroundColor: 'var(--bg-card)', appearance: 'none', WebkitAppearance: 'none',
-              cursor: 'pointer', boxSizing: 'border-box', fontFamily: 'inherit',
-            }}>
-              <option value="alle">Tags</option>
-              {allTags.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-            <svg style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', color:'var(--text-4)', pointerEvents:'none' }} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
+          <div className="hidden md:block">
+            <TagDropdown value={tagFilter} onChange={setTagFilter} allTags={allTags}/>
           </div>
         )}
 
