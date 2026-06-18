@@ -244,6 +244,10 @@ button, input, select, textarea {
   border-radius: 0 !important;
 }
 
+/* Hide scrollbar in dropdown panels while keeping scroll functionality */
+.dropdown-panel { scrollbar-width: none; -ms-overflow-style: none; }
+.dropdown-panel::-webkit-scrollbar { display: none; }
+
 /* ── Scrollbars ── */
 .sidebar-scroll::-webkit-scrollbar { width: 3px; }
 .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }

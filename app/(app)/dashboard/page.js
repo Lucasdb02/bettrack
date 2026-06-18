@@ -301,7 +301,7 @@ function TagDropdown({ value, onChange, allTags }) {
       {mounted && open && rect && createPortal(
         <>
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
-          <div style={{
+          <div className="dropdown-panel" style={{
             position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
             backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
             borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
@@ -454,7 +454,7 @@ function MultiSelect({ label, icon, options, selected, onChange, renderOption })
       {mounted && open && rect && createPortal(
         <>
           <div onClick={close} style={{ position:'fixed', inset:0, zIndex:9998 }}/>
-          <div style={{
+          <div className="dropdown-panel" style={{
             position:'fixed', top: rect.bottom + 4, left: rect.left, zIndex:9999,
             backgroundColor: dropBg, border:`1px solid ${dropBdr}`,
             borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
