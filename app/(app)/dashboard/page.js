@@ -640,6 +640,7 @@ export default function Dashboard() {
   const [showCalendar,  setShowCalendar]  = useState(false);
   const [sportFilter,   setSportFilter]   = useState(null);
   const [bookFilter,    setBookFilter]    = useState(null);
+  const [tagFilter,     setTagFilter]     = useState('alle');
   const [mounted,       setMounted]       = useState(false);
   const [isMobile,      setIsMobile]      = useState(false);
   const [hoverIdx,      setHoverIdx]      = useState(null);
@@ -670,6 +671,7 @@ export default function Dashboard() {
 
   const allSporten    = useMemo(() => [...new Set(bets.map(b => b.sport||'Onbekend'))].sort(), [bets]);
   const allBookmakers = useMemo(() => [...new Set(bets.map(b => b.bookmaker||'Onbekend'))].sort(), [bets]);
+  const allTags       = useMemo(() => Array.from(new Set(bets.flatMap(b => b.tags||[]))).sort(), [bets]);
 
   const handlePeriodSelect = (filter) => {
     if (filter === 'custom') { setShowCalendar(true); return; }
@@ -680,8 +682,9 @@ export default function Dashboard() {
     let r = filterBets(bets, periodFilter, customRange);
     if (sportFilter && sportFilter.length) r = r.filter(b => sportFilter.includes(b.sport||'Onbekend'));
     if (bookFilter  && bookFilter.length)  r = r.filter(b => bookFilter.includes(b.bookmaker||'Onbekend'));
+    if (tagFilter !== 'alle')              r = r.filter(b => (b.tags||[]).includes(tagFilter));
     return r;
-  }, [bets, periodFilter, customRange, sportFilter, bookFilter]);
+  }, [bets, periodFilter, customRange, sportFilter, bookFilter, tagFilter]);
 
   const stats = useMemo(() => {
     const settled    = filtered.filter(b => b.uitkomst !== 'lopend');
@@ -858,6 +861,28 @@ export default function Dashboard() {
           icon={<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>}
           options={allBookmakers} selected={bookFilter} onChange={setBookFilter}
         />
+
+        {allTags.length > 0 && (
+          <div className="hidden md:block" style={{ position:'relative', flexShrink:0 }}>
+            <svg style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color: tagFilter !== 'alle' ? 'var(--brand)' : 'var(--text-3)', pointerEvents:'none', zIndex:1 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+              <line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+            <select value={tagFilter} onChange={e => setTagFilter(e.target.value)} style={{
+              height: 32, paddingLeft: 30, paddingRight: 28, paddingTop: 0, paddingBottom: 0,
+              border: `1px solid ${tagFilter !== 'alle' ? 'var(--brand)' : 'var(--border)'}`,
+              borderRadius: 8, fontSize: 13, color: tagFilter !== 'alle' ? 'var(--brand)' : 'var(--text-2)',
+              backgroundColor: 'var(--bg-card)', appearance: 'none', WebkitAppearance: 'none',
+              cursor: 'pointer', boxSizing: 'border-box', fontFamily: 'inherit',
+            }}>
+              <option value="alle">Tags</option>
+              {allTags.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <svg style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', color:'var(--text-4)', pointerEvents:'none' }} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        )}
 
         <Link href="/bets/new" className="hidden md:inline-flex btn-bet-invoeren" style={{ textDecoration:'none', marginLeft:'auto' }}>
           + Bet Invoeren
