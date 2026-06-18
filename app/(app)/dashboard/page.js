@@ -288,6 +288,7 @@ function TagDropdown({ value, onChange, allTags }) {
         borderRadius:8, backgroundColor:'var(--bg-card)',
         color: active ? 'var(--brand)' : 'var(--text-2)',
         fontSize:13, fontWeight:500, cursor:'pointer', whiteSpace:'nowrap',
+        height:'100%', boxSizing:'border-box',
       }}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
@@ -911,7 +912,7 @@ export default function Dashboard() {
       </div>
 
       {/* Filter bar + Bet Invoeren */}
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, flexWrap:'wrap' }}>
+      <div style={{ display:'flex', alignItems:'stretch', gap:8, marginBottom:16, flexWrap:'wrap' }}>
         <PeriodDropdown filter={periodFilter} onSelect={handlePeriodSelect} customRange={customRange}/>
 
         <MultiSelect
@@ -927,7 +928,7 @@ export default function Dashboard() {
         />
 
         {allTags.length > 0 && (
-          <div className="hidden md:block">
+          <div className="hidden md:flex">
             <TagDropdown value={tagFilter} onChange={setTagFilter} allTags={allTags}/>
           </div>
         )}
