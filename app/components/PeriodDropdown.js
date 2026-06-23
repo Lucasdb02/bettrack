@@ -364,7 +364,10 @@ export function SingleDatePicker({ value, onChange, style }) {
 
   useEffect(() => {
     if (!open) return;
-    const h = () => setOpen(false);
+    const h = (e) => {
+      if (e.target && e.target.closest?.('.dropdown-panel')) return;
+      setOpen(false);
+    };
     window.addEventListener('scroll', h, true);
     return () => window.removeEventListener('scroll', h, true);
   }, [open]);

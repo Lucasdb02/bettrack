@@ -57,8 +57,8 @@ export default function PaywallGate({ requiredPlan = 'pro', title, description, 
           <div style={{
             height: 80,
             background: requiredPlan === 'elite'
-              ? 'linear-gradient(135deg, rgba(168,85,247,0.6) 0%, rgba(99,102,241,0.4) 50%, rgba(236,72,153,0.4) 100%)'
-              : 'linear-gradient(135deg, rgba(107,130,240,0.6) 0%, rgba(84,105,212,0.4) 50%, rgba(99,102,241,0.3) 100%)',
+              ? 'linear-gradient(135deg, rgba(168,85,247,0.6) 0%, rgba(136,136,136,0.4) 50%, rgba(236,72,153,0.4) 100%)'
+              : 'linear-gradient(135deg, rgba(107,130,240,0.6) 0%, rgba(84,105,212,0.4) 50%, rgba(136,136,136,0.3) 100%)',
             filter: 'blur(12px)',
             transform: 'scale(1.1)',
             marginBottom: -20,

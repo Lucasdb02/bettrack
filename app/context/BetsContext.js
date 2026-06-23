@@ -14,7 +14,29 @@ function toDbRow(bet, userId) {
   return row;
 }
 
-export function berekenWinst(uitkomst, odds, inzet) {
+export function berekenWinst(uitkomst, odds, inzet, betType) {
+  // Lay Bet: P&L is reversed (you're the bookmaker)
+  if (betType === 'Lay Bet') {
+    if (uitkomst === 'gewonnen')      return parseFloat((inzet).toFixed(2));
+    if (uitkomst === 'verloren')      return parseFloat((-(odds - 1) * inzet).toFixed(2));
+    if (uitkomst === 'half_gewonnen') return parseFloat((inzet / 2).toFixed(2));
+    if (uitkomst === 'half_verloren') return parseFloat((-(odds - 1) * inzet / 2).toFixed(2));
+    return 0;
+  }
+  // Bonus Bet SNR: stake was free so no real loss; profit = (odds-1)×stake
+  if (betType === 'Bonus Bet (SNR)') {
+    if (uitkomst === 'gewonnen')      return parseFloat(((odds - 1) * inzet).toFixed(2));
+    if (uitkomst === 'half_gewonnen') return parseFloat(((odds - 1) * inzet / 2).toFixed(2));
+    if (uitkomst === 'verloren' || uitkomst === 'half_verloren') return 0;
+    return 0;
+  }
+  // Bonus Bet SR: stake returned so full return = profit; profit = odds×stake
+  if (betType === 'Bonus Bet (SR)') {
+    if (uitkomst === 'gewonnen')      return parseFloat((odds * inzet).toFixed(2));
+    if (uitkomst === 'half_gewonnen') return parseFloat((odds * inzet / 2).toFixed(2));
+    if (uitkomst === 'verloren' || uitkomst === 'half_verloren') return 0;
+    return 0;
+  }
   if (uitkomst === 'gewonnen')      return parseFloat(((odds - 1) * inzet).toFixed(2));
   if (uitkomst === 'verloren')      return parseFloat((-inzet).toFixed(2));
   if (uitkomst === 'half_gewonnen') return parseFloat(((odds - 1) * inzet / 2).toFixed(2));

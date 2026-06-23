@@ -65,7 +65,7 @@ export default function TagInput({ tags = [], onChange, inputStyle = {} }) {
   const remove = (t) => onChange(tags.filter(x => x !== t));
 
   const border = dark ? '#2a3347' : '#e5e7eb';
-  const bg     = dark ? '#0d1117' : '#f9fafb';
+  const bg     = dark ? '#121212' : '#f9fafb';
   const text1  = dark ? '#e6edf3' : '#1a1f36';
   const text4  = dark ? '#6e7681' : '#9ca3af';
 

@@ -28,7 +28,7 @@ export default function SignupPage() {
   const [loading, setLoading]   = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const bg        = dark ? '#0d1117' : '#f8fafc';
+  const bg        = dark ? '#121212' : '#f8fafc';
   const text1     = dark ? '#e6edf3' : '#0f172a';
   const text3     = dark ? '#8b949e' : '#64748b';
   const inputBg   = dark ? 'rgba(255,255,255,0.04)' : '#ffffff';
@@ -80,7 +80,7 @@ export default function SignupPage() {
             <span style={{ color: text1, fontWeight: 500 }}>{email}</span>.
             Klik op de link om je account te activeren.
           </p>
-          <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 24, color: '#7b9ef0', fontSize: 14, fontWeight: 500, textDecoration: 'none' }}>
+          <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 24, color: '#888888', fontSize: 14, fontWeight: 500, textDecoration: 'none' }}>
             <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
             </svg>
@@ -193,7 +193,7 @@ export default function SignupPage() {
 
         <p style={{ textAlign: 'center', fontSize: 14, color: text3, marginTop: 24 }}>
           Al een account?{' '}
-          <Link href="/login" style={{ color: '#7b9ef0', fontWeight: 500, textDecoration: 'none' }}
+          <Link href="/login" style={{ color: '#888888', fontWeight: 500, textDecoration: 'none' }}
             onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
             onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
             Inloggen

@@ -366,12 +366,12 @@ export default function AsianLinesPage() {
 
       {/* Tip */}
       <div style={{ marginTop: 20, background: dark ? 'rgba(84,105,212,0.08)' : '#eef2ff', border: `1px solid ${dark ? 'rgba(123,158,240,0.2)' : '#c7d2fe'}`, borderRadius: 12, padding: '14px 18px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-        <svg style={{ flexShrink: 0, marginTop: 1 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={dark ? '#7b9ef0' : '#4f46e5'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg style={{ flexShrink: 0, marginTop: 1 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={dark ? '#888888' : '#4f46e5'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         <p style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.6 }}>
-          <strong style={{ color: dark ? '#7b9ef0' : '#4f46e5' }}>Kwart-lijnen (0,25 / 0,75 …)</strong> zijn split bets: de inzet wordt 50/50 verdeeld over de twee aangrenzende hele lijnen. Dat verklaart de "Halve winst" en "Half verlies" uitkomsten.
-          Gebruik de <a href="/calculators/vig" style={{ color: dark ? '#7b9ef0' : '#4f46e5', fontWeight: 600, textDecoration: 'none' }}>Vig Calculator</a> om de marge op een AH-markt te berekenen.
+          <strong style={{ color: dark ? '#888888' : '#4f46e5' }}>Kwart-lijnen (0,25 / 0,75 …)</strong> zijn split bets: de inzet wordt 50/50 verdeeld over de twee aangrenzende hele lijnen. Dat verklaart de "Halve winst" en "Half verlies" uitkomsten.
+          Gebruik de <a href="/calculators/vig" style={{ color: dark ? '#888888' : '#4f46e5', fontWeight: 600, textDecoration: 'none' }}>Vig Calculator</a> om de marge op een AH-markt te berekenen.
         </p>
       </div>
     </div>

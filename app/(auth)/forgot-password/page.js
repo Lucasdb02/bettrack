@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
 
-  const bg           = dark ? '#0d1117'                  : '#f8fafc';
+  const bg           = dark ? '#121212'                  : '#f8fafc';
   const text1        = dark ? '#e6edf3'                  : '#0f172a';
   const text2        = dark ? '#c9d1d9'                  : '#1e293b';
   const text3        = dark ? '#8b949e'                  : '#64748b';
@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: bg, padding: '24px 16px', transition: 'background 0.2s' }}>
         <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
           <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(123,158,240,0.1)', border: '1px solid rgba(123,158,240,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-            <svg style={{ width: 28, height: 28 }} fill="none" viewBox="0 0 24 24" stroke="#7b9ef0" strokeWidth={1.8}>
+            <svg style={{ width: 28, height: 28 }} fill="none" viewBox="0 0 24 24" stroke="#888888" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
           </div>
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
           </p>
           <Link
             href="/login"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 24, fontSize: 14, fontWeight: 500, color: '#7b9ef0', textDecoration: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 24, fontSize: 14, fontWeight: 500, color: '#888888', textDecoration: 'none' }}
             onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
             onMouseLeave={e => e.currentTarget.style.opacity = '1'}
           >
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
         <p style={{ textAlign: 'center', fontSize: 14, color: text3, marginTop: 24 }}>
           <Link
             href="/login"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 500, color: '#7b9ef0', textDecoration: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 500, color: '#888888', textDecoration: 'none' }}
             onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
             onMouseLeave={e => e.currentTarget.style.opacity = '1'}
           >

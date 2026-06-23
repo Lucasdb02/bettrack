@@ -31,7 +31,7 @@ export default function LoginPage() {
   const rawNext = searchParams.get('next') || '';
   const nextPath = rawNext.startsWith('/') && rawNext !== '/' ? rawNext : '/dashboard';
 
-  const bg        = dark ? '#0d1117' : '#f8fafc';
+  const bg        = dark ? '#121212' : '#f8fafc';
   const text1     = dark ? '#e6edf3' : '#0f172a';
   const text3     = dark ? '#8b949e' : '#64748b';
   const inputBg   = dark ? 'rgba(255,255,255,0.04)' : '#ffffff';
@@ -134,7 +134,7 @@ export default function LoginPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
               <label style={{ fontSize: 13, fontWeight: 500, color: text3 }}>Wachtwoord</label>
-              <Link href="/forgot-password" style={{ fontSize: 13, color: '#7b9ef0', textDecoration: 'none' }}
+              <Link href="/forgot-password" style={{ fontSize: 13, color: '#888888', textDecoration: 'none' }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
                 onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
                 Vergeten?
@@ -172,7 +172,7 @@ export default function LoginPage() {
 
         <p style={{ textAlign: 'center', fontSize: 14, color: text3, marginTop: 24 }}>
           Nog geen account?{' '}
-          <Link href="/signup" style={{ color: '#7b9ef0', fontWeight: 500, textDecoration: 'none' }}
+          <Link href="/signup" style={{ color: '#888888', fontWeight: 500, textDecoration: 'none' }}
             onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
             onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
             Gratis registreren

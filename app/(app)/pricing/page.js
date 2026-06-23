@@ -200,10 +200,10 @@ export default function PricingPage() {
                   ? `2px solid var(--brand)`
                   : '1px solid var(--border)',
                 background: isPopulair
-                  ? (dark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.03)')
+                  ? (dark ? 'rgba(136,136,136,0.08)' : 'rgba(136,136,136,0.03)')
                   : 'var(--bg-card)',
                 position: 'relative',
-                boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(99,102,241,0.15)') : 'none',
+                boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(136,136,136,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(136,136,136,0.15)') : 'none',
                 display: 'flex', flexDirection: 'column',
               }}
             >

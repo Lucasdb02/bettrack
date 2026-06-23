@@ -77,7 +77,7 @@ function buildChartData(bets, activeBookies, bookmakersConfig, period, customRan
           const t = new Date(b.datum).getTime();
           return b.bookmaker === naam && t < cutoff && t >= startDate;
         })
-        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet)), 0);
+        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
 
       const bm = dbBookmakers?.find(b => b.naam === naam);
       const netTx = bm && transactions ? transactions
@@ -282,7 +282,7 @@ export default function BookmakersPage() {
     const map = {};
     bets.filter(b => b.uitkomst !== 'lopend').forEach(b => {
       if (!map[b.bookmaker]) map[b.bookmaker] = { pnl:0, bets:0, gewonnen:0, verloren:0 };
-      map[b.bookmaker].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet));
+      map[b.bookmaker].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
       map[b.bookmaker].bets++;
       if (b.uitkomst === 'gewonnen') map[b.bookmaker].gewonnen++;
       if (b.uitkomst === 'verloren') map[b.bookmaker].verloren++;

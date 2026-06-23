@@ -13,7 +13,7 @@ function Chevron({ open }) {
 }
 
 function usePortalDropdown() {
-  const btnRef  = useRef(null);
+  const btnRef    = useRef(null);
   const [open,    setOpen]    = useState(false);
   const [rect,    setRect]    = useState(null);
   const [mounted, setMounted] = useState(false);
@@ -25,7 +25,10 @@ function usePortalDropdown() {
   const close = useCallback(() => setOpen(false), []);
   useEffect(() => {
     if (!open) return;
-    const h = () => setOpen(false);
+    const h = (e) => {
+      if (e.target && e.target.closest?.('.dropdown-panel')) return;
+      setOpen(false);
+    };
     window.addEventListener('scroll', h, true);
     return () => window.removeEventListener('scroll', h, true);
   }, [open]);
@@ -87,14 +90,14 @@ export default function MultiSelect({ label, icon, options, selected, onChange }
             borderRadius:10, boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
             minWidth:190, maxHeight:280, overflowY:'auto',
           }}>
-            {/* "Alle" master toggle — clicking when allSelected deselects all */}
+            {/* "Alle" master toggle */}
             <button onClick={() => onChange(allSelected ? [] : null)} style={{
               display:'flex', alignItems:'center', gap:9, width:'100%',
               textAlign:'left', padding:'9px 16px', fontSize:13,
               color: allSelected ? txtActive : txtDef,
               backgroundColor: allSelected ? bgActive : 'transparent',
               border:'none', borderBottom:`1px solid ${divider}`, cursor:'pointer',
-              transition:'background 0.1s',
+              borderRadius:0, transition:'background 0.1s',
             }}
             onMouseEnter={e => { if (!allSelected) e.currentTarget.style.backgroundColor = hoverBg; }}
             onMouseLeave={e => { if (!allSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}>
@@ -111,7 +114,7 @@ export default function MultiSelect({ label, icon, options, selected, onChange }
                   textAlign:'left', padding:'9px 16px', fontSize:13,
                   color: checked ? txtActive : txtDef,
                   backgroundColor: checked ? bgActive : 'transparent',
-                  border:'none', cursor:'pointer', transition:'background 0.1s',
+                  border:'none', borderRadius:0, cursor:'pointer', transition:'background 0.1s',
                 }}
                 onMouseEnter={e => { if (!checked) e.currentTarget.style.backgroundColor = hoverBg; }}
                 onMouseLeave={e => { if (!checked) e.currentTarget.style.backgroundColor = 'transparent'; }}>

@@ -65,7 +65,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-10" style={{ background: '#0d1117' }}>
+    <div className="min-h-screen flex items-center justify-center px-6 py-10" style={{ background: '#121212' }}>
       <div className="w-full max-w-[360px]">
         {/* Logo */}
         <div className="flex items-center gap-2.5 mb-8">
@@ -79,7 +79,7 @@ export default function ResetPasswordPage() {
 
         {/* Icon */}
         <div className="mb-6 flex items-center justify-center w-11 h-11 rounded-xl" style={{ background: 'rgba(84,105,212,0.12)', border: '1px solid rgba(84,105,212,0.2)' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7b9ef0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
@@ -123,7 +123,7 @@ export default function ResetPasswordPage() {
             <Link
               href="/forgot-password"
               className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
-              style={{ color: '#7b9ef0' }}
+              style={{ color: '#888888' }}
             >
               Nieuwe resetlink aanvragen
             </Link>

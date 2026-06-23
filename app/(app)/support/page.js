@@ -247,11 +247,11 @@ export default function SupportPage() {
                 style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'var(--text-3)', textDecoration: 'none' }}
               >
                 <span style={{ width: 32, height: 32, borderRadius: 8, background: dark ? 'rgba(84,105,212,0.15)' : '#eef2ff', border: `1px solid ${dark ? 'rgba(123,158,240,0.2)' : '#c7d2fe'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={dark ? '#7b9ef0' : '#6366f1'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={dark ? '#888888' : '#6366f1'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </span>
                 <div>
                   <p style={{ fontSize: 12, color: 'var(--text-4)', marginBottom: 1 }}>E-mail</p>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: dark ? '#7b9ef0' : '#6366f1' }}>support@trackmijnbets.nl</p>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: dark ? '#888888' : '#6366f1' }}>support@trackmijnbets.nl</p>
                 </div>
               </a>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'var(--text-3)' }}>
