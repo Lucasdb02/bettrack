@@ -327,7 +327,7 @@ function FixtureDetail({ fixture, data, loading }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>AI Voorspelling</span>
             {prediction.advice && (
-              <span style={{ fontSize: 11, color: 'var(--brand)', background: 'var(--bg-brand)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 5, padding: '2px 8px', fontWeight: 600 }}>
+              <span style={{ fontSize: 11, color: 'var(--brand)', background: 'var(--bg-brand)', border: '1px solid rgba(136,136,136,0.2)', borderRadius: 5, padding: '2px 8px', fontWeight: 600 }}>
                 {prediction.advice}
               </span>
             )}
@@ -409,10 +409,24 @@ function FixtureRow({ fixture }) {
     if (next && detail === null) {
       setDetailLoading(true);
       try {
-        const res  = await fetch(`/api/apifootball?action=details&fixtureId=${fixture.id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-        setDetail(data);
+        const oddsParams = new URLSearchParams({
+          action: 'odds',
+          leagueName: fixture.leagueName || '',
+          leagueCountry: fixture.leagueCountry || '',
+          home: fixture.homeTeam,
+          away: fixture.awayTeam,
+          date: fixture.date,
+        });
+        const [predRes, oddsRes] = await Promise.all([
+          fetch(`/api/apifootball?action=predictions&fixtureId=${fixture.id}`),
+          fetch(`/api/odds-papi?${oddsParams.toString()}`),
+        ]);
+        const predData = await predRes.json();
+        const oddsData = await oddsRes.json();
+        setDetail({
+          markets: oddsRes.ok ? (oddsData.markets || {}) : {},
+          prediction: predRes.ok ? predData.prediction : null,
+        });
       } catch {
         setDetail({ markets: {}, prediction: null });
       }

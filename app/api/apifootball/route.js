@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server';
 
 const BASE = 'https://v3.football.api-sports.io';
 
-// Alleen bookmakers actief in de Nederlandse markt (API-Football IDs)
-const NL_BOOKMAKER_IDS = new Set([8, 16, 21, 28]); // Bet365, Unibet, 888Sport, ComeOn
-
 // Landen met relevante voetbalcompetities
 const ALLOWED_COUNTRIES = new Set([
   'England','Spain','Germany','France','Italy','Netherlands','Portugal','Belgium',
@@ -91,6 +88,8 @@ export async function GET(request) {
           halftimeAway: f.score?.halftime?.away,
           venue: fix.venue?.name,
           referee: fix.referee,
+          leagueName: league.name,
+          leagueCountry: league.country,
         };
 
         const lid = league.id;
@@ -131,46 +130,13 @@ export async function GET(request) {
       return NextResponse.json(raw.response || []);
     }
 
-    // ── Odds + Predictions voor één wedstrijd ─────────────────────────────────
-    if (action === 'details') {
+    // ── Voorspellingen voor één wedstrijd (odds komen via /api/odds-papi) ─────
+    if (action === 'predictions') {
       const fixtureId = searchParams.get('fixtureId');
       if (!fixtureId) return NextResponse.json({ error: 'fixtureId vereist' }, { status: 400 });
 
-      const [oddsRes, predRes] = await Promise.all([
-        apiFetch(`/odds?fixture=${fixtureId}`, KEY),
-        apiFetch(`/predictions?fixture=${fixtureId}`, KEY),
-      ]);
+      const predRes = await apiFetch(`/predictions?fixture=${fixtureId}`, KEY);
 
-      // Odds verwerken — alleen Nederlandse bookmakers
-      let markets = {};
-      if (oddsRes.ok) {
-        const oddsRaw = await oddsRes.json();
-        for (const entry of oddsRaw.response || []) {
-          for (const bookie of entry.bookmakers || []) {
-            if (!NL_BOOKMAKER_IDS.has(bookie.id)) continue;
-            for (const bet of bookie.bets || []) {
-              const marketName = bet.name;
-              if (!markets[marketName]) markets[marketName] = [];
-              const existing = markets[marketName].find(b => b.id === bookie.id);
-              const values = {};
-              for (const v of bet.values || []) {
-                values[v.value] = parseFloat(v.odd);
-              }
-              if (existing) {
-                Object.assign(existing.values, values);
-              } else {
-                markets[marketName].push({ id: bookie.id, name: bookie.name, values });
-              }
-            }
-          }
-        }
-        // Sorteer bookmakers alfabetisch per markt
-        for (const m of Object.values(markets)) {
-          m.sort((a, b) => a.name.localeCompare(b.name));
-        }
-      }
-
-      // Predictions verwerken
       let prediction = null;
       if (predRes.ok) {
         const predRaw = await predRes.json();
@@ -198,7 +164,7 @@ export async function GET(request) {
         }
       }
 
-      return NextResponse.json({ markets, prediction });
+      return NextResponse.json({ prediction });
     }
 
     return NextResponse.json({ error: 'Ongeldig action parameter' }, { status: 400 });
