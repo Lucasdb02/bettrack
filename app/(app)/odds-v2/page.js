@@ -149,10 +149,43 @@ function AllMarketsModal({ markets, current, onSelect, onClose }) {
 }
 
 // ── UI helpers ────────────────────────────────────────────────────────────────
-function TeamInitials({ name, size = 22 }) {
+function TeamLogo({ src, name, size = 22 }) {
+  const [err, setErr] = useState(false);
+  if (src && !err) {
+    return <img src={src} alt={name} onError={() => setErr(true)} style={{ width: size, height: size, objectFit: 'contain', flexShrink: 0 }} />;
+  }
   return (
     <div style={{ width: size, height: size, borderRadius: 4, background: 'var(--bg-subtle)', border: '1px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7, fontWeight: 800, color: 'var(--text-4)' }}>
       {(name || '?').slice(0, 2).toUpperCase()}
+    </div>
+  );
+}
+
+function LeagueLogo({ flag, emblem, name }) {
+  const [flagErr, setFlagErr] = useState(false);
+  const [emblemErr, setEmblemErr] = useState(false);
+  return (
+    <div style={{ position: 'relative', width: 28, height: 28, flexShrink: 0 }}>
+      <div style={{
+        width: 28, height: 28, borderRadius: 6, overflow: 'hidden',
+        background: flag && !flagErr ? 'transparent' : 'var(--bg-brand)',
+        border: '1px solid var(--border-subtle)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        {flag && !flagErr
+          ? <img src={flag} alt="" onError={() => setFlagErr(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          : <div style={{ width: 16, height: 16, borderRadius: 3, background: 'var(--bg-brand)' }} />
+        }
+      </div>
+      {emblem && !emblemErr && (
+        <img
+          src={emblem} alt="" onError={() => setEmblemErr(true)}
+          style={{
+            position: 'absolute', right: -4, bottom: -4, width: 16, height: 16, objectFit: 'contain',
+            background: '#fff', borderRadius: 4, border: '1px solid var(--border-subtle)', padding: 1,
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -338,9 +371,12 @@ function FixtureRow({ fixture }) {
         </td>
         <td style={{ padding: '10px 8px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            {[fixture.homeTeam, fixture.awayTeam].map((team, i) => (
+            {[
+              { team: fixture.homeTeam, crest: fixture.homeCrest },
+              { team: fixture.awayTeam, crest: fixture.awayCrest },
+            ].map(({ team, crest }, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <TeamInitials name={team} />
+                <TeamLogo src={crest} name={team} />
                 <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{team}</span>
               </div>
             ))}
@@ -371,6 +407,7 @@ function LeagueCard({ league, defaultOpen }) {
         onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-subtle)'}
         onMouseLeave={e => e.currentTarget.style.background = 'none'}
       >
+        <LeagueLogo flag={league.flag} emblem={league.emblem} name={league.name} />
         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', display: 'block' }}>{league.name}</span>
           <span style={{ fontSize: 11, color: 'var(--text-4)' }}>{league.country}</span>

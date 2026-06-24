@@ -3,6 +3,85 @@ import { NextResponse } from 'next/server';
 const BASE = 'https://api.oddspapi.io';
 const SPORT_ID = 10; // Voetbal
 
+const FD_BASE = 'https://api.football-data.org/v4';
+
+// OddsPapi tournamentId → football-data.org competitiecode.
+// Football-data's gratis plan dekt maar 13 competities — alleen die kunnen
+// een vlag/logo/club-crest krijgen, de rest valt terug op de lege weergave.
+const FD_COMPETITION_BY_TOURNAMENT = {
+  17:  'PL',  // Premier League (Engeland)
+  18:  'ELC', // Championship (Engeland)
+  8:   'PD',  // La Liga (Spanje)
+  35:  'BL1', // Bundesliga (Duitsland)
+  23:  'SA',  // Serie A (Italië)
+  34:  'FL1', // Ligue 1 (Frankrijk)
+  37:  'DED', // Eredivisie (Nederland)
+  238: 'PPL', // Primeira Liga (Portugal)
+  7:   'CL',  // UEFA Champions League
+  16:  'WC',  // FIFA World Cup
+  325: 'BSA', // Brasileiro Série A
+  384: 'CLI', // Copa Libertadores
+};
+
+// In-memory caches (per serverless-instance levensduur) zodat we niet
+// constant tegen football-data.org's limiet van 10 requests/minuut aanlopen.
+let competitionsCache = { data: null, fetchedAt: 0 };
+const teamsCacheByCode = {};
+
+function fdNormalize(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^a-z0-9]/g, '');
+}
+
+async function getCompetitions(fdKey) {
+  if (competitionsCache.data && Date.now() - competitionsCache.fetchedAt < 24 * 60 * 60 * 1000) {
+    return competitionsCache.data;
+  }
+  const res = await fetch(`${FD_BASE}/competitions`, {
+    headers: { 'X-Auth-Token': fdKey },
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) return competitionsCache.data || {};
+
+  const json = await res.json();
+  const byCode = {};
+  for (const c of json.competitions || []) {
+    byCode[c.code] = { emblem: c.emblem || null, flag: c.area?.flag || null };
+  }
+  competitionsCache = { data: byCode, fetchedAt: Date.now() };
+  return byCode;
+}
+
+async function getTeamCrests(code, fdKey) {
+  const cached = teamsCacheByCode[code];
+  if (cached && Date.now() - cached.fetchedAt < 24 * 60 * 60 * 1000) {
+    return cached.data;
+  }
+  const res = await fetch(`${FD_BASE}/competitions/${code}/teams`, {
+    headers: { 'X-Auth-Token': fdKey },
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) return cached?.data || {};
+
+  const json = await res.json();
+  const byName = {};
+  for (const t of json.teams || []) {
+    if (!t.crest) continue;
+    byName[fdNormalize(t.name)] = t.crest;
+    byName[fdNormalize(t.shortName)] = t.crest;
+  }
+  teamsCacheByCode[code] = { data: byName, fetchedAt: Date.now() };
+  return byName;
+}
+
+function findCrest(crestMap, teamName) {
+  const n = fdNormalize(teamName);
+  if (crestMap[n]) return crestMap[n];
+  for (const [key, url] of Object.entries(crestMap)) {
+    if (key && (n.includes(key) || key.includes(n))) return url;
+  }
+  return null;
+}
+
 // Bookmakers die we tonen in de vergelijkingstabel.
 const BOOKMAKERS = [
   { slug: 'bet365', name: 'bet365' },
@@ -99,6 +178,7 @@ export async function GET(request) {
   if (!KEY) {
     return NextResponse.json({ error: 'ODDS_API_KEY niet geconfigureerd.' }, { status: 500 });
   }
+  const FD_KEY = process.env.FOOTBALL_DATA_API_KEY;
 
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
@@ -112,6 +192,9 @@ export async function GET(request) {
       const raw = await getFixtures(date, KEY);
       const now = Date.now();
 
+      const competitions = FD_KEY ? await getCompetitions(FD_KEY) : {};
+      const crestsByCode = {};
+
       const leagueMap = {};
       for (const f of raw || []) {
         if (!isLeagueAllowed(f.tournamentName)) continue;
@@ -123,6 +206,14 @@ export async function GET(request) {
           elapsed = Math.max(0, Math.round((now - new Date(f.trueStartTime).getTime()) / 60000));
         }
 
+        const fdCode = FD_COMPETITION_BY_TOURNAMENT[f.tournamentId];
+        let homeCrest = null, awayCrest = null;
+        if (FD_KEY && fdCode) {
+          if (!crestsByCode[fdCode]) crestsByCode[fdCode] = await getTeamCrests(fdCode, FD_KEY);
+          homeCrest = findCrest(crestsByCode[fdCode], f.participant1Name);
+          awayCrest = findCrest(crestsByCode[fdCode], f.participant2Name);
+        }
+
         const fixture = {
           id: f.fixtureId,
           date: f.startTime,
@@ -130,15 +221,20 @@ export async function GET(request) {
           elapsed,
           homeTeam: f.participant1Name,
           awayTeam: f.participant2Name,
+          homeCrest,
+          awayCrest,
           hasOdds: !!f.hasOdds,
         };
 
         const lid = f.tournamentId;
         if (!leagueMap[lid]) {
+          const fd = fdCode ? competitions[fdCode] : null;
           leagueMap[lid] = {
             id: lid,
             name: f.tournamentName,
             country: f.categoryName,
+            emblem: fd?.emblem || null,
+            flag: fd?.flag || null,
             fixtures: [],
           };
         }
