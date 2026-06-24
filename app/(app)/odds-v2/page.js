@@ -164,20 +164,36 @@ function TeamLogo({ src, name, size = 22 }) {
 function LeagueLogo({ flag, emblem, name }) {
   const [flagErr, setFlagErr] = useState(false);
   const [emblemErr, setEmblemErr] = useState(false);
+  const hasFlag = flag && !flagErr;
+  const hasEmblem = emblem && !emblemErr;
+
+  // Geen vlag (internationale toernooien zoals het WK) → embleem is het hoofdlogo.
+  if (!hasFlag && hasEmblem) {
+    return (
+      <div style={{
+        width: 28, height: 28, borderRadius: 6, flexShrink: 0, overflow: 'hidden',
+        background: '#fff', border: '1px solid var(--border-subtle)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 2,
+      }}>
+        <img src={emblem} alt={name} onError={() => setEmblemErr(true)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      </div>
+    );
+  }
+
   return (
     <div style={{ position: 'relative', width: 28, height: 28, flexShrink: 0 }}>
       <div style={{
         width: 28, height: 28, borderRadius: 6, overflow: 'hidden',
-        background: flag && !flagErr ? 'transparent' : 'var(--bg-brand)',
+        background: hasFlag ? 'transparent' : 'var(--bg-brand)',
         border: '1px solid var(--border-subtle)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        {flag && !flagErr
+        {hasFlag
           ? <img src={flag} alt="" onError={() => setFlagErr(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : <div style={{ width: 16, height: 16, borderRadius: 3, background: 'var(--bg-brand)' }} />
         }
       </div>
-      {emblem && !emblemErr && (
+      {hasEmblem && (
         <img
           src={emblem} alt="" onError={() => setEmblemErr(true)}
           style={{

@@ -29,6 +29,8 @@ const FL_COUNTRY_SLUG = {
 
 // Bekende afwijkingen tussen OddsPapi-teamnaam (bij internationale toernooien,
 // waar de teamnaam de landnaam IS) en de map-slug op football-logos.cc.
+// Opgebouwd door alle WK 2026-deelnemers van OddsPapi één-voor-één te
+// vergelijken met football-logos.cc's eigen folder-namen.
 const FL_TEAM_COUNTRY_ALIAS = {
   'ivory coast': 'cote-d-ivoire',
   'cote d ivoire': 'cote-d-ivoire',
@@ -36,8 +38,19 @@ const FL_TEAM_COUNTRY_ALIAS = {
   'congo dr': 'congo-dr',
   'south korea': 'south-korea',
   'korea republic': 'south-korea',
-  'usa': 'usa',
+  usa: 'usa',
   'united states': 'usa',
+  turkiye: 'turkey',
+  turkey: 'turkey',
+  czechia: 'czech-republic',
+  'czech republic': 'czech-republic',
+  'cape verde': 'cabo-verde',
+  'ir iran': 'iran',
+  iran: 'iran',
+  'bosnia and herzegovina': 'bosnia-and-herzegovina',
+  'bosnia herzegovina': 'bosnia-and-herzegovina',
+  'united arab emirates': 'uae',
+  uae: 'uae',
 };
 
 const META_CATEGORIES = new Set(['international', 'internationalclubs', 'world', 'europe', 'southamerica'].map(normalizeKey));
@@ -87,15 +100,17 @@ function flTokens(s) {
   return new Set(words.filter(w => w && !GENERIC_CLUB_WORDS.has(w)));
 }
 
-// Woord-bewuste match: een titel telt alleen als "match" wanneer al haar
-// woorden (minus generieke clubafkortingen) ook letterlijk in de teamnaam
-// voorkomen — voorkomt valse hits zoals "Milan" in "Inter Milano".
+// Woord-bewuste match in beide richtingen: ofwel zitten alle woorden van de
+// titel in de teamnaam (bv. "Milan" in "Inter Milano" → afgewezen, want
+// "milan" ≠ "milano"), ofwel zitten alle woorden van de teamnaam in de titel
+// (bv. "Premier League" in "English Premier League" → geaccepteerd).
+// Bij meerdere geldige kandidaten wint de kleinste woord-verschil-afstand.
 function flFindByTitle(entries, query, exclude) {
   if (!entries) return null;
   const n = flNormalize(query);
   if (!n) return null;
   const queryTokens = flTokens(query);
-  let best = null, bestScore = 0;
+  let best = null, bestDiff = Infinity;
   for (const e of entries) {
     if (exclude && exclude(e.title)) continue;
     const t = flNormalize(e.title);
@@ -103,12 +118,31 @@ function flFindByTitle(entries, query, exclude) {
 
     const titleTokens = flTokens(e.title);
     if (titleTokens.size === 0) continue;
-    const overlap = [...titleTokens].filter(w => queryTokens.has(w)).length;
-    if (overlap !== titleTokens.size) continue; // alle woorden van de titel moeten in de query staan
-    if (overlap > bestScore) { bestScore = overlap; best = e; }
+    const titleSubsetOfQuery = [...titleTokens].every(w => queryTokens.has(w));
+    const querySubsetOfTitle = [...queryTokens].every(w => titleTokens.has(w));
+    if (!titleSubsetOfQuery && !querySubsetOfTitle) continue;
+
+    const diff = Math.abs(titleTokens.size - queryTokens.size);
+    if (diff < bestDiff) { bestDiff = diff; best = e; }
   }
   return best?.url || null;
 }
+
+// Eén canonieke "X National Team"-pagina per land-folder — geen naam-match
+// nodig, de juiste folder is al via slug/alias bepaald.
+function flFindNationalTeam(entries) {
+  if (!entries) return null;
+  const hit = entries.find(e => /national team/i.test(e.title) && !/no text|white|dark|unofficial/i.test(e.title));
+  return hit?.url || null;
+}
+
+// Bekende vertalingsverschillen tussen OddsPapi's tournamentName en
+// football-logos.cc's titel (bv. Portugees "Brasileiro" vs. Engels "Brazilian").
+const FL_TOURNAMENT_NAME_ALIAS = {
+  'brasileiroseriea': 'brazilian serie a',
+  'brasileiroserieb': 'brazilian serie b',
+  'brasileiroseriec': 'brazilian serie c',
+};
 
 async function getLeagueLogo(tournamentName, categoryName, tournamentId) {
   const catalog = await getLogoCatalog();
@@ -116,11 +150,12 @@ async function getLeagueLogo(tournamentName, categoryName, tournamentId) {
     const hit = flFindByTitle(catalog.tournaments, 'fifa world cup 2026', t => /no text|white|dark|unofficial/i.test(t));
     if (hit) return hit;
   }
+  const query = FL_TOURNAMENT_NAME_ALIAS[normalizeKey(tournamentName)] || tournamentName;
   const isMeta = META_CATEGORIES.has(normalizeKey(categoryName));
   const folder = isMeta ? 'tournaments' : FL_COUNTRY_SLUG[Object.keys(FL_COUNTRY_SLUG).find(k => normalizeKey(k) === normalizeKey(categoryName))];
   const exclude = t => /no text|white|dark|unofficial|national team/i.test(t);
-  const hit = (folder && flFindByTitle(catalog[folder], tournamentName, exclude))
-    || flFindByTitle(catalog.tournaments, tournamentName, exclude);
+  const hit = (folder && flFindByTitle(catalog[folder], query, exclude))
+    || flFindByTitle(catalog.tournaments, query, exclude);
   return hit || null;
 }
 
@@ -131,11 +166,11 @@ async function getTeamLogo(teamName, categoryName) {
 
   if (isMeta) {
     // Teamnaam IS de landnaam — zoek het nationale team in dat land-folder.
+    // Geen naam-match meer nodig zodra de folder vaststaat (voorkomt missers
+    // bij vertaalde namen zoals "Ivory Coast" vs. "Côte d'Ivoire").
     const alias = FL_TEAM_COUNTRY_ALIAS[flNormalize2(teamName)];
     const folder = alias || flSlugify(teamName);
-    const entries = catalog[folder];
-    if (!entries) return null;
-    return flFindByTitle(entries, `${teamName} national team`, t => !/national team/i.test(t)) || null;
+    return flFindNationalTeam(catalog[folder]) || null;
   }
 
   const folder = Object.keys(FL_COUNTRY_SLUG).find(k => normalizeKey(k) === normalizeKey(categoryName));
