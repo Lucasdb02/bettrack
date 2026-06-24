@@ -29,7 +29,8 @@ let competitionsCache = { data: null, fetchedAt: 0 };
 const teamsCacheByCode = {};
 
 function fdNormalize(s) {
-  return (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^a-z0-9]/g, '');
+  return (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
+    .replace(/&/g, ' and ').replace(/[^a-z0-9]/g, '');
 }
 
 async function getCompetitions(fdKey) {
@@ -100,22 +101,55 @@ const MARKETS = {
   'Double Chance':    { marketId: 101902, outcomes: { 101902: 'Home/Draw', 101903: 'Home/Away', 101904: 'Draw/Away' } },
 };
 
-// Landen met relevante voetbalcompetities (zelfde selectie als voorheen).
-const ALLOWED_COUNTRIES = new Set([
+// Landen met relevante voetbalcompetities — namen exact zoals OddsPapi's
+// categoryName ze teruggeeft (afwijkt soms van API-Football's spelling).
+const COUNTRY_NAMES = [
   'England', 'Spain', 'Germany', 'France', 'Italy', 'Netherlands', 'Portugal', 'Belgium',
-  'Turkey', 'Turkiye', 'Russia', 'Scotland', 'Greece', 'Switzerland', 'Austria', 'Poland',
-  'Czech Republic', 'Croatia', 'Serbia', 'Romania', 'Ukraine', 'Denmark', 'Sweden',
-  'Norway', 'Finland', 'Hungary', 'Slovakia', 'Slovenia', 'Bosnia', 'Bulgaria',
+  'Turkiye', 'Russia', 'Scotland', 'Greece', 'Switzerland', 'Austria', 'Poland',
+  'Czechia', 'Croatia', 'Serbia', 'Romania', 'Ukraine', 'Denmark', 'Sweden',
+  'Norway', 'Finland', 'Hungary', 'Slovakia', 'Slovenia', 'Bosnia & Herzegovina', 'Bulgaria',
   'Ireland', 'Northern Ireland', 'Wales', 'Iceland',
   'Brazil', 'Argentina', 'Mexico', 'USA', 'Colombia', 'Chile', 'Peru', 'Ecuador',
   'Uruguay', 'Paraguay', 'Bolivia', 'Venezuela', 'Costa Rica', 'Jamaica', 'Canada',
-  'Japan', 'South Korea', 'China', 'Saudi Arabia', 'UAE', 'Qatar', 'Iran', 'Israel',
+  'Japan', 'Republic of Korea', 'China', 'Saudi Arabia', 'United Arab Emirates', 'Qatar', 'Iran', 'Israel',
   'Morocco', 'Egypt', 'Nigeria', 'Algeria', 'Tunisia', 'Senegal', 'South Africa',
-  'Australia', 'International', 'International Clubs', 'World',
+  'Australia',
+];
+
+// ISO 3166-1 alpha-2 (of GB-subdivisie) codes voor de flagcdn.com-fallback,
+// gebruikt wanneer football-data.org geen vlag heeft (alle niet-13-competities).
+const COUNTRY_ISO = {
+  England: 'gb-eng', Spain: 'es', Germany: 'de', France: 'fr', Italy: 'it',
+  Netherlands: 'nl', Portugal: 'pt', Belgium: 'be', Turkiye: 'tr', Russia: 'ru',
+  Scotland: 'gb-sct', Greece: 'gr', Switzerland: 'ch', Austria: 'at', Poland: 'pl',
+  Czechia: 'cz', Croatia: 'hr', Serbia: 'rs', Romania: 'ro', Ukraine: 'ua',
+  Denmark: 'dk', Sweden: 'se', Norway: 'no', Finland: 'fi', Hungary: 'hu',
+  Slovakia: 'sk', Slovenia: 'si', 'Bosnia & Herzegovina': 'ba', Bulgaria: 'bg',
+  Ireland: 'ie', 'Northern Ireland': 'gb-nir', Wales: 'gb-wls', Iceland: 'is',
+  Brazil: 'br', Argentina: 'ar', Mexico: 'mx', USA: 'us', Colombia: 'co',
+  Chile: 'cl', Peru: 'pe', Ecuador: 'ec', Uruguay: 'uy', Paraguay: 'py',
+  Bolivia: 'bo', Venezuela: 've', 'Costa Rica': 'cr', Jamaica: 'jm', Canada: 'ca',
+  Japan: 'jp', 'Republic of Korea': 'kr', China: 'cn', 'Saudi Arabia': 'sa',
+  'United Arab Emirates': 'ae', Qatar: 'qa', Iran: 'ir', Israel: 'il',
+  Morocco: 'ma', Egypt: 'eg', Nigeria: 'ng', Algeria: 'dz', Tunisia: 'tn',
+  Senegal: 'sn', 'South Africa': 'za', Australia: 'au',
+};
+
+const ALLOWED_COUNTRIES = new Set([
+  ...COUNTRY_NAMES, 'International', 'International Clubs', 'World',
 ].map(normalizeKey));
+
+const COUNTRY_ISO_BY_KEY = Object.fromEntries(
+  Object.entries(COUNTRY_ISO).map(([name, iso]) => [normalizeKey(name), iso])
+);
 
 function normalizeKey(s) {
   return (s || '').toLowerCase().replace(/[^a-z]/g, '');
+}
+
+function flagFallbackUrl(countryName) {
+  const iso = COUNTRY_ISO_BY_KEY[normalizeKey(countryName)];
+  return iso ? `https://flagcdn.com/h40/${iso}.png` : null;
 }
 
 // Patroon-filter: sluit jeugd, vrouwen, reserve, SRL en lagere klassen uit.
@@ -234,7 +268,7 @@ export async function GET(request) {
             name: f.tournamentName,
             country: f.categoryName,
             emblem: fd?.emblem || null,
-            flag: fd?.flag || null,
+            flag: fd?.flag || flagFallbackUrl(f.categoryName),
             fixtures: [],
           };
         }
