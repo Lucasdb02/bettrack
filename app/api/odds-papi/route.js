@@ -3,84 +3,148 @@ import { NextResponse } from 'next/server';
 const BASE = 'https://api.oddspapi.io';
 const SPORT_ID = 10; // Voetbal
 
-const FD_BASE = 'https://api.football-data.org/v4';
+// ── football-logos.cc: club-, competitie- en nationale-teamlogo's ──────────
+// Geen officiële API, maar wel een SEO image-sitemap met alle ~3200 logo's
+// (URL + titel). Eén keer per dag opgehaald en in-memory gecached.
+const FL_SITEMAP_URL = 'https://football-logos.cc/image-sitemap.xml';
 
-// OddsPapi tournamentId → football-data.org competitiecode.
-// Football-data's gratis plan dekt maar 13 competities — alleen die kunnen
-// een vlag/logo/club-crest krijgen, de rest valt terug op de lege weergave.
-const FD_COMPETITION_BY_TOURNAMENT = {
-  17:  'PL',  // Premier League (Engeland)
-  18:  'ELC', // Championship (Engeland)
-  8:   'PD',  // La Liga (Spanje)
-  35:  'BL1', // Bundesliga (Duitsland)
-  23:  'SA',  // Serie A (Italië)
-  34:  'FL1', // Ligue 1 (Frankrijk)
-  37:  'DED', // Eredivisie (Nederland)
-  238: 'PPL', // Primeira Liga (Portugal)
-  7:   'CL',  // UEFA Champions League
-  16:  'WC',  // FIFA World Cup
-  325: 'BSA', // Brasileiro Série A
-  384: 'CLI', // Copa Libertadores
+// Landnaam (zoals wij die gebruiken) → football-logos.cc map-slug.
+// Wijkt op een aantal plekken af van zowel OddsPapi als ISO-namen.
+const FL_COUNTRY_SLUG = {
+  England: 'england', Spain: 'spain', Germany: 'germany', France: 'france', Italy: 'italy',
+  Netherlands: 'netherlands', Portugal: 'portugal', Belgium: 'belgium', Turkiye: 'turkey', Russia: 'russia',
+  Scotland: 'scotland', Greece: 'greece', Switzerland: 'switzerland', Austria: 'austria', Poland: 'poland',
+  Czechia: 'czech-republic', Croatia: 'croatia', Serbia: 'serbia', Romania: 'romania', Ukraine: 'ukraine',
+  Denmark: 'denmark', Sweden: 'sweden', Norway: 'norway', Finland: 'finland', Hungary: 'hungary',
+  Slovakia: 'slovakia', Slovenia: 'slovenia', 'Bosnia & Herzegovina': 'bosnia-and-herzegovina', Bulgaria: 'bulgaria',
+  Ireland: 'republic-of-ireland', 'Northern Ireland': 'northern-ireland', Wales: 'wales', Iceland: 'iceland',
+  Brazil: 'brazil', Argentina: 'argentina', Mexico: 'mexico', USA: 'usa', Colombia: 'colombia',
+  Chile: 'chile', Peru: 'peru', Ecuador: 'ecuador', Uruguay: 'uruguay', Paraguay: 'paraguay',
+  Bolivia: 'bolivia', Venezuela: 'venezuela', 'Costa Rica': 'costa-rica', Jamaica: 'jamaica', Canada: 'canada',
+  Japan: 'japan', 'Republic of Korea': 'south-korea', China: 'china', 'Saudi Arabia': 'saudi-arabia',
+  'United Arab Emirates': 'uae', Qatar: 'qatar', Iran: 'iran', Israel: 'israel',
+  Morocco: 'morocco', Egypt: 'egypt', Nigeria: 'nigeria', Algeria: 'algeria', Tunisia: 'tunisia',
+  Senegal: 'senegal', 'South Africa': 'south-africa', Australia: 'australia',
 };
 
-// In-memory caches (per serverless-instance levensduur) zodat we niet
-// constant tegen football-data.org's limiet van 10 requests/minuut aanlopen.
-let competitionsCache = { data: null, fetchedAt: 0 };
-const teamsCacheByCode = {};
+// Bekende afwijkingen tussen OddsPapi-teamnaam (bij internationale toernooien,
+// waar de teamnaam de landnaam IS) en de map-slug op football-logos.cc.
+const FL_TEAM_COUNTRY_ALIAS = {
+  'ivory coast': 'cote-d-ivoire',
+  'cote d ivoire': 'cote-d-ivoire',
+  'dr congo': 'congo-dr',
+  'congo dr': 'congo-dr',
+  'south korea': 'south-korea',
+  'korea republic': 'south-korea',
+  'usa': 'usa',
+  'united states': 'usa',
+};
 
-function fdNormalize(s) {
+const META_CATEGORIES = new Set(['international', 'internationalclubs', 'world', 'europe', 'southamerica'].map(normalizeKey));
+
+let logoCatalogCache = { byFolder: null, fetchedAt: 0 };
+
+function flSlugify(s) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
-    .replace(/&/g, ' and ').replace(/[^a-z0-9]/g, '');
+    .replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-async function getCompetitions(fdKey) {
-  if (competitionsCache.data && Date.now() - competitionsCache.fetchedAt < 24 * 60 * 60 * 1000) {
-    return competitionsCache.data;
+async function getLogoCatalog() {
+  if (logoCatalogCache.byFolder && Date.now() - logoCatalogCache.fetchedAt < 7 * 24 * 60 * 60 * 1000) {
+    return logoCatalogCache.byFolder;
   }
-  const res = await fetch(`${FD_BASE}/competitions`, {
-    headers: { 'X-Auth-Token': fdKey },
-    next: { revalidate: 86400 },
-  });
-  if (!res.ok) return competitionsCache.data || {};
+  const res = await fetch(FL_SITEMAP_URL, { next: { revalidate: 7 * 24 * 60 * 60 } });
+  if (!res.ok) return logoCatalogCache.byFolder || {};
 
-  const json = await res.json();
-  const byCode = {};
-  for (const c of json.competitions || []) {
-    byCode[c.code] = { emblem: c.emblem || null, flag: c.area?.flag || null };
+  const xml = await res.text();
+  const byFolder = {};
+  const urlBlockRe = /<url>\s*<loc>(.*?)<\/loc>\s*<image:image>\s*<image:loc>(.*?)<\/image:loc>\s*<image:title>(.*?)<\/image:title>/gs;
+  let m;
+  while ((m = urlBlockRe.exec(xml))) {
+    const [, loc, imageLoc, rawTitle] = m;
+    const path = loc.replace('https://football-logos.cc/', '').replace(/\/$/, '');
+    const segments = path.split('/');
+    if (segments.length !== 2) continue; // sla variant-pagina's (no-text/white/dark/unofficial) over
+    const [folder, slug] = segments;
+    const title = rawTitle.replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+    if (!byFolder[folder]) byFolder[folder] = [];
+    byFolder[folder].push({ slug, title, url: imageLoc });
   }
-  competitionsCache = { data: byCode, fetchedAt: Date.now() };
-  return byCode;
+  logoCatalogCache = { byFolder, fetchedAt: Date.now() };
+  return byFolder;
 }
 
-async function getTeamCrests(code, fdKey) {
-  const cached = teamsCacheByCode[code];
-  if (cached && Date.now() - cached.fetchedAt < 24 * 60 * 60 * 1000) {
-    return cached.data;
-  }
-  const res = await fetch(`${FD_BASE}/competitions/${code}/teams`, {
-    headers: { 'X-Auth-Token': fdKey },
-    next: { revalidate: 86400 },
-  });
-  if (!res.ok) return cached?.data || {};
-
-  const json = await res.json();
-  const byName = {};
-  for (const t of json.teams || []) {
-    if (!t.crest) continue;
-    byName[fdNormalize(t.name)] = t.crest;
-    byName[fdNormalize(t.shortName)] = t.crest;
-  }
-  teamsCacheByCode[code] = { data: byName, fetchedAt: Date.now() };
-  return byName;
+function flNormalize(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
+    .replace(/\blogo\b/g, '').replace(/[^a-z0-9]/g, '');
 }
 
-function findCrest(crestMap, teamName) {
-  const n = fdNormalize(teamName);
-  if (crestMap[n]) return crestMap[n];
-  for (const [key, url] of Object.entries(crestMap)) {
-    if (key && (n.includes(key) || key.includes(n))) return url;
+const GENERIC_CLUB_WORDS = new Set(['fc', 'cf', 'afc', 'sc', 'cd', 'ac', 'as', 'ss', 'us', 'ud', 'sd', 'rc', 'logo']);
+
+function flTokens(s) {
+  const words = (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
+    .replace(/[^a-z0-9]+/g, ' ').trim().split(' ');
+  return new Set(words.filter(w => w && !GENERIC_CLUB_WORDS.has(w)));
+}
+
+// Woord-bewuste match: een titel telt alleen als "match" wanneer al haar
+// woorden (minus generieke clubafkortingen) ook letterlijk in de teamnaam
+// voorkomen — voorkomt valse hits zoals "Milan" in "Inter Milano".
+function flFindByTitle(entries, query, exclude) {
+  if (!entries) return null;
+  const n = flNormalize(query);
+  if (!n) return null;
+  const queryTokens = flTokens(query);
+  let best = null, bestScore = 0;
+  for (const e of entries) {
+    if (exclude && exclude(e.title)) continue;
+    const t = flNormalize(e.title);
+    if (t === n) return e.url;
+
+    const titleTokens = flTokens(e.title);
+    if (titleTokens.size === 0) continue;
+    const overlap = [...titleTokens].filter(w => queryTokens.has(w)).length;
+    if (overlap !== titleTokens.size) continue; // alle woorden van de titel moeten in de query staan
+    if (overlap > bestScore) { bestScore = overlap; best = e; }
   }
-  return null;
+  return best?.url || null;
+}
+
+async function getLeagueLogo(tournamentName, categoryName, tournamentId) {
+  const catalog = await getLogoCatalog();
+  if (tournamentId === 16) { // FIFA World Cup — jaartal-specifiek
+    const hit = flFindByTitle(catalog.tournaments, 'fifa world cup 2026', t => /no text|white|dark|unofficial/i.test(t));
+    if (hit) return hit;
+  }
+  const isMeta = META_CATEGORIES.has(normalizeKey(categoryName));
+  const folder = isMeta ? 'tournaments' : FL_COUNTRY_SLUG[Object.keys(FL_COUNTRY_SLUG).find(k => normalizeKey(k) === normalizeKey(categoryName))];
+  const exclude = t => /no text|white|dark|unofficial|national team/i.test(t);
+  const hit = (folder && flFindByTitle(catalog[folder], tournamentName, exclude))
+    || flFindByTitle(catalog.tournaments, tournamentName, exclude);
+  return hit || null;
+}
+
+async function getTeamLogo(teamName, categoryName) {
+  const catalog = await getLogoCatalog();
+  const isMeta = META_CATEGORIES.has(normalizeKey(categoryName));
+  const exclude = t => /no text|white|dark|unofficial/i.test(t);
+
+  if (isMeta) {
+    // Teamnaam IS de landnaam — zoek het nationale team in dat land-folder.
+    const alias = FL_TEAM_COUNTRY_ALIAS[flNormalize2(teamName)];
+    const folder = alias || flSlugify(teamName);
+    const entries = catalog[folder];
+    if (!entries) return null;
+    return flFindByTitle(entries, `${teamName} national team`, t => !/national team/i.test(t)) || null;
+  }
+
+  const folder = Object.keys(FL_COUNTRY_SLUG).find(k => normalizeKey(k) === normalizeKey(categoryName));
+  const slug = folder && FL_COUNTRY_SLUG[folder];
+  return flFindByTitle(catalog[slug], teamName, t => exclude(t) || /national team/i.test(t));
+}
+
+function flNormalize2(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
 // Bookmakers die we tonen in de vergelijkingstabel.
@@ -212,7 +276,6 @@ export async function GET(request) {
   if (!KEY) {
     return NextResponse.json({ error: 'ODDS_API_KEY niet geconfigureerd.' }, { status: 500 });
   }
-  const FD_KEY = process.env.FOOTBALL_DATA_API_KEY;
 
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
@@ -226,9 +289,6 @@ export async function GET(request) {
       const raw = await getFixtures(date, KEY);
       const now = Date.now();
 
-      const competitions = FD_KEY ? await getCompetitions(FD_KEY) : {};
-      const crestsByCode = {};
-
       const leagueMap = {};
       for (const f of raw || []) {
         if (!isLeagueAllowed(f.tournamentName)) continue;
@@ -240,13 +300,10 @@ export async function GET(request) {
           elapsed = Math.max(0, Math.round((now - new Date(f.trueStartTime).getTime()) / 60000));
         }
 
-        const fdCode = FD_COMPETITION_BY_TOURNAMENT[f.tournamentId];
-        let homeCrest = null, awayCrest = null;
-        if (FD_KEY && fdCode) {
-          if (!crestsByCode[fdCode]) crestsByCode[fdCode] = await getTeamCrests(fdCode, FD_KEY);
-          homeCrest = findCrest(crestsByCode[fdCode], f.participant1Name);
-          awayCrest = findCrest(crestsByCode[fdCode], f.participant2Name);
-        }
+        const [homeCrest, awayCrest] = await Promise.all([
+          getTeamLogo(f.participant1Name, f.categoryName),
+          getTeamLogo(f.participant2Name, f.categoryName),
+        ]);
 
         const fixture = {
           id: f.fixtureId,
@@ -262,13 +319,12 @@ export async function GET(request) {
 
         const lid = f.tournamentId;
         if (!leagueMap[lid]) {
-          const fd = fdCode ? competitions[fdCode] : null;
           leagueMap[lid] = {
             id: lid,
             name: f.tournamentName,
             country: f.categoryName,
-            emblem: fd?.emblem || null,
-            flag: fd?.flag || flagFallbackUrl(f.categoryName),
+            emblem: await getLeagueLogo(f.tournamentName, f.categoryName, f.tournamentId),
+            flag: flagFallbackUrl(f.categoryName),
             fixtures: [],
           };
         }
