@@ -3,9 +3,7 @@ import { NextResponse } from 'next/server';
 const BASE = 'https://api.oddspapi.io';
 const SPORT_ID = 10; // Voetbal
 
-// Bookmakers die we tonen — beperkt gehouden vanwege de strikte rate limit
-// van OddsPapi (±1 request/seconde per key, geen parallelle calls mogelijk).
-// Voorkeur voor .nl-specifieke feeds waar beschikbaar.
+// Bookmakers die we tonen in de vergelijkingstabel.
 const BOOKMAKERS = [
   { slug: 'bet365', name: 'bet365' },
   { slug: 'unibet.nl', name: 'Unibet' },
@@ -14,8 +12,7 @@ const BOOKMAKERS = [
   { slug: 'jacks.nl', name: "Jack's" },
 ];
 
-// Marktdefinities (OddsPapi marketId → outcomeId → label).
-// Komt overeen met de markt-keys die de odds-v2 UI al verwacht.
+// Marktdefinities (OddsPapi marketId → outcomeId → label) voor de markt-tabs in de UI.
 const MARKETS = {
   'Match Winner':     { marketId: 101,    outcomes: { 101: 'Home', 102: 'Draw', 103: 'Away' } },
   'Both Teams Score': { marketId: 104,    outcomes: { 104: 'Yes', 105: 'No' } },
@@ -24,95 +21,77 @@ const MARKETS = {
   'Double Chance':    { marketId: 101902, outcomes: { 101902: 'Home/Draw', 101903: 'Home/Away', 101904: 'Draw/Away' } },
 };
 
-// API-Football league.name (+ country) → OddsPapi tournamentId.
-// Alleen de competities die ook in API-Football's ALLOWED_COUNTRIES/odds-v2 relevant zijn.
-const TOURNAMENTS = [
-  { country: 'England',     name: 'Premier League',                tournamentId: 17 },
-  { country: 'England',     name: 'Championship',                  tournamentId: 18 },
-  { country: 'Spain',       name: 'La Liga',                        tournamentId: 8 },
-  { country: 'Germany',     name: 'Bundesliga',                     tournamentId: 35 },
-  { country: 'Germany',     name: '2. Bundesliga',                  tournamentId: 44 },
-  { country: 'Italy',       name: 'Serie A',                        tournamentId: 23 },
-  { country: 'France',      name: 'Ligue 1',                        tournamentId: 34 },
-  { country: 'Netherlands', name: 'Eredivisie',                     tournamentId: 37 },
-  { country: 'Belgium',     name: 'Jupiler Pro League',             tournamentId: 38 },
-  { country: 'Turkey',      name: 'Süper Lig',                      tournamentId: 52 },
-  { country: 'Scotland',    name: 'Premiership',                    tournamentId: 36 },
-  { country: 'Portugal',    name: 'Primeira Liga',                  tournamentId: 238 },
-  { country: 'World',       name: 'UEFA Champions League',          tournamentId: 7 },
-  { country: 'World',       name: 'UEFA Europa League',             tournamentId: 679 },
-  { country: 'World',       name: 'UEFA Europa Conference League',  tournamentId: 34480 },
-];
+// Landen met relevante voetbalcompetities (zelfde selectie als voorheen).
+const ALLOWED_COUNTRIES = new Set([
+  'England', 'Spain', 'Germany', 'France', 'Italy', 'Netherlands', 'Portugal', 'Belgium',
+  'Turkey', 'Turkiye', 'Russia', 'Scotland', 'Greece', 'Switzerland', 'Austria', 'Poland',
+  'Czech Republic', 'Croatia', 'Serbia', 'Romania', 'Ukraine', 'Denmark', 'Sweden',
+  'Norway', 'Finland', 'Hungary', 'Slovakia', 'Slovenia', 'Bosnia', 'Bulgaria',
+  'Ireland', 'Northern Ireland', 'Wales', 'Iceland',
+  'Brazil', 'Argentina', 'Mexico', 'USA', 'Colombia', 'Chile', 'Peru', 'Ecuador',
+  'Uruguay', 'Paraguay', 'Bolivia', 'Venezuela', 'Costa Rica', 'Jamaica', 'Canada',
+  'Japan', 'South Korea', 'China', 'Saudi Arabia', 'UAE', 'Qatar', 'Iran', 'Israel',
+  'Morocco', 'Egypt', 'Nigeria', 'Algeria', 'Tunisia', 'Senegal', 'South Africa',
+  'Australia', 'International', 'International Clubs', 'World',
+].map(normalizeKey));
 
-function normalize(s) {
-  return (s || '')
-    .toLowerCase()
-    .normalize('NFD').replace(/\p{M}/gu, '')
-    .replace(/[^a-z0-9]/g, '');
+function normalizeKey(s) {
+  return (s || '').toLowerCase().replace(/[^a-z]/g, '');
 }
 
-function resolveTournamentId(leagueName, leagueCountry) {
-  const n = normalize(leagueName);
-  for (const t of TOURNAMENTS) {
-    if (normalize(t.name) !== n) continue;
-    if (t.country === 'World' || normalize(t.country) === normalize(leagueCountry)) return t.tournamentId;
+// Patroon-filter: sluit jeugd, vrouwen, reserve, SRL en lagere klassen uit.
+function isLeagueAllowed(name) {
+  const n = (name || '').toLowerCase();
+  if (/\bu\d{2}\b/.test(n)) return false; // U17, U18, U19, U20, U21, U22, U23
+  if (/women|femenin|frauen|dames|feminino|feminin/.test(n)) return false;
+  if (/reserve|amateur|youth|junioren|\bsrl\b|simulated/.test(n)) return false;
+  return true;
+}
+
+// Europe/Amsterdam dag-grenzen → UTC ISO strings (DST-bewust via Intl).
+function localDayRangeUtc(dateStr) {
+  const noonUtc = new Date(`${dateStr}T12:00:00Z`);
+  const hourInAmsterdam = parseInt(
+    new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Amsterdam', hourCycle: 'h23', hour: '2-digit' }).format(noonUtc),
+    10
+  );
+  const offsetHours = hourInAmsterdam - 12;
+  const from = new Date(`${dateStr}T00:00:00Z`);
+  from.setUTCHours(from.getUTCHours() - offsetHours);
+  const to = new Date(`${dateStr}T23:59:59Z`);
+  to.setUTCHours(to.getUTCHours() - offsetHours);
+  return { from: from.toISOString(), to: to.toISOString() };
+}
+
+function mapStatus(statusId, startTime) {
+  if (statusId === 1) return 'LIVE';
+  if (statusId === 2) return 'FT';
+  if (statusId === 3) return 'PP';
+  if (statusId === 0) return 'NS';
+  // Onbekende/ontbrekende status: afleiden uit kickoff-tijd
+  return new Date(startTime).getTime() > Date.now() ? 'NS' : 'FT';
+}
+
+async function getFixtures(date, apiKey) {
+  const { from, to } = localDayRangeUtc(date);
+  const url = `${BASE}/v4/fixtures?sportId=${SPORT_ID}&from=${from}&to=${to}&apiKey=${apiKey}`;
+  const res = await fetch(url, { next: { revalidate: 60 } });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`OddsPapi fixtures fout (${res.status}): ${t.slice(0, 200)}`);
   }
-  return null;
+  return res.json();
 }
 
-function normTeam(s) {
-  return normalize(s).replace(/^(fc|cf|afc|sc|cd|ac|as|ss|us|ud|sd|rc|sv|vfl|vfb|tsv)|(fc|cf|afc|sc)$/g, '');
-}
-
-function teamsMatch(a, b) {
-  const na = normTeam(a), nb = normTeam(b);
-  if (!na || !nb) return false;
-  return na === nb || na.includes(nb) || nb.includes(na);
-}
-
-// Participants worden sport-breed opgehaald (1 grote lijst) en in-memory gecached,
-// zodat we niet bij elke request opnieuw 350k+ aan teamnamen moeten downloaden.
-let participantsCache = { data: null, fetchedAt: 0 };
-
-async function getParticipants(apiKey) {
-  if (participantsCache.data && Date.now() - participantsCache.fetchedAt < 60 * 60 * 1000) {
-    return participantsCache.data;
+async function getOdds(fixtureId, apiKey) {
+  const bookmakers = BOOKMAKERS.map(b => b.slug).join(',');
+  const url = `${BASE}/v4/odds?fixtureId=${encodeURIComponent(fixtureId)}&bookmakers=${bookmakers}&oddsFormat=decimal&apiKey=${apiKey}`;
+  const res = await fetch(url, { next: { revalidate: 45 } });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`OddsPapi odds fout (${res.status}): ${t.slice(0, 200)}`);
   }
-  const res = await fetch(`${BASE}/v4/participants?sportId=${SPORT_ID}&apiKey=${apiKey}`, {
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) return participantsCache.data || {};
-  const data = await res.json();
-  participantsCache = { data, fetchedAt: Date.now() };
-  return data;
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function fetchBookmakerFixtures(tournamentId, bookmakerSlug, apiKey) {
-  const url = `${BASE}/v4/odds-by-tournaments?tournamentIds=${tournamentId}&bookmaker=${bookmakerSlug}&oddsFormat=decimal&apiKey=${apiKey}`;
-  const res = await fetch(url, { next: { revalidate: 90 } });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
-}
-
-function findMatch(fixtures, homeTeam, awayTeam, dateIso, participants) {
-  const target = new Date(dateIso).getTime();
-  let best = null;
-  let bestDiff = Infinity;
-  for (const f of fixtures) {
-    const home = participants[f.participant1Id];
-    const away = participants[f.participant2Id];
-    if (!home || !away) continue;
-    if (!teamsMatch(home, homeTeam) || !teamsMatch(away, awayTeam)) continue;
-    const diff = Math.abs(new Date(f.startTime).getTime() - target);
-    if (diff < bestDiff) { bestDiff = diff; best = f; }
-  }
-  // Sta tot 8 uur afwijking toe (tijdzone-verschillen tussen databronnen)
-  return bestDiff < 8 * 60 * 60 * 1000 ? best : null;
+  return res.json();
 }
 
 export async function GET(request) {
@@ -124,57 +103,97 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
 
-  if (action !== 'odds') {
-    return NextResponse.json({ error: 'Ongeldig action parameter' }, { status: 400 });
-  }
-
-  const leagueName = searchParams.get('leagueName') || '';
-  const leagueCountry = searchParams.get('leagueCountry') || '';
-  const homeTeam = searchParams.get('home') || '';
-  const awayTeam = searchParams.get('away') || '';
-  const date = searchParams.get('date') || '';
-
-  const tournamentId = resolveTournamentId(leagueName, leagueCountry);
-  if (!tournamentId) {
-    return NextResponse.json({ markets: {}, unsupported: true });
-  }
-
   try {
-    const participants = await getParticipants(KEY);
-    const markets = {};
+    // ── Wedstrijden voor een datum ───────────────────────────────────────────
+    if (action === 'fixtures') {
+      const date = searchParams.get('date');
+      if (!date) return NextResponse.json({ error: 'date vereist' }, { status: 400 });
 
-    for (let i = 0; i < BOOKMAKERS.length; i++) {
-      const { slug, name } = BOOKMAKERS[i];
-      if (i > 0) await sleep(1100); // rate limit: max ±1 req/sec
+      const raw = await getFixtures(date, KEY);
+      const now = Date.now();
 
-      const fixtures = await fetchBookmakerFixtures(tournamentId, slug, KEY);
-      const match = findMatch(fixtures, homeTeam, awayTeam, date, participants);
-      if (!match) continue;
+      const leagueMap = {};
+      for (const f of raw || []) {
+        if (!isLeagueAllowed(f.tournamentName)) continue;
+        if (!ALLOWED_COUNTRIES.has(normalizeKey(f.categoryName))) continue;
 
-      const odds = match.bookmakerOdds?.[slug];
-      if (!odds || odds.suspended) continue;
-
-      for (const [marketName, def] of Object.entries(MARKETS)) {
-        const marketData = odds.markets?.[def.marketId];
-        if (!marketData?.marketActive) continue;
-
-        const values = {};
-        for (const [outcomeId, label] of Object.entries(def.outcomes)) {
-          const price = marketData.outcomes?.[outcomeId]?.players?.['0']?.price;
-          if (typeof price === 'number') values[label] = price;
+        const status = mapStatus(f.statusId, f.startTime);
+        let elapsed = null;
+        if (status === 'LIVE' && f.trueStartTime) {
+          elapsed = Math.max(0, Math.round((now - new Date(f.trueStartTime).getTime()) / 60000));
         }
-        if (Object.keys(values).length === 0) continue;
 
-        if (!markets[marketName]) markets[marketName] = [];
-        markets[marketName].push({ id: slug, name, values });
+        const fixture = {
+          id: f.fixtureId,
+          date: f.startTime,
+          status,
+          elapsed,
+          homeTeam: f.participant1Name,
+          awayTeam: f.participant2Name,
+          hasOdds: !!f.hasOdds,
+        };
+
+        const lid = f.tournamentId;
+        if (!leagueMap[lid]) {
+          leagueMap[lid] = {
+            id: lid,
+            name: f.tournamentName,
+            country: f.categoryName,
+            fixtures: [],
+          };
+        }
+        leagueMap[lid].fixtures.push(fixture);
       }
+
+      const ORDER = { LIVE: 0, NS: 1, PP: 2, FT: 2 };
+      for (const l of Object.values(leagueMap)) {
+        l.fixtures.sort((a, b) => {
+          const oa = ORDER[a.status] ?? 1;
+          const ob = ORDER[b.status] ?? 1;
+          if (oa !== ob) return oa - ob;
+          return new Date(a.date) - new Date(b.date);
+        });
+      }
+
+      return NextResponse.json(Object.values(leagueMap));
     }
 
-    for (const m of Object.values(markets)) {
-      m.sort((a, b) => a.name.localeCompare(b.name));
+    // ── Odds voor één wedstrijd, alle bookmakers in 1 call ──────────────────
+    if (action === 'odds') {
+      const fixtureId = searchParams.get('fixtureId');
+      if (!fixtureId) return NextResponse.json({ error: 'fixtureId vereist' }, { status: 400 });
+
+      const raw = await getOdds(fixtureId, KEY);
+      const markets = {};
+
+      for (const { slug, name } of BOOKMAKERS) {
+        const odds = raw.bookmakerOdds?.[slug];
+        if (!odds || odds.suspended) continue;
+
+        for (const [marketName, def] of Object.entries(MARKETS)) {
+          const marketData = odds.markets?.[def.marketId];
+          if (!marketData?.marketActive) continue;
+
+          const values = {};
+          for (const [outcomeId, label] of Object.entries(def.outcomes)) {
+            const price = marketData.outcomes?.[outcomeId]?.players?.['0']?.price;
+            if (typeof price === 'number') values[label] = price;
+          }
+          if (Object.keys(values).length === 0) continue;
+
+          if (!markets[marketName]) markets[marketName] = [];
+          markets[marketName].push({ id: slug, name, values });
+        }
+      }
+
+      for (const m of Object.values(markets)) {
+        m.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      return NextResponse.json({ markets });
     }
 
-    return NextResponse.json({ markets });
+    return NextResponse.json({ error: 'Ongeldig action parameter' }, { status: 400 });
   } catch (e) {
     console.error('OddsPapi error:', e);
     return NextResponse.json({ error: e.message }, { status: 500 });

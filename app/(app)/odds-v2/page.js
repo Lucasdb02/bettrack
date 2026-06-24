@@ -1,15 +1,11 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useTheme } from '../../context/ThemeContext';
 import { SingleDatePicker } from '../../components/PeriodDropdown';
 import PaywallGate from '../../components/PaywallGate';
 
 // ── Datum helpers ─────────────────────────────────────────────────────────────
-const NL_DAYS_SHORT   = ['zo','ma','di','wo','do','vr','za'];
-const NL_MONTHS_SHORT = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
-
 function todayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -21,14 +17,6 @@ function shiftDate(dateStr, delta) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-function formatDateLabel(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  const day  = NL_DAYS_SHORT[d.getDay()].toUpperCase();
-  const dd   = String(d.getDate()).padStart(2, '0');
-  const mm   = String(d.getMonth() + 1).padStart(2, '0');
-  return `${dd}/${mm} ${day}`;
-}
-
 function formatTime(dateStr) {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleTimeString('nl-NL', {
@@ -37,16 +25,14 @@ function formatTime(dateStr) {
 }
 
 // ── Status helpers ────────────────────────────────────────────────────────────
-const LIVE_STATUSES = new Set(['1H','2H','HT','ET','P','BT','INT']);
-const FT_STATUSES   = new Set(['FT','AET','PEN']);
-
-function isLive(s) { return LIVE_STATUSES.has(s); }
-function isFT(s)   { return FT_STATUSES.has(s); }
+function isLive(s) { return s === 'LIVE'; }
+function isFT(s)   { return s === 'FT' || s === 'PP'; }
 function isNS(s)   { return s === 'NS'; }
 
 function statusLabel(f) {
-  if (isLive(f.status)) return f.status === 'HT' ? 'HT' : f.elapsed ? `${f.elapsed}'` : f.status;
-  if (isFT(f.status))   return f.status;
+  if (isLive(f.status)) return f.elapsed != null ? `${f.elapsed}'` : 'LIVE';
+  if (f.status === 'PP') return 'Uitgesteld';
+  if (isFT(f.status))   return 'FT';
   return formatTime(f.date);
 }
 function statusColor(s) {
@@ -66,7 +52,6 @@ const PRIORITY_MARKETS = [
 
 // ── DayNavPicker ──────────────────────────────────────────────────────────────
 function DayNavPicker({ date, onChange }) {
-  const { dark } = useTheme();
   const btnStyle = {
     width: 32, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
     border: `1px solid var(--border)`, borderRadius: 7,
@@ -102,31 +87,8 @@ function DayNavPicker({ date, onChange }) {
   );
 }
 
-// ── FilterBtn — zelfde stijl als Periode/Sport/Bookmaker dropdowns ─────────────
-function FilterBtn({ label, active, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        padding: '7px 11px',
-        border: `1px solid ${active ? 'var(--brand)' : 'var(--border)'}`,
-        borderRadius: 8, backgroundColor: 'var(--bg-card)',
-        color: active ? 'var(--brand)' : 'var(--text-2)',
-        fontSize: 13, fontWeight: 500, cursor: 'pointer',
-        whiteSpace: 'nowrap', transition: 'all 0.15s',
-      }}
-      onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = 'var(--text-4)'; e.currentTarget.style.color = 'var(--text-1)'; } }}
-      onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-2)'; } }}
-    >
-      {label}
-    </button>
-  );
-}
-
 // ── Alle markten popup ────────────────────────────────────────────────────────
 function AllMarketsModal({ markets, current, onSelect, onClose }) {
-  const { dark } = useTheme();
   const all = Object.keys(markets);
   const priority = PRIORITY_MARKETS.filter(m => all.includes(m));
   const rest = all.filter(m => !PRIORITY_MARKETS.includes(m)).sort();
@@ -187,48 +149,10 @@ function AllMarketsModal({ markets, current, onSelect, onClose }) {
 }
 
 // ── UI helpers ────────────────────────────────────────────────────────────────
-function TeamLogo({ src, name, size = 22 }) {
-  const [err, setErr] = useState(false);
-  if (src && !err) {
-    return <img src={src} alt={name} onError={() => setErr(true)} style={{ width: size, height: size, objectFit: 'contain', flexShrink: 0 }} />;
-  }
+function TeamInitials({ name, size = 22 }) {
   return (
     <div style={{ width: size, height: size, borderRadius: 4, background: 'var(--bg-subtle)', border: '1px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7, fontWeight: 800, color: 'var(--text-4)' }}>
       {(name || '?').slice(0, 2).toUpperCase()}
-    </div>
-  );
-}
-
-function FormBadge({ form }) {
-  if (!form) return null;
-  return (
-    <div style={{ display: 'flex', gap: 2 }}>
-      {form.slice(-5).split('').map((r, i) => (
-        <span key={i} style={{
-          width: 14, height: 14, borderRadius: 3, fontSize: 8, fontWeight: 800,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: r==='W' ? 'rgba(17,185,129,0.2)' : r==='L' ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
-          color: r==='W' ? '#11b981' : r==='L' ? '#ef4444' : '#f59e0b',
-          border: `1px solid ${r==='W' ? 'rgba(17,185,129,0.3)' : r==='L' ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)'}`,
-        }}>{r}</span>
-      ))}
-    </div>
-  );
-}
-
-function PredictionBar({ home, draw, away, homeName, awayName }) {
-  return (
-    <div style={{ marginBottom: 14 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: 11, color: 'var(--text-3)' }}>
-        <span>{homeName} <strong style={{ color: 'var(--text-1)' }}>{home}%</strong></span>
-        <span>Gelijk <strong style={{ color: 'var(--text-1)' }}>{draw}%</strong></span>
-        <span><strong style={{ color: 'var(--text-1)' }}>{away}%</strong> {awayName}</span>
-      </div>
-      <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 7 }}>
-        <div style={{ flex: home, background: 'rgba(84,105,212,0.7)' }} />
-        <div style={{ flex: draw, background: 'rgba(245,158,11,0.5)', borderLeft: '1px solid var(--bg-page)', borderRight: '1px solid var(--bg-page)' }} />
-        <div style={{ flex: away, background: 'rgba(239,68,68,0.5)' }} />
-      </div>
     </div>
   );
 }
@@ -281,7 +205,7 @@ function OddsTable({ bookmakers, keys, headers }) {
 }
 
 // ── Detail panel ──────────────────────────────────────────────────────────────
-function FixtureDetail({ fixture, data, loading }) {
+function FixtureDetail({ data, loading, error }) {
   const [marketTab, setMarketTab]       = useState('Match Winner');
   const [showAllMarkets, setShowAllMarkets] = useState(false);
   const [mounted, setMounted]           = useState(false);
@@ -291,20 +215,19 @@ function FixtureDetail({ fixture, data, loading }) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '20px', color: 'var(--text-4)', fontSize: 13 }}>
         <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid var(--border)', borderTopColor: 'var(--brand)', animation: 'spin 0.7s linear infinite' }} />
-        Odds & voorspellingen laden...
+        Odds laden...
       </div>
     );
   }
+  if (error) {
+    return <p style={{ color: '#ef4444', fontSize: 13, padding: '14px 0' }}>{error}</p>;
+  }
   if (!data) return null;
 
-  const { markets = {}, prediction } = data;
+  const { markets = {} } = data;
   const allMarketNames = Object.keys(markets);
   const visibleMarkets = PRIORITY_MARKETS.filter(m => allMarketNames.includes(m));
-  const hasMore = allMarketNames.some(m => !PRIORITY_MARKETS.includes(m)) || allMarketNames.length > visibleMarkets.length;
 
-  if (!allMarketNames.includes(marketTab) && visibleMarkets.length > 0) {
-    // don't reset here, handled below
-  }
   const activeMarket = allMarketNames.includes(marketTab) ? marketTab : (visibleMarkets[0] || allMarketNames[0] || '');
   const current = markets[activeMarket] || [];
 
@@ -320,35 +243,6 @@ function FixtureDetail({ fixture, data, loading }) {
 
   return (
     <div style={{ padding: '14px 20px 16px' }}>
-
-      {/* Prediction */}
-      {prediction && (
-        <div style={{ marginBottom: 16, paddingBottom: 14, borderBottom: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-            <span style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>AI Voorspelling</span>
-            {prediction.advice && (
-              <span style={{ fontSize: 11, color: 'var(--brand)', background: 'var(--bg-brand)', border: '1px solid rgba(136,136,136,0.2)', borderRadius: 5, padding: '2px 8px', fontWeight: 600 }}>
-                {prediction.advice}
-              </span>
-            )}
-          </div>
-          <PredictionBar home={prediction.percent.home} draw={prediction.percent.draw} away={prediction.percent.away} homeName={fixture.homeTeam} awayName={fixture.awayTeam} />
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12, color: 'var(--text-3)', marginBottom: 8 }}>
-            {prediction.underOver && <span>Verwacht: <strong style={{ color: 'var(--text-1)' }}>{prediction.underOver}</strong></span>}
-            {prediction.goals?.home && <span>Goals thuis: <strong style={{ color: 'var(--text-1)' }}>{prediction.goals.home}</strong></span>}
-            {prediction.goals?.away && <span>Goals uit: <strong style={{ color: 'var(--text-1)' }}>{prediction.goals.away}</strong></span>}
-          </div>
-          {(prediction.homeForm || prediction.awayForm) && (
-            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-              {prediction.homeForm && <div><span style={{ fontSize: 10, color: 'var(--text-4)', display: 'block', marginBottom: 3 }}>Vorm {fixture.homeTeam}</span><FormBadge form={prediction.homeForm} /></div>}
-              {prediction.awayForm && <div><span style={{ fontSize: 10, color: 'var(--text-4)', display: 'block', marginBottom: 3 }}>Vorm {fixture.awayTeam}</span><FormBadge form={prediction.awayForm} /></div>}
-              {prediction.homeAvgGoals && <div><span style={{ fontSize: 10, color: 'var(--text-4)', display: 'block', marginBottom: 3 }}>Gem. goals</span><span style={{ fontSize: 12, color: 'var(--text-2)' }}>{prediction.homeAvgGoals} – {prediction.awayAvgGoals}</span></div>}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Markt knoppen: prioriteit + "Alle markten" knop */}
       {allMarketNames.length > 0 && (
         <>
           <div style={{ display: 'flex', gap: 4, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -383,8 +277,8 @@ function FixtureDetail({ fixture, data, loading }) {
         </>
       )}
 
-      {allMarketNames.length === 0 && !prediction && (
-        <p style={{ color: 'var(--text-4)', fontSize: 13 }}>Geen data beschikbaar voor deze wedstrijd.</p>
+      {allMarketNames.length === 0 && (
+        <p style={{ color: 'var(--text-4)', fontSize: 13 }}>Geen odds beschikbaar voor deze wedstrijd.</p>
       )}
 
       {mounted && showAllMarkets && (
@@ -399,6 +293,7 @@ function FixtureRow({ fixture }) {
   const [expanded, setExpanded]         = useState(false);
   const [detail, setDetail]             = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError]   = useState(null);
 
   const live = isLive(fixture.status);
   const ft   = isFT(fixture.status);
@@ -408,27 +303,14 @@ function FixtureRow({ fixture }) {
     setExpanded(next);
     if (next && detail === null) {
       setDetailLoading(true);
+      setDetailError(null);
       try {
-        const oddsParams = new URLSearchParams({
-          action: 'odds',
-          leagueName: fixture.leagueName || '',
-          leagueCountry: fixture.leagueCountry || '',
-          home: fixture.homeTeam,
-          away: fixture.awayTeam,
-          date: fixture.date,
-        });
-        const [predRes, oddsRes] = await Promise.all([
-          fetch(`/api/apifootball?action=predictions&fixtureId=${fixture.id}`),
-          fetch(`/api/odds-papi?${oddsParams.toString()}`),
-        ]);
-        const predData = await predRes.json();
-        const oddsData = await oddsRes.json();
-        setDetail({
-          markets: oddsRes.ok ? (oddsData.markets || {}) : {},
-          prediction: predRes.ok ? predData.prediction : null,
-        });
-      } catch {
-        setDetail({ markets: {}, prediction: null });
+        const res  = await fetch(`/api/odds-papi?action=odds&fixtureId=${encodeURIComponent(fixture.id)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `Fout (${res.status})`);
+        setDetail(data);
+      } catch (e) {
+        setDetailError(e.message);
       }
       setDetailLoading(false);
     }
@@ -456,20 +338,13 @@ function FixtureRow({ fixture }) {
         </td>
         <td style={{ padding: '10px 8px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            {[{ team: fixture.homeTeam, logo: fixture.homeLogo, score: fixture.homeScore }, { team: fixture.awayTeam, logo: fixture.awayLogo, score: fixture.awayScore }].map(({ team, logo, score }, i) => (
+            {[fixture.homeTeam, fixture.awayTeam].map((team, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <TeamLogo src={logo} name={team} />
+                <TeamInitials name={team} />
                 <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{team}</span>
-                {(live || ft) && score !== null && (
-                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-1)', marginLeft: 'auto', fontFamily: 'ui-monospace,"SF Mono",monospace' }}>{score}</span>
-                )}
               </div>
             ))}
           </div>
-        </td>
-        <td style={{ padding: '10px 8px 10px 0', textAlign: 'right', whiteSpace: 'nowrap' }}>
-          {fixture.venue && <span style={{ fontSize: 10, color: 'var(--text-4)', display: 'block' }}>{fixture.venue}</span>}
-          <span style={{ fontSize: 10, color: 'var(--text-4)', fontFamily: 'ui-monospace,"SF Mono",monospace' }}>#{fixture.id}</span>
         </td>
         <td style={{ padding: '10px 16px 10px 4px', width: 24 }}>
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transition: 'transform 0.2s', transform: expanded ? 'rotate(180deg)' : 'none' }}><polyline points="6 9 12 15 18 9"/></svg>
@@ -477,32 +352,12 @@ function FixtureRow({ fixture }) {
       </tr>
       {expanded && (
         <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-          <td colSpan={4} style={{ padding: 0, background: 'var(--bg-page)' }}>
-            <FixtureDetail fixture={fixture} data={detail} loading={detailLoading} />
+          <td colSpan={3} style={{ padding: 0, background: 'var(--bg-page)' }}>
+            <FixtureDetail data={detail} loading={detailLoading} error={detailError} />
           </td>
         </tr>
       )}
     </>
-  );
-}
-
-// ── League logo met witte achtergrond (darkmode) ──────────────────────────────
-function LeagueLogo({ src, name }) {
-  const { dark } = useTheme();
-  const [err, setErr] = useState(false);
-  return (
-    <div style={{
-      width: 28, height: 28, borderRadius: 6, flexShrink: 0,
-      background: dark ? '#ffffff' : 'transparent',
-      border: dark ? 'none' : '1px solid var(--border-subtle)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      overflow: 'hidden',
-    }}>
-      {src && !err
-        ? <img src={src} alt={name} onError={() => setErr(true)} style={{ width: 20, height: 20, objectFit: 'contain' }} />
-        : <div style={{ width: 20, height: 20, borderRadius: 3, background: 'var(--bg-brand)' }} />
-      }
-    </div>
   );
 }
 
@@ -516,10 +371,9 @@ function LeagueCard({ league, defaultOpen }) {
         onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-subtle)'}
         onMouseLeave={e => e.currentTarget.style.background = 'none'}
       >
-        <LeagueLogo src={league.logo} name={league.name} />
         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', display: 'block' }}>{league.name}</span>
-          <span style={{ fontSize: 11, color: 'var(--text-4)' }}>{league.country} · {league.round}</span>
+          <span style={{ fontSize: 11, color: 'var(--text-4)' }}>{league.country}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           {liveCount > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: '#11b981', background: 'rgba(17,185,129,0.1)', border: '1px solid rgba(17,185,129,0.25)', borderRadius: 4, padding: '2px 8px' }}>{liveCount} LIVE</span>}
@@ -533,7 +387,6 @@ function LeagueCard({ league, defaultOpen }) {
             <tr style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-subtle)' }}>
               <th style={{ textAlign: 'left', padding: '6px 20px', fontSize: 10, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em', width: 68 }}>Tijd</th>
               <th style={{ textAlign: 'left', padding: '6px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Wedstrijd</th>
-              <th style={{ textAlign: 'right', padding: '6px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Info</th>
               <th style={{ width: 24 }} />
             </tr>
           </thead>
@@ -565,7 +418,7 @@ export default function OddsV2Page() {
       setError(null);
       setLeagues([]);
       try {
-        const res  = await fetch(`/api/apifootball?action=fixtures&date=${selectedDate}`);
+        const res  = await fetch(`/api/odds-papi?action=fixtures&date=${selectedDate}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || `Fout (${res.status})`);
         if (!cancelled) setLeagues(Array.isArray(data) ? data : []);
@@ -586,7 +439,6 @@ export default function OddsV2Page() {
     fixtures: l.fixtures.filter(f => {
       if (activeFilter === 'Aankomend' && !isNS(f.status))   return false;
       if (activeFilter === 'Live'      && !isLive(f.status)) return false;
-      if (activeFilter === 'Afgelopen' && !isFT(f.status))   return false;
       if (search) {
         const q = search.toLowerCase();
         return f.homeTeam.toLowerCase().includes(q) || f.awayTeam.toLowerCase().includes(q);
@@ -606,7 +458,7 @@ export default function OddsV2Page() {
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)', marginBottom: 4 }}>Odds Vergelijker</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-3)' }}>Odds, voorspellingen & statistieken — alle beschikbare markten per wedstrijd</p>
+        <p style={{ fontSize: 14, color: 'var(--text-3)' }}>Odds per wedstrijd vergeleken over meerdere bookmakers</p>
       </div>
 
       {/* Stats */}
@@ -638,7 +490,7 @@ export default function OddsV2Page() {
         {/* Scheidslijn */}
         <div style={{ width: 1, height: 28, background: 'var(--border)', flexShrink: 0 }} />
 
-        {/* Live / Aankomend segmented toggle — stijl van Storting/Opname */}
+        {/* Live / Aankomend segmented toggle */}
         <div style={{ display: 'flex', gap: 3, padding: 3, backgroundColor: 'var(--bg-subtle)', border: '1px solid var(--border)', borderRadius: 8, flexShrink: 0, height: 36 }}>
           {[
             { val: 'Aankomend', label: 'Aankomend' },
@@ -683,7 +535,7 @@ export default function OddsV2Page() {
       {loading ? (
         <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
           <div style={{ width: 30, height: 30, borderRadius: '50%', border: '3px solid var(--border)', borderTopColor: 'var(--brand)', animation: 'spin 0.8s linear infinite' }} />
-          <span style={{ fontSize: 13, color: 'var(--text-4)' }}>Wedstrijden ophalen via API-Football...</span>
+          <span style={{ fontSize: 13, color: 'var(--text-4)' }}>Wedstrijden ophalen via OddsPapi...</span>
         </div>
       ) : error ? (
         <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '32px 24px', textAlign: 'center' }}>

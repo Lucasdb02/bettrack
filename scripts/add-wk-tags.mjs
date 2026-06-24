@@ -14,7 +14,6 @@ const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 
 const EMAIL = 'lucas@mybuqo.com';
 const FROM  = '2026-06-11';
-const TO    = '2026-06-17';
 const TAG   = 'WK';
 
 // 1. Zoek de user
@@ -25,17 +24,16 @@ const user = users.find(u => u.email === EMAIL);
 if (!user) { console.error('Gebruiker niet gevonden:', EMAIL); process.exit(1); }
 console.log(`Gebruiker: ${user.email} (${user.id})`);
 
-// 2. Haal voetbal bets op in de periode
+// 2. Haal voetbal bets op vanaf FROM (geen bovengrens)
 const { data: bets, error: bErr } = await admin
   .from('bets')
   .select('id, datum, sport, wedstrijd, tags')
   .eq('user_id', user.id)
   .eq('sport', 'Voetbal')
-  .gte('datum', FROM)
-  .lte('datum', TO);
+  .gte('datum', FROM);
 
 if (bErr) { console.error('Bets ophalen mislukt:', bErr); process.exit(1); }
-console.log(`\nGevonden voetbal bets (${FROM} t/m ${TO}): ${bets.length}`);
+console.log(`\nGevonden voetbal bets (vanaf ${FROM}): ${bets.length}`);
 
 if (bets.length === 0) {
   console.log('Geen bets gevonden, klaar.');
