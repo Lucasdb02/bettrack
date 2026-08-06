@@ -57,7 +57,7 @@ function OverzichtTab({ prefs, bets }) {
   const settled = bets.filter(b => b.uitkomst !== 'lopend');
   const won = settled.filter(b => b.uitkomst === 'gewonnen');
   const lost = settled.filter(b => b.uitkomst === 'verloren');
-  const totalPnl = settled.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
+  const totalPnl = settled.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet), 0);
   const totalInzet = settled.reduce((s, b) => s + Number(b.inzet), 0);
   const roi = totalInzet > 0 ? (totalPnl / totalInzet) * 100 : 0;
   const winRate = (won.length + lost.length) > 0 ? (won.length / (won.length + lost.length)) * 100 : 0;

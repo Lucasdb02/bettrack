@@ -26,7 +26,7 @@ const NO_MARKT    = new Set([...SYSTEM_BETS,...TOTE_BETS,'Multi Bet','Same Game 
 const BOOKMAKERS = ['bet365','BetCity','Unibet','LeoVegas','Holland Casino Online','TOTO',"Jack's",'Bingoal','Circus','BetMGM','Vbet','711','ZEbet','One Casino','Tonybet','Starcasino','888','Betnation','ComeOn','Hommerson','OranjePalace','Overig'];
 const EW_FRACTIONS = ['1/4','1/5','1/3','1/8'];
 const today = () => new Date().toISOString().split('T')[0];
-const LEEG = { datum:today(), sport:'Voetbal', wedstrijd:'', betType:'Enkel', markt:'1X2', selectie:'', odds:'', inzet:'', uitkomst:'lopend', bookmaker:'bet365', notities:'', tags:[], ewFractie:'1/4', ewPlacen:'' };
+const LEEG = { datum:today(), sport:'Voetbal', wedstrijd:'', betType:'Enkel', markt:'1X2', selectie:'', odds:'', inzet:'', uitkomst:'lopend', bookmaker:'bet365', notities:'', tags:[], ewFractie:'1/4', ewPlacen:'', is_freebet:false };
 
 const iStyle = { width:'100%', height:'40px', padding:'0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s', boxSizing:'border-box' };
 const sStyle = { ...{width:'100%', height:'40px', padding:'0 36px 0 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', transition:'border-color 0.15s', boxSizing:'border-box', appearance:'none', WebkitAppearance:'none', cursor:'pointer'} };
@@ -219,7 +219,13 @@ function HandmatigForm({ onSaved }) {
                   </SelectWrap>
                 </FF>
                 <FF label="Inzet per deel (€)" required hint="Win + Place elk dit bedrag">
-                  <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  <div style={{display:'flex',alignItems:'center',gap:8}}>
+                    <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px',flex:1}}/>
+                    <label style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:'var(--text-3)',whiteSpace:'nowrap',cursor:'pointer',userSelect:'none'}}>
+                      <input type="checkbox" checked={form.is_freebet} onChange={e=>set('is_freebet',e.target.checked)} style={{cursor:'pointer',width:14,height:14,accentColor:'var(--brand)'}}/>
+                      Freebet
+                    </label>
+                  </div>
                   {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
                 </FF>
               </>
@@ -230,7 +236,15 @@ function HandmatigForm({ onSaved }) {
                   {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
                 </FF>
                 <FF label="Inzet (€)" required>
-                  <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  <div style={{display:'flex',alignItems:'center',gap:8}}>
+                    <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px',flex:1}}/>
+                    {!isLayBet && (
+                      <label style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:'var(--text-3)',whiteSpace:'nowrap',cursor:'pointer',userSelect:'none'}}>
+                        <input type="checkbox" checked={form.is_freebet} onChange={e=>set('is_freebet',e.target.checked)} style={{cursor:'pointer',width:14,height:14,accentColor:'var(--brand)'}}/>
+                        Freebet
+                      </label>
+                    )}
+                  </div>
                   {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
                 </FF>
                 {!isTote && (
@@ -257,7 +271,7 @@ function HandmatigForm({ onSaved }) {
           {!isLayBet && !isEachWay && pot && (
             <div style={{marginTop:16,padding:'12px 16px',backgroundColor:'var(--bg-brand)',borderRadius:8,border:'1px solid var(--brand-soft)',display:'flex',gap:20}}>
               <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Potentiële winst</p><p style={{fontSize:16,fontWeight:700,color:'var(--color-win)'}}>+€{pot}</p></div>
-              {!isTote && <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale uitbetaling</p><p style={{fontSize:16,fontWeight:700,color:'var(--text-1)'}}>€{(Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>}
+              {!isTote && <div><p style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale uitbetaling</p><p style={{fontSize:16,fontWeight:700,color:'var(--text-1)'}}>€{form.is_freebet ? pot : (Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>}
             </div>
           )}
         </div>
@@ -440,14 +454,22 @@ function EditPreviewModal({ bet, onSave, onClose }) {
                 {fouten.odds && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.odds}</p>}
               </PreviewFField>
               <PreviewFField label="Inzet (€)" required>
-                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border }}/>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border, flex: 1 }}/>
+                  {form.betType !== 'Lay Bet' && (
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: text3, whiteSpace: 'nowrap', cursor: 'pointer', userSelect: 'none' }}>
+                      <input type="checkbox" checked={!!form.is_freebet} onChange={e => set('is_freebet', e.target.checked)} style={{ cursor: 'pointer', width: 14, height: 14, accentColor: 'var(--brand)' }}/>
+                      Freebet
+                    </label>
+                  )}
+                </div>
                 {fouten.inzet && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.inzet}</p>}
               </PreviewFField>
             </div>
             {pot && (
               <div style={{ marginTop: 12, padding: '10px 14px', backgroundColor: 'var(--bg-brand)', borderRadius: 8, border: '1px solid var(--brand-soft)', display: 'flex', gap: 20 }}>
                 <div><p style={{ fontSize: 10.5, color: text3, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Potentiële winst</p><p style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-win)' }}>+€{pot}</p></div>
-                <div><p style={{ fontSize: 10.5, color: text3, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Totale uitbetaling</p><p style={{ fontSize: 15, fontWeight: 700, color: text1 }}>€{(Number(form.odds) * Number(form.inzet)).toFixed(2)}</p></div>
+                <div><p style={{ fontSize: 10.5, color: text3, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Totale uitbetaling</p><p style={{ fontSize: 15, fontWeight: 700, color: text1 }}>€{form.is_freebet ? pot : (Number(form.odds) * Number(form.inzet)).toFixed(2)}</p></div>
               </div>
             )}
           </div>
@@ -751,7 +773,7 @@ function ScreenshotImport() {
                   const uitkomstBg     = dark ? cfg.darkBg        : cfg.bg;
                   const uitkomstBorder = dark ? cfg.darkBorder    : cfg.border;
                   const uitkomstColor  = dark ? cfg.darkTextColor : cfg.textColor;
-                  const pnl = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
+                  const pnl = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt, bet.is_freebet);
                   return (
                     <tr key={i}
                       className="bet-row"

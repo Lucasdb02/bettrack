@@ -184,7 +184,7 @@ export default function Sidebar() {
     return dbBookmakers.reduce((sum, bm) => {
       const pnl = settledBets
         .filter(b => b.bookmaker === bm.naam)
-        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
+        .reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet), 0);
       const netTx = transactions
         .filter(tx => tx.bookmaker_id === bm.id)
         .reduce((s, tx) => s + (tx.type === 'deposit' ? Number(tx.amount) : tx.type === 'withdrawal' ? -Number(tx.amount) : Number(tx.amount)), 0);

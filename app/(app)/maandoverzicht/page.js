@@ -69,7 +69,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
             /* Mobile: bet cards */
             <div style={{padding:'14px 16px',display:'flex',flexDirection:'column',gap:10}}>
               {bets.map(bet => {
-                const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
+                const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt, bet.is_freebet);
                 const cfg = uitkomstConfig(bet.uitkomst);
                 const badgeBg = dark ? cfg.darkBg : cfg.bg;
                 const badgeBorder = dark ? cfg.darkBorder : cfg.border;
@@ -125,7 +125,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
               </thead>
               <tbody>
                 {bets.map(bet => {
-                  const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
+                  const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt, bet.is_freebet);
                   const cfg = uitkomstConfig(bet.uitkomst);
                   const badgeBg = dark ? cfg.darkBg : cfg.bg;
                   const badgeBorder = dark ? cfg.darkBorder : cfg.border;
@@ -188,7 +188,7 @@ export default function MaandoverzichtPage() {
       if(!map[b.datum]) map[b.datum]={bets:[],pnl:0,gewonnen:0,verloren:0};
       map[b.datum].bets.push(b);
       if(b.uitkomst!=='lopend'){
-        map[b.datum].pnl+=berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt);
+        map[b.datum].pnl+=berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt,b.is_freebet);
         if(b.uitkomst==='gewonnen') map[b.datum].gewonnen++;
         if(b.uitkomst==='verloren') map[b.datum].verloren++;
       }
@@ -220,7 +220,7 @@ export default function MaandoverzichtPage() {
     const entry={datum:String(new Date(datum).getDate())};
     bookmakersMaand.forEach(bk=>{entry[bk]=0;});
     dagData[datum].bets.forEach(b=>{
-      if(b.uitkomst!=='lopend') entry[b.bookmaker]=(entry[b.bookmaker]||0)+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt);
+      if(b.uitkomst!=='lopend') entry[b.bookmaker]=(entry[b.bookmaker]||0)+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt,b.is_freebet);
     });
     return entry;
   }),[dagData,bookmakersMaand]);

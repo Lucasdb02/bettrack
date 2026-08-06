@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase';
 
 const BetsContext = createContext();
 
-const SCHEMA_FIELDS = ['datum', 'sport', 'wedstrijd', 'markt', 'selectie', 'odds', 'inzet', 'uitkomst', 'bookmaker', 'notities', 'tags'];
+const SCHEMA_FIELDS = ['datum', 'sport', 'wedstrijd', 'markt', 'selectie', 'odds', 'inzet', 'uitkomst', 'bookmaker', 'notities', 'tags', 'is_freebet'];
 
 function toDbRow(bet, userId) {
   const row = { user_id: userId };
@@ -14,13 +14,20 @@ function toDbRow(bet, userId) {
   return row;
 }
 
-export function berekenWinst(uitkomst, odds, inzet, betType) {
-  // Lay Bet: P&L is reversed (you're the bookmaker)
+export function berekenWinst(uitkomst, odds, inzet, betType, isFreebet) {
+  // Lay Bet: P&L is reversed (you're the bookmaker) — freebet flag doesn't apply here
   if (betType === 'Lay Bet') {
     if (uitkomst === 'gewonnen')      return parseFloat((inzet).toFixed(2));
     if (uitkomst === 'verloren')      return parseFloat((-(odds - 1) * inzet).toFixed(2));
     if (uitkomst === 'half_gewonnen') return parseFloat((inzet / 2).toFixed(2));
     if (uitkomst === 'half_verloren') return parseFloat((-(odds - 1) * inzet / 2).toFixed(2));
+    return 0;
+  }
+  // Freebet: stake is bookmaker's money, not returned on a win and never lost; profit = (odds-1)×stake
+  if (isFreebet) {
+    if (uitkomst === 'gewonnen')      return parseFloat(((odds - 1) * inzet).toFixed(2));
+    if (uitkomst === 'half_gewonnen') return parseFloat(((odds - 1) * inzet / 2).toFixed(2));
+    if (uitkomst === 'verloren' || uitkomst === 'half_verloren') return 0;
     return 0;
   }
   // Bonus Bet SNR: stake was free so no real loss; profit = (odds-1)×stake

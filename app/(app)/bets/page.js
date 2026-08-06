@@ -75,6 +75,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
     bookmaker: bet.bookmaker||'bet365',
     notities: bet.notities||'',
     tags: bet.tags||[],
+    is_freebet: bet.is_freebet||false,
   });
   const [fouten, setFouten] = useState({});
   const [totaalUitbetaling, setTotaalUitbetaling] = useState(() => {
@@ -190,7 +191,15 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
                 {fouten.odds&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.odds}</p>}
               </FF>
               <FF label="Inzet (€)" required text2={text2}>
-                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border}}/>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border,flex:1}}/>
+                  {form.markt!=='Lay Bet' && (
+                    <label style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:text3,whiteSpace:'nowrap',cursor:'pointer',userSelect:'none'}}>
+                      <input type="checkbox" checked={!!form.is_freebet} onChange={e=>set('is_freebet',e.target.checked)} style={{cursor:'pointer',width:14,height:14,accentColor:'var(--brand)'}}/>
+                      Freebet
+                    </label>
+                  )}
+                </div>
                 {fouten.inzet&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.inzet}</p>}
               </FF>
               <FF label={<><span className="hide-mobile">Totale uitbetaling (€)</span><span className="show-mobile">Uitbetaling</span></>} text2={text2}>
@@ -200,7 +209,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
             {pot&&(
               <div style={{marginTop:12,padding:'10px 14px',backgroundColor:dark?'rgba(84,105,212,0.15)':'#eff6ff',borderRadius:8,border:`1px solid ${dark?'rgba(84,105,212,0.3)':'#bfdbfe'}`,display:'flex',gap:20}}>
                 <div><p style={{fontSize:10.5,color:text3,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Potentiële winst</p><p style={{fontSize:15,fontWeight:700,color:'var(--color-win)'}}>+€{pot}</p></div>
-                <div><p style={{fontSize:10.5,color:text3,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale uitbetaling</p><p style={{fontSize:15,fontWeight:700,color:text1}}>€{(Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>
+                <div><p style={{fontSize:10.5,color:text3,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}}>Totale uitbetaling</p><p style={{fontSize:15,fontWeight:700,color:text1}}>€{form.is_freebet ? pot : (Number(form.odds)*Number(form.inzet)).toFixed(2)}</p></div>
               </div>
             )}
           </div>
@@ -444,7 +453,7 @@ export default function BetsPage() {
     .filter(b=>!zoeken||[b.wedstrijd,b.selectie,b.bookmaker,...(b.tags||[])].join(' ').toLowerCase().includes(zoeken.toLowerCase()))
     .sort((a,b)=>new Date(b.datum)-new Date(a.datum))
   ,[bets,filterU,filterS,filterT,filterPeriod,customPeriodRange,zoeken]);
-  const totaal = useMemo(()=>filtered.filter(b=>b.uitkomst!=='lopend').reduce((s,b)=>s+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt),0),[filtered]);
+  const totaal = useMemo(()=>filtered.filter(b=>b.uitkomst!=='lopend').reduce((s,b)=>s+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt,b.is_freebet),0),[filtered]);
 
   const { fmtPnl } = useFmt();
 
@@ -529,7 +538,7 @@ export default function BetsPage() {
             {filtered.length===0 ? (
               <tr><td colSpan={10} style={{padding:'48px 24px',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</td></tr>
             ) : filtered.map(bet => {
-              const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
+              const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt, bet.is_freebet);
               return (
                 <tr
                   key={bet.id}
@@ -593,7 +602,7 @@ export default function BetsPage() {
         {filtered.length===0 ? (
           <div style={{padding:'48px 0',textAlign:'center',color:'var(--text-4)',fontSize:14}}>Geen bets gevonden.</div>
         ) : filtered.map(bet => {
-          const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt);
+          const w = berekenWinst(bet.uitkomst, Number(bet.odds), Number(bet.inzet), bet.markt, bet.is_freebet);
           return (
             <div key={bet.id} className="bet-card" onDoubleClick={()=>setEditBet(bet)}>
               {/* Top row: date + sport + uitkomst badge */}

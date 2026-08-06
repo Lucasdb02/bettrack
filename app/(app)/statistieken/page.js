@@ -102,7 +102,7 @@ function countRow(map, key, b) {
   if (!map[key]) map[key] = { key, bets: [], gewonnen: 0, verloren: 0, totalInzet: 0, totalWinst: 0 };
   map[key].bets.push(b);
   map[key].totalInzet += Number(b.inzet);
-  map[key].totalWinst += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
+  map[key].totalWinst += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
   if (b.uitkomst === 'gewonnen' || b.uitkomst === 'half_gewonnen') map[key].gewonnen++;
   else if (b.uitkomst === 'verloren' || b.uitkomst === 'half_verloren') map[key].verloren++;
 }
@@ -126,7 +126,7 @@ function maandelijksPnL(bets) {
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     const label = d.toLocaleDateString('nl-NL', { month: 'short', year: '2-digit' });
     if (!map[key]) map[key] = { key, label, pnl: 0, bets: 0 };
-    map[key].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
+    map[key].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
     map[key].bets++;
   });
   return Object.values(map)
@@ -140,7 +140,7 @@ function equityCurve(bets) {
     .sort((a, b) => new Date(a.datum) - new Date(b.datum));
   let running = 0;
   return sorted.map((b, i) => {
-    running += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
+    running += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
     return { i: i + 1, pnl: parseFloat(running.toFixed(2)) };
   });
 }
@@ -151,7 +151,7 @@ function berekenDrawdown(bets) {
     .sort((a, b) => new Date(a.datum) - new Date(b.datum));
   let peak = 0, maxDD = 0, running = 0;
   sorted.forEach(b => {
-    running += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
+    running += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
     if (running > peak) peak = running;
     const dd = peak - running;
     if (dd > maxDD) maxDD = dd;
@@ -163,7 +163,7 @@ function dagAnalyse(bets) {
   const map = Array(7).fill(null).map((_, i) => ({ dag: WEEKDAGEN[i], pnl: 0, bets: 0, wins: 0, losses: 0 }));
   bets.forEach(b => {
     const d = (new Date(b.datum).getDay() + 6) % 7; // Mon=0 … Sun=6
-    map[d].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt);
+    map[d].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
     map[d].bets++;
     if (b.uitkomst === 'gewonnen' || b.uitkomst === 'half_gewonnen') map[d].wins++;
     else if (b.uitkomst === 'verloren' || b.uitkomst === 'half_verloren') map[d].losses++;
@@ -178,7 +178,7 @@ function oddsRangeAnalyse(bets) {
       return o >= br.min && (br.max === Infinity ? true : o <= br.max);
     });
     if (!inBracket.length) return null;
-    const pnl = inBracket.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt), 0);
+    const pnl = inBracket.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet), 0);
     const totalInzet = inBracket.reduce((s, b) => s + Number(b.inzet), 0);
     const wins = inBracket.filter(b => b.uitkomst === 'gewonnen' || b.uitkomst === 'half_gewonnen').length;
     const losses = inBracket.filter(b => b.uitkomst === 'verloren' || b.uitkomst === 'half_verloren').length;
