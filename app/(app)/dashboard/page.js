@@ -566,6 +566,96 @@ function CalendarMonth({ year, month, fromDate, toDate, hoverDate, selecting, on
 }
 
 /* ─── Date range modal ─── */
+function SuperboostModal({ loading, error, results, onClose }) {
+  const { dark } = useTheme();
+  const bg     = dark ? 'var(--bg-card)' : '#fff';
+  const border = dark ? 'var(--border)'  : '#e5e7eb';
+  const text1  = dark ? 'var(--text-1)'  : '#1a1f36';
+  const text2  = dark ? 'var(--text-2)'  : '#374151';
+  const text3  = dark ? 'var(--text-3)'  : '#9ca3af';
+
+  return createPortal(
+    <div onClick={onClose} style={{ position:'fixed', inset:0, zIndex:99999, backgroundColor:'rgba(0,0,0,0.55)', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
+      <div onClick={e=>e.stopPropagation()} style={{ backgroundColor:bg, border:`1px solid ${border}`, borderRadius:12, width:'100%', maxWidth:560, boxShadow:'0 20px 60px rgba(0,0,0,0.4)', maxHeight:'90vh', overflowY:'auto' }}>
+        <div style={{ padding:'20px 24px', borderBottom:`1px solid ${border}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div>
+            <h2 style={{ fontSize:17, fontWeight:700, color:text1, marginBottom:2 }}>Superboost Check</h2>
+            <p style={{ fontSize:12.5, color:text3 }}>Pilot — checkt momenteel alleen BetCity</p>
+          </div>
+          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', color:text3, padding:6, display:'flex', borderRadius:6 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div style={{ padding:'20px 24px', display:'flex', flexDirection:'column', gap:16 }}>
+          {loading && (
+            <div style={{ textAlign:'center', padding:'32px 0' }}>
+              <div style={{ width:36, height:36, border:'3px solid var(--border)', borderTopColor:'var(--brand)', borderRadius:'50%', margin:'0 auto 14px', animation:'spin 0.8s linear infinite' }}/>
+              <p style={{ fontSize:13.5, color:text2 }}>Sportsbook-pagina's worden bezocht en gecontroleerd…</p>
+              <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+            </div>
+          )}
+
+          {!loading && error && (
+            <div style={{ padding:'14px 16px', borderRadius:8, backgroundColor:'rgba(244,63,94,0.1)', border:'1px solid rgba(244,63,94,0.3)' }}>
+              <p style={{ fontSize:13.5, fontWeight:700, color:'#FB7185', marginBottom:4 }}>Check mislukt</p>
+              <p style={{ fontSize:13, color:text2 }}>{error}</p>
+            </div>
+          )}
+
+          {!loading && !error && results && results.map(r => (
+            <div key={r.bookmaker} style={{ border:`1px solid ${border}`, borderRadius:10, overflow:'hidden' }}>
+              <div style={{ padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', backgroundColor:'var(--bg-subtle)' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <BookmakerIcon naam={r.bookmaker} size={18}/>
+                  <span style={{ fontSize:14, fontWeight:700, color:text1 }}>{r.bookmaker}</span>
+                </div>
+                {r.status === 'ok' && (
+                  <span style={{ fontSize:11.5, fontWeight:600, padding:'2px 9px', borderRadius:5, backgroundColor: r.found ? 'rgba(17,185,129,0.15)' : 'var(--bg-card)', color: r.found ? '#11B981' : text3, border: r.found ? '1px solid rgba(17,185,129,0.35)' : `1px solid ${border}` }}>
+                    {r.found ? 'Superboost gevonden' : 'Geen superboost'}
+                  </span>
+                )}
+                {r.status === 'blocked' && (
+                  <span style={{ fontSize:11.5, fontWeight:600, padding:'2px 9px', borderRadius:5, backgroundColor:'rgba(251,191,36,0.12)', color:'#F59E0B', border:'1px solid rgba(251,191,36,0.3)' }}>Geblokkeerd</span>
+                )}
+                {r.status === 'error' && (
+                  <span style={{ fontSize:11.5, fontWeight:600, padding:'2px 9px', borderRadius:5, backgroundColor:'rgba(244,63,94,0.1)', color:'#FB7185', border:'1px solid rgba(244,63,94,0.3)' }}>Fout</span>
+                )}
+              </div>
+
+              {r.status === 'ok' && r.found && (
+                <div style={{ padding:'14px 16px', display:'flex', flexDirection:'column', gap:10 }}>
+                  {r.bets.map((b, i) => (
+                    <div key={i} style={{ padding:'10px 12px', backgroundColor:'var(--bg-brand)', border:'1px solid var(--brand-soft)', borderRadius:8 }}>
+                      <p style={{ fontSize:13.5, fontWeight:600, color:text1 }}>{b.wedstrijd}</p>
+                      <p style={{ fontSize:12.5, color:text2, marginTop:2 }}>{b.selectie}</p>
+                      {b.boosted_odds && <p style={{ fontSize:13, fontWeight:700, color:'var(--color-win)', marginTop:4 }}>Boosted odds: {b.boosted_odds}</p>}
+                    </div>
+                  ))}
+                  {r.screenshot && (
+                    <img src={r.screenshot} alt={`${r.bookmaker} screenshot`} style={{ width:'100%', borderRadius:8, border:`1px solid ${border}`, marginTop:4 }}/>
+                  )}
+                </div>
+              )}
+
+              {(r.status === 'blocked' || r.status === 'error') && (
+                <div style={{ padding:'12px 16px' }}>
+                  <p style={{ fontSize:12.5, color:text3 }}>{r.message}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ padding:'16px 24px', borderTop:`1px solid ${border}`, display:'flex', justifyContent:'flex-end' }}>
+          <button onClick={onClose} style={{ padding:'8px 18px', border:`1px solid ${border}`, borderRadius:7, fontSize:13.5, fontWeight:600, color:text2, backgroundColor:bg, cursor:'pointer' }}>Sluiten</button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function DateRangeModal({ initial, onSave, onClose }) {
   const { dark } = useTheme();
   const [isMob, setIsMob] = useState(false);
@@ -711,6 +801,27 @@ export default function Dashboard() {
   const [hoverIdx,      setHoverIdx]      = useState(null);
   const [dbBookmakers,  setDbBookmakers]  = useState([]);
   const [transactions,  setTransactions]  = useState([]);
+  const [sbOpen,    setSbOpen]    = useState(false);
+  const [sbLoading, setSbLoading] = useState(false);
+  const [sbResults, setSbResults] = useState(null);
+  const [sbError,   setSbError]   = useState(null);
+
+  const runSuperboostCheck = async () => {
+    setSbOpen(true);
+    setSbLoading(true);
+    setSbError(null);
+    setSbResults(null);
+    try {
+      const res = await fetch('/api/superboost');
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Check mislukt');
+      setSbResults(json.results);
+    } catch (e) {
+      setSbError(e.message || 'Er is een onverwachte fout opgetreden.');
+    } finally {
+      setSbLoading(false);
+    }
+  };
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -933,9 +1044,21 @@ export default function Dashboard() {
           </div>
         )}
 
-        <Link href="/bets/new" className="hidden md:inline-flex btn-bet-invoeren" style={{ textDecoration:'none', marginLeft:'auto' }}>
-          + Bet Invoeren
-        </Link>
+        <div className="hidden md:flex" style={{ display:'flex', gap:8, marginLeft:'auto' }}>
+          <button onClick={runSuperboostCheck} disabled={sbLoading} style={{
+            display:'inline-flex', alignItems:'center', gap:7,
+            padding:'7px 14px', border:'1px solid var(--border)', borderRadius:8,
+            backgroundColor:'var(--bg-card)', color:'var(--text-2)',
+            fontSize:13, fontWeight:600, cursor: sbLoading ? 'wait' : 'pointer', whiteSpace:'nowrap',
+            opacity: sbLoading ? 0.7 : 1,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Superboost Check
+          </button>
+          <Link href="/bets/new" className="btn-bet-invoeren" style={{ textDecoration:'none' }}>
+            + Bet Invoeren
+          </Link>
+        </div>
       </div>
 
       {/* Date range modal */}
@@ -944,6 +1067,16 @@ export default function Dashboard() {
           initial={customRange}
           onSave={(range) => { setCustomRange(range); setPeriodFilter('custom'); }}
           onClose={() => setShowCalendar(false)}
+        />
+      )}
+
+      {/* Superboost check modal */}
+      {mounted && sbOpen && (
+        <SuperboostModal
+          loading={sbLoading}
+          error={sbError}
+          results={sbResults}
+          onClose={() => setSbOpen(false)}
         />
       )}
 
