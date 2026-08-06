@@ -189,6 +189,7 @@ const BOOKMAKERS = [
   { slug: 'betcity.nl', name: 'BetCity' },
   { slug: 'leovegas', name: 'LeoVegas' },
   { slug: 'jacks.nl', name: "Jack's" },
+  { slug: 'betmgm', name: 'BetMGM' },
 ];
 
 // Marktdefinities (OddsPapi marketId → outcomeId → label) voor de markt-tabs in de UI.
