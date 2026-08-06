@@ -1352,7 +1352,7 @@ export default function Dashboard() {
                     <td style={{ padding:'13px 14px', fontSize:13, color:'var(--text-1)', fontWeight:700, verticalAlign:'middle' }}>
                       {Number(bet.odds).toFixed(2)}
                     </td>
-                    <td style={{ padding:'13px 14px', fontSize:13, color:'var(--text-2)', verticalAlign:'middle', whiteSpace:'nowrap' }}>
+                    <td style={{ padding:'13px 14px', fontSize:13, color: bet.is_freebet ? 'var(--color-win)' : 'var(--text-2)', fontWeight: bet.is_freebet ? 700 : 400, verticalAlign:'middle', whiteSpace:'nowrap' }}>
                       €{Number(bet.inzet).toFixed(2)}
                     </td>
                     <td style={{ padding:'13px 14px', verticalAlign:'middle' }}>
@@ -1398,7 +1398,7 @@ export default function Dashboard() {
                 </div>
                 <div className="bet-card-numbers">
                   <div className="bet-card-num-cell"><span className="bet-card-num-label">Odds</span><span className="bet-card-num-value">{Number(bet.odds).toFixed(2)}</span></div>
-                  <div className="bet-card-num-cell"><span className="bet-card-num-label">Inzet</span><span className="bet-card-num-value">€{Number(bet.inzet).toFixed(2)}</span></div>
+                  <div className="bet-card-num-cell"><span className="bet-card-num-label">Inzet</span><span className="bet-card-num-value" style={{color:bet.is_freebet?'var(--color-win)':undefined}}>€{Number(bet.inzet).toFixed(2)}</span></div>
                   <div className="bet-card-num-cell"><span className="bet-card-num-label">P&L</span><span className="bet-card-num-value" style={{ color: bet.uitkomst==='lopend' ? 'var(--text-3)' : w >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>{bet.uitkomst==='lopend' ? '—' : fmtPnl(w)}</span></div>
                 </div>
                 <div className="bet-card-bottom">

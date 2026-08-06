@@ -250,7 +250,7 @@ export default function UserDrawer({ user: summaryUser, onClose }) {
                               <td style={{ padding:'5px 8px', color:'var(--text-2)', maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }} title={b.wedstrijd}>{b.wedstrijd}</td>
                               <td style={{ padding:'5px 8px', color:'var(--text-3)', whiteSpace:'nowrap' }}>{b.bookmaker}</td>
                               <td style={{ padding:'5px 8px', color:'var(--text-2)', fontWeight:600 }}>{Number(b.odds).toFixed(2)}</td>
-                              <td style={{ padding:'5px 8px', color:'var(--text-2)' }}>€{Number(b.inzet).toFixed(2)}</td>
+                              <td style={{ padding:'5px 8px', color: b.is_freebet ? 'var(--color-win)' : 'var(--text-2)', fontWeight: b.is_freebet ? 600 : 400 }}>€{Number(b.inzet).toFixed(2)}</td>
                               <td style={{ padding:'5px 8px', color: uitkomstColor, fontWeight:600, whiteSpace:'nowrap' }}>{b.uitkomst || '—'}</td>
                               <td style={{ padding:'5px 8px', color: pnl != null ? (pnl >= 0 ? 'var(--color-win)' : 'var(--color-loss)') : 'var(--text-4)', fontWeight:600 }}>
                                 {pnl != null ? fmtEur(pnl) : '—'}

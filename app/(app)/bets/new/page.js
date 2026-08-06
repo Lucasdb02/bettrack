@@ -223,7 +223,7 @@ function HandmatigForm({ onSaved }) {
                   </SelectWrap>
                 </FF>
                 <FF label="Inzet per deel (€)" required hint="Win + Place elk dit bedrag" extra={<FreebetToggle checked={form.is_freebet} onChange={v=>set('is_freebet',v)}/>}>
-                  <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px',color:form.is_freebet?'var(--color-win)':'var(--text-1)',fontWeight:form.is_freebet?700:400}}/>
                   {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
                 </FF>
               </>
@@ -234,7 +234,7 @@ function HandmatigForm({ onSaved }) {
                   {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
                 </FF>
                 <FF label="Inzet (€)" required extra={!isLayBet && <FreebetToggle checked={form.is_freebet} onChange={v=>set('is_freebet',v)}/>}>
-                  <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
+                  <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px',color:form.is_freebet?'var(--color-win)':'var(--text-1)',fontWeight:form.is_freebet?700:400}}/>
                   {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
                 </FF>
                 {!isTote && (
@@ -447,7 +447,7 @@ function EditPreviewModal({ bet, onSave, onClose }) {
                 {fouten.odds && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.odds}</p>}
               </PreviewFField>
               <PreviewFField label="Inzet (€)" required extra={form.betType !== 'Lay Bet' && <FreebetToggle checked={!!form.is_freebet} onChange={v => set('is_freebet', v)}/>}>
-                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border }}/>
+                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border, color: form.is_freebet ? 'var(--color-win)' : text1, fontWeight: form.is_freebet ? 700 : 400 }}/>
                 {fouten.inzet && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.inzet}</p>}
               </PreviewFField>
             </div>
@@ -794,7 +794,7 @@ function ScreenshotImport() {
                       {/* Odds */}
                       <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:700,whiteSpace:'nowrap'}}>{Number(bet.odds).toFixed(2)}</td>
                       {/* Inzet */}
-                      <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',whiteSpace:'nowrap'}}>€{Number(bet.inzet).toFixed(2)}</td>
+                      <td style={{padding:'11px 14px',fontSize:13,color:bet.is_freebet?'var(--color-win)':'var(--text-2)',fontWeight:bet.is_freebet?700:400,whiteSpace:'nowrap'}}>€{Number(bet.inzet).toFixed(2)}</td>
                       {/* Uitkomst badge */}
                       <td style={{padding:'11px 14px'}}>
                         <span style={{display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'2px 8px',borderRadius:4,fontSize:11.5,fontWeight:600,background:uitkomstBg,color:uitkomstColor,border:`1px solid ${uitkomstBorder}`,whiteSpace:'nowrap',lineHeight:'18px'}}>

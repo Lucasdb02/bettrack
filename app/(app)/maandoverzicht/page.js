@@ -94,7 +94,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',border:`1px solid ${border}`,borderRadius:8,overflow:'hidden'}}>
                       {[
                         {label:'Odds',value:Number(bet.odds).toFixed(2),color:text1},
-                        {label:'Inzet',value:`€${Number(bet.inzet).toFixed(2)}`,color:text2},
+                        {label:'Inzet',value:`€${Number(bet.inzet).toFixed(2)}`,color:bet.is_freebet?'var(--color-win)':text2},
                         {label:'P&L',value:bet.uitkomst==='lopend'?'—':fmtPnl(w),color:bet.uitkomst==='lopend'?text3:w>=0?'var(--color-win)':'var(--color-loss)'},
                       ].map((cell,i)=>(
                         <div key={cell.label} style={{padding:'8px 10px',display:'flex',flexDirection:'column',gap:2,borderRight:i<2?`1px solid ${border}`:'none'}}>
@@ -141,7 +141,7 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
                         </div>
                       </td>
                       <td style={{padding:'12px 16px',fontSize:13,color:text1,fontWeight:600}}>{Number(bet.odds).toFixed(2)}</td>
-                      <td style={{padding:'12px 16px',fontSize:13,color:text2}}>€{Number(bet.inzet).toFixed(2)}</td>
+                      <td style={{padding:'12px 16px',fontSize:13,color:bet.is_freebet?'var(--color-win)':text2,fontWeight:bet.is_freebet?700:400}}>€{Number(bet.inzet).toFixed(2)}</td>
                       <td style={{padding:'12px 16px'}}>
                         <span style={{display:'inline-flex',alignItems:'center',verticalAlign:'middle',background:badgeBg,color:badgeColor,border:`1px solid ${badgeBorder}`,padding:'2px 8px',borderRadius:4,fontSize:11.5,fontWeight:600,lineHeight:'18px',whiteSpace:'nowrap'}}>
                           {cfg.label}

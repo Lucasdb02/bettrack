@@ -195,7 +195,7 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
                 {fouten.odds&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.odds}</p>}
               </FF>
               <FF label="Inzet (€)" required text2={text2} extra={form.markt!=='Lay Bet' && <FreebetToggle checked={!!form.is_freebet} onChange={v=>set('is_freebet',v)}/>}>
-                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border}}/>
+                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border,color:form.is_freebet?'var(--color-win)':text1,fontWeight:form.is_freebet?700:400}}/>
                 {fouten.inzet&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.inzet}</p>}
               </FF>
               <FF label={<><span className="hide-mobile">Totale uitbetaling (€)</span><span className="show-mobile">Uitbetaling</span></>} text2={text2}>
@@ -561,7 +561,7 @@ export default function BetsPage() {
                     <div style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.selectie}</div>
                   </td>
                   <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-1)',fontWeight:700,verticalAlign:'middle'}}>{Number(bet.odds).toFixed(2)}</td>
-                  <td style={{padding:'11px 14px',fontSize:13,color:'var(--text-2)',verticalAlign:'middle'}}>€{Number(bet.inzet).toFixed(2)}</td>
+                  <td style={{padding:'11px 14px',fontSize:13,color:bet.is_freebet?'var(--color-win)':'var(--text-2)',fontWeight:bet.is_freebet?700:400,verticalAlign:'middle'}}>€{Number(bet.inzet).toFixed(2)}</td>
                   <td style={{padding:'11px 14px',verticalAlign:'middle'}}>
                     <UitkomstBadge value={bet.uitkomst} />
                   </td>
@@ -632,7 +632,7 @@ export default function BetsPage() {
                 </div>
                 <div className="bet-card-num-cell">
                   <span className="bet-card-num-label">Inzet</span>
-                  <span className="bet-card-num-value">€{Number(bet.inzet).toFixed(2)}</span>
+                  <span className="bet-card-num-value" style={{color:bet.is_freebet?'var(--color-win)':undefined}}>€{Number(bet.inzet).toFixed(2)}</span>
                 </div>
                 <div className="bet-card-num-cell">
                   <span className="bet-card-num-label">P&L</span>
