@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
+  /* config options here */
 };
 
 export default nextConfig;
