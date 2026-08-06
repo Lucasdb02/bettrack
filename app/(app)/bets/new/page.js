@@ -8,6 +8,7 @@ import TagInput from '../../../components/TagInput';
 import BookmakerIcon from '../../../components/BookmakerIcon';
 import { useTheme } from '../../../context/ThemeContext';
 import { SingleDatePicker } from '../../../components/PeriodDropdown';
+import FreebetToggle from '../../../components/FreebetToggle';
 
 const MARKTEN = ['1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig'];
 const BET_TYPES = [
@@ -42,12 +43,15 @@ function SelectWrap({ children, error }) {
   );
 }
 
-function FF({ label, required, hint, children }) {
+function FF({ label, required, hint, children, extra }) {
   return (
     <div>
-      <label style={{display:'block',fontSize:13,fontWeight:600,color:'var(--text-2)',marginBottom:6}}>
-        {label}{required && <span style={{color:'#FB7185',marginLeft:3}}>*</span>}
-      </label>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,marginBottom:6}}>
+        <label style={{fontSize:13,fontWeight:600,color:'var(--text-2)'}}>
+          {label}{required && <span style={{color:'#FB7185',marginLeft:3}}>*</span>}
+        </label>
+        {extra}
+      </div>
       {children}
       {hint && <p style={{fontSize:11.5,color:'var(--text-4)',marginTop:4}}>{hint}</p>}
     </div>
@@ -218,14 +222,8 @@ function HandmatigForm({ onSaved }) {
                     </select>
                   </SelectWrap>
                 </FF>
-                <FF label="Inzet per deel (€)" required hint="Win + Place elk dit bedrag">
-                  <div style={{display:'flex',alignItems:'center',gap:8}}>
-                    <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px',flex:1}}/>
-                    <label style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:'var(--text-3)',whiteSpace:'nowrap',cursor:'pointer',userSelect:'none'}}>
-                      <input type="checkbox" checked={form.is_freebet} onChange={e=>set('is_freebet',e.target.checked)} style={{cursor:'pointer',width:14,height:14,accentColor:'var(--brand)'}}/>
-                      Freebet
-                    </label>
-                  </div>
+                <FF label="Inzet per deel (€)" required hint="Win + Place elk dit bedrag" extra={<FreebetToggle checked={form.is_freebet} onChange={v=>set('is_freebet',v)}/>}>
+                  <input type="number" step="0.01" min="0.01" placeholder="5.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
                   {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
                 </FF>
               </>
@@ -235,16 +233,8 @@ function HandmatigForm({ onSaved }) {
                   <input type="number" step="0.001" min="1" placeholder={isTote ? 'Invullen na uitslag' : '2.100'} value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iStyle,borderColor:fouten.odds?'#FB7185':'var(--border)',padding:'0 12px'}}/>
                   {fouten.odds && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.odds}</p>}
                 </FF>
-                <FF label="Inzet (€)" required>
-                  <div style={{display:'flex',alignItems:'center',gap:8}}>
-                    <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px',flex:1}}/>
-                    {!isLayBet && (
-                      <label style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:'var(--text-3)',whiteSpace:'nowrap',cursor:'pointer',userSelect:'none'}}>
-                        <input type="checkbox" checked={form.is_freebet} onChange={e=>set('is_freebet',e.target.checked)} style={{cursor:'pointer',width:14,height:14,accentColor:'var(--brand)'}}/>
-                        Freebet
-                      </label>
-                    )}
-                  </div>
+                <FF label="Inzet (€)" required extra={!isLayBet && <FreebetToggle checked={form.is_freebet} onChange={v=>set('is_freebet',v)}/>}>
+                  <input type="number" step="0.01" min="0.01" placeholder="50.00" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iStyle,borderColor:fouten.inzet?'#FB7185':'var(--border)',padding:'0 12px'}}/>
                   {fouten.inzet && <p style={{fontSize:11.5,color:'#FB7185',marginTop:4}}>{fouten.inzet}</p>}
                 </FF>
                 {!isTote && (
@@ -330,12 +320,15 @@ function HandmatigForm({ onSaved }) {
 
 // ── Edit modal for screenshot preview rows ────────────────────────────────────
 
-function PreviewFField({ label, required, children }) {
+function PreviewFField({ label, required, children, extra }) {
   return (
     <div>
-      <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)', marginBottom: 5 }}>
-        {label}{required && <span style={{ color: '#e02424', marginLeft: 3 }}>*</span>}
-      </label>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 5 }}>
+        <label style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)' }}>
+          {label}{required && <span style={{ color: '#e02424', marginLeft: 3 }}>*</span>}
+        </label>
+        {extra}
+      </div>
       {children}
     </div>
   );
@@ -453,16 +446,8 @@ function EditPreviewModal({ bet, onSave, onClose }) {
                 <input type="number" step="0.001" min="1" value={form.odds} onChange={e => set('odds', e.target.value)} style={{ ...iS, borderColor: fouten.odds ? '#e02424' : border }}/>
                 {fouten.odds && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.odds}</p>}
               </PreviewFField>
-              <PreviewFField label="Inzet (€)" required>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border, flex: 1 }}/>
-                  {form.betType !== 'Lay Bet' && (
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: text3, whiteSpace: 'nowrap', cursor: 'pointer', userSelect: 'none' }}>
-                      <input type="checkbox" checked={!!form.is_freebet} onChange={e => set('is_freebet', e.target.checked)} style={{ cursor: 'pointer', width: 14, height: 14, accentColor: 'var(--brand)' }}/>
-                      Freebet
-                    </label>
-                  )}
-                </div>
+              <PreviewFField label="Inzet (€)" required extra={form.betType !== 'Lay Bet' && <FreebetToggle checked={!!form.is_freebet} onChange={v => set('is_freebet', v)}/>}>
+                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e => set('inzet', e.target.value)} style={{ ...iS, borderColor: fouten.inzet ? '#e02424' : border }}/>
                 {fouten.inzet && <p style={{ fontSize: 11, color: '#e02424', marginTop: 3 }}>{fouten.inzet}</p>}
               </PreviewFField>
             </div>

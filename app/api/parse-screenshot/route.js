@@ -51,6 +51,7 @@ Geef de bets terug als een JSON array. Elk bet-object moet de volgende velden he
 - uitkomst: een van: "gewonnen", "verloren", "lopend", "push", "void", "half_gewonnen", "half_verloren", "onbeslist"
 - bookmaker: gebruik EXACT één van deze namen (hoofdlettergevoelig): "bet365", "BetCity", "Unibet", "LeoVegas", "Holland Casino Online", "TOTO", "Jack's", "Bingoal", "Circus", "BetMGM", "Vbet", "711", "ZEbet", "One Casino", "Tonybet", "Starcasino", "888", "Betnation", "ComeOn", "Hommerson", "OranjePalace", "Overig". Gebruik "Overig" als de bookmaker niet in de lijst staat.
 - sport: een van: "Voetbal", "Tennis", "Basketbal", "Hockey", "Formule 1", "Wielrennen", "Darts", "Snooker", "American Football", "Baseball", "Overig"
+- is_freebet: true als dit een freebet/gratis weddenschap is, anders false. Herken dit aan labels/badges op de screenshot zoals "Freebet", "Free Bet", "Gratis weddenschap", "Gratis inzet", "Bonus Bet" (zonder risico), "Vrijspel", of een expliciete vermelding dat de inzet niet wordt uitbetaald bij winst. Gebruik false als er geen aanwijzing voor een freebet is.
 
 Belangrijke regels:
 - Gebruik voor het "wedstrijd" veld altijd korte teamafkortingen zoals op de afbeelding zichtbaar (bv. "NEC - FEY", "CHE - MCI", "MAN - PSG"). Schrijf GEEN volledige teamnamen uit tenzij er geen afkorting beschikbaar is.
@@ -179,6 +180,7 @@ Als er geen bets zichtbaar zijn, geef een lege array terug: []`,
         sport,
         notities:  '',
         tags:      [],
+        is_freebet: b.is_freebet === true,
         _source:   'screenshot-import',
       };
     });

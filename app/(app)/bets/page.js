@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import PeriodDropdown, { SingleDatePicker } from '../../components/PeriodDropdown';
 import { getDateRange } from '../../lib/dateUtils';
+import FreebetToggle from '../../components/FreebetToggle';
 
 const MARKTEN = [
   '1X2','Asian Handicap','Over/Under','BTTS','Wedstrijd Winnaar','Handicap','Totaal Punten','Race Winnaar','Eerste Doelpuntenmaker','Overig',
@@ -43,12 +44,15 @@ function UitkomstBadge({ value }) {
 
 const iStyle = {width:'100%',padding:'8px 12px',border:'1px solid var(--border)',borderRadius:7,fontSize:13.5,color:'var(--text-1)',backgroundColor:'var(--bg-input)',transition:'border-color 0.15s'};
 
-function FF({label,required,children,text2}) {
+function FF({label,required,children,text2,extra}) {
   return (
     <div>
-      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:text2||'var(--text-2)',marginBottom:5}}>
-        {label}{required&&<span style={{color:'#e02424',marginLeft:3}}>*</span>}
-      </label>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,marginBottom:5}}>
+        <label style={{fontSize:12.5,fontWeight:600,color:text2||'var(--text-2)'}}>
+          {label}{required&&<span style={{color:'#e02424',marginLeft:3}}>*</span>}
+        </label>
+        {extra}
+      </div>
       {children}
     </div>
   );
@@ -190,16 +194,8 @@ function EditBetModal({bet, onSave, onClose, saveError}) {
                 <input type="number" step="0.001" min="1" value={form.odds} onChange={e=>setWithCalc('odds',e.target.value)} style={{...iS,borderColor:fouten.odds?'#e02424':border}}/>
                 {fouten.odds&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.odds}</p>}
               </FF>
-              <FF label="Inzet (€)" required text2={text2}>
-                <div style={{display:'flex',alignItems:'center',gap:8}}>
-                  <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border,flex:1}}/>
-                  {form.markt!=='Lay Bet' && (
-                    <label style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:text3,whiteSpace:'nowrap',cursor:'pointer',userSelect:'none'}}>
-                      <input type="checkbox" checked={!!form.is_freebet} onChange={e=>set('is_freebet',e.target.checked)} style={{cursor:'pointer',width:14,height:14,accentColor:'var(--brand)'}}/>
-                      Freebet
-                    </label>
-                  )}
-                </div>
+              <FF label="Inzet (€)" required text2={text2} extra={form.markt!=='Lay Bet' && <FreebetToggle checked={!!form.is_freebet} onChange={v=>set('is_freebet',v)}/>}>
+                <input type="number" step="0.01" min="0.01" value={form.inzet} onChange={e=>setWithCalc('inzet',e.target.value)} style={{...iS,borderColor:fouten.inzet?'#e02424':border}}/>
                 {fouten.inzet&&<p style={{fontSize:11,color:'#e02424',marginTop:3}}>{fouten.inzet}</p>}
               </FF>
               <FF label={<><span className="hide-mobile">Totale uitbetaling (€)</span><span className="show-mobile">Uitbetaling</span></>} text2={text2}>
