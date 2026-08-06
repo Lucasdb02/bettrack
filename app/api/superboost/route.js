@@ -15,18 +15,13 @@ const TARGETS = [
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
-// @sparticuz/chromium-min ships without the binary — it downloads this pack from
-// GitHub releases on cold start instead. Keep the version in sync with package.json.
-const CHROMIUM_VERSION = '149.0.0';
-const CHROMIUM_PACK_URL = `https://github.com/Sparticuz/chromium/releases/download/v${CHROMIUM_VERSION}/chromium-v${CHROMIUM_VERSION}-pack.x64.tar`;
-
 async function getBrowser() {
   if (process.env.VERCEL) {
-    const chromium = (await import('@sparticuz/chromium-min')).default;
+    const chromium = (await import('@sparticuz/chromium')).default;
     return puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(CHROMIUM_PACK_URL),
+      executablePath: await chromium.executablePath(),
       headless: chromium.headless,
     });
   }
