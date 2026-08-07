@@ -228,6 +228,8 @@ export default function BookmakersPage() {
   const [editBalance, setEditBalance]     = useState({});
   const [editDate,    setEditDate]        = useState({});
   const [selectedToAdd, setSelectedToAdd] = useState('');
+  const [addBalance, setAddBalance]       = useState('');
+  const [addDate,    setAddDate]          = useState(() => new Date().toISOString().split('T')[0]);
   const [period, setPeriod]               = useState('last28');
   const [customRange, setCustomRange]     = useState(null);
   const [filterBookies, setFilterBookies] = useState([]);
@@ -361,13 +363,16 @@ export default function BookmakersPage() {
     if (!selectedToAdd) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    const saldo = parseFloat(addBalance);
     const { data, error } = await supabase
       .from('bookmakers')
-      .insert({ user_id: user.id, naam: selectedToAdd, saldo: 0 })
+      .insert({ user_id: user.id, naam: selectedToAdd, saldo: isNaN(saldo) ? 0 : saldo, start_datum: addDate || null })
       .select()
       .single();
     if (!error && data) setDbBookmakers(prev => [...prev, data]);
     setSelectedToAdd('');
+    setAddBalance('');
+    setAddDate(new Date().toISOString().split('T')[0]);
   };
 
   const removeBookmaker = async (naam) => {
@@ -507,8 +512,8 @@ export default function BookmakersPage() {
 
         {/* — Bookmaker toevoegen — */}
         <h2 style={{ fontSize:13, fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:14 }}>Bookmaker toevoegen</h2>
-        <div className="bm-add-row" style={{ display:'flex', gap:10, alignItems:'center' }}>
-          <div style={{ position:'relative', flex:1, maxWidth:320 }}>
+        <div className="bm-add-row" style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
+          <div className="bm-add-bookie" style={{ position:'relative', flex:'1 1 200px', maxWidth:260 }}>
             <select
               value={selectedToAdd}
               onChange={e => setSelectedToAdd(e.target.value)}
@@ -521,6 +526,25 @@ export default function BookmakersPage() {
             </select>
             <svg style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', pointerEvents:'none', color:'var(--text-3)' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
+
+          {/* Startbedrag */}
+          <div className="bm-add-amount" style={{ display:'flex', alignItems:'center', flex:'0 0 130px', height:40, border:'1px solid var(--border)', borderRadius:7, backgroundColor:'var(--bg-input)', boxSizing:'border-box', overflow:'hidden' }}>
+            <span className="bm-add-euro" style={{ paddingLeft:10, flexShrink:0, color:'var(--text-1)', fontSize:13.5, lineHeight:1, pointerEvents:'none' }}>€</span>
+            <input
+              type="number" min="0" step="0.01"
+              placeholder="0.00"
+              value={addBalance}
+              onChange={e => setAddBalance(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && addBookmaker()}
+              style={{ flex:1, height:'100%', padding:'0 8px', border:'none', outline:'none', fontSize:13.5, color:'var(--text-1)', backgroundColor:'transparent', WebkitAppearance:'none', boxSizing:'border-box' }}
+            />
+          </div>
+
+          {/* Startdatum */}
+          <div className="bm-add-date" style={{ flex:'0 0 150px' }}>
+            <SingleDatePicker value={addDate} onChange={setAddDate} style={{ width:'100%', height:40, boxSizing:'border-box', fontSize:13.5 }}/>
+          </div>
+
           <button
             onClick={addBookmaker}
             disabled={!selectedToAdd}
@@ -531,7 +555,7 @@ export default function BookmakersPage() {
               border:'1px solid var(--border)', borderRadius:7,
               cursor: selectedToAdd ? 'pointer' : 'default',
               display:'flex', alignItems:'center', gap:7,
-              height:40, boxSizing:'border-box',
+              height:40, boxSizing:'border-box', flexShrink:0,
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

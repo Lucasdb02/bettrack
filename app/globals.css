@@ -707,11 +707,16 @@ html.dark .glass-card {
 .bm-tx-row .bm-tx-date    { height: 40px !important; box-sizing: border-box !important; }
 .bm-tx-row .bm-tx-date button { height: 100% !important; box-sizing: border-box !important; display: flex !important; align-items: center !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 .bm-add-row select        { height: 40px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-add-row .bm-add-amount        { height: 40px !important; box-sizing: border-box !important; }
+.bm-add-row .bm-add-amount input  { height: 100% !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.bm-add-row .bm-add-date  { height: 40px !important; box-sizing: border-box !important; }
+.bm-add-row .bm-add-date button { height: 100% !important; box-sizing: border-box !important; display: flex !important; align-items: center !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 
 /* Placeholder kleur wit + euro-teken mee schalen op mobiel */
-.bm-tx-amount input::placeholder { color: var(--text-1) !important; opacity: 1; }
+.bm-tx-amount input::placeholder,
+.bm-add-amount input::placeholder { color: var(--text-1) !important; opacity: 1; }
 @media screen and (max-width: 900px) {
-  .bm-tx-euro { font-size: 16px !important; }
+  .bm-tx-euro, .bm-add-euro { font-size: 16px !important; }
 }
 .bm-add-row button        { height: 40px !important; box-sizing: border-box !important; }
 
@@ -727,7 +732,11 @@ html.dark .glass-card {
   .bm-field-bets { flex: 0 0 50% !important; box-sizing: border-box !important; padding-right: 8px !important; }
   .bm-field-progress { flex: 0 0 100% !important; }
   .bm-add-row { flex-direction: column !important; align-items: stretch !important; }
-  .bm-add-row > div:first-child { max-width: 100% !important; flex: 1 1 100% !important; }
+  .bm-add-bookie,
+  .bm-add-amount,
+  .bm-add-date  { max-width: 100% !important; width: 100% !important; flex: none !important; min-width: 0 !important; }
+  .bm-add-amount input { width: 100% !important; box-sizing: border-box !important; padding-left: 24px !important; }
+  .bm-add-date button   { width: 100% !important; box-sizing: border-box !important; }
   .bm-add-row > button { width: 100% !important; justify-content: center !important; }
   /* Deposits form: single-column stack on mobile */
   .bm-tx-row { display: flex !important; flex-direction: column !important; gap: 8px !important; align-items: stretch !important; }
