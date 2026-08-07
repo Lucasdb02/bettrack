@@ -225,8 +225,6 @@ export default function BookmakersPage() {
   const [loadedBm, setLoadedBm]         = useState(false);
   const [transactions, setTransactions] = useState([]); // [{id, bookmaker_id, type, amount, datum, notitie}]
 
-  const [editBalance, setEditBalance]     = useState({});
-  const [editDate,    setEditDate]        = useState({});
   const [selectedToAdd, setSelectedToAdd] = useState('');
   const [addBalance, setAddBalance]       = useState('');
   const [addDate,    setAddDate]          = useState(() => new Date().toISOString().split('T')[0]);
@@ -380,28 +378,6 @@ export default function BookmakersPage() {
     if (!bm) return;
     const { error } = await supabase.from('bookmakers').delete().eq('id', bm.id);
     if (!error) setDbBookmakers(prev => prev.filter(b => b.naam !== naam));
-  };
-
-  const commitBalance = async (naam) => {
-    const val = parseFloat(editBalance[naam]);
-    if (!isNaN(val)) {
-      const bm = dbBookmakers.find(b => b.naam === naam);
-      if (bm) {
-        await supabase.from('bookmakers').update({ saldo: val }).eq('id', bm.id);
-        setDbBookmakers(prev => prev.map(b => b.naam === naam ? { ...b, saldo: val } : b));
-      }
-    }
-    setEditBalance(p => { const n={...p}; delete n[naam]; return n; });
-  };
-
-  const commitDate = async (naam) => {
-    const val = editDate[naam] || null;
-    const bm = dbBookmakers.find(b => b.naam === naam);
-    if (bm) {
-      await supabase.from('bookmakers').update({ start_datum: val }).eq('id', bm.id);
-      setDbBookmakers(prev => prev.map(b => b.naam === naam ? { ...b, start_datum: val } : b));
-    }
-    setEditDate(p => { const n={...p}; delete n[naam]; return n; });
   };
 
   const addTransaction = async () => {
@@ -708,10 +684,8 @@ export default function BookmakersPage() {
             const lopend         = lopendPerBookie[naam] || 0;
             const netTx          = netTxPerBookie[naam] || 0;
             const currentBalance = cfg.startBalance + stats.pnl + netTx;
-            const isEditing      = naam in editBalance;
             const color          = bookieColor(naam, activeBookies);
 
-            const isEditingDate = naam in editDate;
             const fmtStartDate  = cfg.startDate
               ? new Date(cfg.startDate).toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' })
               : null;
@@ -730,48 +704,13 @@ export default function BookmakersPage() {
                   {/* Startdatum */}
                   <div className="bm-field-date" style={{ flex:'0 0 148px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Startdatum</p>
-                    {isEditingDate ? (
-                      <div style={{ display:'flex', gap:5, alignItems:'center' }}>
-                        <input
-                          type="date" autoFocus
-                          value={editDate[naam]}
-                          onChange={e => setEditDate(p => ({ ...p, [naam]: e.target.value }))}
-                          onKeyDown={e => { if(e.key==='Enter') commitDate(naam); if(e.key==='Escape') setEditDate(p => { const n={...p}; delete n[naam]; return n; }); }}
-                          style={{ padding:'4px 6px', border:'1px solid var(--brand)', borderRadius:6, fontSize:12, color:'var(--text-1)', backgroundColor:'var(--bg-input)', width:120 }}
-                        />
-                        <button onClick={() => commitDate(naam)} className="btn-primary-glass" style={{ padding:'4px 7px', fontSize:12, cursor:'pointer' }}>✓</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => setEditDate(p => ({ ...p, [naam]: cfg.startDate || '' }))} style={{ background:'none', border:'none', padding:0, cursor:'pointer', textAlign:'left', display:'flex', alignItems:'baseline', gap:5 }}>
-                        <span style={{ fontSize:13, fontWeight:600, color:'var(--text-1)' }}>{fmtStartDate || '—'}</span>
-                        <span style={{ fontSize:11, color:'var(--text-4)' }}>aanpassen</span>
-                      </button>
-                    )}
+                    <span style={{ fontSize:13, fontWeight:600, color:'var(--text-1)' }}>{fmtStartDate || '—'}</span>
                   </div>
 
                   {/* Start balance */}
                   <div className="bm-field-startbal" style={{ flex:'0 0 155px' }}>
                     <p style={{ fontSize:10.5, fontWeight:700, color:'var(--text-4)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Startbalance</p>
-                    {isEditing ? (
-                      <div style={{ display:'flex', gap:5, alignItems:'center' }}>
-                        <div style={{ position:'relative', flex:1 }}>
-                          <span style={{ position:'absolute', left:7, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13 }}>€</span>
-                          <input
-                            type="number" step="0.01" autoFocus
-                            value={editBalance[naam]}
-                            onChange={e => setEditBalance(p => ({ ...p, [naam]: e.target.value }))}
-                            onKeyDown={e => { if(e.key==='Enter') commitBalance(naam); if(e.key==='Escape') setEditBalance(p => { const n={...p}; delete n[naam]; return n; }); }}
-                            style={{ width:'100%', padding:'4px 7px 4px 20px', border:'1px solid var(--brand)', borderRadius:6, fontSize:13, color:'var(--text-1)', backgroundColor:'var(--bg-input)' }}
-                          />
-                        </div>
-                        <button onClick={() => commitBalance(naam)} className="btn-primary-glass" style={{ padding:'4px 7px', fontSize:12, cursor:'pointer' }}>✓</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => setEditBalance(p => ({ ...p, [naam]: String(cfg.startBalance) }))} style={{ background:'none', border:'none', padding:0, cursor:'pointer', textAlign:'left', display:'flex', alignItems:'baseline', gap:5 }}>
-                        <span style={{ fontSize:15, fontWeight:700, color:'var(--text-1)' }}>€{cfg.startBalance.toFixed(2)}</span>
-                        <span style={{ fontSize:11, color:'var(--text-4)' }}>aanpassen</span>
-                      </button>
-                    )}
+                    <span style={{ fontSize:15, fontWeight:700, color:'var(--text-1)' }}>€{cfg.startBalance.toFixed(2)}</span>
                   </div>
 
                   {/* P&L */}
