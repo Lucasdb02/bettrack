@@ -133,7 +133,9 @@ function DagModal({ datum, bets, pnl, onClose, isMobile }) {
                   return (
                     <tr key={bet.id} className="bet-row" style={{borderTop:`1px solid ${border}`,verticalAlign:'middle'}}>
                       <td style={{padding:'12px 16px',fontSize:13,color:text1,fontWeight:500,maxWidth:160,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.wedstrijd}</td>
-                      <td style={{padding:'12px 16px',fontSize:13,color:text2}}>{bet.selectie}</td>
+                      <td style={{padding:'12px 16px',fontSize:13,color:text2,maxWidth:260}}>
+                        <div style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.selectie}</div>
+                      </td>
                       <td style={{padding:'12px 16px',fontSize:13,color:text2}}>
                         <div style={{display:'flex',alignItems:'center',gap:6}}>
                           <BookmakerIcon naam={bet.bookmaker} size={15}/>
