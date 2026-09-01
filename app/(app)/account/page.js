@@ -52,14 +52,15 @@ function Row({ label, hint, last, children }) {
 const iStyle = { width:'100%', padding:'8px 12px', border:'1px solid var(--border)', borderRadius:7, fontSize:13.5, color:'var(--text-1)', backgroundColor:'var(--bg-input)', outline:'none' };
 
 /* ─── Overzicht tab ─── */
-function OverzichtTab({ prefs, bets }) {
+function OverzichtTab({ prefs, bets, correctiesSom }) {
   const { fmtPnl, fmtAmt } = useFmt();
   const settled = bets.filter(b => b.uitkomst !== 'lopend');
   const won = settled.filter(b => b.uitkomst === 'gewonnen');
   const lost = settled.filter(b => b.uitkomst === 'verloren');
-  const totalPnl = settled.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet), 0);
+  const betsPnl = settled.reduce((s, b) => s + berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet), 0);
+  const totalPnl = betsPnl + correctiesSom;
   const totalInzet = settled.reduce((s, b) => s + Number(b.inzet), 0);
-  const roi = totalInzet > 0 ? (totalPnl / totalInzet) * 100 : 0;
+  const roi = totalInzet > 0 ? (betsPnl / totalInzet) * 100 : 0;
   const winRate = (won.length + lost.length) > 0 ? (won.length / (won.length + lost.length)) * 100 : 0;
   const unitsWon = prefs.unitGrootte > 0 ? totalPnl / prefs.unitGrootte : 0;
 
@@ -180,6 +181,18 @@ export default function AccountPage() {
   const { prefs, setPrefs, updatePref, loaded } = usePreferences();
   const { bets } = useBets();
   const [tab, setTab] = useState('overzicht');
+  const [correctiesSom, setCorrectiesSom] = useState(0);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase.from('transactions').select('amount').eq('user_id', user.id).eq('type', 'correctie')
+        .then(({ data, error }) => {
+          if (!error && data) setCorrectiesSom(data.reduce((s, tx) => s + Number(tx.amount), 0));
+        });
+    });
+  }, []);
 
   function handleLogout() {
     window.location.href = '/api/logout';
@@ -215,7 +228,7 @@ export default function AccountPage() {
       <div style={{ display:'flex', gap:3, padding:3, backgroundColor:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:10, marginBottom:28, width:'fit-content', height:38 }}>
         {TABS.map(t => <TabBtn key={t.id} active={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</TabBtn>)}
       </div>
-      {tab === 'overzicht'   && <OverzichtTab prefs={prefs} bets={bets} />}
+      {tab === 'overzicht'   && <OverzichtTab prefs={prefs} bets={bets} correctiesSom={correctiesSom} />}
       {tab === 'voorkeuren'  && <VoorkeurenTab prefs={prefs} setPrefs={setPrefs} />}
       {tab === 'gegevens'    && <GegevensTab bets={bets} />}
     </div>

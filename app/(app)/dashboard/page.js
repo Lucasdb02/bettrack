@@ -751,6 +751,21 @@ export default function Dashboard() {
     return r;
   }, [bets, periodFilter, customRange, sportFilter, bookFilter, tagFilter]);
 
+  // Correcties zijn niet aan een sport/tag te koppelen: alleen meenemen als die filters niet actief zijn.
+  const filteredCorrecties = useMemo(() => {
+    if ((sportFilter && sportFilter.length) || tagFilter !== 'alle') return [];
+    let r = filterBets(transactions.filter(tx => tx.type === 'correctie'), periodFilter, customRange);
+    if (bookFilter && bookFilter.length) {
+      r = r.filter(tx => {
+        const bm = dbBookmakers.find(b => b.id === tx.bookmaker_id);
+        return bm && bookFilter.includes(bm.naam);
+      });
+    }
+    return r;
+  }, [transactions, periodFilter, customRange, sportFilter, bookFilter, tagFilter, dbBookmakers]);
+
+  const correctiesSom = useMemo(() => filteredCorrecties.reduce((s, tx) => s + Number(tx.amount), 0), [filteredCorrecties]);
+
   const stats = useMemo(() => {
     const settled    = filtered.filter(b => b.uitkomst !== 'lopend');
     const won        = settled.filter(b => b.uitkomst === 'gewonnen');
@@ -769,6 +784,9 @@ export default function Dashboard() {
       lopend: filtered.filter(b => b.uitkomst === 'lopend'),
     };
   }, [filtered]);
+
+  // Totale P&L = resultaat uit bets + correcties op de betreffende dagen.
+  const totalPnl = stats.totalWinst + correctiesSom;
 
   const statusData = useMemo(() => {
     const ns    = stats.lopend.length;
@@ -798,43 +816,58 @@ export default function Dashboard() {
   const bookmakers = useMemo(() => [...new Set(filtered.map(b => b.bookmaker||'Onbekend'))].slice(0,8), [filtered]);
 
   const cumulData = useMemo(() => {
-    let cumPnl = 0, cumInzet = 0, cumW = 0, cumL = 0, cumP = 0;
+    let cumPnl = 0, cumBetPnl = 0, cumInzet = 0, cumW = 0, cumL = 0, cumP = 0;
     const dayPnlMap = {};
     const map = {};
-    [...filtered].filter(b => b.uitkomst !== 'lopend')
-      .sort((a, b) => new Date(a.datum) - new Date(b.datum))
-      .forEach(b => {
-        const lbl = new Date(b.datum).toLocaleDateString('nl-NL', {day:'numeric', month:'short'});
-        const w = berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
-        cumPnl   += w;
-        cumInzet += Number(b.inzet);
-        if (['gewonnen','half_gewonnen'].includes(b.uitkomst))       cumW++;
-        else if (['verloren','half_verloren'].includes(b.uitkomst))  cumL++;
-        else if (['push','void','onbeslist'].includes(b.uitkomst))   cumP++;
-        dayPnlMap[lbl] = parseFloat(((dayPnlMap[lbl] || 0) + w).toFixed(2));
+    const betEvents = [...filtered].filter(b => b.uitkomst !== 'lopend').map(b => ({
+      date: new Date(b.datum), amount: berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet),
+      inzet: Number(b.inzet), uitkomst: b.uitkomst, isBet: true,
+    }));
+    const correctieEvents = filteredCorrecties.map(tx => ({ date: new Date(tx.datum), amount: Number(tx.amount), isBet: false }));
+    [...betEvents, ...correctieEvents]
+      .sort((a, b) => a.date - b.date)
+      .forEach(ev => {
+        const lbl = ev.date.toLocaleDateString('nl-NL', {day:'numeric', month:'short'});
+        cumPnl += ev.amount;
+        if (ev.isBet) {
+          cumBetPnl += ev.amount;
+          cumInzet  += ev.inzet;
+          if (['gewonnen','half_gewonnen'].includes(ev.uitkomst))       cumW++;
+          else if (['verloren','half_verloren'].includes(ev.uitkomst))  cumL++;
+          else if (['push','void','onbeslist'].includes(ev.uitkomst))   cumP++;
+        }
+        dayPnlMap[lbl] = parseFloat(((dayPnlMap[lbl] || 0) + ev.amount).toFixed(2));
         map[lbl] = {
           pnl:    parseFloat(cumPnl.toFixed(2)),
           dayPnl: dayPnlMap[lbl],
-          roi:    cumInzet > 0 ? parseFloat((cumPnl / cumInzet * 100).toFixed(1)) : 0,
+          roi:    cumInzet > 0 ? parseFloat((cumBetPnl / cumInzet * 100).toFixed(1)) : 0,
           w: cumW, l: cumL, p: cumP,
         };
       });
     return Object.entries(map).map(([datum, v]) => ({ datum, ...v }));
-  }, [filtered]);
+  }, [filtered, filteredCorrecties]);
 
   const bookLineData = useMemo(() => {
-    const settled = [...filtered].filter(b=>b.uitkomst!=='lopend').sort((a,b)=>new Date(a.datum)-new Date(b.datum));
+    const betEvents = [...filtered].filter(b=>b.uitkomst!=='lopend').map(b => ({
+      date: new Date(b.datum), bk: b.bookmaker||'Onbekend',
+      amount: berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt,b.is_freebet),
+    }));
+    const correctieEvents = filteredCorrecties.map(tx => {
+      const bm = dbBookmakers.find(b => b.id === tx.bookmaker_id);
+      return bm ? { date: new Date(tx.datum), bk: bm.naam, amount: Number(tx.amount) } : null;
+    }).filter(Boolean);
+    const events = [...betEvents, ...correctieEvents].sort((a,b)=>a.date-b.date);
     const cum = {}; bookmakers.forEach(bk=>{cum[bk]=0;});
     const dayMap = {};
-    settled.forEach(b => {
-      const bk = b.bookmaker||'Onbekend';
-      const lbl = new Date(b.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+    events.forEach(ev => {
+      if (cum[ev.bk] === undefined) return; // bookmaker buiten top-8 lijst
+      const lbl = ev.date.toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
       if (!dayMap[lbl]) dayMap[lbl] = {...cum};
-      cum[bk] = parseFloat((cum[bk]+berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt,b.is_freebet)).toFixed(2));
+      cum[ev.bk] = parseFloat((cum[ev.bk]+ev.amount).toFixed(2));
       dayMap[lbl] = {...cum};
     });
     return Object.entries(dayMap).map(([datum,vals])=>({datum,...vals}));
-  }, [filtered, bookmakers]);
+  }, [filtered, filteredCorrecties, dbBookmakers, bookmakers]);
 
   const stackedData = useMemo(() => {
     const map = {};
@@ -949,7 +982,7 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid gap-4 mb-4 grid-4-to-2" style={{ gridTemplateColumns:'repeat(4,1fr)' }}>
-        <StatCard label="Totale P&L" value={fmtAmt(stats.totalWinst)} sub={`${stats.settled.length} afgeronde bets`} color={stats.totalWinst>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
+        <StatCard label="Totale P&L" value={fmtAmt(totalPnl)} sub={`${stats.settled.length} afgeronde bets${filteredCorrecties.length>0?` — ${filteredCorrecties.length} correctie${filteredCorrecties.length!==1?'s':''}`:''}`} color={totalPnl>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>}/>
         <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} sub={`${stats.wins}W — ${stats.losses}L${stats.pushes>0?` — ${stats.pushes}P`:''}`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}/>
         <StatCard label="ROI" value={`${stats.roi>=0?'+':''}${stats.roi.toFixed(1)}%`} sub={`Totale inzet: €${stats.totalInzet.toFixed(0)}`} color={stats.roi>=0?'var(--color-win)':'var(--color-loss)'} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><polyline points="18 9 13 14 8 9 3 14"/></svg>}/>
         <StatCard label="Record" value={`${stats.wins}-${stats.losses}-${stats.pushes}`} sub={`W — L — P  •  ${stats.settled.length} bets`} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}/>
@@ -961,7 +994,7 @@ export default function Dashboard() {
         {/* LEFT 70%: Cumulative P&L */}
         {(() => {
           const hp         = hoverIdx !== null ? cumulData[hoverIdx] : null;
-          const dispPnl    = hp ? hp.pnl    : stats.totalWinst;
+          const dispPnl    = hp ? hp.pnl    : totalPnl;
           const dispRoi    = hp ? hp.roi    : stats.roi;
           const dispDayPnl = hp ? hp.dayPnl : null;
           const dispW      = hp ? hp.w      : stats.wins;

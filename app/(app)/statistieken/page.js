@@ -14,6 +14,7 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell, ReferenceLine,
 } from 'recharts';
+import { createClient } from '@/lib/supabase';
 
 // ── period filter helpers ──────────────────────────────────────────────────────
 
@@ -119,39 +120,44 @@ function groepeerOpTags(bets) {
   return finalize(map);
 }
 
-function maandelijksPnL(bets) {
+function maandelijksPnL(bets, correcties = []) {
   const map = {};
-  bets.filter(b => b.uitkomst !== 'lopend').forEach(b => {
-    const d = new Date(b.datum);
+  const bump = (datumStr, amount, isBet) => {
+    const d = new Date(datumStr);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    const label = d.toLocaleDateString('nl-NL', { month: 'short', year: '2-digit' });
-    if (!map[key]) map[key] = { key, label, pnl: 0, bets: 0 };
-    map[key].pnl += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
-    map[key].bets++;
+    if (!map[key]) map[key] = { key, label: d.toLocaleDateString('nl-NL', { month: 'short', year: '2-digit' }), pnl: 0, bets: 0 };
+    map[key].pnl += amount;
+    if (isBet) map[key].bets++;
+  };
+  bets.filter(b => b.uitkomst !== 'lopend').forEach(b => {
+    bump(b.datum, berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet), true);
   });
+  correcties.forEach(tx => bump(tx.datum, Number(tx.amount), false));
   return Object.values(map)
     .sort((a, b) => a.key.localeCompare(b.key))
     .map(m => ({ ...m, pnl: parseFloat(m.pnl.toFixed(2)) }));
 }
 
-function equityCurve(bets) {
-  const sorted = [...bets]
-    .filter(b => b.uitkomst !== 'lopend')
-    .sort((a, b) => new Date(a.datum) - new Date(b.datum));
+function combinedEvents(bets, correcties = []) {
+  const betEvents = bets.filter(b => b.uitkomst !== 'lopend').map(b => ({
+    date: new Date(b.datum), amount: berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet),
+  }));
+  const correctieEvents = correcties.map(tx => ({ date: new Date(tx.datum), amount: Number(tx.amount) }));
+  return [...betEvents, ...correctieEvents].sort((a, b) => a.date - b.date);
+}
+
+function equityCurve(bets, correcties = []) {
   let running = 0;
-  return sorted.map((b, i) => {
-    running += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
+  return combinedEvents(bets, correcties).map((ev, i) => {
+    running += ev.amount;
     return { i: i + 1, pnl: parseFloat(running.toFixed(2)) };
   });
 }
 
-function berekenDrawdown(bets) {
-  const sorted = [...bets]
-    .filter(b => b.uitkomst !== 'lopend')
-    .sort((a, b) => new Date(a.datum) - new Date(b.datum));
+function berekenDrawdown(bets, correcties = []) {
   let peak = 0, maxDD = 0, running = 0;
-  sorted.forEach(b => {
-    running += berekenWinst(b.uitkomst, Number(b.odds), Number(b.inzet), b.markt, b.is_freebet);
+  combinedEvents(bets, correcties).forEach(ev => {
+    running += ev.amount;
     if (running > peak) peak = running;
     const dd = peak - running;
     if (dd > maxDD) maxDD = dd;
@@ -318,6 +324,22 @@ export default function StatistiekenPage() {
   const [sportFilter,  setSportFilter]  = useState(null);
   const [bookFilter,   setBookFilter]   = useState(null);
 
+  const [dbBookmakers, setDbBookmakers] = useState([]);
+  const [correctieTxs, setCorrectieTxs] = useState([]);
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      Promise.all([
+        supabase.from('bookmakers').select('*').eq('user_id', user.id),
+        supabase.from('transactions').select('*').eq('user_id', user.id).eq('type', 'correctie'),
+      ]).then(([bmRes, txRes]) => {
+        if (!bmRes.error && bmRes.data) setDbBookmakers(bmRes.data);
+        if (!txRes.error && txRes.data) setCorrectieTxs(txRes.data);
+      });
+    });
+  }, []);
+
   const allSporten    = useMemo(() => [...new Set(bets.map(b => b.sport||'Onbekend'))].sort(),     [bets]);
   const allBookmakers = useMemo(() => [...new Set(bets.map(b => b.bookmaker||'Onbekend'))].sort(), [bets]);
 
@@ -328,6 +350,19 @@ export default function StatistiekenPage() {
     return r;
   }, [bets, periodFilter, customRange, sportFilter, bookFilter]);
 
+  // Correcties zijn niet aan een sport te koppelen: alleen meenemen als dat filter niet actief is.
+  const filteredCorrecties = useMemo(() => {
+    if (sportFilter && sportFilter.length) return [];
+    let r = filterBetsByPeriod(correctieTxs, periodFilter, customRange);
+    if (bookFilter && bookFilter.length) {
+      r = r.filter(tx => {
+        const bm = dbBookmakers.find(b => b.id === tx.bookmaker_id);
+        return bm && bookFilter.includes(bm.naam);
+      });
+    }
+    return r;
+  }, [correctieTxs, periodFilter, customRange, sportFilter, bookFilter, dbBookmakers]);
+
   const settled = useMemo(() => filtered.filter(b => b.uitkomst !== 'lopend'), [filtered]);
 
   // computed data
@@ -335,11 +370,11 @@ export default function StatistiekenPage() {
   const perBookmaker = useMemo(() => groepeerOp(settled, 'bookmaker'), [settled]);
   const perMarkt     = useMemo(() => groepeerOp(settled, 'markt'),     [settled]);
   const perTag       = useMemo(() => groepeerOpTags(settled),          [settled]);
-  const maandData    = useMemo(() => maandelijksPnL(filtered),         [filtered]);
+  const maandData    = useMemo(() => maandelijksPnL(filtered, filteredCorrecties), [filtered, filteredCorrecties]);
   const dagData      = useMemo(() => dagAnalyse(settled),              [settled]);
   const oddsData     = useMemo(() => oddsRangeAnalyse(settled),        [settled]);
-  const curve        = useMemo(() => equityCurve(filtered),            [filtered]);
-  const maxDrawdown  = useMemo(() => berekenDrawdown(filtered),        [filtered]);
+  const curve        = useMemo(() => equityCurve(filtered, filteredCorrecties),     [filtered, filteredCorrecties]);
+  const maxDrawdown  = useMemo(() => berekenDrawdown(filtered, filteredCorrecties), [filtered, filteredCorrecties]);
   const huidig       = useMemo(() => huidigeReeks(filtered),           [filtered]);
 
   const gemOdds  = useMemo(() => settled.length > 0 ? (settled.reduce((s, b) => s + Number(b.odds), 0) / settled.length).toFixed(2) : 0, [settled]);
