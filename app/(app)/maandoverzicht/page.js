@@ -9,6 +9,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PaywallGate from '../../components/PaywallGate';
+import { createClient } from '@/lib/supabase';
 
 const MAANDEN=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const DAGEN=['Ma','Di','Wo','Do','Vr','Za','Zo'];
@@ -174,6 +175,7 @@ export default function MaandoverzichtPage() {
   const [geselecteerd,setGeselecteerd]=useState(null);
   const [mounted,setMounted]=useState(false);
   const [isMobile,setIsMobile]=useState(false);
+  const [correcties,setCorrecties]=useState([]);
   useEffect(()=>setMounted(true),[]);
   useEffect(()=>{
     const check=()=>setIsMobile(window.innerWidth<768);
@@ -182,12 +184,21 @@ export default function MaandoverzichtPage() {
     return ()=>window.removeEventListener('resize',check);
   },[]);
 
+  useEffect(()=>{
+    const supabase=createClient();
+    supabase.auth.getUser().then(({data:{user}})=>{
+      if(!user) return;
+      supabase.from('transactions').select('*').eq('user_id',user.id).eq('type','correctie')
+        .then(({data,error})=>{ if(!error&&data) setCorrecties(data); });
+    });
+  },[]);
+
   const dagData=useMemo(()=>{
     const map={};
     bets.forEach(b=>{
       const d=new Date(b.datum);
       if(d.getFullYear()!==jaar||d.getMonth()!==maand) return;
-      if(!map[b.datum]) map[b.datum]={bets:[],pnl:0,gewonnen:0,verloren:0};
+      if(!map[b.datum]) map[b.datum]={bets:[],pnl:0,gewonnen:0,verloren:0,correctie:0};
       map[b.datum].bets.push(b);
       if(b.uitkomst!=='lopend'){
         map[b.datum].pnl+=berekenWinst(b.uitkomst,Number(b.odds),Number(b.inzet),b.markt,b.is_freebet);
@@ -195,8 +206,15 @@ export default function MaandoverzichtPage() {
         if(b.uitkomst==='verloren') map[b.datum].verloren++;
       }
     });
+    correcties.forEach(tx=>{
+      const d=new Date(tx.datum);
+      if(d.getFullYear()!==jaar||d.getMonth()!==maand) return;
+      if(!map[tx.datum]) map[tx.datum]={bets:[],pnl:0,gewonnen:0,verloren:0,correctie:0};
+      map[tx.datum].pnl+=Number(tx.amount);
+      map[tx.datum].correctie+=Number(tx.amount);
+    });
     return map;
-  },[bets,jaar,maand]);
+  },[bets,correcties,jaar,maand]);
 
   const maandStats=useMemo(()=>{
     const entries=Object.values(dagData);
@@ -290,7 +308,8 @@ export default function MaandoverzichtPage() {
             if(!cell) return <div key={`e${i}`} className="cal-empty-cell" style={{borderRight:i%7!==6?'1px solid var(--border-subtle)':'none',borderBottom:'1px solid var(--border-subtle)',minHeight:isMobile?54:80,backgroundColor:'var(--bg-subtle)',opacity:0.4}}/>;
             const {dag,key,data}=cell;
             const isToday = todayKey === key;
-            const hasBets = data && data.bets.length > 0;
+            const hasBets = data && (data.bets.length > 0 || data.correctie !== 0);
+            const canOpen = data && data.bets.length > 0;
             const pnl = data?.pnl ?? 0;
             const lopendInzet = data?.bets.filter(b=>b.uitkomst==='lopend').reduce((s,b)=>s+Number(b.inzet),0) ?? 0;
             const int = hasBets ? Math.min(Math.abs(pnl)/maxAbs,1) : 0;
@@ -306,8 +325,8 @@ export default function MaandoverzichtPage() {
                 data-pnl={hasBets ? (pnl > 0 ? 'win' : pnl < 0 ? 'loss' : 'neutral') : 'none'}
                 data-has-bets={hasBets ? 'true' : 'false'}
                 data-today={isToday ? 'true' : 'false'}
-                onClick={()=>hasBets&&setGeselecteerd(key)}
-                style={{borderRight:i%7!==6?'1px solid var(--border-subtle)':'none',borderBottom:'1px solid var(--border-subtle)',minHeight:isMobile?54:84,padding:isMobile?'6px 4px':'10px 12px',backgroundColor:bg,cursor:hasBets?'pointer':'default',transition:'background-color 0.1s',display:isMobile?'flex':'block',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:isMobile?'center':'left'}}
+                onClick={()=>canOpen&&setGeselecteerd(key)}
+                style={{borderRight:i%7!==6?'1px solid var(--border-subtle)':'none',borderBottom:'1px solid var(--border-subtle)',minHeight:isMobile?54:84,padding:isMobile?'6px 4px':'10px 12px',backgroundColor:bg,cursor:canOpen?'pointer':'default',transition:'background-color 0.1s',display:isMobile?'flex':'block',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:isMobile?'center':'left'}}
               >
                 {isMobile ? (
                   <>
@@ -330,7 +349,7 @@ export default function MaandoverzichtPage() {
                         <div className="cal-day-pnl" style={{fontSize:12.5,fontWeight:700,color:pnl!==0?pnlColor:'var(--text-3)',lineHeight:1.2}}>
                           {pnl!==0?fmtPnl(pnl):lopendInzet>0?`€${lopendInzet.toFixed(2)}`:'—'}
                         </div>
-                        <div className="cal-day-count" style={{fontSize:10.5,color:'var(--text-4)',marginTop:2}}>{data.bets.length} bet{data.bets.length!==1?'s':''}</div>
+                        <div className="cal-day-count" style={{fontSize:10.5,color:'var(--text-4)',marginTop:2}}>{data.bets.length>0?`${data.bets.length} bet${data.bets.length!==1?'s':''}`:'Correctie'}</div>
                       </>
                     )}
                   </>
