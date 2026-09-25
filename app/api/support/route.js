@@ -10,8 +10,8 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Alle velden zijn verplicht.' }, { status: 400 });
     }
 
-    const { error } = await resend.emails.send({
-      from: 'TrackMijnBets Support <onboarding@resend.dev>',
+    const mail = {
+      from: 'TrackMijnBets <info@trackmijnbets.nl>',
       to: 'lucas@mybuqo.com',
       replyTo: email,
       subject: `Support aanvraag van ${naam}`,
@@ -42,7 +42,15 @@ export async function POST(req) {
           </p>
         </div>
       `,
-    });
+    };
+
+    let { error } = await resend.emails.send(mail);
+
+    /* Terugval als het domein (nog) niet geverifieerd is in Resend */
+    if (error) {
+      console.error('Resend error (info@trackmijnbets.nl):', error);
+      ({ error } = await resend.emails.send({ ...mail, from: 'TrackMijnBets Support <onboarding@resend.dev>' }));
+    }
 
     if (error) {
       console.error('Resend error:', error);
