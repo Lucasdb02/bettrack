@@ -85,7 +85,7 @@ export default function CalculatorsPage() {
   const { dark } = useTheme();
 
   return (
-    <PaywallGate requiredPlan="pro" title="Ontgrendel alle Calculators" description="Bereken arbitrage, expected value, Kelly criterion, vig en meer met onze 6 professionele bettingcalculators.">
+    <PaywallGate requiredPlan="pro" title="Calculators zijn onderdeel van Pro" description="Bereken arbitrage, expected value, Kelly-inzet, vig en meer met 6 bettingcalculators.">
     <div style={{ padding: '24px' }} className="app-page">
       <div className="mb-6 page-header">
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-1)', marginBottom: 4 }}>Calculators</h1>

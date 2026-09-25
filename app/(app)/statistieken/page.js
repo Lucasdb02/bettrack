@@ -401,7 +401,7 @@ export default function StatistiekenPage() {
   const curveColor = curve.length > 0 && curve[curve.length - 1].pnl >= 0 ? '#00c951' : '#fb2b37';
 
   return (
-    <PaywallGate requiredPlan="pro" title="Ontgrendel Statistieken" description="Duik diep in je bettingdata met geavanceerde grafieken, sport- en bookmaker-analyses, en uitgebreide prestatie-inzichten.">
+    <PaywallGate requiredPlan="pro" title="Statistieken zijn onderdeel van Pro" description="Analyseer je bets per sport, bookmaker en periode met grafieken en uitgebreide prestatiecijfers.">
     <div style={{ padding: '24px' }} className="app-page">
 
       {/* Header */}

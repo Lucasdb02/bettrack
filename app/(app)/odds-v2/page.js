@@ -501,7 +501,7 @@ export default function OddsV2Page() {
   })).filter(l => l.fixtures.length > 0), [leagues, activeFilter, search]);
 
   return (
-    <PaywallGate requiredPlan="pro" title="Ontgrendel Odds Vergelijker" description="Vergelijk live odds van alle grote bookmakers en vind de beste waarde voor elke wedstrijd. Nooit meer een betere lijn missen.">
+    <PaywallGate requiredPlan="pro" title="De Odds Vergelijker is onderdeel van Pro" description="Vergelijk live odds van alle grote bookmakers en zie direct waar je de beste quotering krijgt.">
     <div className="app-page" style={{ padding: '40px 32px' }}>
       <style>{`
         @keyframes spin  { to { transform: rotate(360deg); } }

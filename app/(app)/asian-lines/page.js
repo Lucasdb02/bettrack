@@ -276,7 +276,7 @@ export default function AsianLinesPage() {
   ];
 
   return (
-    <PaywallGate requiredPlan="pro" title="Ontgrendel Asian Lines" description="Begrijp Asian Handicap en kwart-lijnen volledig met onze interactieve uitlegpagina en rekenvoorbeelden.">
+    <PaywallGate requiredPlan="pro" title="Asian Lines is onderdeel van Pro" description="Leer hoe Asian Handicap en kwartlijnen werken, met interactieve uitleg en rekenvoorbeelden.">
     <div style={{ padding: '24px 28px' }} className="app-page">
       <style>{`
         .ah-legend   { display: flex; }

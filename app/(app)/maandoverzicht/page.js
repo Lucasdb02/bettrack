@@ -267,7 +267,7 @@ export default function MaandoverzichtPage() {
   const todayKey = now.toISOString().split('T')[0];
 
   return (
-    <PaywallGate requiredPlan="pro" title="Ontgrendel Maandoverzicht" description="Bekijk je dagelijkse resultaten per maand in een overzichtelijke kalender. Analyseer trends en optimaliseer je strategie.">
+    <PaywallGate requiredPlan="pro" title="Maandoverzicht is onderdeel van Pro" description="Zie je resultaten per dag in een maandkalender en ontdek welke periodes je winst of verlies opleveren.">
     <div className="cal-page-wrap" style={{padding:'24px'}}>
       <div className="flex items-center justify-between mb-7 page-header">
         <div><h1 style={{fontSize:24,fontWeight:700,color:'var(--text-1)',marginBottom:4}}>Maandoverzicht</h1><p style={{fontSize:14,color:'var(--text-3)'}}>Dagelijkse analyse van je bettingresultaten</p></div>
