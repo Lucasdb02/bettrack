@@ -41,6 +41,24 @@ export function SubscriptionProvider({ children }) {
     async function load(session) {
       if (!session?.user) { setSub(s => ({ ...s, loading: false })); return; }
 
+      /* Terug van Stripe Checkout → abonnement direct ophalen i.p.v. op de webhook te wachten */
+      const params = new URLSearchParams(window.location.search);
+      const checkoutSessionId = params.get('session_id');
+      if (checkoutSessionId) {
+        try {
+          await fetch('/api/stripe/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ sessionId: checkoutSessionId }),
+          });
+        } catch (err) {
+          console.error('[subscription] sync mislukt', err);
+        }
+        params.delete('session_id');
+        const qs = params.toString();
+        window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
+      }
+
       const { data } = await supabase
         .from('subscriptions')
         .select('plan,status,interval,current_period_end,cancel_at_period_end')

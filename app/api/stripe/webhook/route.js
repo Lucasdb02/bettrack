@@ -1,4 +1,4 @@
-import { stripe, planFromPriceId } from '@/lib/stripe';
+import { stripe, planFromPriceId, syncCheckoutSession } from '@/lib/stripe';
 import { createAdminClient } from '@/lib/supabase-admin';
 
 export const dynamic = 'force-dynamic';
@@ -26,33 +26,7 @@ export async function POST(request) {
 
       /* Checkout afgerond → subscription koppelen */
       case 'checkout.session.completed': {
-        const session = event.data.object;
-        if (session.mode !== 'subscription') break;
-
-        const userId     = session.metadata?.supabase_user_id;
-        const customerId = session.customer;
-        const subId      = session.subscription;
-
-        if (!userId) break;
-
-        /* Haal price ID op uit de subscription */
-        const stripeSub = await stripe.subscriptions.retrieve(subId);
-        /* Opgezegd/verlopen abonnement (bv. duplicaat of vertraagde retry) niet over het huidige heen zetten */
-        if (['canceled', 'incomplete_expired'].includes(stripeSub.status)) break;
-        const priceId   = stripeSub.items.data[0]?.price?.id;
-        const plan      = planFromPriceId(priceId);
-
-        await admin.from('subscriptions').upsert({
-          user_id:                 userId,
-          stripe_customer_id:      customerId,
-          stripe_subscription_id:  subId,
-          plan,
-          status:                  stripeSub.status,
-          interval:                stripeSub.items.data[0]?.plan?.interval,
-          current_period_end:      new Date(stripeSub.current_period_end * 1000).toISOString(),
-          cancel_at_period_end:    stripeSub.cancel_at_period_end,
-          updated_at:              new Date().toISOString(),
-        }, { onConflict: 'user_id' });
+        await syncCheckoutSession(event.data.object, admin);
         break;
       }
 

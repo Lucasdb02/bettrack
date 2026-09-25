@@ -63,7 +63,7 @@ export async function POST(request) {
         metadata: { supabase_user_id: user.id },
       },
       metadata: { supabase_user_id: user.id },
-      success_url: `${appUrl}/dashboard?payment=success`,
+      success_url: `${appUrl}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${appUrl}/pricing`,
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
