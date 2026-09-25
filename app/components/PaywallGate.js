@@ -1,19 +1,32 @@
 'use client';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { useSubscription } from '../context/SubscriptionContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function PaywallGate({ requiredPlan = 'pro', title, description, children }) {
   const { plan, status, loading } = useSubscription();
   const { dark } = useTheme();
-
-  if (loading) return children;
+  const rootRef = useRef(null);
 
   const hasAccess = requiredPlan === 'elite'
     ? plan === 'elite' && status !== 'canceled'
     : (plan === 'pro' || plan === 'elite') && status !== 'canceled';
+  const locked = !loading && !hasAccess;
 
-  if (hasAccess) return children;
+  /* Geen toegang → pagina naar boven en scrollen uitzetten (window én de scrollende <main>) */
+  useEffect(() => {
+    if (!locked) return;
+    const main = rootRef.current?.closest('main');
+    const targets = [document.documentElement, document.body, main].filter(Boolean);
+    const prev = targets.map(el => el.style.overflow);
+    window.scrollTo(0, 0);
+    if (main) main.scrollTop = 0;
+    targets.forEach(el => { el.style.overflow = 'hidden'; });
+    return () => targets.forEach((el, i) => { el.style.overflow = prev[i]; });
+  }, [locked]);
+
+  if (!locked) return children;
 
   const planLabel = requiredPlan === 'elite' ? 'Elite' : 'Pro';
   const accent    = requiredPlan === 'elite' ? '#a855f7' : '#5469d4';
@@ -23,9 +36,9 @@ export default function PaywallGate({ requiredPlan = 'pro', title, description, 
   const overlayBg = dark ? 'rgba(10,12,20,0.55)' : 'rgba(245,247,250,0.6)';
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div ref={rootRef} style={{ position: 'relative', height: '100dvh', overflow: 'hidden' }}>
       {/* Geblurde preview van de pagina */}
-      <div aria-hidden style={{ filter: 'blur(8px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5, minHeight: 480 }}>
+      <div aria-hidden style={{ filter: 'blur(8px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5 }}>
         {children}
       </div>
 
