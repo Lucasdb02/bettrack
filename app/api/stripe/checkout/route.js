@@ -42,6 +42,17 @@ export async function POST(request) {
       }, { onConflict: 'user_id' });
     }
 
+    /* Heeft de klant al een lopend abonnement? Stuur naar de portal i.p.v. een tweede aanmaken */
+    const existing = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 10 });
+    const hasRunning = existing.data.some(s => ['trialing', 'active', 'past_due', 'incomplete'].includes(s.status));
+    if (hasRunning) {
+      const portalSession = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${appUrl}/pricing`,
+      });
+      return Response.json({ url: portalSession.url });
+    }
+
     /* Maak Stripe Checkout Session aan */
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
