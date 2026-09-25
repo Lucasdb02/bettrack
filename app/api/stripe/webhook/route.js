@@ -37,6 +37,8 @@ export async function POST(request) {
 
         /* Haal price ID op uit de subscription */
         const stripeSub = await stripe.subscriptions.retrieve(subId);
+        /* Opgezegd/verlopen abonnement (bv. duplicaat of vertraagde retry) niet over het huidige heen zetten */
+        if (['canceled', 'incomplete_expired'].includes(stripeSub.status)) break;
         const priceId   = stripeSub.items.data[0]?.price?.id;
         const plan      = planFromPriceId(priceId);
 
