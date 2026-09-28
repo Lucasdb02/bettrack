@@ -24,7 +24,7 @@ export default function HubPage({ path, crumb, title, intro, items, tag }) {
         },
       ]} />
       <SiteHeader />
-      <main className="seo-wrap seo-prose" style={{ maxWidth: 1100 }}>
+      <main className="seo-wrap seo-prose">
         <nav className="seo-crumbs" aria-label="Kruimelpad">
           <Link href="/">Home</Link><span>/</span><span>{crumb}</span>
         </nav>

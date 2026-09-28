@@ -14,8 +14,8 @@ export const metadata = {
 };
 
 const GROUPS = [
-  { title: 'Gidsen', items: ARTICLES, base: '/gidsen' },
-  { title: 'Gratis calculators', items: TOOLS, base: '/tools' },
+  { title: 'Gidsen', items: ARTICLES, base: '/gidsen', tag: 'Gids' },
+  { title: 'Gratis calculators', items: TOOLS, base: '/tools', tag: 'Gratis tool' },
 ];
 
 export default function GidsenPage() {
@@ -30,7 +30,7 @@ export default function GidsenPage() {
         ],
       }} />
       <SiteHeader />
-      <main className="seo-wrap seo-prose" style={{ maxWidth: 1100 }}>
+      <main className="seo-wrap seo-prose">
         <nav className="seo-crumbs" aria-label="Kruimelpad">
           <Link href="/">Home</Link><span>/</span><span>Gidsen</span>
         </nav>
@@ -46,6 +46,7 @@ export default function GidsenPage() {
               {group.items.map(g => (
                 <Link key={g.slug} href={`${group.base}/${g.slug}`} className="seo-card">
                   <TileIcon href={`${group.base}/${g.slug}`} />
+                  <span>{group.tag}</span>
                   <h3>{g.name}</h3>
                   <p>{g.description}</p>
                 </Link>
