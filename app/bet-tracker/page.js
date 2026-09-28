@@ -3,7 +3,7 @@ import { SPORT_PAGES } from '@/lib/sport-pages';
 
 export const metadata = {
   title: 'Bet tracker per sport',
-  description: 'Houd je bets bij per sport: voetbal, tennis, basketbal, darts, Formule 1 en wielrennen. Zie per sport en markt waar je winst maakt.',
+  description: 'Houd je bets bij per sport: voetbal, tennis, basketbal, hockey, darts, Formule 1, wielrennen, snooker, American football en baseball.',
   alternates: { canonical: '/bet-tracker' },
 };
 

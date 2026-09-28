@@ -3,7 +3,7 @@ import { BOOKMAKER_PAGES } from '@/lib/bookmaker-pages';
 
 export const metadata = {
   title: 'Bets bijhouden per bookmaker',
-  description: 'Houd je bets bij per bookmaker: TOTO, BetCity, bet365, Unibet, Jack\'s, BetMGM, Circus en LeoVegas. Zie je winst en saldo per bookmaker.',
+  description: 'Houd je bets bij per bookmaker, van TOTO, BetCity en bet365 tot Unibet, Holland Casino Online en 16 andere. Zie je winst en saldo per bookmaker.',
   alternates: { canonical: '/bookmaker' },
 };
 

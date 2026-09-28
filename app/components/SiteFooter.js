@@ -23,7 +23,7 @@ const COLUMNS = [
   {
     title: 'Bet tracker',
     links: [
-      ...SPORT_PAGES.map(p => ({ href: `/bet-tracker/${p.slug}`, label: p.sport })),
+      ...SPORT_PAGES.slice(0, 6).map(p => ({ href: `/bet-tracker/${p.slug}`, label: p.sport })),
       { href: '/bet-tracker', label: 'Alle sporten' },
     ],
   },
