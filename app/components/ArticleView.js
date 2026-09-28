@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import JsonLd from './JsonLd';
+import TileIcon from './TileIcon';
 import FaqSection from './FaqSection';
 import { SITE } from '@/lib/site';
 
@@ -89,6 +90,7 @@ export default function ArticleView({ article, path, crumbs, badge, cta, related
             <div className="seo-cards">
               {related.map(r => (
                 <Link key={r.href} href={r.href} className="seo-card">
+                  <TileIcon href={r.href} />
                   {r.tag && <span>{r.tag}</span>}
                   <h3>{r.name}</h3>
                   <p>{r.description}</p>

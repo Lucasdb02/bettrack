@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import JsonLd from '../components/JsonLd';
+import TileIcon from '../components/TileIcon';
 import { FEATURES } from '@/lib/features';
 import { SITE } from '@/lib/site';
 
@@ -36,6 +37,7 @@ export default function FunctiesPage() {
         <div className="seo-cards">
           {FEATURES.map(f => (
             <Link key={f.slug} href={`/functies/${f.slug}`} className="seo-card">
+              <TileIcon href={`/functies/${f.slug}`} />
               <span>{f.plan === 'Gratis' ? 'Gratis' : 'Pro'}</span>
               <h2>{f.name}</h2>
               <p>{f.description}</p>

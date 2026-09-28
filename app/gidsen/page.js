@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import JsonLd from '../components/JsonLd';
+import TileIcon from '../components/TileIcon';
 import { ARTICLES, TOOLS } from '@/lib/guides';
 import { SITE } from '@/lib/site';
 
@@ -44,6 +45,7 @@ export default function GidsenPage() {
             <div className="seo-cards" style={{ marginTop: 12 }}>
               {group.items.map(g => (
                 <Link key={g.slug} href={`${group.base}/${g.slug}`} className="seo-card">
+                  <TileIcon href={`${group.base}/${g.slug}`} />
                   <h3>{g.name}</h3>
                   <p>{g.description}</p>
                 </Link>

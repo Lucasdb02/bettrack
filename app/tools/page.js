@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import JsonLd from '../components/JsonLd';
+import TileIcon from '../components/TileIcon';
 import { TOOLS } from '@/lib/guides';
 import { SITE } from '@/lib/site';
 
@@ -42,6 +43,7 @@ export default function ToolsPage() {
         <div className="seo-cards">
           {TOOLS.map(t => (
             <Link key={t.slug} href={`/tools/${t.slug}`} className="seo-card">
+              <TileIcon href={`/tools/${t.slug}`} />
               <span>Gratis tool</span>
               <h2>{t.name}</h2>
               <p>{t.description}</p>
