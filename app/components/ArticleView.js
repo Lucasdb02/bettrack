@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import JsonLd from './JsonLd';
+import FaqSection from './FaqSection';
 import { SITE } from '@/lib/site';
 
 /* Gedeelde weergave voor functie-artikelen en gidsen.
@@ -71,19 +72,7 @@ export default function ArticleView({ article, path, crumbs, badge, cta, related
             </section>
           ))}
 
-          {article.faq?.length > 0 && (
-            <section>
-              <h2>Veelgestelde vragen</h2>
-              <div className="seo-faq">
-                {article.faq.map(q => (
-                  <details key={q.q}>
-                    <summary>{q.q}</summary>
-                    <p>{q.a}</p>
-                  </details>
-                ))}
-              </div>
-            </section>
-          )}
+          <FaqSection items={article.faq} />
 
           {cta && (
             <div className="seo-cta">

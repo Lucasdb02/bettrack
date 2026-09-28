@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import JsonLd from '../components/JsonLd';
+import FaqSection from '../components/FaqSection';
 import { LP_PLANS } from '@/lib/plans';
 import { SITE } from '@/lib/site';
 
@@ -82,17 +83,7 @@ export default function PrijzenPage() {
           ))}
         </div>
 
-        <section style={{ maxWidth: 760 }}>
-          <h2>Veelgestelde vragen over de prijzen</h2>
-          <div className="seo-faq">
-            {PRICE_FAQ.map(q => (
-              <details key={q.q}>
-                <summary>{q.q}</summary>
-                <p>{q.a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+        <FaqSection items={PRICE_FAQ} title="Veelgestelde vragen over de prijzen" />
       </main>
       <SiteFooter />
     </div>
