@@ -34,7 +34,7 @@ export default function HubPage({ path, crumb, title, intro, items, tag }) {
           {items.map(it => (
             <Link key={it.href} href={it.href} className="seo-card">
               {tag && <span>{tag}</span>}
-              <h2>{it.name}</h2>
+              <h2 className={it.icon ? 'seo-card-title' : undefined}>{it.icon}{it.name}</h2>
               <p>{it.description}</p>
             </Link>
           ))}

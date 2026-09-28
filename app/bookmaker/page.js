@@ -1,4 +1,5 @@
 import HubPage from '../components/HubPage';
+import BookmakerIcon from '../components/BookmakerIcon';
 import { BOOKMAKER_PAGES } from '@/lib/bookmaker-pages';
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default function BookmakerHub() {
       crumb="Bookmakers"
       title="Bets bijhouden per bookmaker"
       intro="Wed je bij meerdere bookmakers? Met TrackMijnBets zie je per bookmaker je winst, ROI en saldo. Kies je bookmaker en lees hoe je je bets daar bijhoudt."
-      items={BOOKMAKER_PAGES.map(b => ({ href: `/bookmaker/${b.slug}`, name: b.name, description: b.description }))}
+      items={BOOKMAKER_PAGES.map(b => ({ href: `/bookmaker/${b.slug}`, name: b.name, description: b.description, icon: <BookmakerIcon naam={b.name} size={20} /> }))}
     />
   );
 }
