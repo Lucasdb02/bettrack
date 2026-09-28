@@ -953,5 +953,11 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .faq-icon { font-size: 22px; line-height: 1; color: rgba(255,255,255,0.5); flex-shrink: 0; user-select: none; }
 .faq-item.is-open .faq-icon { font-size: 20px; }
 .seo-prose .faq-answer { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.5); margin: -8px 0 0; padding: 0 24px 20px; }
-.seo-card .tile-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 10px; margin-bottom: 16px; letter-spacing: 0; text-transform: none; }
-.seo-card .tile-icon + span { display: block; }
+/* Tegel met icoon: icoon links, label + titel ernaast, beschrijving eronder over de volle breedte */
+.seo-card:has(> .tile-icon) { display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; align-items: center; align-content: start; }
+.seo-card .tile-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 10px; margin: 0; letter-spacing: 0; text-transform: none; grid-row: 1 / span 2; }
+.seo-card:not(:has(> span:not(.tile-icon))) > .tile-icon { grid-row: 1; }
+.seo-card > .tile-icon + span { margin: 0; align-self: end; }
+.seo-card:has(> .tile-icon) > h2, .seo-card:has(> .tile-icon) > h3 { margin: 0; align-self: center; }
+.seo-card > .tile-icon + span + h2, .seo-card > .tile-icon + span + h3 { align-self: start; margin-top: 2px; }
+.seo-card:has(> .tile-icon) > p { grid-column: 1 / -1; margin-top: 14px; }
