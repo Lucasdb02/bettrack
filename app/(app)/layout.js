@@ -5,6 +5,10 @@ import { SubscriptionProvider } from "../context/SubscriptionContext";
 import { AppShell } from "../components/AppShell";
 import AppMain from "../components/AppMain";
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default function AppLayout({ children }) {
   return (
     <PreferencesProvider>
