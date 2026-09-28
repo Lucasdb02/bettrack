@@ -961,3 +961,8 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .seo-card:has(> .tile-icon) > h2, .seo-card:has(> .tile-icon) > h3 { margin: 0; align-self: center; }
 .seo-card > .tile-icon + span + h2, .seo-card > .tile-icon + span + h3 { align-self: start; margin-top: 2px; }
 .seo-card:has(> .tile-icon) > p { grid-column: 1 / -1; margin-top: 14px; }
+
+/* Taalwissel: pagina kort verbergen tot de Engelse vertaling is toegepast */
+html.i18n-pending body { opacity: 0; }
+.lang-toggle { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; line-height: 1; flex-shrink: 0; transition: background .15s; }
+.lang-toggle:hover { background: rgba(255,255,255,0.12); }

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LangToggle from './LangToggle';
 
 export default function SiteHeader() {
   return (
@@ -18,6 +19,7 @@ export default function SiteHeader() {
           <Link href="/gidsen" className="site-header-link">Gidsen</Link>
           <Link href="/prijzen" className="site-header-link">Prijzen</Link>
           <Link href="/login" className="site-header-link">Inloggen</Link>
+          <LangToggle />
           <Link href="/signup" style={{ background: '#5469d4', color: '#fff', fontSize: 13.5, fontWeight: 600, padding: '8px 14px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap' }}>Gratis starten</Link>
         </nav>
       </div>

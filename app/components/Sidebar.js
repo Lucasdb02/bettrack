@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage, langFlag, langSwitchLabel } from '../context/LanguageContext';
 import { createClient } from '../../lib/supabase';
 import { useBets, berekenWinst } from '../context/BetsContext';
 
@@ -146,6 +147,7 @@ const drawerNav = [
 export default function Sidebar() {
   const pathname = usePathname();
   const { dark, toggle } = useTheme();
+  const { lang, toggleLang } = useLanguage();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { bets } = useBets();
   const [dbBookmakers, setDbBookmakers] = useState([]);
@@ -328,6 +330,33 @@ export default function Sidebar() {
             )}
           </span>
           {dark ? 'Lichte modus' : 'Donkere modus'}
+        </button>
+
+        {/* Taal */}
+        <button
+          onClick={toggleLang}
+          data-no-translate
+          title={langSwitchLabel(lang)}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 9,
+            padding: '7px 10px', borderRadius: 7, marginBottom: 6,
+            background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
+            color: 'var(--text-2)', fontSize: 13, fontWeight: 400,
+            transition: 'all 0.18s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.07)' : '#e2e8f0';
+            e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.12)' : '#cbd5e1';
+            e.currentTarget.style.color = dark ? '#e0e0e0' : '#334155';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = 'transparent';
+            e.currentTarget.style.color = 'var(--text-2)';
+          }}
+        >
+          <span style={{ fontSize: 15, lineHeight: 1, width: 16, textAlign: 'center', flexShrink: 0 }}>{langFlag(lang)}</span>
+          {langSwitchLabel(lang)}
         </button>
 
         {/* Abonnement */}
@@ -540,6 +569,14 @@ export default function Sidebar() {
                 )}
               </span>
               {dark ? 'Lichte modus' : 'Donkere modus'}
+            </button>
+            <button
+              onClick={toggleLang}
+              data-no-translate
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 7, marginBottom: 4, background: 'transparent', border: '1px solid transparent', cursor: 'pointer', color: '#888888', fontSize: 13, WebkitTapHighlightColor: 'transparent' }}
+            >
+              <span style={{ fontSize: 15, lineHeight: 1, width: 16, textAlign: 'center' }}>{langFlag(lang)}</span>
+              {langSwitchLabel(lang)}
             </button>
             <button
               onClick={handleLogout}

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase';
 import SiteFooter from './components/SiteFooter';
 import { FAQS } from '@/lib/faqs';
 import { LP_PLANS } from '@/lib/plans';
+import { useLanguage, langFlag, langSwitchLabel } from './context/LanguageContext';
 
 /* ── Landing page theme context ── */
 const LpTheme = createContext({ dark: true, setDark: () => {} });
@@ -47,6 +48,7 @@ function lightenColor(hex, factor = 0.22) {
 /* ── Sticky header ── */
 function Header() {
   const { dark, setDark } = useLp();
+  const { lang, toggleLang } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -175,6 +177,11 @@ function Header() {
               onMouseEnter={(e) => { e.currentTarget.style.background = iconBgHover; e.currentTarget.style.color = iconColorHover; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = iconBg; e.currentTarget.style.color = iconColor; }}
             >{dark ? <SunIcon/> : <MoonIcon/>}</button>
+            <button onClick={toggleLang} title={langSwitchLabel(lang)} aria-label={langSwitchLabel(lang)} data-no-translate
+              style={{ width: 34, height: 34, borderRadius: 8, border: iconBorder, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, lineHeight: 1, transition: 'all 0.15s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = iconBgHover; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = iconBg; }}
+            >{langFlag(lang)}</button>
 
             {user ? (
               <>
@@ -267,6 +274,14 @@ function Header() {
           >
             {dark ? <SunIcon/> : <MoonIcon/>}
             {dark ? 'Lichte modus' : 'Donkere modus'}
+          </button>
+          <button onClick={toggleLang} data-no-translate
+            style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: textNav, fontSize: 14, fontWeight: 500, padding: '10px 12px', borderRadius: 10, transition: 'background 0.12s' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = navHoverBg}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+          >
+            <span style={{ fontSize: 16, lineHeight: 1 }}>{langFlag(lang)}</span>
+            {langSwitchLabel(lang)}
           </button>
 
           {user ? (
