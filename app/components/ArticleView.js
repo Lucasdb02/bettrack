@@ -8,7 +8,7 @@ import { SITE } from '@/lib/site';
 
 /* Gedeelde weergave voor functie-artikelen en gidsen.
    crumbs: [{ href, label }] zonder Home; de laatste is de huidige pagina. */
-export default function ArticleView({ article, path, crumbs, badge, cta, related = [], children, softwareApp }) {
+export default function ArticleView({ article, path, crumbs, badge, badgeAside, cta, related = [], children, softwareApp }) {
   const url = `${SITE.url}${path}`;
   const allCrumbs = [{ href: '/', label: 'Home' }, ...crumbs];
 
@@ -59,7 +59,12 @@ export default function ArticleView({ article, path, crumbs, badge, cta, related
         </nav>
 
         <article className="seo-prose">
-          {badge && <span className="seo-badge">{badge}</span>}
+          {badge && badgeAside ? (
+            <div className="seo-badges">
+              <span className="seo-badge">{badge}</span>
+              {badgeAside}
+            </div>
+          ) : badge && <span className="seo-badge">{badge}</span>}
           <h1>{article.title}</h1>
           <p className="seo-intro">{article.intro}</p>
           {children}

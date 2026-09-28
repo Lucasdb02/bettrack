@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import ArticleView from '../../components/ArticleView';
+import BookmakerIcon from '../../components/BookmakerIcon';
 import { BOOKMAKER_PAGES, getBookmakerPage } from '@/lib/bookmaker-pages';
 import { getFeature } from '@/lib/features';
 import { SITE } from '@/lib/site';
@@ -40,15 +41,13 @@ export default async function BookmakerPage({ params }) {
       crumbs={[{ href: '/bookmaker', label: 'Bookmakers' }, { href: `/bookmaker/${b.slug}`, label: b.name }]}
       badge={`${b.name} bet tracker`}
       cta={{ title: `Houd je ${b.name} bets bij`, text: 'Gratis te starten. Importeer je bethistorie met een screenshot en zie direct je resultaat.' }}
-      related={related}
-    >
-      {b.logo && (
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', marginBottom: 8 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={b.logo} alt={`${b.name} logo`} width={28} height={28} style={{ borderRadius: 6, objectFit: 'contain', background: '#fff' }} />
-          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Onafhankelijke tracker, niet verbonden aan {b.name}</span>
-        </div>
+      badgeAside={(
+        <span className="seo-badge-note">
+          <BookmakerIcon naam={b.name} size={14} />
+          Onafhankelijke tracker, niet verbonden aan {b.name}
+        </span>
       )}
-    </ArticleView>
+      related={related}
+    />
   );
 }
