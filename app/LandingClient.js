@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts';
 import { createClient } from '@/lib/supabase';
 import SiteFooter from './components/SiteFooter';
 import { FAQS } from '@/lib/faqs';
+import { LP_PLANS } from '@/lib/plans';
 
 /* ── Landing page theme context ── */
 const LpTheme = createContext({ dark: true, setDark: () => {} });
@@ -1006,58 +1007,7 @@ const LP_PRICE_IDS = {
   elite_yearly:  'price_1TRyiSAFCw5K2LNNDsbFc4h1',
 };
 
-const LP_PLANS = [
-  {
-    id: 'gratis', naam: 'Gratis', sub: 'Voor casual bettors', maand: 0, jaar: 0,
-    cta: 'Gratis starten', ctaDisabled: false, populair: false,
-    features: [
-      { label: 'Dashboard overzicht', ok: true },
-      { label: 'Tot 30 bets per maand', ok: true },
-      { label: 'Basis statistieken (P&L, win rate)', ok: true },
-      { label: '1 bookmaker koppelen', ok: true },
-      { label: 'Handmatig bets invoeren', ok: true },
-      { label: 'Donkere & lichte modus', ok: true },
-      { label: 'AI betslip herkenning', ok: false },
-      { label: 'Chrome Extension', ok: false },
-      { label: 'Onbeperkte bets', ok: false },
-      { label: 'Alle calculators', ok: false },
-      { label: 'Maandoverzicht & kalender', ok: false },
-      { label: 'CSV / JSON export', ok: false },
-    ],
-  },
-  {
-    id: 'pro', naam: 'Pro', sub: 'Voor serieuze bettors', maand: 6.99, jaar: 5.59,
-    cta: 'Start 7 dagen gratis', ctaDisabled: false, populair: true,
-    features: [
-      { label: 'Alles van Gratis', ok: true },
-      { label: 'Onbeperkte bets', ok: true },
-      { label: 'Onbeperkte bookmakers', ok: true },
-      { label: 'Volledig statistieken dashboard', ok: true },
-      { label: 'AI betslip herkenning', ok: true },
-      { label: 'Chrome Extension', ok: true },
-      { label: 'Maandoverzicht & kalender', ok: true },
-      { label: 'Alle calculators (6 tools)', ok: true },
-      { label: 'Asian Lines overzicht', ok: true },
-      { label: 'Odds Vergelijker', ok: true },
-      { label: 'CSV & JSON export', ok: true },
-      { label: 'E-mail support', ok: true },
-    ],
-  },
-  {
-    id: 'elite', naam: 'Elite', sub: 'Voor professionele bettors', maand: 12.99, jaar: 10.39,
-    cta: 'Start 7 dagen gratis', ctaDisabled: false, populair: false,
-    features: [
-      { label: 'Alles van Pro', ok: true },
-      { label: 'Priority support (< 4 uur)', ok: true },
-      { label: 'Vroege toegang tot nieuwe functies', ok: true },
-      { label: 'Geavanceerde analytische rapporten', ok: true },
-      { label: 'Meerdere gebruikersprofielen', ok: true },
-      { label: 'API-toegang (bèta)', ok: true },
-      { label: 'Persoonlijk onboarding gesprek', ok: true },
-      { label: 'Dedicated accountmanager', ok: true },
-    ],
-  },
-];
+
 
 function LpCheck({ ok, dark }) {
   if (ok) return (

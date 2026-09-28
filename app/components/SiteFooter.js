@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FEATURES } from '@/lib/features';
+import { GUIDES } from '@/lib/guides';
 import { SITE } from '@/lib/site';
 
 const COLUMNS = [
@@ -8,16 +9,24 @@ const COLUMNS = [
     links: FEATURES.slice(0, 6).map(f => ({ href: `/functies/${f.slug}`, label: f.name })),
   },
   {
-    title: 'Tools & uitleg',
+    title: 'Tools',
     links: [
       ...FEATURES.slice(6).map(f => ({ href: `/functies/${f.slug}`, label: f.name })),
       { href: '/functies', label: 'Alle functies' },
     ],
   },
   {
+    title: 'Gidsen',
+    links: [
+      ...GUIDES.filter(g => g.category === 'Gids').map(g => ({ href: `/gidsen/${g.slug}`, label: g.name })),
+      ...GUIDES.filter(g => g.category === 'Calculator').slice(0, 3).map(g => ({ href: `/gidsen/${g.slug}`, label: g.name })),
+      { href: '/gidsen', label: 'Alle gidsen' },
+    ],
+  },
+  {
     title: 'TrackMijnBets',
     links: [
-      { href: '/#prijzen', label: 'Prijzen' },
+      { href: '/prijzen', label: 'Prijzen' },
       { href: '/#hoe-het-werkt', label: 'Hoe het werkt' },
       { href: '/signup', label: 'Gratis account' },
       { href: '/login', label: 'Inloggen' },

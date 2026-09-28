@@ -14,7 +14,8 @@ export default function SiteHeader() {
         </Link>
         <nav style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Link href="/functies" className="site-header-link">Functies</Link>
-          <Link href="/#prijzen" className="site-header-link">Prijzen</Link>
+          <Link href="/gidsen" className="site-header-link">Gidsen</Link>
+          <Link href="/prijzen" className="site-header-link">Prijzen</Link>
           <Link href="/login" className="site-header-link">Inloggen</Link>
           <Link href="/signup" style={{ background: '#5469d4', color: '#fff', fontSize: 13.5, fontWeight: 600, padding: '8px 14px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap' }}>Gratis starten</Link>
         </nav>
