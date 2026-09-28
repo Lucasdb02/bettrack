@@ -2,19 +2,19 @@ import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import JsonLd from '../components/JsonLd';
-import { GUIDES } from '@/lib/guides';
+import { ARTICLES, TOOLS } from '@/lib/guides';
 import { SITE } from '@/lib/site';
 
 export const metadata = {
-  title: 'Gidsen en calculators voor sportwedden',
+  title: 'Gidsen over sportwedden',
   description: 'Praktische gidsen over sportwedden: bets bijhouden, value betting en bankroll management, plus uitleg van de arbitrage, Kelly, EV, vig, odds en dutching calculators.',
   alternates: { canonical: '/gidsen' },
   openGraph: { url: `${SITE.url}/gidsen`, title: 'Gidsen en calculators voor sportwedden' },
 };
 
 const GROUPS = [
-  { title: 'Gidsen', category: 'Gids' },
-  { title: 'Calculators uitgelegd', category: 'Calculator' },
+  { title: 'Gidsen', items: ARTICLES, base: '/gidsen' },
+  { title: 'Gratis calculators', items: TOOLS, base: '/tools' },
 ];
 
 export default function GidsenPage() {
@@ -39,11 +39,11 @@ export default function GidsenPage() {
         </p>
 
         {GROUPS.map(group => (
-          <section key={group.category}>
+          <section key={group.title}>
             <h2>{group.title}</h2>
             <div className="seo-cards" style={{ marginTop: 12 }}>
-              {GUIDES.filter(g => g.category === group.category).map(g => (
-                <Link key={g.slug} href={`/gidsen/${g.slug}`} className="seo-card">
+              {group.items.map(g => (
+                <Link key={g.slug} href={`${group.base}/${g.slug}`} className="seo-card">
                   <h3>{g.name}</h3>
                   <p>{g.description}</p>
                 </Link>

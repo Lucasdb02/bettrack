@@ -12,7 +12,7 @@ export default function LegalPage({ title, updated, children }) {
         </nav>
         <article className="seo-prose">
           <h1>{title}</h1>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)' }}>Laatst bijgewerkt: {updated}</p>
+          {updated && <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)' }}>Laatst bijgewerkt: {updated}</p>}
           {children}
         </article>
       </main>

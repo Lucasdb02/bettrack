@@ -1,9 +1,20 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
+/* Gebruikersinvoer veilig in de HTML-mail zetten */
+const esc = (v) => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 export async function POST(req) {
   try {
-    const { naam, email, bericht } = await req.json();
+    const body = await req.json();
+    /* Spamval: bots vullen het verborgen veld 'website' in */
+    if (body.website) return NextResponse.json({ ok: true });
+    const naam = esc(body.naam || '').slice(0, 200);
+    const email = String(body.email || '').trim().slice(0, 200);
+    const bericht = esc(body.bericht || '').slice(0, 5000);
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: 'Ongeldig e-mailadres.' }, { status: 400 });
+    }
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     if (!naam || !email || !bericht) {
@@ -28,7 +39,7 @@ export async function POST(req) {
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #64748b;">E-mail</td>
-              <td style="padding: 6px 0;"><a href="mailto:${email}" style="color: #6366f1;">${email}</a></td>
+              <td style="padding: 6px 0;"><a href="mailto:${esc(email)}" style="color: #6366f1;">${esc(email)}</a></td>
             </tr>
           </table>
 
@@ -38,7 +49,7 @@ export async function POST(req) {
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-wrap;">${bericht}</div>
 
           <p style="font-size: 12px; color: #94a3b8; margin-top: 24px;">
-            Stuur een reply naar dit e-mailadres om direct te antwoorden: ${email}
+            Stuur een reply naar dit e-mailadres om direct te antwoorden: ${esc(email)}
           </p>
         </div>
       `,

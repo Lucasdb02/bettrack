@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import ArticleView from '../../components/ArticleView';
 import { FEATURES, getFeature } from '@/lib/features';
-import { GUIDES } from '@/lib/guides';
+import { GUIDES, guideHref } from '@/lib/guides';
 import { SITE } from '@/lib/site';
 
 export const dynamicParams = false;
@@ -30,7 +30,7 @@ export default async function FeaturePage({ params }) {
 
   const related = [
     ...f.related.map(getFeature).filter(Boolean).map(r => ({ href: `/functies/${r.slug}`, name: r.name, description: r.description, tag: 'Functie' })),
-    ...GUIDES.filter(g => g.relatedFeatures.includes(f.slug)).slice(0, 3).map(g => ({ href: `/gidsen/${g.slug}`, name: g.name, description: g.description, tag: g.category })),
+    ...GUIDES.filter(g => g.relatedFeatures.includes(f.slug)).slice(0, 3).map(g => ({ href: guideHref(g), name: g.name, description: g.description, tag: g.category === 'Calculator' ? 'Tool' : 'Gids' })),
   ];
 
   const price = SITE.pricing.proMonthly.toFixed(2).replace('.', ',');

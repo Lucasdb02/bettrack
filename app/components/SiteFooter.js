@@ -1,25 +1,44 @@
 import Link from 'next/link';
 import { FEATURES } from '@/lib/features';
-import { GUIDES } from '@/lib/guides';
+import { TOOLS, ARTICLES } from '@/lib/guides';
+import { SPORT_PAGES } from '@/lib/sport-pages';
+import { BOOKMAKER_PAGES } from '@/lib/bookmaker-pages';
 import { SITE } from '@/lib/site';
 
 const COLUMNS = [
   {
     title: 'Functies',
-    links: FEATURES.slice(0, 6).map(f => ({ href: `/functies/${f.slug}`, label: f.name })),
-  },
-  {
-    title: 'Tools',
     links: [
-      ...FEATURES.slice(6).map(f => ({ href: `/functies/${f.slug}`, label: f.name })),
+      ...FEATURES.slice(0, 7).map(f => ({ href: `/functies/${f.slug}`, label: f.name })),
       { href: '/functies', label: 'Alle functies' },
     ],
   },
   {
-    title: 'Gidsen',
+    title: 'Gratis tools',
     links: [
-      ...GUIDES.filter(g => g.category === 'Gids').map(g => ({ href: `/gidsen/${g.slug}`, label: g.name })),
-      ...GUIDES.filter(g => g.category === 'Calculator').slice(0, 3).map(g => ({ href: `/gidsen/${g.slug}`, label: g.name })),
+      ...TOOLS.map(t => ({ href: `/tools/${t.slug}`, label: t.name })),
+      { href: '/tools', label: 'Alle tools' },
+    ],
+  },
+  {
+    title: 'Bet tracker',
+    links: [
+      ...SPORT_PAGES.map(p => ({ href: `/bet-tracker/${p.slug}`, label: p.sport })),
+      { href: '/bet-tracker', label: 'Alle sporten' },
+    ],
+  },
+  {
+    title: 'Bookmakers',
+    links: [
+      ...BOOKMAKER_PAGES.slice(0, 7).map(b => ({ href: `/bookmaker/${b.slug}`, label: b.name })),
+      { href: '/bookmaker', label: 'Alle bookmakers' },
+    ],
+  },
+  {
+    title: 'Leren',
+    links: [
+      ...ARTICLES.map(g => ({ href: `/gidsen/${g.slug}`, label: g.name })),
+      { href: '/functies/asian-handicap-uitleg', label: 'Asian handicap uitleg' },
       { href: '/gidsen', label: 'Alle gidsen' },
     ],
   },
@@ -27,17 +46,12 @@ const COLUMNS = [
     title: 'TrackMijnBets',
     links: [
       { href: '/prijzen', label: 'Prijzen' },
-      { href: '/#hoe-het-werkt', label: 'Hoe het werkt' },
+      { href: '/over-ons', label: 'Over ons' },
+      { href: '/contact', label: 'Contact' },
       { href: '/signup', label: 'Gratis account' },
       { href: '/login', label: 'Inloggen' },
-    ],
-  },
-  {
-    title: 'Juridisch',
-    links: [
       { href: '/privacy', label: 'Privacybeleid' },
-      { href: '/voorwaarden', label: 'Algemene voorwaarden' },
-      { href: `mailto:${SITE.email}`, label: SITE.email },
+      { href: '/voorwaarden', label: 'Voorwaarden' },
     ],
   },
 ];

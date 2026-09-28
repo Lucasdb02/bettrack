@@ -6,7 +6,7 @@ import { SITE } from '@/lib/site';
 
 /* Gedeelde weergave voor functie-artikelen en gidsen.
    crumbs: [{ href, label }] zonder Home; de laatste is de huidige pagina. */
-export default function ArticleView({ article, path, crumbs, badge, cta, related = [] }) {
+export default function ArticleView({ article, path, crumbs, badge, cta, related = [], children, softwareApp }) {
   const url = `${SITE.url}${path}`;
   const allCrumbs = [{ href: '/', label: 'Home' }, ...crumbs];
 
@@ -26,6 +26,16 @@ export default function ArticleView({ article, path, crumbs, badge, cta, related
       '@type': 'BreadcrumbList',
       itemListElement: allCrumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.label, item: `${SITE.url}${c.href === '/' ? '' : c.href}` })),
     },
+    ...(softwareApp ? [{
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: softwareApp.name,
+      url: softwareApp.url,
+      applicationCategory: 'FinanceApplication',
+      operatingSystem: 'Web',
+      inLanguage: 'nl-NL',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    }] : []),
     ...(article.faq?.length ? [{
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
@@ -50,6 +60,7 @@ export default function ArticleView({ article, path, crumbs, badge, cta, related
           {badge && <span className="seo-badge">{badge}</span>}
           <h1>{article.title}</h1>
           <p className="seo-intro">{article.intro}</p>
+          {children}
 
           {article.sections.map(s => (
             <section key={s.h2}>

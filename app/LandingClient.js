@@ -106,7 +106,8 @@ function Header() {
   const NAV_ITEMS = [
     { label: 'Functies',       id: 'functies' },
     { label: 'Hoe het werkt',  id: 'hoe-het-werkt' },
-    { label: 'Analyse',        id: 'analyse' },
+    { label: 'Tools',          href: '/tools' },
+    { label: 'Gidsen',         href: '/gidsen' },
     { label: 'Prijzen',        id: 'prijzen' },
   ];
 
@@ -159,7 +160,7 @@ function Header() {
           {/* Nav — desktop only */}
           <nav className="lp-nav-links" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
             {NAV_ITEMS.map((item) => (
-              <a key={item.id} href={`#${item.id}`} onClick={(e) => { e.preventDefault(); scrollTo(item.id); }}
+              <a key={item.label} href={item.href || `#${item.id}`} onClick={(e) => { if (item.href) return; e.preventDefault(); scrollTo(item.id); }}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'none', color: textNav, fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 7, transition: 'all 0.15s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = navHoverColor; e.currentTarget.style.background = navHoverBg; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = textNav; e.currentTarget.style.background = 'none'; }}
@@ -245,8 +246,8 @@ function Header() {
       }}>
         {/* Nav items */}
         {NAV_ITEMS.map((item) => (
-          <button key={item.id}
-            onClick={() => { scrollTo(item.id); setMenuOpen(false); }}
+          <button key={item.label}
+            onClick={() => { if (item.href) { window.location.href = item.href; return; } scrollTo(item.id); setMenuOpen(false); }}
             style={{ display: 'flex', width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', color: textPrimary, fontSize: 15, fontWeight: 500, padding: '11px 12px', borderRadius: 10, transition: 'background 0.12s' }}
             onMouseEnter={(e) => e.currentTarget.style.background = navHoverBg}
             onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
