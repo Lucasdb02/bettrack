@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Inter+Display:opsz,wght@40..140,100..900&family=Caveat:wght@500..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Inter+Display:opsz,wght@40..140,100..900&family=Caveat:wght@400..700&display=swap');
 @import "tailwindcss";
 
 @font-face {
@@ -1027,7 +1027,7 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 @media (max-width: 768px) {
   .hiw { padding: 64px 0 72px !important; }
   .hiw-title { font-size: 34px !important; }
-  .hiw-hand { font-size: 24px !important; }
+  .hiw-hand { font-size: 24px !important; line-height: 32px !important; }
   .hiw-hand-arrow { display: none; }
 }
 
