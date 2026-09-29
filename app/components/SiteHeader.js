@@ -21,7 +21,8 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
 
   useEffect(() => {
     const fn = () => { setScrolled(window.scrollY > 20); };
-    window.addEventListener('scroll', fn);
+    fn(); // ook goed bij laden halverwege de pagina
+    window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
 

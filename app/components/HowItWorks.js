@@ -1,5 +1,6 @@
 'use client';
 import { useRef } from 'react';
+import BookmakerIcon from './BookmakerIcon';
 
 /* "Hoe het werkt" op de homepage: grote kop met gemarkeerde woorden, handgeschreven hint
    en een versleepbare tijdlijn met stapkaarten (elk met een mini-mockup van de app). */
@@ -64,9 +65,9 @@ function MockBookmakers({ dark }) {
   return (
     <div style={{ fontSize: 9.5, color: m.text }}>
       <div style={{ fontWeight: 600, marginBottom: 6 }}>Mijn bookmakers</div>
-      {[['#16a34a', 'TOTO', '€ 312,40'], ['#0ea5e9', 'BetCity', '€ 148,00'], ['#15803d', 'bet365', '€ 96,75'], ['#dc2626', "Jack's", '€ 55,20']].map(([c, n, s]) => (
+      {[['TOTO', '€ 312,40'], ['BetCity', '€ 148,00'], ['bet365', '€ 96,75'], ["Jack's", '€ 55,20']].map(([n, s]) => (
         <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 7, border: `1px solid ${m.line}`, background: m.field, borderRadius: 5, padding: '5px 7px', marginBottom: 4 }}>
-          <span style={{ width: 12, height: 12, borderRadius: 3, background: c }} />
+          <BookmakerIcon naam={n} size={12} />
           <span style={{ flex: 1, fontWeight: 500 }}>{n}</span>
           <b>{s}</b>
         </div>
@@ -212,18 +213,21 @@ export default function HowItWorks({ dark = true }) {
         <p style={{ fontSize: 17, color: text2, marginTop: 22 }}>
           AI-import, handmatig invoeren, al je bookmakers, statistieken en je maandoverzicht, allemaal in TrackMijnBets.
         </p>
-        <div aria-hidden style={{ display: 'inline-flex', alignItems: 'flex-end', gap: 10, marginTop: 30, fontFamily: 'Tempting, cursive', fontSize: 26, color: text1, transform: 'rotate(-2deg)' }}>
-          <span>
-            <span style={{ position: 'relative', display: 'inline-block' }}>
-              Sleep
-              <svg viewBox="0 0 70 8" preserveAspectRatio="none" style={{ position: 'absolute', left: -2, right: -2, bottom: -4, width: 'calc(100% + 4px)', height: 8 }}>
-                <path d="M2 5 C 18 1, 40 8, 68 3" fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" />
-              </svg>
-            </span>{' '}om de tijdlijn te verkennen
-          </span>
-          <svg width="44" height="30" viewBox="0 0 44 30" fill="none" stroke={text1} strokeWidth="1.6" strokeLinecap="round" style={{ marginBottom: -8 }}>
-            <path d="M2 6 C 16 0, 34 4, 38 22" /><path d="M32 17 L38 23 L42 15" />
-          </svg>
+        <div aria-hidden style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+          <div style={{ position: 'relative', display: 'inline-block', transform: 'rotate(-2deg)' }}>
+            <span className="hiw-hand" style={{ fontFamily: "'Caveat', cursive", fontWeight: 600, fontSize: 30, lineHeight: 1, color: text1 }}>
+              <span style={{ position: 'relative', display: 'inline-block' }}>
+                Sleep om
+                <svg viewBox="0 0 90 12" preserveAspectRatio="none" style={{ position: 'absolute', left: 0, bottom: -7, width: '100%', height: 10 }}>
+                  <path d="M2 8 C 22 3, 50 3, 88 6" fill="none" stroke="#22c55e" strokeWidth="3.5" strokeLinecap="round" />
+                </svg>
+              </span>{' '}de tijdlijn te verkennen
+            </span>
+            <svg viewBox="0 0 90 60" fill="none" stroke={text1} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="hiw-hand-arrow" style={{ position: 'absolute', right: -96, top: '50%', width: 90, height: 48, transform: 'translateY(-50%)' }}>
+              <path d="M4 14 C 30 2, 62 6, 78 36" />
+              <path d="M70 32 L78 38 L82 28" />
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -242,7 +246,7 @@ export default function HowItWorks({ dark = true }) {
           {STEPS.map((s, i) => {
             const Mock = s.mock;
             return (
-              <li key={s.title} style={{ position: 'relative', width: 250, flexShrink: 0, transform: `translateY(${s.offset}px)`, background: cardBg, border: `1px solid ${cardBd}`, borderRadius: 16, padding: 16, boxShadow: dark ? '0 10px 30px rgba(0,0,0,0.35)' : '0 6px 24px rgba(15,23,42,0.06)' }}>
+              <li key={s.title} style={{ position: 'relative', width: 250, height: 364, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0, transform: `translateY(${s.offset}px)`, background: cardBg, border: `1px solid ${cardBd}`, borderRadius: 16, padding: 16, boxShadow: dark ? '0 10px 30px rgba(0,0,0,0.35)' : '0 6px 24px rgba(15,23,42,0.06)' }}>
                 <Icon d={s.icon} dark={dark} />
                 <div style={{ marginTop: 12, height: 150, overflow: 'hidden', borderRadius: 10, background: mockBg, padding: '10px 10px 0', WebkitMaskImage: 'linear-gradient(180deg, #000 78%, transparent)', maskImage: 'linear-gradient(180deg, #000 78%, transparent)' }}>
                   <Mock dark={dark} />
