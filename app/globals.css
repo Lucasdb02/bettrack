@@ -966,6 +966,62 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .seo-card > .tile-icon + span + h2, .seo-card > .tile-icon + span + h3 { align-self: start; margin-top: 2px; }
 .seo-card:has(> .tile-icon) > p { grid-column: 1 / -1; margin-top: 14px; }
 
+/* Sportpagina's (/bet-tracker/[slug]) */
+.sport-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 40px; align-items: start; }
+.sport-main > section { margin-top: 56px; }
+.sport-main h2 { margin-top: 0; }
+.sport-hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+.sport-hero-emoji { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); font-size: 22px; line-height: 1; }
+.sport-pill { font-size: 12px; color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.12); border-radius: 99px; padding: 4px 10px; }
+.sport-pill.is-strong { font-weight: 700; color: #a5b8f5; background: rgba(84,105,212,0.15); border-color: rgba(84,105,212,0.35); }
+.sport-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.sport-btn-ghost { display: inline-block; font-weight: 600; font-size: 15px; padding: 10px 18px; border-radius: 9px; text-decoration: none; color: #fff !important; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); }
+.sport-btn-ghost:hover { background: rgba(255,255,255,0.08); }
+.seo-prose .sport-lead { font-size: 15px; color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+.sport-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sport-tile { padding: 18px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
+.sport-tile.is-metric { border-style: dashed; }
+.seo-prose .sport-tile h3 { display: flex; align-items: center; gap: 10px; font-size: 15px; margin: 0 0 8px; }
+.sport-tile h3 span { font-size: 18px; line-height: 1; }
+.seo-prose .sport-tile p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.6); margin: 0; }
+.sport-steps { padding: 28px; border-radius: 16px; background: linear-gradient(135deg, rgba(84,105,212,0.16), rgba(84,105,212,0.04)); border: 1px solid rgba(84,105,212,0.3); }
+.seo-prose .sport-steps ol { list-style: none; padding: 0; margin: 20px 0 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.seo-prose .sport-steps li { margin: 0; }
+.sport-step-head { display: flex; align-items: center; gap: 8px; font-size: 18px; }
+.sport-step-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: #04111f; font-size: 13px; font-weight: 800; }
+.seo-prose .sport-steps h3 { font-size: 15px; margin: 12px 0 6px; }
+.seo-prose .sport-steps p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.6); margin: 0; }
+.sport-tips { display: flex; flex-direction: column; gap: 12px; }
+.sport-tip { padding: 20px 22px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
+.seo-prose .sport-tip h3 { font-size: 16px; margin: 0 0 8px; }
+.seo-prose .sport-tip p { font-size: 15px; margin: 0; }
+.sport-cta { text-align: center; margin-top: 64px; }
+.sport-cta .sport-hero-emoji { margin-bottom: 12px; }
+.sport-side { display: flex; flex-direction: column; gap: 10px; }
+.sport-box { display: block; padding: 18px; border-radius: 14px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.1); text-decoration: none; }
+.sport-box-link:hover { border-color: rgba(84,105,212,0.5); }
+.sport-box-link span { font-size: 13px; font-weight: 600; color: #8ea4f5; }
+.sport-box-title { font-size: 15px; font-weight: 700; color: #fff; margin: 10px 0 6px; }
+.sport-box-link .sport-box-title { margin-top: 0; }
+.sport-box-text { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,0.55); margin: 0 0 12px; }
+.sport-perks { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.75); }
+.sport-btn-block { display: block; text-align: center; font-size: 14px; }
+.sport-side-title { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 14px 0 2px; }
+.sport-links { display: flex; flex-direction: column; gap: 6px; }
+.sport-links a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); font-size: 13.5px; font-weight: 600; text-decoration: none; }
+.sport-links a:hover { border-color: rgba(84,105,212,0.5); background: rgba(84,105,212,0.07); }
+.sport-links a i { margin-left: auto; font-style: normal; color: rgba(255,255,255,0.35); }
+.sport-links a.is-all { background: none; border-color: transparent; color: rgba(255,255,255,0.5); font-weight: 500; }
+.sport-card-emoji { font-size: 22px; line-height: 1; }
+@media (max-width: 900px) {
+  .sport-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .sport-grid { grid-template-columns: 1fr; }
+  .seo-prose .sport-steps ol { grid-template-columns: 1fr; }
+  .sport-steps { padding: 20px; }
+}
+
 /* Taalwissel: pagina kort verbergen tot de Engelse vertaling is toegepast */
 html.i18n-pending body { opacity: 0; }
 .lang-toggle { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; line-height: 1; flex-shrink: 0; transition: background .15s; }
