@@ -5,6 +5,13 @@ import { SPORT_PAGES } from '@/lib/sport-pages';
 import { BOOKMAKER_PAGES } from '@/lib/bookmaker-pages';
 import { SITE } from '@/lib/site';
 
+/* Kortere namen in de footer dan de volledige tool-/gidsnaam */
+const SHORT_LABELS = {
+  'bookmaker-marge-berekenen': 'Bookmakermarge',
+  'hoe-houd-je-je-bets-bij': 'Bets bijhouden',
+  'bankroll-management': 'Bankroll',
+};
+
 const COLUMNS = [
   {
     title: 'Functies',
@@ -16,7 +23,7 @@ const COLUMNS = [
   {
     title: 'Gratis tools',
     links: [
-      ...TOOLS.map(t => ({ href: `/tools/${t.slug}`, label: t.name })),
+      ...TOOLS.map(t => ({ href: `/tools/${t.slug}`, label: SHORT_LABELS[t.slug] || t.name })),
       { href: '/tools', label: 'Alle tools' },
     ],
   },
@@ -37,8 +44,8 @@ const COLUMNS = [
   {
     title: 'Leren',
     links: [
-      ...ARTICLES.map(g => ({ href: `/gidsen/${g.slug}`, label: g.name })),
-      { href: '/functies/asian-handicap-uitleg', label: 'Asian handicap uitleg' },
+      ...ARTICLES.map(g => ({ href: `/gidsen/${g.slug}`, label: SHORT_LABELS[g.slug] || g.name })),
+      { href: '/functies/asian-handicap-uitleg', label: 'Asian handicap' },
       { href: '/gidsen', label: 'Alle gidsen' },
     ],
   },
