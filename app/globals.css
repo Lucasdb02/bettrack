@@ -996,7 +996,8 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .sport-cta .sport-hero-emoji { margin-bottom: 12px; }
 .sport-title { display: flex; align-items: center; gap: 14px; }
 .sport-title span { font-size: 0.9em; line-height: 1; }
-.sport-side { position: sticky; top: 84px; max-height: calc(100vh - 104px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
+.sport-side { position: sticky; top: 84px; max-height: calc(100vh - 104px); overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; gap: 10px; }
+.sport-side::-webkit-scrollbar { display: none; }
 .sport-box { display: block; padding: 18px; border-radius: 14px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.1); text-decoration: none; }
 .sport-box-link:hover { border-color: rgba(84,105,212,0.5); }
 .sport-box-link span { font-size: 13px; font-weight: 600; color: #8ea4f5; }
