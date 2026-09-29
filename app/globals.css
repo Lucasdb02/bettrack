@@ -992,7 +992,7 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .sport-tip { padding: 20px 22px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
 .seo-prose .sport-tip h3 { font-size: 16px; margin: 0 0 8px; }
 .seo-prose .sport-tip p { font-size: 15px; margin: 0; }
-.sport-cta { text-align: center; margin-top: 64px; }
+.sport-cta { text-align: center; margin-top: 64px; margin-bottom: 0; }
 .sport-cta .sport-hero-emoji { margin-bottom: 12px; }
 .sport-title { display: flex; align-items: center; gap: 14px; }
 .sport-title span { font-size: 0.9em; line-height: 1; }
