@@ -1022,6 +1022,13 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
   .sport-steps { padding: 20px; }
 }
 
+/* Homepage: Hoe het werkt (versleepbare tijdlijn) */
+.hiw-track::-webkit-scrollbar { display: none; }
+@media (max-width: 768px) {
+  .hiw { padding: 64px 0 72px !important; }
+  .hiw-title { font-size: 34px !important; }
+}
+
 /* Taalwissel: pagina kort verbergen tot de Engelse vertaling is toegepast */
 html.i18n-pending body { opacity: 0; }
 .lang-toggle { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; line-height: 1; flex-shrink: 0; transition: background .15s; }
