@@ -996,8 +996,9 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .sport-cta .sport-hero-emoji { margin-bottom: 12px; }
 .sport-title { display: flex; align-items: center; gap: 14px; }
 .sport-title span { font-size: 0.9em; line-height: 1; }
-.sport-side { position: sticky; top: 84px; max-height: calc(100vh - 104px); overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; gap: 10px; }
-.sport-side::-webkit-scrollbar { display: none; }
+/* Zijbalk staat onderaan de grid en plakt aan de onderkant van het scherm: hij scrollt eerst mee,
+   blijft dan staan en eindigt gelijk met de hoofdkolom */
+.sport-side { position: sticky; bottom: 24px; align-self: end; display: flex; flex-direction: column; gap: 10px; }
 .sport-box { display: block; padding: 18px; border-radius: 14px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.1); text-decoration: none; }
 .sport-box-link:hover { border-color: rgba(84,105,212,0.5); }
 .sport-box-link span { font-size: 13px; font-weight: 600; color: #8ea4f5; }
@@ -1013,7 +1014,7 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .sport-card-emoji { font-size: 22px; line-height: 1; }
 @media (max-width: 900px) {
   .sport-layout { grid-template-columns: 1fr; }
-  .sport-side { position: static; max-height: none; overflow: visible; }
+  .sport-side { position: static; align-self: start; }
 }
 @media (max-width: 640px) {
   .sport-grid { grid-template-columns: 1fr; }
