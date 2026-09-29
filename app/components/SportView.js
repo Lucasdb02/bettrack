@@ -17,7 +17,6 @@ const STEPS = [
   { emoji: '🔍', title: 'Vind je voorsprong', text: 'Zie op welke markten je winst maakt en waar je verliest, zodat je meer doet van wat werkt.' },
 ];
 
-const PERKS = ['Alle markten op één plek', 'ROI per markt en tag', 'Alle bookmakers in één overzicht', 'Bets importeren met een screenshot'];
 
 export default function SportView({ sport: s }) {
   const path = `/bet-tracker/${s.slug}`;
@@ -65,15 +64,10 @@ export default function SportView({ sport: s }) {
         <div className="sport-layout">
           <article className="seo-prose sport-main">
             <header>
-              <div className="sport-hero-meta">
-                <span className="sport-hero-emoji" aria-hidden>{s.emoji}</span>
-                <span className="sport-pill is-strong">{s.season}</span>
-                <span className="sport-pill">{s.seasonNote}</span>
-              </div>
-              <h1>{s.title}</h1>
+              <h1 className="sport-title"><span aria-hidden>{s.emoji}</span>{s.title}</h1>
               <p className="seo-intro">{s.intro}</p>
               <div className="sport-actions">
-                <Link href="/signup" className="seo-btn">Gratis beginnen →</Link>
+                <Link href="/signup" className="seo-btn">Gratis beginnen</Link>
                 <Link href="/functies/bets-importeren-met-ai" className="sport-btn-ghost">📸 Importeren met een screenshot</Link>
               </div>
             </header>
@@ -115,7 +109,7 @@ export default function SportView({ sport: s }) {
                   </li>
                 ))}
               </ol>
-              <Link href="/signup" className="seo-btn">Houd je {lower}bets gratis bij →</Link>
+              <Link href="/signup" className="seo-btn">Houd je {lower}bets gratis bij</Link>
             </section>
 
             <section>
@@ -138,24 +132,14 @@ export default function SportView({ sport: s }) {
               <h2 style={{ marginTop: 0 }}>Klaar om je {lower}bets bij te houden?</h2>
               <p>Maak gratis een account aan, importeer je eerste bets met een screenshot en zie direct waar je winst maakt.</p>
               <div className="sport-actions" style={{ justifyContent: 'center' }}>
-                <Link href="/signup" className="seo-btn">Gratis account aanmaken →</Link>
+                <Link href="/signup" className="seo-btn">Gratis account aanmaken</Link>
                 <Link href="/tools" className="sport-btn-ghost">🧮 Gratis tools bekijken</Link>
               </div>
             </div>
           </article>
 
           <aside className="sport-side" aria-label="Meer">
-            <div className="sport-box">
-              <span className="sport-hero-emoji" aria-hidden>{s.emoji}</span>
-              <p className="sport-box-title">Gratis {lower} bet tracker</p>
-              <p className="sport-box-text">Leg elke bet vast, zie je echte ROI en ontdek waar je voorsprong zit.</p>
-              <ul className="sport-perks">
-                {PERKS.map(p => <li key={p}>✅ {p}</li>)}
-              </ul>
-              <Link href="/signup" className="seo-btn sport-btn-block">Gratis beginnen</Link>
-            </div>
-
-            <p className="sport-side-title">Andere sporten</p>
+            <p className="sport-side-title" style={{ marginTop: 0 }}>Andere sporten</p>
             <nav className="sport-links">
               {SPORT_PAGES.filter(x => x.slug !== s.slug).map(x => (
                 <Link key={x.slug} href={`/bet-tracker/${x.slug}`}><span aria-hidden>{x.emoji}</span>{x.name}<i aria-hidden>›</i></Link>
