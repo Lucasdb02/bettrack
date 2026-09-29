@@ -1,5 +1,5 @@
 'use client';
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import BookmakerIcon from './BookmakerIcon';
 
 /* "Hoe het werkt" op de homepage: grote kop met gemarkeerde woorden, handgeschreven hint
@@ -150,19 +150,19 @@ function MockEdge({ dark }) {
 }
 
 const STEPS = [
-  { title: 'Importeer met AI', text: 'Upload een screenshot van je betslip. De AI herkent wedstrijd, markt, odds en inzet en vult alles voor je in.', mock: MockImport, offset: 0,
+  { title: 'Importeer met AI', text: 'Upload een screenshot van je betslip. De AI herkent wedstrijd, markt, odds en inzet en vult alles voor je in.', mock: MockImport,
     icon: <><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z" /><path d="M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z" /></> },
-  { title: 'Of voer handmatig in', text: 'Sport, markt, selectie, odds en inzet in een paar seconden. Je ziet direct je mogelijke winst.', mock: MockForm, offset: 12,
+  { title: 'Of voer handmatig in', text: 'Sport, markt, selectie, odds en inzet in een paar seconden. Je ziet direct je mogelijke winst.', mock: MockForm,
     icon: <><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="12" y2="17" /></> },
-  { title: 'Al je bookmakers', text: 'Koppel al je bookmakers en zie per account je saldo, stortingen en opnames op één plek.', mock: MockBookmakers, offset: 12,
+  { title: 'Al je bookmakers', text: 'Koppel al je bookmakers en zie per account je saldo, stortingen en opnames op één plek.', mock: MockBookmakers,
     icon: <><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M16 12h2" /><path d="M3 10h18" /></> },
-  { title: 'Update met één klik', text: 'Is de wedstrijd klaar? Zet je bet op gewonnen of verloren en je winst of verlies wordt automatisch berekend.', mock: MockUpdate, offset: -8,
+  { title: 'Update met één klik', text: 'Is de wedstrijd klaar? Zet je bet op gewonnen of verloren en je winst of verlies wordt automatisch berekend.', mock: MockUpdate,
     icon: <><polyline points="20 6 9 17 4 12" /></> },
-  { title: 'Dashboard en statistieken', text: 'Winst, ROI en win rate in één oogopslag, met je resultaat over tijd in een grafiek.', mock: MockChart, offset: 6,
+  { title: 'Dashboard en statistieken', text: 'Winst, ROI en win rate in één oogopslag, met je resultaat over tijd in een grafiek.', mock: MockChart,
     icon: <><path d="M3 3v18h18" /><path d="M7 15l4-4 3 3 5-6" /></> },
-  { title: 'Maandoverzicht', text: 'Een kalender met je resultaat per dag. Zie in één blik je goede en slechte weken.', mock: MockCalendar, offset: 14,
+  { title: 'Maandoverzicht', text: 'Een kalender met je resultaat per dag. Zie in één blik je goede en slechte weken.', mock: MockCalendar,
     icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="3" y1="10" x2="21" y2="10" /></> },
-  { title: 'Vind je voorsprong', text: 'Zie per markt, sport en bookmaker waar je winst maakt en waar je verliest. Doe meer van wat werkt.', mock: MockEdge, offset: -4,
+  { title: 'Vind je voorsprong', text: 'Zie per markt, sport en bookmaker waar je winst maakt en waar je verliest. Doe meer van wat werkt.', mock: MockEdge,
     icon: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></> },
 ];
 
@@ -179,6 +179,7 @@ export default function HowItWorks({ dark = true }) {
   const pillFg = dark ? '#0b0f19' : '#fff';
   const cardBg = dark ? '#0d1a2e' : '#fff';
   const cardBd = dark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.07)';
+  const dash   = dark ? 'rgba(255,255,255,0.22)' : 'rgba(15,23,42,0.22)';
   const mockBg = dark ? 'rgba(255,255,255,0.02)' : '#fafbfc';
 
   const Pill = ({ children }) => (
@@ -240,13 +241,16 @@ export default function HowItWorks({ dark = true }) {
         onPointerLeave={onUp}
         style={{ marginTop: 56, overflowX: 'auto', overflowY: 'hidden', cursor: 'grab', userSelect: 'none', scrollbarWidth: 'none', WebkitMaskImage: 'linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%)', maskImage: 'linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%)' }}
       >
-        <ol style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 56, listStyle: 'none', margin: 0, padding: '28px max(24px, calc((100vw - 1240px) / 2))', width: 'max-content' }}>
-          {/* Tijdlijn */}
-          <li aria-hidden style={{ position: 'absolute', left: 0, right: 0, top: '50%', borderTop: `1.5px dashed ${dark ? 'rgba(255,255,255,0.14)' : 'rgba(15,23,42,0.18)'}` }} />
+        <ol style={{ position: 'relative', display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: '28px max(24px, calc((100vw - 1240px) / 2))', width: 'max-content' }}>
           {STEPS.map((s, i) => {
             const Mock = s.mock;
             return (
-              <li key={s.title} style={{ position: 'relative', width: 250, height: 364, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0, transform: `translateY(${s.offset}px)`, background: cardBg, border: `1px solid ${cardBd}`, borderRadius: 16, padding: 16, boxShadow: dark ? '0 10px 30px rgba(0,0,0,0.35)' : '0 6px 24px rgba(15,23,42,0.06)' }}>
+              <Fragment key={s.title}>
+              {i > 0 && (
+                /* Streepjeslijn alleen tussen de kaarten */
+                <li aria-hidden style={{ width: 56, height: 2, flexShrink: 0, backgroundImage: `repeating-linear-gradient(90deg, ${dash} 0 6px, transparent 6px 12px)` }} />
+              )}
+              <li style={{ position: 'relative', width: 250, height: 364, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0, background: cardBg, border: `1px solid ${cardBd}`, borderRadius: 16, padding: 16, boxShadow: dark ? '0 10px 30px rgba(0,0,0,0.35)' : '0 6px 24px rgba(15,23,42,0.06)' }}>
                 <Icon d={s.icon} dark={dark} />
                 <div style={{ marginTop: 12, height: 150, overflow: 'hidden', borderRadius: 10, background: mockBg, padding: '10px 10px 0', WebkitMaskImage: 'linear-gradient(180deg, #000 78%, transparent)', maskImage: 'linear-gradient(180deg, #000 78%, transparent)' }}>
                   <Mock dark={dark} />
@@ -254,6 +258,7 @@ export default function HowItWorks({ dark = true }) {
                 <h3 style={{ fontSize: 15.5, fontWeight: 700, color: text1, margin: '14px 0 6px', letterSpacing: '-0.01em' }}>{i + 1}. {s.title}</h3>
                 <p style={{ fontSize: 13, lineHeight: 1.6, color: text2, margin: 0 }}>{s.text}</p>
               </li>
+              </Fragment>
             );
           })}
         </ol>
