@@ -10,7 +10,7 @@ function scrollTo(id) {
 
 /* Header van de publieke site, gelijk aan die van de homepage: transparant bovenaan,
    bij scrollen een zwevende, vervaagde balk.
-   home: op de homepage scrollen Functies/Hoe het werkt/Prijzen naar de sectie;
+   home: op de homepage scrollen Hoe het werkt/Prijzen naar de sectie;
          elders zijn het gewone links en staat er een spacer onder de vaste header.
    onToggleTheme: alleen de homepage heeft een lichte modus, dus alleen daar de themaknop. */
 export default function SiteHeader({ home = false, dark = true, onToggleTheme }) {
@@ -69,7 +69,7 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
   const menuTop        = scrolled ? 80 : 72;
 
   const NAV_ITEMS = [
-    { label: 'Functies',       id: 'functies',      page: '/functies' },
+    { label: 'Functies',       href: '/functies' },
     { label: 'Hoe het werkt',  id: 'hoe-het-werkt', page: '/#hoe-het-werkt' },
     { label: 'Tools',          href: '/tools' },
     { label: 'Gidsen',         href: '/gidsen' },
@@ -92,7 +92,7 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
           pointerEvents: 'auto',
           display: 'flex', alignItems: 'center',
           width: '100%',
-          maxWidth: scrolled ? 920 : 1400,
+          maxWidth: scrolled ? 1060 : 1400, /* 1060 = breedte van de prijzenkaarten */
           height: scrolled ? 54 : 64,
           /* Liquid glass: grotendeels doorzichtig, sterke blur, effen vlak */
           background: scrolled

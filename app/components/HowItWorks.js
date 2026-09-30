@@ -248,7 +248,7 @@ export default function HowItWorks({ dark = true }) {
         onPointerLeave={onUp}
         style={{ marginTop: 56, overflowX: 'auto', overflowY: 'hidden', cursor: 'grab', userSelect: 'none', scrollbarWidth: 'none', WebkitMaskImage: 'linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%)', maskImage: 'linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%)' }}
       >
-        <ol style={{ position: 'relative', display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: '28px max(24px, calc((100vw - 1240px) / 2))', width: 'max-content' }}>
+        <ol style={{ position: 'relative', display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: '28px max(32px, calc((100vw - 1136px) / 2))', width: 'max-content' }}>
           {STEPS.map((s, i) => {
             const Mock = s.mock;
             return (
