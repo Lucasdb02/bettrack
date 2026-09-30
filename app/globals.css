@@ -1051,6 +1051,14 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
 .lp-hero-line { display: block; overflow: hidden; padding: 0.1em 0.05em; margin: -0.1em -0.05em; }
 /* Na de onthulling het masker weghalen, anders knipt het de schaduw van het icoon af */
 .lp-hero-line.is-revealed { overflow: visible; }
+/* Koptekst: dikgedrukte kernwoorden en een label (omgekeerde kleuren) om één woord */
+.lp-hero-strong { font-weight: 700; }
+.lp-hero-label {
+  display: inline-block; font-weight: 700; line-height: 1.05;
+  padding: 0 0.16em 0.04em; margin: 0 0.02em; border-radius: 0.14em;
+  background: #ffffff; color: #0a2540;
+}
+.lp-hero-label.is-light { background: #0f172a; color: #ffffff; }
 
 /* Homepage: Hoe het werkt (versleepbare tijdlijn) */
 .hiw-track::-webkit-scrollbar { display: none; }
