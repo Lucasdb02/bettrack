@@ -957,25 +957,29 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
 .calc-result.is-loss strong { color: #f87171; }
 .calc-note { font-size: 13px !important; color: rgba(255,255,255,0.5) !important; margin: 14px 0 0 !important; }
 
-/* FAQ-secties (FaqSection): één kaart met scheidingslijnen, geanimeerd met framer-motion */
-.faq-section { max-width: 720px; margin: 64px auto 0; }
-.faq-section .faq-title { font-size: clamp(28px, 4.5vw, 38px); font-weight: 800; color: #fff; text-align: center; letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 12px; }
-.faq-section .faq-subtitle { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.5); text-align: center; margin: 0 auto 40px; max-width: 460px; }
-.faq-list { background: #0b1728; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
-.faq-item + .faq-item { border-top: 1px solid rgba(255,255,255,0.07); }
-.faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: none; border: none; cursor: pointer; padding: 20px 24px; text-align: left; font: inherit; font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.78); transition: color .2s, background-color .2s; }
-.faq-question:hover, .faq-item.is-open .faq-question { color: #fff; }
-.faq-question:hover { background: rgba(255,255,255,0.02); }
-.faq-question:focus-visible { outline: 2px solid #5469d4; outline-offset: -2px; border-radius: 12px; }
-.faq-icon { position: relative; width: 14px; height: 14px; flex-shrink: 0; color: rgba(255,255,255,0.55); transition: color .2s; }
-.faq-item.is-open .faq-icon { color: #fff; }
-.faq-icon-bar { position: absolute; left: 0; top: 6px; width: 14px; height: 2px; border-radius: 2px; background: currentColor; }
+/* FAQ-secties (FaqSection): titel links, vragen als losse kaarten rechts; geanimeerd met framer-motion.
+   Twee kolommen zodra de sectie breed genoeg is (container query), anders onder elkaar. */
+.faq-section { margin: 64px auto 0; container-type: inline-size; }
+.faq-layout { display: grid; grid-template-columns: 1fr; gap: 28px; }
+@container (min-width: 820px) { .faq-layout { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 56px; align-items: start; } }
+.faq-section .faq-title { font-size: clamp(28px, 4vw, 36px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 16px; }
+.faq-section .faq-subtitle { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.55); margin: 0; max-width: 360px; }
+.faq-section .faq-subtitle a { color: #fff; font-weight: 600; text-decoration: none; }
+.faq-section .faq-subtitle a:hover { text-decoration: underline; }
+.faq-list { display: flex; flex-direction: column; gap: 12px; }
+.faq-item { background: #0b1728; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; transition: border-color .2s, box-shadow .2s; }
+.faq-item:hover, .faq-item.is-open { border-color: rgba(255,255,255,0.14); }
+.faq-question { width: 100%; display: flex; align-items: center; gap: 16px; background: none; border: none; cursor: pointer; padding: 22px 24px; text-align: left; font: inherit; font-size: 16px; font-weight: 600; color: #fff; }
+.faq-question:focus-visible { outline: 2px solid #5469d4; outline-offset: 2px; border-radius: 14px; }
+.faq-qicon { flex-shrink: 0; color: rgba(255,255,255,0.6); }
+.faq-qtext { flex: 1; }
+.faq-chevron { flex-shrink: 0; color: rgba(255,255,255,0.5); }
 .faq-answer-wrap { overflow: hidden; }
-.faq-section .faq-answer { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.55); margin: -6px 0 0; padding: 0 56px 22px 24px; }
-.lp-faq .faq-section { margin-top: 0; }
+.faq-section .faq-answer { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.6); margin: -6px 0 0; padding: 0 24px 22px 58px; }
+.lp-faq .faq-section { margin: 0 auto; max-width: 1060px; }
 @media (max-width: 560px) {
-  .faq-question { padding: 18px 18px; font-size: 15px; }
-  .faq-section .faq-answer { padding: 0 18px 20px; }
+  .faq-question { padding: 18px; gap: 12px; font-size: 15px; }
+  .faq-section .faq-answer { padding: 0 18px 20px 48px; }
 }
 /* Tegel met icoon: icoon links, label + titel ernaast, beschrijving eronder over de volle breedte */
 .seo-card:has(> .tile-icon) { display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; align-items: center; align-content: start; }
@@ -1159,17 +1163,16 @@ html[data-site-theme="light"] .calc-result.is-loss strong { color: #dc2626; }
 html[data-site-theme="light"] .calc-note { color: #64748b !important; }
 html[data-site-theme="light"] .calc-thanks { color: #0f172a !important; }
 
-html[data-site-theme="light"] .faq-section .faq-title { color: #0f172a; }
+html[data-site-theme="light"] .faq-section .faq-title,
+html[data-site-theme="light"] .faq-section .faq-subtitle a,
+html[data-site-theme="light"] .faq-question { color: #0f172a; }
 html[data-site-theme="light"] .faq-section .faq-subtitle,
 html[data-site-theme="light"] .faq-section .faq-answer { color: #64748b; }
-html[data-site-theme="light"] .faq-list { background: #ffffff; border-color: rgba(15,23,42,0.08); box-shadow: 0 6px 24px rgba(15,23,42,0.06); }
-html[data-site-theme="light"] .faq-item + .faq-item { border-top-color: rgba(15,23,42,0.07); }
-html[data-site-theme="light"] .faq-question { color: #334155; }
-html[data-site-theme="light"] .faq-question:hover,
-html[data-site-theme="light"] .faq-item.is-open .faq-question { color: #0f172a; }
-html[data-site-theme="light"] .faq-question:hover { background: #f8fafc; }
-html[data-site-theme="light"] .faq-icon { color: #94a3b8; }
-html[data-site-theme="light"] .faq-item.is-open .faq-icon { color: #0f172a; }
+html[data-site-theme="light"] .faq-item { background: #ffffff; border-color: rgba(15,23,42,0.09); box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+html[data-site-theme="light"] .faq-item:hover,
+html[data-site-theme="light"] .faq-item.is-open { border-color: rgba(15,23,42,0.16); box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+html[data-site-theme="light"] .faq-qicon { color: #334155; }
+html[data-site-theme="light"] .faq-chevron { color: #64748b; }
 
 html[data-site-theme="light"] .sport-hero-emoji { background: #f1f5f9; border-color: rgba(15,23,42,0.08); }
 html[data-site-theme="light"] .sport-btn-ghost { color: #0f172a !important; border-color: rgba(15,23,42,0.16); background: #ffffff; }
