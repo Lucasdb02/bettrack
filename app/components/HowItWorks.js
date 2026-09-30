@@ -216,7 +216,7 @@ export default function HowItWorks({ dark = true }) {
         </p>
         <div aria-hidden style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
           <div style={{ position: 'relative', display: 'inline-block', transform: 'rotate(-2deg)' }}>
-            <span className="hiw-hand" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontVariationSettings: "'opsz' 96", letterSpacing: '-0.01em', fontSize: 30, lineHeight: '36px', color: dark ? '#fcfcfc' : '#050505' }}>
+            <span className="hiw-hand" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontStyle: 'italic', fontVariationSettings: "'opsz' 96", letterSpacing: '-0.01em', fontSize: 30, lineHeight: '36px', color: dark ? '#fcfcfc' : '#050505' }}>
               <span style={{ position: 'relative', display: 'inline-block' }}>
                 Sleep om
                 <svg viewBox="0 0 90 12" preserveAspectRatio="none" style={{ position: 'absolute', left: 0, bottom: -7, width: '100%', height: 10 }}>
