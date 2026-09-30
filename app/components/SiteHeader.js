@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useLanguage, langFlag, langSwitchLabel } from '../context/LanguageContext';
 import { useSiteDark, setSiteTheme } from './useSiteTheme';
+import RollingText from './RollingText';
 
 function scrollTo(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -167,16 +168,16 @@ export default function SiteHeader({ home = false }) {
               </>
             ) : (
               <>
-                <Link href="/login"
+                <Link href="/login" className="roll-host"
                   style={{ color: loginColor, fontSize: 13.5, fontWeight: 500, textDecoration: 'none', padding: '8px 14px', borderRadius: 7, transition: 'all 0.15s', display: 'inline-flex', alignItems: 'center' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = loginHoverColor; e.currentTarget.style.background = loginHoverBg; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = loginColor; e.currentTarget.style.background = 'transparent'; }}
-                >Inloggen</Link>
-                <Link href="/signup"
+                ><RollingText text={lang === 'en' ? 'Log in' : 'Inloggen'} /></Link>
+                <Link href="/signup" className="roll-host"
                   style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 8, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                >Aanmelden</Link>
+                ><RollingText text={lang === 'en' ? 'Sign up' : 'Aanmelden'} /></Link>
               </>
             )}
           </div>
