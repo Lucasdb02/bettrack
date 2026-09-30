@@ -2,19 +2,13 @@
    in het midden schuiven. Elke kant is een eigen band met een dubbele lijst logo's,
    zodat de animatie naadloos doorloopt; in het midden verdwijnen ze onder het icoon. */
 
+import { BOOKMAKER_DOMAINS } from './BookmakerIcon';
+
+/* Namen zoals in BOOKMAKER_DOMAINS; het favicon komt van hetzelfde domein als in de app */
 const BOOKIES = [
-  { name: 'Unibet',    src: 'https://www.surebetnl.com/unibet.png' },
-  { name: 'bet365',    src: 'https://www.surebetnl.com/bet365.png' },
-  { name: 'TOTO',      src: 'https://www.surebetnl.com/toto.png' },
-  { name: 'BetCity',   src: 'https://www.surebetnl.com/betcity.png' },
-  { name: "Jack's",    src: 'https://www.surebetnl.com/jacks.png' },
-  { name: 'BetMGM',    src: 'https://www.surebetnl.com/betmgm.png' },
-  { name: 'Circus',    src: 'https://www.surebetnl.com/circus.png' },
-  { name: 'OneCasino', src: 'https://www.surebetnl.com/onecasino.png' },
-  { name: '711',       src: 'https://www.surebetnl.com/711.png' },
-  { name: 'Bingoal',   src: 'https://www.surebetnl.com/bingoal.png' },
-  { name: '888sport',  src: 'https://www.surebetnl.com/888sport.png' },
-];
+  'Unibet', 'bet365', 'TOTO', 'BetCity', "Jack's", 'BetMGM',
+  'Circus', 'One Casino', '711', 'Bingoal', '888',
+].map(name => ({ name, src: `https://www.google.com/s2/favicons?domain=${BOOKMAKER_DOMAINS[name]}&sz=128` }));
 
 /* Rechterkant begint halverwege de lijst, zodat links en rechts elkaar niet spiegelen */
 const LEFT = BOOKIES;
