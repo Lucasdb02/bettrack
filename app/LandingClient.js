@@ -301,7 +301,7 @@ function Testimonials() {
     <section style={{ backgroundColor: bg, padding: '96px 0', borderTop: `1px solid ${border}`, overflow: 'hidden', transition: 'background-color 0.3s ease' }}>
       <div style={{ textAlign: 'center', marginBottom: 60, padding: '0 32px' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#5469d4' }}/>
+          <div className="pulse-dot" style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#5469d4', '--dot-color': 'rgba(84,105,212,0.6)' }}/>
           <span style={{ fontSize: 13, color: text2, fontWeight: 500 }}>Wat bettors zeggen</span>
         </div>
         <h2 style={{ fontSize: 42, fontWeight: 800, color: text1, letterSpacing: '-0.03em', lineHeight: 1.15 }}>
