@@ -408,13 +408,14 @@ function AnalysePreview() {
 
 /* ── Final CTA ── */
 function FinalCTA() {
+  const { dark } = useLp();
   return (
-    <section className="lp-final-cta-section" style={{ background: 'linear-gradient(135deg, #0a2540 0%, #0d1f38 100%)', padding: '100px 32px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <section className="lp-final-cta-section" style={{ background: dark ? 'linear-gradient(135deg, #0a2540 0%, #0d1f38 100%)' : '#f1f5f9', padding: '100px 32px', textAlign: 'center', borderTop: dark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(15,23,42,0.06)', transition: 'background 0.3s ease' }}>
       <div style={{ maxWidth: 620, margin: '0 auto' }}>
-        <h2 className="lp-final-cta-title" style={{ fontSize: 42, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 18 }}>
+        <h2 className="lp-final-cta-title" style={{ fontSize: 42, fontWeight: 800, color: dark ? '#fff' : '#0f172a', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 18 }}>
           Klaar om slimmer te wedden?
         </h2>
-        <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.6)', marginBottom: 40, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 17, color: dark ? 'rgba(255,255,255,0.6)' : '#64748b', marginBottom: 40, lineHeight: 1.6 }}>
           Doe mee met 2.400+ bettors die TrackMijnBets gebruiken om hun resultaten te verbeteren. Begin vandaag, gratis.
         </p>
         <Link href="/signup" className="lp-final-cta-btn"
@@ -425,7 +426,7 @@ function FinalCTA() {
             <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
           </svg>
         </Link>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 16 }}>Geen creditcard nodig. Direct aan de slag.</p>
+        <p style={{ fontSize: 13, color: dark ? 'rgba(255,255,255,0.3)' : '#94a3b8', marginTop: 16 }}>Geen creditcard nodig. Direct aan de slag.</p>
       </div>
     </section>
   );
