@@ -956,7 +956,11 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
    Twee kolommen zodra de sectie breed genoeg is (container query), anders onder elkaar. */
 .faq-section { margin: 64px auto 0; container-type: inline-size; }
 .faq-layout { display: grid; grid-template-columns: 1fr; gap: 28px; }
-@container (min-width: 820px) { .faq-layout { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 56px; align-items: start; } }
+@container (min-width: 820px) {
+  .faq-layout { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 56px; align-items: start; }
+  /* Titel blijft onder de zwevende header staan terwijl de vragen doorscrollen */
+  .faq-intro { position: sticky; top: 104px; }
+}
 .faq-section .faq-title { font-size: clamp(28px, 4vw, 36px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 16px; }
 .faq-section .faq-subtitle { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.55); margin: 0; max-width: 360px; }
 .faq-section .faq-subtitle a { color: #fff; font-weight: 600; text-decoration: none; }
