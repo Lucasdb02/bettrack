@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts';
 import { createClient } from '@/lib/supabase';
 import SiteFooter from './components/SiteFooter';
 import { useSiteDark } from './components/useSiteTheme';
+import FaqSection from './components/FaqSection';
 import SiteHeader from './components/SiteHeader';
 import PricingSection from './components/PricingSection';
 import HowItWorks from './components/HowItWorks';
@@ -447,59 +448,9 @@ function FinalCTA() {
 
 function FAQ() {
   const { dark } = useLp();
-  const [open, setOpen] = useState(0);
-  const bg = dark ? '#060e1a' : '#f8fafc';
-  const text1 = dark ? '#fff' : '#0f172a';
-  const text2 = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
-  const cardBg = dark ? '#0d1a2e' : '#ffffff';
-  const cardBorder = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
-  const dashedBorder = dark ? '1px dashed rgba(255,255,255,0.18)' : '1px dashed #d1d5db';
-
   return (
-    <section style={{ backgroundColor: bg, padding: '88px 32px' }}>
-      <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <h2 style={{ fontSize: 38, fontWeight: 800, color: text1, textAlign: 'center', letterSpacing: '-0.03em', marginBottom: 12 }}>
-          Veelgestelde vragen
-        </h2>
-        <p style={{ fontSize: 15, color: text2, textAlign: 'center', marginBottom: 48 }}>
-          Heb je een vraag? Wij hebben het antwoord.
-        </p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {FAQS.map((faq, i) => {
-            const isOpen = open === i;
-            return (
-              <div
-                key={i}
-                onClick={() => setOpen(isOpen ? null : i)}
-                style={{
-                  backgroundColor: isOpen ? cardBg : 'transparent',
-                  border: isOpen ? `1px solid ${cardBorder}` : dashedBorder,
-                  borderRadius: isOpen ? 16 : 12,
-                  padding: '20px 24px',
-                  cursor: 'pointer',
-                  boxShadow: isOpen ? '0 2px 16px rgba(0,0,0,0.08)' : 'none',
-                  transition: 'border-radius 0.15s, background-color 0.15s',
-                }}
-                onMouseEnter={(e) => { if (!isOpen) e.currentTarget.style.backgroundColor = dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; }}
-                onMouseLeave={(e) => { if (!isOpen) e.currentTarget.style.backgroundColor = 'transparent'; }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-                  <span style={{ fontSize: 16, fontWeight: 700, color: text1 }}>{faq.v}</span>
-                  <span style={{ fontSize: isOpen ? 20 : 22, color: text2, flexShrink: 0, lineHeight: 1, userSelect: 'none' }}>
-                    {isOpen ? '×' : '+'}
-                  </span>
-                </div>
-                {isOpen && (
-                  <p style={{ fontSize: 15, color: text2, marginTop: 12, lineHeight: 1.65, marginBottom: 0 }}>
-                    {faq.a}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+    <section className="lp-faq" style={{ backgroundColor: dark ? '#060e1a' : '#f8fafc', padding: '88px 32px', transition: 'background-color 0.3s ease' }}>
+      <FaqSection items={FAQS.map(f => ({ q: f.v, a: f.a }))} />
     </section>
   );
 }
