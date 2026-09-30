@@ -455,8 +455,8 @@ export default function LandingPage() {
         <HowItWorks dark={dark} />
         <Testimonials />
         <TrustStats dark={dark} />
-        <BookmakerFlow dark={dark} />
         <PricingSection dark={dark} />
+        <BookmakerFlow dark={dark} />
         <FAQ />
         <FinalCTA />
         <SiteFooter />
