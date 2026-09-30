@@ -11,6 +11,7 @@ import SiteHeader from './components/SiteHeader';
 import PricingSection from './components/PricingSection';
 import HowItWorks from './components/HowItWorks';
 import TrustStats from './components/TrustStats';
+import BookmakerFlow from './components/BookmakerFlow';
 import { FAQS } from '@/lib/faqs';
 
 /* ── Landing page theme context ── */
@@ -47,7 +48,7 @@ function lightenColor(hex, factor = 0.22) {
 
 /* ── Hero ── */
 /* Hero-animatie: bij laden komen de koptekstregels van onder een masker omhoog en volgen
-   badge, tekst, knoppen, bookmakers en cijfers gestaffeld; bij scrollen gaat de tekst
+   badge, tekst, knoppen en cijfers gestaffeld; bij scrollen gaat de tekst
    sneller omhoog dan het dashboard (parallax). */
 const HERO_EASE = [0.22, 1, 0.36, 1];
 const heroStagger = { hidden: {}, show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } } };
@@ -144,47 +145,6 @@ function Hero() {
               style={{ background: dark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.08)', backdropFilter: 'blur(12px) saturate(1.6)', WebkitBackdropFilter: 'blur(12px) saturate(1.6)', border: dark ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(99,102,241,0.25)', color: dark ? 'rgba(255,255,255,0.9)' : '#4f46e5', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
             >Bekijk functies</Link>
           </motion.div>
-
-          {/* Bookmaker logo scroll */}
-          {(() => {
-            const BOOKIES = [
-              { name: 'Unibet',    src: 'https://www.surebetnl.com/unibet.png' },
-              { name: 'bet365',    src: 'https://www.surebetnl.com/bet365.png' },
-              { name: 'TOTO',      src: 'https://www.surebetnl.com/toto.png' },
-              { name: 'BetCity',   src: 'https://www.surebetnl.com/betcity.png' },
-              { name: "Jack's",    src: 'https://www.surebetnl.com/jacks.png' },
-              { name: 'BetMGM',    src: 'https://www.surebetnl.com/betmgm.png' },
-              { name: 'Circus',    src: 'https://www.surebetnl.com/circus.png' },
-              { name: 'OneCasino', src: 'https://www.surebetnl.com/onecasino.png' },
-              { name: '711',       src: 'https://www.surebetnl.com/711.png' },
-              { name: 'Bingoal',   src: 'https://www.surebetnl.com/bingoal.png' },
-              { name: '888sport',  src: 'https://www.surebetnl.com/888sport.png' },
-            ];
-            return (
-              <motion.div variants={heroItem} style={{ marginBottom: 40 }}>
-                <p style={{ fontSize: 11, color: dark ? 'rgba(255,255,255,0.25)' : '#c0cad6', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 14 }}>
-                  Ondersteunde bookmakers
-                </p>
-                <div style={{
-                  overflow: 'hidden',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
-                  maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, width: 'max-content', animation: 'bookie-scroll 26s linear infinite' }}>
-                    {[...BOOKIES, ...BOOKIES].map((b, i) => (
-                      <div key={i} style={{ height: 32, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                        <img
-                          src={b.src} alt={b.name}
-                          style={{ height: 32, width: 'auto', objectFit: 'contain', display: 'block' }}
-                          draggable={false}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })()}
 
           <motion.div variants={heroItem} className="lp-stats-row" style={{ display: 'flex', alignItems: 'center' }}>
             {[
@@ -495,6 +455,7 @@ export default function LandingPage() {
         <HowItWorks dark={dark} />
         <Testimonials />
         <TrustStats dark={dark} />
+        <BookmakerFlow dark={dark} />
         <PricingSection dark={dark} />
         <FAQ />
         <FinalCTA />

@@ -794,11 +794,6 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 /* ══════════════════════════════════════════════
    STATUS BREAKDOWN — Pulsing legend dots
    ══════════════════════════════════════════════ */
-@keyframes bookie-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
 @keyframes dot-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(84,105,212,0.6); }
   50%       { box-shadow: 0 0 0 5px rgba(84,105,212,0); }
@@ -1110,6 +1105,41 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
   .ts-big { padding: 22px 20px; }
   .ts-big-num { font-size: 28px; }
   .ts-badge { margin-top: 20px; }
+}
+
+/* Homepage: bookmakers die naar het TrackMijnBets-icoon schuiven (BookmakerFlow) */
+.bf { padding: 8px 32px 104px; background-color: var(--ts-bg); background-image: radial-gradient(var(--ts-dot-bg) 1px, transparent 1px); background-size: 22px 22px; transition: background-color .3s ease; overflow: hidden; }
+.ts-dark.bf { --bf-circle: #fff; --bf-ring: rgba(255,255,255,0.05); --bf-ring-bd: rgba(255,255,255,0.1); }
+.ts-light.bf { --bf-circle: #fff; --bf-ring: rgba(255,255,255,0.75); --bf-ring-bd: rgba(15,23,42,0.06); }
+.bf-head { max-width: 760px; margin: 0 auto; text-align: center; }
+.bf-title { margin: 0; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--ts-t1); }
+.bf-text { margin: 14px auto 0; max-width: 460px; font-size: 16px; line-height: 1.6; color: var(--ts-t2); }
+.bf-stage { position: relative; max-width: 1060px; height: 200px; margin: 56px auto 0; }
+.bf-side { position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden; display: flex; align-items: center; }
+.bf-left { left: 0; justify-content: flex-end; -webkit-mask-image: linear-gradient(to right, transparent, #000 22%); mask-image: linear-gradient(to right, transparent, #000 22%); }
+.bf-right { right: 0; justify-content: flex-start; -webkit-mask-image: linear-gradient(to left, transparent, #000 22%); mask-image: linear-gradient(to left, transparent, #000 22%); }
+.bf-track { display: flex; align-items: center; width: max-content; flex-shrink: 0; will-change: transform; }
+.bf-left .bf-track { animation: bf-to-right 60s linear infinite; }
+.bf-right .bf-track { animation: bf-to-left 60s linear infinite; }
+@keyframes bf-to-right { from { transform: translateX(0); } to { transform: translateX(50%); } }
+@keyframes bf-to-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.bf-bookie { width: 68px; height: 68px; margin: 0 22px; border-radius: 50%; background: var(--bf-circle); border: 1px solid var(--ts-card-bd); box-shadow: var(--ts-shadow); display: inline-flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.bf-bookie img { width: 48px; height: 48px; object-fit: contain; display: block; border-radius: 8px; }
+.bf-center { position: absolute; left: 50%; top: 50%; width: 184px; height: 184px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--bf-ring); border: 1px solid var(--bf-ring-bd); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--ts-shadow); display: flex; align-items: center; justify-content: center; z-index: 2; }
+.bf-center::before { content: ''; position: absolute; inset: -18px; border-radius: 50%; background: radial-gradient(closest-side, var(--ts-bg) 70%, transparent); z-index: -1; }
+.bf-logo { width: 132px; height: 132px; border-radius: 50%; background: linear-gradient(155deg, #060e1a 0%, #0a1628 55%, #1b2f5a 100%); border: 1px solid rgba(123,158,240,0.3); box-shadow: 0 12px 40px rgba(84,105,212,0.35), inset 0 1px 0 rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; }
+@media (prefers-reduced-motion: reduce) { .bf-track { animation: none !important; } }
+@media (max-width: 960px) {
+  .bf { padding: 0 20px 72px; }
+  .bf-title { font-size: 30px; }
+  .bf-text { font-size: 15px; }
+  .bf-stage { height: 150px; margin-top: 36px; }
+  .bf-bookie { width: 52px; height: 52px; margin: 0 12px; }
+  .bf-bookie img { width: 38px; height: 38px; }
+  .bf-center { width: 128px; height: 128px; }
+  .bf-center::before { inset: -10px; }
+  .bf-logo { width: 92px; height: 92px; }
+  .bf-logo svg { width: 32px; height: 32px; }
 }
 
 /* Taalwissel: pagina kort verbergen tot de Engelse vertaling is toegepast */
