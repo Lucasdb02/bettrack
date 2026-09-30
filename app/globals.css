@@ -1031,7 +1031,8 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
 .sport-links a:hover { border-color: rgba(84,105,212,0.5); background: rgba(84,105,212,0.07); }
 .sport-links a i { margin-left: auto; font-style: normal; color: rgba(255,255,255,0.35); }
 .sport-links a.is-all { background: none; border-color: transparent; color: rgba(255,255,255,0.5); font-weight: 500; }
-.sport-card-emoji { font-size: 22px; line-height: 1; }
+/* Emoji in de titel van een sportkaart: zo hoog als de hoofdletters (0.8em ≈ kapitaalhoogte), niet de labelstijl van .seo-card span */
+.seo-card .sport-card-emoji { font-size: 0.8em; line-height: 1; margin: 0; letter-spacing: 0; text-transform: none; }
 @media (max-width: 900px) {
   .sport-layout { grid-template-columns: 1fr; }
   .sport-side { position: static; align-self: start; }
