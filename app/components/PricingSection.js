@@ -69,7 +69,8 @@ export default function PricingSection({ dark = true, headingAs: Heading = 'h2',
 
   return (
     <section id="prijzen" className={bare ? undefined : 'lp-section-pad'} style={bare ? { padding: '8px 0 0' } : { backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+      {/* 1060 = contentbreedte van .seo-wrap op /prijzen, zodat beide pagina's gelijk zijn */}
+      <div style={{ maxWidth: 1060, margin: '0 auto' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>

@@ -94,11 +94,9 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
           width: '100%',
           maxWidth: scrolled ? 920 : 1400,
           height: scrolled ? 54 : 64,
-          /* Liquid glass: grotendeels doorzichtig, sterke blur, zachte glans van boven */
+          /* Liquid glass: grotendeels doorzichtig, sterke blur, effen vlak */
           background: scrolled
-            ? (dark
-              ? 'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%), rgba(10,18,34,0.32)'
-              : 'linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 100%)')
+            ? (dark ? 'rgba(22,30,46,0.36)' : 'rgba(255,255,255,0.4)')
             : 'transparent',
           backdropFilter: scrolled ? 'blur(18px) saturate(1.8)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(18px) saturate(1.8)' : 'none',
