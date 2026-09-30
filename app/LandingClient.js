@@ -64,6 +64,7 @@ function Hero() {
   const { dark } = useLp();
   const heroRef = useRef(null);
   const reduceMotion = useReducedMotion();
+  const [linesRevealed, setLinesRevealed] = useState(false);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const textY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -110]);
   const mockY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -35]);
@@ -104,7 +105,7 @@ function Hero() {
           </motion.div>
 
           <h1 className="lp-hero-title" style={{ fontSize: 62, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
-            <span className="lp-hero-line"><motion.span variants={heroLine} style={{ display: 'block' }}>
+            <span className={`lp-hero-line${linesRevealed ? ' is-revealed' : ''}`}><motion.span variants={heroLine} style={{ display: 'block' }}>
             Track je Bets{' '}
             <span style={{ display:'inline-block', position:'relative', width:'0.84em', height:'0.84em', margin:'0 0.14em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
               {/* Outer tilted white card */}
@@ -120,7 +121,8 @@ function Hero() {
             </span>
             Slimmer
             </motion.span></span>
-            <span className="lp-hero-line"><motion.span variants={heroLine} style={{ display: 'block' }}>
+            <span className={`lp-hero-line${linesRevealed ? ' is-revealed' : ''}`}><motion.span variants={heroLine} style={{ display: 'block' }}
+              onAnimationComplete={() => setLinesRevealed(true)}>
             en Automatisch met{' '}
             <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               AI

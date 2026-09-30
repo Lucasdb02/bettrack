@@ -1049,6 +1049,8 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
 
 /* Homepage hero: masker per koptekstregel (tekst schuift er van onderen in); ruimte voor het gekantelde icoon */
 .lp-hero-line { display: block; overflow: hidden; padding: 0.1em 0.05em; margin: -0.1em -0.05em; }
+/* Na de onthulling het masker weghalen, anders knipt het de schaduw van het icoon af */
+.lp-hero-line.is-revealed { overflow: visible; }
 
 /* Homepage: Hoe het werkt (versleepbare tijdlijn) */
 .hiw-track::-webkit-scrollbar { display: none; }
