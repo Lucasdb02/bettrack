@@ -1026,7 +1026,6 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .hiw-track::-webkit-scrollbar { display: none; }
 @media (max-width: 768px) {
   .hiw { padding: 64px 0 72px !important; }
-  .hiw-title { font-size: 34px !important; }
   .hiw-hand { font-size: 24px !important; line-height: 32px !important; }
   .hiw-hand-arrow { display: none; }
 }

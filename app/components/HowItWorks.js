@@ -183,7 +183,7 @@ export default function HowItWorks({ dark = true }) {
   const mockBg = dark ? 'rgba(255,255,255,0.02)' : '#fafbfc';
 
   const Pill = ({ children }) => (
-    <span style={{ background: pillBg, color: pillFg, borderRadius: 14, padding: '0 14px', display: 'inline-block', lineHeight: 1.15, margin: '4px 0' }}>{children}</span>
+    <span style={{ background: pillBg, color: pillFg, borderRadius: 11, padding: '0 11px', display: 'inline-block', lineHeight: 1.15, margin: '4px 0' }}>{children}</span>
   );
 
   /* Slepen met de muis; touch en trackpad scrollen gewoon horizontaal */
@@ -208,7 +208,7 @@ export default function HowItWorks({ dark = true }) {
       transition: 'background-color 0.3s ease', overflow: 'hidden',
     }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-        <h2 className="hiw-title" style={{ fontSize: 56, fontWeight: 800, color: text1, letterSpacing: '-0.035em', lineHeight: 1.12, margin: 0 }}>
+        <h2 className="hiw-title" style={{ fontSize: 42, fontWeight: 800, color: text1, letterSpacing: '-0.03em', lineHeight: 1.15, margin: 0 }}>
           Alles wat je nodig hebt om je bets te <Pill>bijhouden</Pill>, <Pill>analyseren</Pill> en <Pill>verbeteren</Pill>
         </h2>
         <p style={{ fontSize: 17, color: text2, marginTop: 22 }}>
