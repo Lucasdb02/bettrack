@@ -310,7 +310,7 @@ function Testimonials() {
       </div>
 
       {/* 3-column scroll grid — wrapped so the fade overlay stays inside */}
-      <div style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
+      <div style={{ position: 'relative', maxWidth: 1124, margin: '0 auto', padding: '0 32px' }}>
         <div className="tmb-track" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, maxHeight: 640, overflow: 'hidden' }}>
           {/* Left — scroll down */}
           <div className="tmb-col-down">
