@@ -7,6 +7,7 @@ import SiteFooter from './components/SiteFooter';
 import SiteHeader from './components/SiteHeader';
 import PricingSection from './components/PricingSection';
 import HowItWorks from './components/HowItWorks';
+import TrustStats from './components/TrustStats';
 import { FAQS } from '@/lib/faqs';
 
 /* ── Landing page theme context ── */
@@ -46,7 +47,6 @@ function lightenColor(hex, factor = 0.22) {
   return `#${lc(r).toString(16).padStart(2,'0')}${lc(g).toString(16).padStart(2,'0')}${lc(b).toString(16).padStart(2,'0')}`;
 }
 
-/* ── Sticky header ── */
 /* ── Hero ── */
 function Hero() {
   const { dark } = useLp();
@@ -376,7 +376,6 @@ function AppShowcase() {
   );
 }
 
-/* ── How it works ── */
 /* ── Testimonials ── */
 const TMB_REVIEWS = {
   col1: [
@@ -468,129 +467,6 @@ function Testimonials() {
         {/* Fade overlay — absolute so it never bleeds outside the track */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none',
           backgroundImage: `linear-gradient(to bottom, ${bg} 0%, transparent 20%, transparent 80%, ${bg} 100%)` }}/>
-      </div>
-    </section>
-  );
-}
-
-/* ── Extension flow ── */
-function ExtensieFlow() {
-  const { dark } = useLp();
-  const bg       = dark ? '#04111f' : '#f8fafc';
-  const border   = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
-  const text1    = dark ? '#fff' : '#0f172a';
-  const text2    = dark ? 'rgba(255,255,255,0.5)' : '#64748b';
-  const cardBg   = dark ? '#0d1a2e' : '#ffffff';
-  const cardBdr  = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
-  const arrowClr = dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1';
-
-  const steps = [
-    { num: '1', title: 'Open je betslip', desc: 'Ga naar de bookmaker van je keuze en navigeer naar je openstaande betslip of bet history. Werkt met alle grote Nederlandse bookmakers.' },
-    { num: '2', title: 'Klik de extensie', desc: 'Klik op het TrackMijnBets icoontje rechtsbovenin Chrome. De extensie maakt in één klik automatisch een screenshot van je betslip.' },
-    { num: '3', title: 'Controleer & sla op', desc: 'Bekijk de herkende bets, pas eventueel de odds of inzet aan en klik op Opslaan. Je bet staat direct in je dashboard — klaar.' },
-  ];
-
-  const GlobeIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-    </svg>
-  );
-  const CameraIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
-    </svg>
-  );
-  const CpuIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="9" y="9" width="6" height="6" rx="1"/><path d="M15 2v3M9 2v3M2 9h3M2 15h3M9 22v-3M15 22v-3M22 9h-3M22 15h-3"/><rect x="4" y="4" width="16" height="16" rx="2"/>
-    </svg>
-  );
-  const SaveIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-    </svg>
-  );
-
-  const flow = [
-    { label: 'bet365.com',  sub: 'Ga naar je openstaande betslip of bet history bij de bookmaker van jouw keuze.',  dot: '#20a851', iconBg: '#dcfce7', iconClr: '#16a34a', Icon: GlobeIcon  },
-    { label: 'Screenshot',  sub: 'Klik op het TrackMijnBets extensie-icoontje in Chrome. De extensie pakt automatisch een screenshot van je scherm.',                                       dot: '#6b82f0', iconBg: '#eef2ff', iconClr: '#5469d4', Icon: CameraIcon },
-    { label: 'AI Analyse',  sub: 'Claude analyseert het screenshot en herkent automatisch sport, wedstrijd, odds, inzet en markt — zonder dat jij iets hoeft in te vullen.',              dot: '#f59e0b', iconBg: '#fef3c7', iconClr: '#d97706', Icon: CpuIcon    },
-    { label: 'Opgeslagen',  sub: 'Controleer de herkende gegevens, pas eventueel iets aan en sla op. De bet verschijnt direct in je dashboard en statistieken.',                          dot: '#3b82f6', iconBg: '#dbeafe', iconClr: '#2563eb', Icon: SaveIcon   },
-  ];
-
-  return (
-    <section id="extensie" style={{ backgroundColor: bg, padding: '96px 32px', borderTop: `1px solid ${border}`, transition: 'background-color 0.3s ease' }}>
-      <div className="lp-ext-row" style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'flex-start', gap: 80 }}>
-
-        {/* Left — title + steps */}
-        <div className="lp-ext-left" style={{ flex: '0 0 auto', width: '46%' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#6b82f0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>
-            Hoe het werkt
-          </div>
-          <h2 style={{ fontSize: 42, fontWeight: 800, color: text1, letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: 14 }}>
-            Drie stappen,<br />minder dan 10 seconden
-          </h2>
-          <p style={{ fontSize: 16, color: text2, lineHeight: 1.7, marginBottom: 40 }}>
-            Met de TrackMijnBets Chrome-extensie registreer je een bet in minder dan 10 seconden. Open je betslip, klik de extensie, en de AI doet de rest.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-            {steps.map((step, i) => (
-              <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
-                <div style={{
-                  flexShrink: 0, width: 44, height: 44, borderRadius: 8,
-                  background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)',
-                  color: '#fff', fontWeight: 800, fontSize: 17,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 16px rgba(84,105,212,0.4)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                }}>
-                  {step.num}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 17, fontWeight: 700, color: text1, marginBottom: 6 }}>{step.title}</h3>
-                  <p style={{ fontSize: 14.5, color: text2, lineHeight: 1.65 }}>{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right — flow cards */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          {flow.map((item, i) => (
-            <div key={i}>
-              <div style={{
-                backgroundColor: cardBg, border: `1px solid ${cardBdr}`,
-                borderRadius: 14, padding: '18px 20px',
-                display: 'flex', alignItems: 'flex-start', gap: 14,
-                boxShadow: dark ? 'none' : '0 1px 4px rgba(0,0,0,0.05)',
-              }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-                  backgroundColor: dark ? 'rgba(255,255,255,0.07)' : item.iconBg,
-                  color: dark ? 'rgba(255,255,255,0.7)' : item.iconClr,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <item.Icon />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: text1, marginBottom: 4 }}>{item.label}</div>
-                  <div style={{ fontSize: 13, color: text2, lineHeight: 1.55 }}>{item.sub}</div>
-                </div>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: item.dot, flexShrink: 0, marginTop: 5 }} />
-              </div>
-              {i < flow.length - 1 && (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
-                  <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
-                    <path d="M8 0v16M2 10l6 8 6-8" stroke={arrowClr} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
       </div>
     </section>
   );
@@ -789,7 +665,7 @@ export default function LandingPage() {
         <AppShowcase />
         <Testimonials />
         <HowItWorks dark={dark} />
-        <ExtensieFlow />
+        <TrustStats dark={dark} />
         <PricingSection dark={dark} />
         <FAQ />
         <FinalCTA />
