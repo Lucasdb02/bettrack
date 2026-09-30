@@ -1119,8 +1119,8 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
 .bf-left { left: 0; justify-content: flex-end; -webkit-mask-image: linear-gradient(to right, transparent, #000 22%); mask-image: linear-gradient(to right, transparent, #000 22%); }
 .bf-right { right: 0; justify-content: flex-start; -webkit-mask-image: linear-gradient(to left, transparent, #000 22%); mask-image: linear-gradient(to left, transparent, #000 22%); }
 .bf-track { display: flex; align-items: center; width: max-content; flex-shrink: 0; will-change: transform; }
-.bf-left .bf-track { animation: bf-to-right 60s linear infinite; }
-.bf-right .bf-track { animation: bf-to-left 60s linear infinite; }
+.bf-left .bf-track { animation: bf-to-right 40s linear infinite; }
+.bf-right .bf-track { animation: bf-to-left 40s linear infinite; }
 @keyframes bf-to-right { from { transform: translateX(0); } to { transform: translateX(50%); } }
 @keyframes bf-to-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .bf-bookie { width: 56px; height: 56px; margin: 0 24px; border-radius: 50%; background: var(--bf-circle); border: 1px solid var(--ts-card-bd); box-shadow: var(--ts-shadow); display: inline-flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
