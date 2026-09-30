@@ -108,11 +108,18 @@ function MockChart({ dark }) {
           </div>
         ))}
       </div>
-      <svg viewBox="0 0 200 70" width="100%" height="70" aria-hidden>
-        <defs><linearGradient id="hiw-g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#5469d4" stopOpacity="0.35" /><stop offset="1" stopColor="#5469d4" stopOpacity="0" /></linearGradient></defs>
-        <path d="M0 60 L20 55 L40 58 L60 45 L80 48 L100 35 L120 38 L140 25 L160 28 L180 14 L200 10 L200 70 L0 70 Z" fill="url(#hiw-g)" />
-        <path d="M0 60 L20 55 L40 58 L60 45 L80 48 L100 35 L120 38 L140 25 L160 28 L180 14 L200 10" fill="none" stroke="#5469d4" strokeWidth="2" />
-      </svg>
+      {/* Staafgrafiek: resultaat per week, winst boven en verlies onder de nullijn */}
+      <div aria-hidden style={{ position: 'relative', display: 'flex', gap: 5, height: 72, padding: '0 2px' }}>
+        <span style={{ position: 'absolute', left: 0, right: 0, top: 54, borderTop: `1px solid ${m.line}` }} />
+        {[18, 30, -12, 24, 38, -8, 28, 44, 20, 52].map((v, i) => (
+          <span key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <span style={{ height: 54, display: 'flex', alignItems: 'flex-end' }}>
+              {v > 0 && <span style={{ width: '100%', height: v, borderRadius: '3px 3px 0 0', background: 'linear-gradient(180deg, #6b82f0, #5469d4)' }} />}
+            </span>
+            {v < 0 && <span style={{ width: '100%', height: -v, borderRadius: '0 0 3px 3px', background: '#ef4444', opacity: 0.85 }} />}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -136,7 +143,7 @@ function MockEdge({ dark }) {
   return (
     <div style={{ fontSize: 9.5, color: m.text }}>
       <div style={{ fontWeight: 600, marginBottom: 8 }}>ROI per markt</div>
-      {[['Enkel · 1X2', 14], ['Over/Under', 9], ['Asian handicap', 6], ['Betbuilders', -11], ['Combi\'s', -18]].map(([n, v]) => (
+      {[['Enkel · 1X2', 14], ['Over/Under', 9], ['Asian', 6], ['Betbuilders', -11], ['Combi\'s', -18]].map(([n, v]) => (
         <div key={n} style={{ display: 'grid', gridTemplateColumns: '70px 1fr 30px', alignItems: 'center', gap: 6, marginBottom: 5 }}>
           <span style={{ color: m.muted }}>{n}</span>
           <span style={{ height: 7, borderRadius: 4, background: m.line, position: 'relative' }}>
