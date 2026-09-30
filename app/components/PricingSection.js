@@ -106,6 +106,8 @@ export default function PricingSection({ dark: darkProp, headingAs: Heading = 'h
               <div key={plan.id} style={{ paddingTop: 13, display: 'flex', flexDirection: 'column' }}>
               <div style={{ borderRadius: 14, padding: '24px 22px', border: isPopulair ? '2px solid #6366f1' : `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, background: isPopulair ? (dark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.03)') : (dark ? '#0d1a2e' : '#ffffff'), position: 'relative', boxShadow: isPopulair ? (dark ? '0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.3)' : '0 4px 24px rgba(99,102,241,0.15)') : 'none', display: 'flex', flexDirection: 'column', flex: 1 }}>
 
+                {/* Lichtboog die langs de rand van het aanbevolen plan draait */}
+                {isPopulair && <span className="border-beam" aria-hidden />}
                 {/* Popular badge */}
                 {isPopulair && (
                   <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)' }}>

@@ -1186,3 +1186,42 @@ html[data-site-theme="light"] .sport-side-title { color: #94a3b8; }
 html[data-site-theme="light"] .sport-links a { background: #f8fafc; border-color: rgba(15,23,42,0.08); color: #1e293b; }
 html[data-site-theme="light"] .sport-links a i { color: #94a3b8; }
 html[data-site-theme="light"] .sport-links a.is-all { background: none; border-color: transparent; color: #64748b; }
+
+/* ══════════════════════════════════════════════
+   Border beam: lichtboog die langs de rand van een kaart draait (aanbevolen prijsplan).
+   Gebruik: <span className="border-beam" /> als kind van een kaart met position: relative
+   en een rand van 2px. De ring valt precies over die rand; de boog volgt de afgeronde hoeken.
+   ══════════════════════════════════════════════ */
+.border-beam {
+  --beam-size: 120px; --beam-duration: 6s; --beam-width: 2px;
+  --beam-from: rgba(165,184,245,0); --beam-via: #818cf8; --beam-to: #ffffff;
+  position: absolute; inset: calc(var(--beam-width) * -1); border-radius: inherit; pointer-events: none;
+  border: var(--beam-width) solid transparent;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0);
+  display: none;
+}
+@supports (offset-path: rect(0 auto auto 0 round 1px)) {
+  .border-beam { display: block; }
+  .border-beam::after {
+    content: ''; position: absolute; width: var(--beam-size); aspect-ratio: 1;
+    background: linear-gradient(to left, var(--beam-to), var(--beam-via) 35%, var(--beam-from));
+    offset-path: rect(0 auto auto 0 round 14px); offset-anchor: 90% 50%;
+    animation: border-beam var(--beam-duration) linear infinite;
+  }
+}
+/* Licht: vaste rand zachter zodat de boog (paars → donker indigo) opvalt, zoals in het voorbeeld.
+   .is-app = de prijspagina in de app, die het app-thema (html.dark) volgt i.p.v. het site-thema. */
+html[data-site-theme="light"] .border-beam,
+html:not(.dark) .border-beam.is-app { --beam-via: #818cf8; --beam-to: #3730a3; }
+@supports (offset-path: rect(0 auto auto 0 round 1px)) {
+  html[data-site-theme="light"] :has(> .border-beam),
+  html:not(.dark) :has(> .border-beam.is-app) { border-color: rgba(99,102,241,0.3) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-site-theme="light"] :has(> .border-beam),
+  html:not(.dark) :has(> .border-beam.is-app) { border-color: #6366f1 !important; }
+}
+@keyframes border-beam { to { offset-distance: 100%; } }
+@media (prefers-reduced-motion: reduce) { .border-beam { display: none; } }

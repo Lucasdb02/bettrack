@@ -207,6 +207,8 @@ export default function PricingPage() {
                 display: 'flex', flexDirection: 'column',
               }}
             >
+              {/* Lichtboog die langs de rand van het aanbevolen plan draait */}
+              {isPopulair && <span className="border-beam is-app" aria-hidden />}
               {/* Populair badge */}
               {isPopulair && (
                 <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)' }}>
