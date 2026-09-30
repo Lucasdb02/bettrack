@@ -94,20 +94,21 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
           width: '100%',
           maxWidth: scrolled ? 920 : 1400,
           height: scrolled ? 54 : 64,
+          /* Liquid glass: grotendeels doorzichtig, sterke blur, zachte glans van boven */
           background: scrolled
-            ? (dark ? 'rgba(6,10,22,0.88)' : 'rgba(255,255,255,0.78)')
+            ? (dark
+              ? 'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%), rgba(10,18,34,0.32)'
+              : 'linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 100%)')
             : 'transparent',
-          backdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(28px) saturate(2)' : 'none',
+          backdropFilter: scrolled ? 'blur(18px) saturate(1.8)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(18px) saturate(1.8)' : 'none',
           border: scrolled
-            ? (dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.08)')
-            : 'none',
+            ? (dark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.6)')
+            : '1px solid transparent',
           borderRadius: scrolled ? 14 : 0,
           padding: scrolled ? '0 8px 0 20px' : '0',
           boxShadow: scrolled
-            ? (dark
-              ? '0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
-              : '0 4px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)')
+            ? (dark ? '0 8px 32px rgba(0,0,0,0.35)' : '0 8px 32px rgba(15,23,42,0.08)')
             : 'none',
           transition: 'all 0.3s ease',
         }}>
