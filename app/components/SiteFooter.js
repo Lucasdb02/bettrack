@@ -52,10 +52,10 @@ const COLUMNS = [
   },
 ];
 
-/* dark: alleen de homepage heeft een lichte modus en geeft die door; elders altijd donker */
-export default function SiteFooter({ dark = true }) {
+/* Licht/donker via html[data-site-theme] in globals.css, zodat dit een servercomponent blijft */
+export default function SiteFooter() {
   return (
-    <footer className={`site-footer ${dark ? 'sf-dark' : 'sf-light'}`}>
+    <footer className="site-footer">
       <div style={{ maxWidth: 1060, margin: '0 auto' }}>
         <div className="site-footer-grid">
           <div>

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useSiteDark } from './useSiteTheme';
 import { createClient } from '@/lib/supabase';
 import { LP_PLANS } from '@/lib/plans';
 
@@ -34,7 +35,9 @@ const LP_TRUST = [
 /* Prijzensectie van de homepage, ook gebruikt op /prijzen.
    headingAs: 'h2' op de homepage, 'h1' op de prijzenpagina.
    bare: zonder eigen achtergrond en bovenrand (voor gebruik binnen een pagina). */
-export default function PricingSection({ dark = true, headingAs: Heading = 'h2', bare = false }) {
+export default function PricingSection({ dark: darkProp, headingAs: Heading = 'h2', bare = false }) {
+  const siteDark = useSiteDark();
+  const dark = darkProp ?? siteDark;
   const [jaarlijks, setJaarlijks] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState(null);
   const bg     = dark ? '#060e1a' : '#ffffff';

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useLanguage, langFlag, langSwitchLabel } from '../context/LanguageContext';
+import { useSiteDark, setSiteTheme } from './useSiteTheme';
 
 function scrollTo(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -12,8 +13,9 @@ function scrollTo(id) {
    bij scrollen een zwevende, vervaagde balk.
    home: op de homepage scrollen Hoe het werkt/Prijzen naar de sectie;
          elders zijn het gewone links en staat er een spacer onder de vaste header.
-   onToggleTheme: alleen de homepage heeft een lichte modus, dus alleen daar de themaknop. */
-export default function SiteHeader({ home = false, dark = true, onToggleTheme }) {
+   Themaknop staat op elke pagina; het thema komt uit useSiteTheme (gedeeld met footer en pagina's). */
+export default function SiteHeader({ home = false }) {
+  const dark = useSiteDark();
   const { lang, toggleLang } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
@@ -42,7 +44,7 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
     return () => subscription.unsubscribe();
   }, []);
 
-  const toggleTheme = onToggleTheme;
+  const toggleTheme = () => setSiteTheme(!dark);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -134,11 +136,11 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
 
           {/* Right actions — desktop only */}
           <div className="lp-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-            {toggleTheme && <button onClick={toggleTheme} title={dark ? 'Lichte modus' : 'Donkere modus'}
+            <button onClick={toggleTheme} title={dark ? 'Lichte modus' : 'Donkere modus'}
               style={{ width: 34, height: 34, borderRadius: 8, border: iconBorder, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: iconColor, transition: 'all 0.15s' }}
               onMouseEnter={(e) => { e.currentTarget.style.background = iconBgHover; e.currentTarget.style.color = iconColorHover; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = iconBg; e.currentTarget.style.color = iconColor; }}
-            >{dark ? <SunIcon/> : <MoonIcon/>}</button>}
+            >{dark ? <SunIcon/> : <MoonIcon/>}</button>
             <button onClick={toggleLang} title={langSwitchLabel(lang)} aria-label={langSwitchLabel(lang)} data-no-translate
               style={{ width: 34, height: 34, borderRadius: 8, border: iconBorder, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, lineHeight: 1, transition: 'all 0.15s' }}
               onMouseEnter={(e) => { e.currentTarget.style.background = iconBgHover; }}
@@ -229,14 +231,14 @@ export default function SiteHeader({ home = false, dark = true, onToggleTheme })
         {/* Action buttons */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {/* Theme toggle */}
-          {toggleTheme && <button onClick={() => { toggleTheme(); }}
+          <button onClick={toggleTheme}
             style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: textNav, fontSize: 14, fontWeight: 500, padding: '10px 12px', borderRadius: 10, transition: 'background 0.12s' }}
             onMouseEnter={(e) => e.currentTarget.style.background = navHoverBg}
             onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
           >
             {dark ? <SunIcon/> : <MoonIcon/>}
             {dark ? 'Lichte modus' : 'Donkere modus'}
-          </button>}
+          </button>
           <button onClick={toggleLang} data-no-translate
             style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: textNav, fontSize: 14, fontWeight: 500, padding: '10px 12px', borderRadius: 10, transition: 'background 0.12s' }}
             onMouseEnter={(e) => e.currentTarget.style.background = navHoverBg}

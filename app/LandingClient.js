@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts';
 import { createClient } from '@/lib/supabase';
 import SiteFooter from './components/SiteFooter';
+import { useSiteDark } from './components/useSiteTheme';
 import SiteHeader from './components/SiteHeader';
 import PricingSection from './components/PricingSection';
 import HowItWorks from './components/HowItWorks';
@@ -11,7 +12,7 @@ import TrustStats from './components/TrustStats';
 import { FAQS } from '@/lib/faqs';
 
 /* ── Landing page theme context ── */
-const LpTheme = createContext({ dark: true, setDark: () => {} });
+const LpTheme = createContext({ dark: true });
 const useLp = () => useContext(LpTheme);
 
 /* ── Smooth scroll helper ── */
@@ -505,23 +506,12 @@ function FAQ() {
 
 /* ── Main export ── */
 export default function LandingPage() {
-  const [dark, setDark] = useState(true);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved) setDark(saved !== 'light');
-  }, []);
-
-  const toggleTheme = () => {
-    const next = !dark;
-    setDark(next);
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-  };
+  const dark = useSiteDark();
 
   return (
-    <LpTheme.Provider value={{ dark, setDark }}>
+    <LpTheme.Provider value={{ dark }}>
       <div style={{ backgroundColor: dark ? '#04111f' : '#ffffff', transition: 'background-color 0.3s ease' }}>
-        <SiteHeader home dark={dark} onToggleTheme={toggleTheme} />
+        <SiteHeader home />
         <Hero />
         <HowItWorks dark={dark} />
         <Testimonials />
@@ -529,7 +519,7 @@ export default function LandingPage() {
         <PricingSection dark={dark} />
         <FAQ />
         <FinalCTA />
-        <SiteFooter dark={dark} />
+        <SiteFooter />
       </div>
     </LpTheme.Provider>
   );

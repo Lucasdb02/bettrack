@@ -874,8 +874,8 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
    PUBLIEKE SITE — footer, header, artikelen (SEO)
    ══════════════════════════════════════════════ */
 .site-footer { background: var(--sf-bg); border-top: 1px solid var(--sf-border); padding: 56px 32px 32px; transition: background-color .3s ease; }
-.sf-dark  { --sf-bg: #04111f; --sf-border: rgba(255,255,255,0.07); --sf-name: #fff;    --sf-title: #fff;    --sf-link: rgba(255,255,255,0.62); --sf-link-hover: #fff;    --sf-muted: rgba(255,255,255,0.62); --sf-faint: rgba(255,255,255,0.4); }
-.sf-light { --sf-bg: #f6f7f9; --sf-border: rgba(15,23,42,0.08);   --sf-name: #0b0f19; --sf-title: #0b0f19; --sf-link: #475569;               --sf-link-hover: #0b0f19; --sf-muted: #475569;               --sf-faint: #94a3b8; }
+.site-footer { --sf-bg: #04111f; --sf-border: rgba(255,255,255,0.07); --sf-name: #fff;    --sf-title: #fff;    --sf-link: rgba(255,255,255,0.62); --sf-link-hover: #fff;    --sf-muted: rgba(255,255,255,0.62); --sf-faint: rgba(255,255,255,0.4); }
+html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba(15,23,42,0.08);   --sf-name: #0b0f19; --sf-title: #0b0f19; --sf-link: #475569;               --sf-link-hover: #0b0f19; --sf-muted: #475569;               --sf-faint: #6b7789; }
 .sf-name { color: var(--sf-name); font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
 .sf-title { font-size: 14px; font-weight: 600; color: var(--sf-title); margin-bottom: 16px; }
 .sf-muted { color: var(--sf-muted); }
@@ -929,6 +929,8 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .prijzen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 18px; margin: 32px 0 16px; }
 .prijzen-card { padding: 26px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
 .prijzen-card.is-populair { border-color: rgba(84,105,212,0.55); background: rgba(84,105,212,0.08); }
+.seo-updated { font-size: 13px; color: rgba(255,255,255,0.45); }
+.calc-thanks { margin: 0 !important; color: #fff !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
 /* Openbare calculators (/tools) */
@@ -938,8 +940,8 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 .calc-field { display: flex; flex-direction: column; gap: 6px; }
 .calc-field > span { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
 .calc-input-wrap { position: relative; }
-.calc-input-wrap input { width: 100%; box-sizing: border-box; background: #0a1a2e; border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; color: #fff; font-size: 16px; padding: 10px 36px 10px 12px; outline: none; }
-.calc-input-wrap input:focus { border-color: #5469d4; box-shadow: 0 0 0 3px rgba(84,105,212,0.25); }
+.calc-input-wrap input, .calc-input-wrap textarea { width: 100%; box-sizing: border-box; background: #0a1a2e; border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; color: #fff; font-size: 16px; padding: 10px 36px 10px 12px; outline: none; }
+.calc-input-wrap input:focus, .calc-input-wrap textarea:focus { border-color: #5469d4; box-shadow: 0 0 0 3px rgba(84,105,212,0.25); }
 .calc-input-wrap em { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 14px; color: rgba(255,255,255,0.45); }
 .calc-actions { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
 .calc-actions button, .calc-seg button { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.8); font-size: 13px; padding: 9px 12px; border-radius: 9px; cursor: pointer; }
@@ -1088,3 +1090,81 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 html.i18n-pending body { opacity: 0; }
 .lang-toggle { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; line-height: 1; flex-shrink: 0; transition: background .15s; }
 .lang-toggle:hover { background: rgba(255,255,255,0.12); }
+
+/* ══════════════════════════════════════════════
+   PUBLIEKE SITE — lichte modus (html[data-site-theme="light"], zie useSiteTheme)
+   ══════════════════════════════════════════════ */
+html[data-site-theme="light"] { color-scheme: light; }
+html[data-site-theme="light"] .seo-page { background: #ffffff; color: #1e293b; }
+html[data-site-theme="light"] .seo-crumbs { color: #94a3b8; }
+html[data-site-theme="light"] .seo-crumbs a { color: #64748b; }
+html[data-site-theme="light"] .seo-crumbs a:hover { color: #0f172a; }
+html[data-site-theme="light"] .seo-badge { color: #4254c0; background: rgba(84,105,212,0.08); border-color: rgba(84,105,212,0.25); }
+html[data-site-theme="light"] .seo-badge-note { color: #64748b; background: #f8fafc; border-color: rgba(15,23,42,0.08); }
+html[data-site-theme="light"] .seo-prose h1,
+html[data-site-theme="light"] .seo-prose h2,
+html[data-site-theme="light"] .seo-prose h3 { color: #0f172a; }
+html[data-site-theme="light"] .seo-prose p,
+html[data-site-theme="light"] .seo-prose li { color: #475569; }
+html[data-site-theme="light"] .seo-prose .seo-intro { color: #334155; }
+html[data-site-theme="light"] .seo-prose a { color: #4254c0; }
+html[data-site-theme="light"] .seo-updated { color: #94a3b8; }
+html[data-site-theme="light"] .seo-cta { background: linear-gradient(135deg, rgba(84,105,212,0.1), rgba(84,105,212,0.03)); border-color: rgba(84,105,212,0.22); }
+html[data-site-theme="light"] .seo-card,
+html[data-site-theme="light"] .prijzen-card,
+html[data-site-theme="light"] .sport-tile,
+html[data-site-theme="light"] .sport-tip,
+html[data-site-theme="light"] .sport-box { background: #f8fafc; border-color: rgba(15,23,42,0.08); }
+html[data-site-theme="light"] .seo-card:hover,
+html[data-site-theme="light"] .sport-links a:hover { border-color: rgba(84,105,212,0.45); background: rgba(84,105,212,0.05); }
+html[data-site-theme="light"] .seo-card h2,
+html[data-site-theme="light"] .seo-card h3,
+html[data-site-theme="light"] .sport-box-title { color: #0f172a; }
+html[data-site-theme="light"] .seo-card p,
+html[data-site-theme="light"] .seo-prose .sport-tile p,
+html[data-site-theme="light"] .seo-prose .sport-steps p,
+html[data-site-theme="light"] .seo-prose .sport-lead,
+html[data-site-theme="light"] .sport-box-text { color: #64748b; }
+html[data-site-theme="light"] .seo-card span:not(.tile-icon),
+html[data-site-theme="light"] .sport-box-link span { color: #4254c0; }
+html[data-site-theme="light"] .prijzen-card.is-populair { border-color: rgba(84,105,212,0.5); background: rgba(84,105,212,0.05); }
+
+html[data-site-theme="light"] .calc-box { background: #f8fafc; border-color: rgba(84,105,212,0.28); }
+html[data-site-theme="light"] .calc-title { color: #4254c0 !important; }
+html[data-site-theme="light"] .calc-field > span { color: #334155; }
+html[data-site-theme="light"] .calc-input-wrap input,
+html[data-site-theme="light"] .calc-input-wrap textarea { background: #ffffff; border-color: rgba(15,23,42,0.14); color: #0f172a; }
+html[data-site-theme="light"] .calc-input-wrap em { color: #94a3b8; }
+html[data-site-theme="light"] .calc-actions button,
+html[data-site-theme="light"] .calc-seg button { background: #ffffff; border-color: rgba(15,23,42,0.14); color: #334155; }
+html[data-site-theme="light"] .calc-actions button:hover,
+html[data-site-theme="light"] .calc-seg button:hover { background: #f1f5f9; }
+html[data-site-theme="light"] .calc-seg button.is-on { background: #5469d4; border-color: #5469d4; color: #fff; }
+html[data-site-theme="light"] .calc-results { border-top-color: rgba(15,23,42,0.08); }
+html[data-site-theme="light"] .calc-result { background: #ffffff; border: 1px solid rgba(15,23,42,0.06); }
+html[data-site-theme="light"] .calc-result span { color: #64748b; }
+html[data-site-theme="light"] .calc-result strong { color: #0f172a; }
+html[data-site-theme="light"] .calc-result.is-strong { background: rgba(84,105,212,0.08); }
+html[data-site-theme="light"] .calc-result.is-win strong { color: #059669; }
+html[data-site-theme="light"] .calc-result.is-loss strong { color: #dc2626; }
+html[data-site-theme="light"] .calc-note { color: #64748b !important; }
+html[data-site-theme="light"] .calc-thanks { color: #0f172a !important; }
+
+html[data-site-theme="light"] .seo-prose .faq-title,
+html[data-site-theme="light"] .faq-question { color: #0f172a; }
+html[data-site-theme="light"] .seo-prose .faq-subtitle,
+html[data-site-theme="light"] .seo-prose .faq-answer,
+html[data-site-theme="light"] .faq-icon { color: #64748b; }
+html[data-site-theme="light"] .faq-item { border-color: rgba(15,23,42,0.18); }
+html[data-site-theme="light"] .faq-item:not(.is-open):hover { background: #f8fafc; }
+html[data-site-theme="light"] .faq-item.is-open { background: #f8fafc; border-color: rgba(15,23,42,0.1); }
+
+html[data-site-theme="light"] .sport-hero-emoji { background: #f1f5f9; border-color: rgba(15,23,42,0.08); }
+html[data-site-theme="light"] .sport-btn-ghost { color: #0f172a !important; border-color: rgba(15,23,42,0.16); background: #ffffff; }
+html[data-site-theme="light"] .sport-btn-ghost:hover { background: #f1f5f9; }
+html[data-site-theme="light"] .sport-steps { background: linear-gradient(135deg, rgba(84,105,212,0.1), rgba(84,105,212,0.03)); border-color: rgba(84,105,212,0.22); }
+html[data-site-theme="light"] .sport-step-num { background: #0f172a; color: #fff; }
+html[data-site-theme="light"] .sport-side-title { color: #94a3b8; }
+html[data-site-theme="light"] .sport-links a { background: #f8fafc; border-color: rgba(15,23,42,0.08); color: #1e293b; }
+html[data-site-theme="light"] .sport-links a i { color: #94a3b8; }
+html[data-site-theme="light"] .sport-links a.is-all { background: none; border-color: transparent; color: #64748b; }
