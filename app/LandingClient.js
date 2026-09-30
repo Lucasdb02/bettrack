@@ -529,7 +529,7 @@ export default function LandingPage() {
         <PricingSection dark={dark} />
         <FAQ />
         <FinalCTA />
-        <SiteFooter />
+        <SiteFooter dark={dark} />
       </div>
     </LpTheme.Provider>
   );

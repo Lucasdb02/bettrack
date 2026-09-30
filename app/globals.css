@@ -873,16 +873,24 @@ html.dark .bet-thead-row { background: var(--bg-subtle); }
 /* ══════════════════════════════════════════════
    PUBLIEKE SITE — footer, header, artikelen (SEO)
    ══════════════════════════════════════════════ */
+.site-footer { background: var(--sf-bg); border-top: 1px solid var(--sf-border); padding: 56px 32px 32px; transition: background-color .3s ease; }
+.sf-dark  { --sf-bg: #04111f; --sf-border: rgba(255,255,255,0.06); --sf-name: #fff;    --sf-title: rgba(255,255,255,0.7); --sf-link: rgba(255,255,255,0.5); --sf-link-hover: rgba(255,255,255,0.9); --sf-muted: rgba(255,255,255,0.45); --sf-faint: rgba(255,255,255,0.35); }
+.sf-light { --sf-bg: #f6f7f9; --sf-border: rgba(15,23,42,0.08);   --sf-name: #0b0f19; --sf-title: #0b0f19;               --sf-link: #64748b;               --sf-link-hover: #0b0f19;               --sf-muted: #64748b;               --sf-faint: #94a3b8; }
+.sf-name { color: var(--sf-name); font-weight: 700; font-size: 15px; }
+.sf-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sf-title); margin-bottom: 14px; }
+.sf-muted { color: var(--sf-muted); }
+.sf-faint { color: var(--sf-faint); }
+.site-footer-brand { margin-bottom: 36px; }
 .site-footer-grid {
   display: grid;
-  grid-template-columns: 1.3fr repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 28px;
 }
-@media (max-width: 1100px) { .site-footer-grid { grid-template-columns: repeat(4, 1fr); } .site-footer-grid > div:first-child { grid-column: 1 / -1; } }
 @media (max-width: 700px) { .site-footer-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .site-footer-grid { grid-template-columns: 1fr; } }
-.site-footer-link { font-size: 13.5px; color: rgba(255,255,255,0.5); text-decoration: none; transition: color .15s; word-break: break-word; }
-.site-footer-link:hover { color: rgba(255,255,255,0.9); }
+.site-footer-link { font-size: 13.5px; color: var(--sf-link, rgba(255,255,255,0.5)); text-decoration: none; transition: color .15s; word-break: break-word; }
+.site-footer-link:hover { color: var(--sf-link-hover, rgba(255,255,255,0.9)); }
+.sf-bottom { border-top: 1px solid var(--sf-border); margin-top: 40px; padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 
 .site-header-link { font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.65); text-decoration: none; padding: 7px 10px; border-radius: 7px; transition: all .15s; white-space: nowrap; }
 .site-header-link:hover { color: #fff; background: rgba(255,255,255,0.06); }
