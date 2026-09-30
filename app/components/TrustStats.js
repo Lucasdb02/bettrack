@@ -32,7 +32,7 @@ const BIG = [
 ];
 
 /* Layout voor de lijnen (desktop): horizontaal in %, verticaal in px */
-const G = { pillH: 52, row1Top: 132, row1H: 124, row2Top: 356, row2H: 400 };
+const G = { pillH: 34, row1Top: 82, row1H: 84, row2Top: 224, row2H: 290 };
 const X1 = [15.667, 50, 84.333];   // midden van de drie kleine kaarten (gap 3%)
 const X2 = [24.25, 75.75];         // midden van de twee grote kaarten
 const H = G.row2Top + G.row2H;
@@ -40,7 +40,7 @@ const H = G.row2Top + G.row2H;
 function Ico({ children }) {
   return (
     <span className="ts-ico" aria-hidden>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{children}</svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{children}</svg>
     </span>
   );
 }
@@ -67,7 +67,7 @@ export default function TrustStats({ dark = true }) {
         <div className="ts-pill-row">
           <p className="ts-pill">
             <span className="ts-check" aria-hidden>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             </span>
             Vertrouwd door <b>2.400+</b> bettors in Nederland
           </p>
@@ -98,7 +98,7 @@ export default function TrustStats({ dark = true }) {
                 <span className="ts-badge">
                   {b.badge.text}
                   {b.badge.verified && (
-                    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden><path fill="#3b82f6" d="M12 1l2.6 2.2 3.4-.4.9 3.3 3 1.7-1.2 3.2 1.2 3.2-3 1.7-.9 3.3-3.4-.4L12 23l-2.6-2.2-3.4.4-.9-3.3-3-1.7L3.3 13 2.1 9.8l3-1.7.9-3.3 3.4.4z" /><polyline points="8 12.5 11 15.5 16.5 9.5" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden><path fill="#3b82f6" d="M12 1l2.6 2.2 3.4-.4.9 3.3 3 1.7-1.2 3.2 1.2 3.2-3 1.7-.9 3.3-3.4-.4L12 23l-2.6-2.2-3.4.4-.9-3.3-3-1.7L3.3 13 2.1 9.8l3-1.7.9-3.3 3.4.4z" /><polyline points="8 12.5 11 15.5 16.5 9.5" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   )}
                 </span>
               )}
