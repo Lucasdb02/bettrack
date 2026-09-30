@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts';
 import { createClient } from '@/lib/supabase';
 import SiteFooter from './components/SiteFooter';
@@ -15,11 +16,6 @@ import { FAQS } from '@/lib/faqs';
 /* ── Landing page theme context ── */
 const LpTheme = createContext({ dark: true });
 const useLp = () => useContext(LpTheme);
-
-/* ── Smooth scroll helper ── */
-function scrollTo(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
 
 /* ── Catmull-Rom → cubic Bezier SVG path ── */
 function mkSmoothPath(pts) {
@@ -50,13 +46,32 @@ function lightenColor(hex, factor = 0.22) {
 }
 
 /* ── Hero ── */
+/* Hero-animatie: bij laden komen de koptekstregels van onder een masker omhoog en volgen
+   badge, tekst, knoppen, bookmakers en cijfers gestaffeld; bij scrollen gaat de tekst
+   sneller omhoog dan het dashboard (parallax). */
+const HERO_EASE = [0.22, 1, 0.36, 1];
+const heroStagger = { hidden: {}, show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } } };
+const heroItem = {
+  hidden: { opacity: 0, y: 16, filter: 'blur(6px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: HERO_EASE } },
+};
+const heroLine = {
+  hidden: { y: '110%' },
+  show: { y: '0%', transition: { duration: 0.8, ease: HERO_EASE } },
+};
+
 function Hero() {
   const { dark } = useLp();
+  const heroRef = useRef(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const textY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -110]);
+  const mockY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -35]);
   const cBg   = 'rgba(255,255,255,0.04)';
   const cBrd  = 'rgba(255,255,255,0.07)';
 
   return (
-    <section className="lp-hero-section" style={{
+    <section ref={heroRef} className="lp-hero-section" style={{
       background: dark
         ? 'linear-gradient(160deg, #04111f 0%, #0a2540 45%, #0d1f38 100%)'
         : '#ffffff',
@@ -81,13 +96,15 @@ function Hero() {
       <div className="lp-hero-row" style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
         {/* Left text — aligned to 1400px grid */}
-        <div className="lp-hero-text" style={{ flexShrink: 0, width: '50%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: dark ? 'rgba(84,105,212,0.15)' : 'rgba(84,105,212,0.1)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
+        <motion.div className="lp-hero-text" initial="hidden" animate="show" variants={heroStagger}
+          style={{ flexShrink: 0, width: '50%', minWidth: 320, padding: '128px 48px 80px max(32px, calc((100vw - 1400px) / 2 + 32px))', y: textY }}>
+          <motion.div variants={heroItem} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, backgroundColor: dark ? 'rgba(84,105,212,0.15)' : 'rgba(84,105,212,0.1)', border: '1px solid rgba(84,105,212,0.3)', borderRadius: 99, padding: '5px 14px', marginBottom: 28 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5469d4', animation: 'dot-pulse 1.8s ease-in-out infinite' }} />
             <span style={{ fontSize: 13, color: dark ? '#a5b8f5' : '#5469d4', fontWeight: 500 }}>Gebouwd voor Nederlandse sportwedders</span>
-          </div>
+          </motion.div>
 
           <h1 className="lp-hero-title" style={{ fontSize: 62, fontWeight: 500, color: dark ? 'rgba(255,255,255,0.85)' : '#334155', lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: 22 }}>
+            <span className="lp-hero-line"><motion.span variants={heroLine} style={{ display: 'block' }}>
             Track je Bets{' '}
             <span style={{ display:'inline-block', position:'relative', width:'0.84em', height:'0.84em', margin:'0 0.14em 0 0.04em', verticalAlign:'middle', top:'-0.05em', flexShrink:0 }}>
               {/* Outer tilted white card */}
@@ -101,26 +118,30 @@ function Hero() {
                 </svg>
               </span>
             </span>
-            Slimmer en Automatisch met{' '}
+            Slimmer
+            </motion.span></span>
+            <span className="lp-hero-line"><motion.span variants={heroLine} style={{ display: 'block' }}>
+            en Automatisch met{' '}
             <span style={{ background: 'linear-gradient(135deg, #7b9ef0, #5469d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               AI
             </span>
+            </motion.span></span>
           </h1>
 
-          <p className="lp-hero-sub" style={{ fontSize: 16, fontWeight: 400, color: dark ? 'rgba(255,255,255,0.55)' : '#64748b', lineHeight: 1.7, marginBottom: 40, maxWidth: 560 }}>
+          <motion.p variants={heroItem} className="lp-hero-sub" style={{ fontSize: 16, fontWeight: 400, color: dark ? 'rgba(255,255,255,0.55)' : '#64748b', lineHeight: 1.7, marginBottom: 40, maxWidth: 560 }}>
             De meest geavanceerde sports bet tracker. Track je bets direct via screenshots of een browserextensie. Een compleet sportsbook trackingplatform met diepgaande analyses voor serieuze sportsbettors.
-          </p>
+          </motion.p>
 
-          <div className="lp-cta-row" style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 52 }}>
+          <motion.div variants={heroItem} className="lp-cta-row" style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 52 }}>
             <Link href="/signup"
               style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', padding: '13px 28px', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 28px rgba(84,105,212,0.55)', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               Gratis beginnen
             </Link>
-            <button onClick={() => scrollTo('functies')}
+            <Link href="/functies"
               style={{ background: dark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.08)', backdropFilter: 'blur(12px) saturate(1.6)', WebkitBackdropFilter: 'blur(12px) saturate(1.6)', border: dark ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(99,102,241,0.25)', color: dark ? 'rgba(255,255,255,0.9)' : '#4f46e5', fontSize: 15, fontWeight: 600, padding: '13px 24px', borderRadius: 9, cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
-            >Bekijk functies</button>
-          </div>
+            >Bekijk functies</Link>
+          </motion.div>
 
           {/* Bookmaker logo scroll */}
           {(() => {
@@ -138,7 +159,7 @@ function Hero() {
               { name: '888sport',  src: 'https://www.surebetnl.com/888sport.png' },
             ];
             return (
-              <div style={{ marginBottom: 40 }}>
+              <motion.div variants={heroItem} style={{ marginBottom: 40 }}>
                 <p style={{ fontSize: 11, color: dark ? 'rgba(255,255,255,0.25)' : '#c0cad6', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 14 }}>
                   Ondersteunde bookmakers
                 </p>
@@ -159,11 +180,11 @@ function Hero() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })()}
 
-          <div className="lp-stats-row" style={{ display: 'flex', alignItems: 'center' }}>
+          <motion.div variants={heroItem} className="lp-stats-row" style={{ display: 'flex', alignItems: 'center' }}>
             {[
               {
                 value: '2.400+', label: 'Actieve gebruikers',
@@ -194,13 +215,18 @@ function Hero() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Right — screenshot in browser chrome, top/bottom aligned to left column content */}
-        <div className="lp-mockup-wrap" style={{ flex: 1, paddingTop: 128, paddingBottom: 80, paddingLeft: 40, minWidth: 0, alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
-          {/* Browser chrome — light theme, fills exact height */}
-          <div style={{
+        <motion.div className="lp-mockup-wrap"
+          initial={{ opacity: 0, y: 40, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.9, delay: 0.35, ease: HERO_EASE }}
+          style={{ flex: 1, paddingTop: 128, paddingBottom: 80, paddingLeft: 40, minWidth: 0, alignSelf: 'stretch', display: 'flex', flexDirection: 'column' }}>
+          {/* Browser chrome — light theme, fills exact height; parallax: beweegt trager dan de tekst */}
+          <motion.div style={{
+            y: mockY,
             flex: 1,
             background: '#ffffff',
             borderRadius: 14,
@@ -232,8 +258,8 @@ function Hero() {
                 draggable={false}
               />
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

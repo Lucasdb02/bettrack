@@ -1047,6 +1047,9 @@ html[data-site-theme="light"] .site-footer { --sf-bg: #f6f7f9; --sf-border: rgba
   .sport-steps { padding: 20px; }
 }
 
+/* Homepage hero: masker per koptekstregel (tekst schuift er van onderen in); ruimte voor het gekantelde icoon */
+.lp-hero-line { display: block; overflow: hidden; padding: 0.1em 0.05em; margin: -0.1em -0.05em; }
+
 /* Homepage: Hoe het werkt (versleepbare tijdlijn) */
 .hiw-track::-webkit-scrollbar { display: none; }
 @media (max-width: 768px) {
