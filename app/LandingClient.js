@@ -663,8 +663,8 @@ export default function LandingPage() {
         <SiteHeader home dark={dark} onToggleTheme={toggleTheme} />
         <Hero />
         <AppShowcase />
-        <Testimonials />
         <HowItWorks dark={dark} />
+        <Testimonials />
         <TrustStats dark={dark} />
         <PricingSection dark={dark} />
         <FAQ />
