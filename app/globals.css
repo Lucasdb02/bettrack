@@ -1237,9 +1237,9 @@ html:not(.dark) .border-beam.is-app { --beam-via: #818cf8; --beam-to: #3730a3; }
 @media (prefers-reduced-motion: reduce) { .border-beam { display: none; } }
 
 /* Header-knoppen: staggered rolling text (RollingText.js) */
-.roll-text { display: inline-block; position: relative; }
+.roll-text { display: inline-flex; align-items: center; position: relative; }
 .roll-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.roll-letters { display: inline-flex; overflow: hidden; line-height: 1.25; vertical-align: top; }
+.roll-letters { display: flex; overflow: hidden; line-height: 1.25; }
 .roll-letter { display: inline-flex; flex-direction: column; height: 1.25em; }
 .roll-letter > span { display: block; height: 1.25em; transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); transition-delay: calc(var(--i) * 22ms); }
 .roll-host:hover .roll-letter > span, .roll-host:focus-visible .roll-letter > span { transform: translateY(-100%); }

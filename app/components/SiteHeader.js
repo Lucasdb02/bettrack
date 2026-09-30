@@ -174,7 +174,7 @@ export default function SiteHeader({ home = false }) {
                   onMouseLeave={(e) => { e.currentTarget.style.color = loginColor; e.currentTarget.style.background = 'transparent'; }}
                 ><RollingText text={lang === 'en' ? 'Log in' : 'Inloggen'} /></Link>
                 <Link href="/signup" className="roll-host"
-                  style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 8, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
+                  style={{ background: 'linear-gradient(135deg, #6b82f0 0%, #5469d4 100%)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 18px', borderRadius: 8, boxShadow: '0 2px 12px rgba(84,105,212,0.4)', border: '1px solid rgba(255,255,255,0.2)', transition: 'opacity 0.15s', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center' }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 ><RollingText text={lang === 'en' ? 'Sign up' : 'Aanmelden'} /></Link>
